@@ -1,9 +1,4 @@
 -- This file allow to write SQL commands that will be emitted in test and dev.
--- The commands are commented as their support depends of the database
--- insert into myentity (id, field) values(1, 'field-1');
--- insert into myentity (id, field) values(2, 'field-2');
--- insert into myentity (id, field) values(3, 'field-3');
--- alter sequence myentity_seq restart with 4;
 
 -- 1. User
 CREATE TABLE IF NOT EXISTS tbl_user (
@@ -110,7 +105,7 @@ CREATE TABLE IF NOT EXISTS tbl_transaction (
     `updated_date` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     
     CONSTRAINT fk_trans_user FOREIGN KEY (user_id) REFERENCES tbl_user(id) ON DELETE CASCADE,
-		CONSTRAINT fk_trans_income FOREIGN KEY (income_id) REFERENCES tbl_income(id) ON DELETE CASCADE,
+	CONSTRAINT fk_trans_income FOREIGN KEY (income_id) REFERENCES tbl_income(id) ON DELETE CASCADE,
     CONSTRAINT fk_trans_cat FOREIGN KEY (category_id) REFERENCES tbl_category(id) ON DELETE CASCADE,
     CONSTRAINT fk_trans_acc FOREIGN KEY (account_id) REFERENCES tbl_account(id) ON DELETE CASCADE,
     CONSTRAINT fk_trans_acc_dest FOREIGN KEY (destination_account_id) REFERENCES tbl_account(id) ON DELETE CASCADE,
