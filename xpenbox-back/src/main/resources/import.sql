@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS tbl_user (
     `password` VARCHAR(250) NOT NULL,
 	`currency` varchar(10) NOT NULL,
     `state` TINYINT(1) NOT NULL DEFAULT 1,
+    `verified` TINYINT(1) NOT NULL DEFAULT 0,
     `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_date` DATETIME ON UPDATE CURRENT_TIMESTAMP
 );
@@ -79,9 +80,10 @@ CREATE TABLE IF NOT EXISTS tbl_category (
     `resource_code` VARCHAR(50) NOT NULL UNIQUE,
     `name` VARCHAR(150) NOT NULL,
     `color` VARCHAR(20) NOT NULL,
-    `user_id` BIGINT NOT NULL,
     `state` TINYINT(1) NOT NULL DEFAULT 1,
+    `user_id` BIGINT NOT NULL,
     `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_date` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_category_user FOREIGN KEY (user_id) REFERENCES tbl_user(id) ON DELETE CASCADE
 );
 
@@ -114,9 +116,6 @@ CREATE TABLE IF NOT EXISTS tbl_transaction (
 
 CREATE INDEX idx_token_user
 ON tbl_token(user_id);
-
-CREATE INDEX idx_token_refresh
-ON tbl_token(refresh_token);
 
 CREATE INDEX idx_token_valid
 ON tbl_token(user_id, revoked, refresh_token_expires_at);
