@@ -17,7 +17,7 @@ public class IncomeMapper {
      * @return The mapped IncomeResponseDTO.
      */
     public static IncomeResponseDTO toDTO(Income entity) {
-        LOG.info("Mapping Income entity to DTO: " + entity);
+        LOG.infof("Mapping Income entity to DTO: %s", entity);
         IncomeResponseDTO dto = new IncomeResponseDTO(
             entity.getResourceCode(),
             entity.getConcept(),
@@ -33,7 +33,7 @@ public class IncomeMapper {
      * @return The mapped Income entity.
      */
     public static Income toEntity(IncomeCreateDTO dto) {
-        LOG.info("Mapping Income DTO to entity: " + dto);
+        LOG.infof("Mapping IncomeCreateDTO to entity: %s", dto);
         Income entity = new Income();
         entity.setConcept(dto.concept());
         entity.setIncomeDate(dto.incomeDate());

@@ -1,4 +1,7 @@
-package org.xpenbox.category;
+package org.xpenbox.account.entity;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import org.xpenbox.user.entity.User;
 
@@ -13,12 +16,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 /**
- * Category entity representing category records associated with users.
+ * Account entity representing the account table in the database.
  */
 @Entity
-@Table(name = "tbl_category")
-public class Category extends PanacheEntityBase {
-
+@Table(name = "tbl_account")
+public class Account extends PanacheEntityBase {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
@@ -29,16 +32,16 @@ public class Category extends PanacheEntityBase {
     @Column(name = "name", nullable = false, length = 150)
     private String name;
 
-    @Column(name = "color", nullable = false, length = 20)
-    private String color;
+    @Column(name = "balance", nullable = false, precision = 13, scale = 2)
+    private BigDecimal balance;
 
-    @Column(name = "state", nullable = false)
-    private Boolean state = true;
+    @Column(name = "closing_date", nullable = true)
+    private LocalDateTime closingDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
+    
     public String getResourceCode() {
         return resourceCode;
     }
@@ -55,20 +58,20 @@ public class Category extends PanacheEntityBase {
         this.name = name;
     }
 
-    public String getColor() {
-        return color;
+    public BigDecimal getBalance() {
+        return balance;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
     }
 
-    public Boolean getState() {
-        return state;
+    public LocalDateTime getClosingDate() {
+        return closingDate;
     }
 
-    public void setState(Boolean state) {
-        this.state = state;
+    public void setClosingDate(LocalDateTime closingDate) {
+        this.closingDate = closingDate;
     }
 
     public User getUser() {

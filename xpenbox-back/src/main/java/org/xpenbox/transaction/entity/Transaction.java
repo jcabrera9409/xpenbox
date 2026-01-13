@@ -1,4 +1,4 @@
-package org.xpenbox.transaction;
+package org.xpenbox.transaction.entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -8,9 +8,9 @@ import jakarta.persistence.Id;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import org.xpenbox.account.model.Account;
-import org.xpenbox.category.Category;
-import org.xpenbox.creditcard.CreditCard;
+import org.xpenbox.account.entity.Account;
+import org.xpenbox.category.entity.Category;
+import org.xpenbox.creditcard.entity.CreditCard;
 import org.xpenbox.income.entity.Income;
 import org.xpenbox.user.entity.User;
 

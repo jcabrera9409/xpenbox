@@ -18,7 +18,7 @@ public class UserMapper {
      * @return the corresponding UserResponseDTO
      */
     public static UserResponseDTO toDTO(User entity) {
-        LOG.info("Mapping User entity to DTO: " + entity);
+        LOG.infof("Mapping User entity to DTO: %s", entity);
         UserResponseDTO dto = new UserResponseDTO(
             entity.getUsername(),
             entity.getEmail(),
@@ -35,7 +35,7 @@ public class UserMapper {
      * @return the corresponding User entity
      */
     public static User toEntity(UserCreateDTO dto) {
-        LOG.info("Mapping UserCreateDTO to entity: " + dto);
+        LOG.infof("Mapping UserCreateDTO to entity: %s", dto);
         User entity = new User();
         entity.setUsername(dto.username());
         entity.setEmail(dto.email());
