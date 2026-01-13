@@ -97,6 +97,8 @@ CREATE TABLE IF NOT EXISTS tbl_transaction (
     `description` VARCHAR(500) NULL,
     `transaction_type` ENUM('INCOME', 'EXPENSE', 'TRANSFER', 'CREDIT_PAYMENT') NOT NULL,
     `amount` DECIMAL(13,2) NOT NULL,
+    `latitude` DECIMAL(10,8) NULL,
+    `longitude` DECIMAL(11,8) NULL,
     `transaction_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `category_id` BIGINT NULL,
 	`income_id` BIGINT NULL,
