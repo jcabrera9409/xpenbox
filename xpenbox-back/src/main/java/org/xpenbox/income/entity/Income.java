@@ -1,7 +1,9 @@
-package org.xpenbox.model;
+package org.xpenbox.income.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import org.xpenbox.user.entity.User;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
@@ -14,11 +16,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 /**
- * Account entity representing the account table in the database.
+ * Income entity representing income records associated with users.
  */
 @Entity
-@Table(name = "tbl_account")
-public class Account extends PanacheEntityBase {
+@Table(name = "tbl_income")
+public class Income extends PanacheEntityBase {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,14 +29,14 @@ public class Account extends PanacheEntityBase {
     @Column(name = "resource_code", nullable = false, unique = true, length = 50)
     private String resourceCode;
 
-    @Column(name = "name", nullable = false, length = 150)
-    private String name;
+    @Column(name = "concept", nullable = false, length = 150)
+    private String concept;
 
-    @Column(name = "balance", nullable = false, precision = 13, scale = 2)
-    private BigDecimal balance;
+    @Column(name = "income_date", nullable = false)
+    private LocalDateTime incomeDate;
 
-    @Column(name = "closing_date", nullable = true)
-    private LocalDateTime closingDate;
+    @Column(name = "total_amount", nullable = false, precision = 13, scale = 2)
+    private BigDecimal totalAmount;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -48,28 +50,28 @@ public class Account extends PanacheEntityBase {
         this.resourceCode = resourceCode;
     }
 
-    public String getName() {
-        return name;
+    public String getConcept() {
+        return concept;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setConcept(String concept) {
+        this.concept = concept;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
+    public LocalDateTime getIncomeDate() {
+        return incomeDate;
     }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
+    public void setIncomeDate(LocalDateTime incomeDate) {
+        this.incomeDate = incomeDate;
     }
 
-    public LocalDateTime getClosingDate() {
-        return closingDate;
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setClosingDate(LocalDateTime closingDate) {
-        this.closingDate = closingDate;
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public User getUser() {

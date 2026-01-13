@@ -1,6 +1,8 @@
-package org.xpenbox.model;
+package org.xpenbox.auth.entity;
 
 import java.time.LocalDateTime;
+
+import org.xpenbox.user.entity.User;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;

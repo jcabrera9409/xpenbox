@@ -1,4 +1,4 @@
-package org.xpenbox.model;
+package org.xpenbox.user.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;

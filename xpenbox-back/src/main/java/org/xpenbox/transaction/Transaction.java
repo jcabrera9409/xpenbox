@@ -1,4 +1,4 @@
-package org.xpenbox.model;
+package org.xpenbox.transaction;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -7,6 +7,12 @@ import jakarta.persistence.Id;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import org.xpenbox.account.model.Account;
+import org.xpenbox.category.Category;
+import org.xpenbox.creditcard.CreditCard;
+import org.xpenbox.income.entity.Income;
+import org.xpenbox.user.entity.User;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
