@@ -1,10 +1,10 @@
-package org.xpenbox.auth.repository;
+package org.xpenbox.authorization.repository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.jboss.logging.Logger;
-import org.xpenbox.auth.entity.Token;
+import org.xpenbox.authorization.entity.Token;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Parameters;

@@ -1,10 +1,10 @@
-package org.xpenbox.auth.controller;
+package org.xpenbox.authorization.controller;
 
 import org.jboss.logging.Logger;
-import org.xpenbox.auth.dto.LoginRequestDTO;
-import org.xpenbox.auth.dto.TokenResponseDTO;
-import org.xpenbox.auth.service.IAuthenticationService;
-import org.xpenbox.auth.service.ITokenService;
+import org.xpenbox.authorization.dto.LoginRequestDTO;
+import org.xpenbox.authorization.dto.TokenResponseDTO;
+import org.xpenbox.authorization.service.IAuthenticationService;
+import org.xpenbox.authorization.service.ITokenService;
 import org.xpenbox.user.dto.UserCreateDTO;
 import org.xpenbox.user.service.IUserService;
 

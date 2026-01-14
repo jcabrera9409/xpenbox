@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.server.ServerRequestFilter;
-import org.xpenbox.auth.entity.Token;
-import org.xpenbox.auth.repository.TokenRepository;
+import org.xpenbox.authorization.entity.Token;
+import org.xpenbox.authorization.repository.TokenRepository;
 
 import io.quarkus.security.UnauthorizedException;
 import jakarta.enterprise.context.ApplicationScoped;

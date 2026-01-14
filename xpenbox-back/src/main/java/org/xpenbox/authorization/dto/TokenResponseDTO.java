@@ -1,4 +1,4 @@
-package org.xpenbox.auth.dto;
+package org.xpenbox.authorization.dto;
 
 import java.time.LocalDateTime;
 

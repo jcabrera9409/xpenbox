@@ -1,4 +1,4 @@
-package org.xpenbox.auth.dto;
+package org.xpenbox.authorization.dto;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.Email;

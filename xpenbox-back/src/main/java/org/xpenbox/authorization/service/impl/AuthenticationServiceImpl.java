@@ -1,10 +1,10 @@
-package org.xpenbox.auth.service.impl;
+package org.xpenbox.authorization.service.impl;
 
 import org.jboss.logging.Logger;
 import org.mindrot.jbcrypt.BCrypt;
-import org.xpenbox.auth.dto.TokenResponseDTO;
-import org.xpenbox.auth.service.IAuthenticationService;
-import org.xpenbox.auth.service.ITokenService;
+import org.xpenbox.authorization.dto.TokenResponseDTO;
+import org.xpenbox.authorization.service.IAuthenticationService;
+import org.xpenbox.authorization.service.ITokenService;
 import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
 

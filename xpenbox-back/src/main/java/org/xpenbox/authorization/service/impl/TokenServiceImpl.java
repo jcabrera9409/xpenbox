@@ -1,15 +1,15 @@
-package org.xpenbox.auth.service.impl;
+package org.xpenbox.authorization.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
-import org.xpenbox.auth.dto.TokenResponseDTO;
-import org.xpenbox.auth.entity.Token;
-import org.xpenbox.auth.mapper.TokenMapper;
-import org.xpenbox.auth.repository.TokenRepository;
-import org.xpenbox.auth.service.ITokenService;
+import org.xpenbox.authorization.dto.TokenResponseDTO;
+import org.xpenbox.authorization.entity.Token;
+import org.xpenbox.authorization.mapper.TokenMapper;
+import org.xpenbox.authorization.repository.TokenRepository;
+import org.xpenbox.authorization.service.ITokenService;
 import org.xpenbox.common.ResourceCode;
 import org.xpenbox.user.entity.User;
 

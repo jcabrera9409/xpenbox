@@ -1,6 +1,6 @@
-package org.xpenbox.auth.service;
+package org.xpenbox.authorization.service;
 
-import org.xpenbox.auth.dto.TokenResponseDTO;
+import org.xpenbox.authorization.dto.TokenResponseDTO;
 
 /**
  * Service interface for authentication operations.

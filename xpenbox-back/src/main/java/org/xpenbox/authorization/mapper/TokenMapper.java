@@ -1,9 +1,9 @@
-package org.xpenbox.auth.mapper;
+package org.xpenbox.authorization.mapper;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
-import org.xpenbox.auth.dto.TokenResponseDTO;
-import org.xpenbox.auth.entity.Token;
+import org.xpenbox.authorization.dto.TokenResponseDTO;
+import org.xpenbox.authorization.entity.Token;
 
 /**
  * Mapper class for converting Token entities to TokenResponseDTOs.
