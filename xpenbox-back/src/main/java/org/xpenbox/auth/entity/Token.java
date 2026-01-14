@@ -25,13 +25,13 @@ public class Token extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @Column(name = "resource_code", nullable = false, unique = true, length = 50)
+    @Column(name = "resource_code", nullable = false, unique = true, length = 100)
     private String resourceCode;
 
-    @Column(name = "access_token", nullable = false, length = 500)
+    @Column(name = "access_token", nullable = false, length = 1000)
     private String accessToken;
 
-    @Column(name = "refresh_token", nullable = false, length = 500)
+    @Column(name = "refresh_token", nullable = false, length = 250)
     private String refreshToken;
 
     @Column(name = "access_token_expires_at", nullable = false)

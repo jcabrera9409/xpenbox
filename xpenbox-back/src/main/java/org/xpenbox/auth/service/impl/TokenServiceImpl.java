@@ -5,30 +5,32 @@ import java.util.UUID;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
+import org.xpenbox.auth.dto.TokenResponseDTO;
 import org.xpenbox.auth.entity.Token;
+import org.xpenbox.auth.mapper.TokenMapper;
 import org.xpenbox.auth.repository.TokenRepository;
-import org.xpenbox.auth.service.TokenService;
+import org.xpenbox.auth.service.ITokenService;
+import org.xpenbox.common.ResourceCode;
 import org.xpenbox.user.entity.User;
 
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 
 /**
  * Implementation of the TokenService interface.
  */
 @ApplicationScoped
-public class TokenServiceImpl implements TokenService {
+public class TokenServiceImpl implements ITokenService {
     private static final Logger LOG = Logger.getLogger(TokenServiceImpl.class);
 
     @ConfigProperty(name = "mp.jwt.verify.issuer")
     private String issuer;
 
     @ConfigProperty(name = "mp.jwt.expiration.time")
-    private long expirationTime;
+    private Long expirationTime;
 
     @ConfigProperty(name = "mp.jwt.refresh.expiration.time")
-    private long refreshExpirationTime;
+    private Long refreshExpirationTime;
 
     private final TokenRepository tokenRepository;
 
@@ -38,69 +40,71 @@ public class TokenServiceImpl implements TokenService {
         this.tokenRepository = tokenRepository;
     }
 
-    @Transactional
     @Override
-    public Token createToken(User user, Boolean rememberMe) {
-        LOG.infof("Creating token for user: %s, rememberMe: %b", user.getUsername(), rememberMe);
-
-        String accessToken = generateAccessToken(user);
-        
-        String refreshToken = UUID.randomUUID().toString();
+    public TokenResponseDTO createToken(User user, Boolean rememberMe) {
+        LOG.infof("Creating token for email: %s, rememberMe: %b", user.getEmail(), rememberMe);
 
         Token token = new Token();
+        token.setResourceCode(ResourceCode.generateTokenResourceCode());
         token.setUser(user);
-        token.setAccessToken(accessToken);
-        token.setRefreshToken(refreshToken);
         token.setPersistentSession(rememberMe);
-        token.setIssuedAt(LocalDateTime.now());
-        token.setLastUsedAt(LocalDateTime.now());
-        token.setAccessTokenExpiresAt(LocalDateTime.now().plusSeconds(expirationTime));
-
-        if (rememberMe) {
-            token.setRefreshTokenExpiresAt(LocalDateTime.now().plusSeconds(refreshExpirationTime));
-        }
+        
+        token = completeTokenData(token);
 
         tokenRepository.persist(token);
 
-        LOG.infof("Token created successfully for user: %s", user.getUsername());
+        LOG.infof("Token created successfully for email: %s", user.getEmail());
 
-        return token;
+        return TokenMapper.toAuthDTO(token);
     }
 
-    @Transactional
     @Override
-    public Token refreshToken(String refreshToken) {
+    public TokenResponseDTO refreshToken(String refreshToken) {
         LOG.infof("Refreshing token with refresh token: %s", refreshToken);
 
         Token token = tokenRepository.findValidRefreshToken(refreshToken)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid or expired refresh token"));
-        String newAccessToken = generateAccessToken(token.getUser());
-        String newRefreshToken = UUID.randomUUID().toString();
-        token.setAccessToken(newAccessToken);
-        token.setRefreshToken(newRefreshToken);
+        
+        token = completeTokenData(token);
+
+        tokenRepository.persist(token);
+
+        LOG.infof("Token refreshed successfully for email: %s", token.getUser().getEmail());
+
+        return TokenMapper.toAuthDTO(token);
+    }
+
+    @Override
+    public void revokeToken(String refreshToken) {
+        LOG.infof("Revoking token with refresh token: %s", refreshToken);
+        Token token = tokenRepository.findValidRefreshToken(refreshToken)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired refresh token"));
+        token.setRevoked(true);
+        tokenRepository.persist(token);
+        LOG.infof("Token revoked successfully for email: %s", token.getUser().getEmail());
+    }
+
+    private Token completeTokenData(Token token) {
+        LOG.debugf("Completing token data for token ID: %d", token.id);
+        String accessToken = generateAccessToken(token.getUser());
+        String refreshToken = UUID.randomUUID().toString();
+        token.setAccessToken(accessToken);
+        token.setRefreshToken(refreshToken);
         token.setIssuedAt(LocalDateTime.now());
         token.setLastUsedAt(LocalDateTime.now());
         token.setAccessTokenExpiresAt(LocalDateTime.now().plusSeconds(expirationTime));
 
-        tokenRepository.persist(token);
-
-        LOG.infof("Token refreshed successfully for user: %s", token.getUser().getUsername());
+        if (token.getPersistentSession()) {
+            token.setRefreshTokenExpiresAt(LocalDateTime.now().plusSeconds(refreshExpirationTime));
+        }
 
         return token;
     }
 
-    @Transactional
-    @Override
-    public void revokeToken(Token token) {
-        LOG.infof("Revoking token for user: %s", token.getUser().getUsername());
-        token.setRevoked(true);
-        tokenRepository.persist(token);
-        LOG.infof("Token revoked successfully for user: %s", token.getUser().getUsername());
-    }
-
     private String generateAccessToken(User user) {
+        LOG.debugf("Generating access token for email: %s", user.getEmail());
         String accessToken = Jwt.issuer(issuer)
-                .subject(user.getUsername())
+                .subject(user.getEmail())
                 .expiresAt(System.currentTimeMillis() / 1000 + expirationTime)
                 .sign();
         

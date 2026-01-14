@@ -1,4 +1,4 @@
-package org.xpenbox.user.dto;
+package org.xpenbox.auth.dto;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.Email;
@@ -6,13 +6,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * Data Transfer Object for creating a new user.
- * @param email the email of the user
- * @param password the password of the user
- * @param currency the preferred currency of the user
+ * Data Transfer Object for Login requests.
+ * @param email The email of the user.
+ * @param password The password of the user.
+ * @param rememberMe Flag indicating if the session should be persistent.
  */
 @RegisterForReflection
-public record UserCreateDTO (
+public record LoginRequestDTO (
 
     @NotNull(message = "Email cannot be null")
     @Email(message = "Email should be valid")
@@ -23,7 +23,6 @@ public record UserCreateDTO (
     @Size(min = 6, message = "Password must be at least 6 characters")
     String password,
 
-    @NotNull(message = "Currency cannot be null")
-    @Size(min = 1, max = 10, message = "Currency must be between 1 and 10 characters")
-    String currency
-){ }
+    @NotNull(message = "RememberMe cannot be null")
+    Boolean rememberMe
+) { }

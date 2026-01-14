@@ -10,7 +10,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 */
 @RegisterForReflection
 public record UserResponseDTO (
-    String username,
     String email,
     String currency,
     Boolean verified

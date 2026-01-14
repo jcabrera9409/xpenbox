@@ -19,9 +19,6 @@ public class User extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @Column(name = "username", unique = true, nullable = false, length = 50)
-    private String username;
-
     @Column(name = "email", unique = true, nullable = false, length = 250)
     private String email;
 
@@ -36,14 +33,6 @@ public class User extends PanacheEntityBase {
 
     @Column(name = "verified", nullable = false)
     private Boolean verified = false;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getEmail() {
         return email;

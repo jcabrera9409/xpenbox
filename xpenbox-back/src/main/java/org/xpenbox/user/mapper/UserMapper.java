@@ -20,7 +20,6 @@ public class UserMapper {
     public static UserResponseDTO toDTO(User entity) {
         LOG.infof("Mapping User entity to DTO: %s", entity);
         UserResponseDTO dto = new UserResponseDTO(
-            entity.getUsername(),
             entity.getEmail(),
             entity.getCurrency(),
             entity.getVerified()
@@ -37,7 +36,6 @@ public class UserMapper {
     public static User toEntity(UserCreateDTO dto) {
         LOG.infof("Mapping UserCreateDTO to entity: %s", dto);
         User entity = new User();
-        entity.setUsername(dto.username());
         entity.setEmail(dto.email());
         entity.setPassword(dto.password());
         entity.setCurrency(dto.currency());

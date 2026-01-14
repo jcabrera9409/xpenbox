@@ -23,7 +23,7 @@ public class Category extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @Column(name = "resource_code", nullable = false, unique = true, length = 50)
+    @Column(name = "resource_code", nullable = false, unique = true, length = 100)
     private String resourceCode;
 
     @Column(name = "name", nullable = false, length = 150)

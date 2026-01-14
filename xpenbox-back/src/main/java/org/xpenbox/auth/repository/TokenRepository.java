@@ -9,7 +9,6 @@ import org.xpenbox.auth.entity.Token;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Parameters;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 
 /**
  * Repository for managing Token entities.
@@ -17,6 +16,17 @@ import jakarta.transaction.Transactional;
 @ApplicationScoped
 public class TokenRepository implements PanacheRepository<Token> {
     private static final Logger LOG = Logger.getLogger(TokenRepository.class);
+
+    /**
+     * Finds a token by its access token value.
+     *
+     * @param accessToken the access token value to search for
+     * @return an Optional containing the Token if found, otherwise empty
+     */
+    public Optional<Token> findByAccessToken(String accessToken) {
+        LOG.debugf("Finding token by access token: %s", accessToken);
+        return find("accessToken", accessToken).firstResultOptional();
+    }
 
     /**
      * Finds a valid (not revoked and not expired) refresh token by its value.
@@ -39,7 +49,6 @@ public class TokenRepository implements PanacheRepository<Token> {
      *
      * @param userId the ID of the user whose tokens should be revoked
      */
-    @Transactional
     public void revokeAllByUserId(Long userId) {
         LOG.debugf("Revoking all tokens for user ID: %d", userId);
         update("revoked = true where user.id = :userId", Parameters.with("userId", userId));

@@ -3,7 +3,6 @@
 -- 1. User
 CREATE TABLE IF NOT EXISTS tbl_user (
     `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `username` VARCHAR(50) NOT NULL UNIQUE,
     `email` VARCHAR(250) NOT NULL UNIQUE,
     `password` VARCHAR(250) NOT NULL,
 	`currency` varchar(10) NOT NULL,
@@ -15,10 +14,10 @@ CREATE TABLE IF NOT EXISTS tbl_user (
 
 CREATE TABLE IF NOT EXISTS tbl_token (
     `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `resource_code` VARCHAR(50) NOT NULL UNIQUE,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
     `user_id` BIGINT NOT NULL,
-    `access_token` VARCHAR(500) NOT NULL,
-    `refresh_token` VARCHAR(500) NOT NULL,
+    `access_token` VARCHAR(1000) NOT NULL,
+    `refresh_token` VARCHAR(250) NOT NULL,
     `access_token_expires_at` DATETIME NOT NULL,
     `refresh_token_expires_at` DATETIME NULL,
     `persistent_session` TINYINT(1) NOT NULL DEFAULT 0,
@@ -34,7 +33,7 @@ CREATE TABLE IF NOT EXISTS tbl_token (
 -- 2. Income
 CREATE TABLE IF NOT EXISTS tbl_income (
     `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `resource_code` VARCHAR(50) NOT NULL UNIQUE,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
     `concept` VARCHAR(150) NOT NULL,
     `income_date` DATETIME NOT NULL,
     `total_amount` DECIMAL(13,2) NOT NULL,
@@ -47,7 +46,7 @@ CREATE TABLE IF NOT EXISTS tbl_income (
 -- 3. Account (Cost Center)
 CREATE TABLE IF NOT EXISTS tbl_account (
     `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `resource_code` VARCHAR(50) NOT NULL UNIQUE,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
     `name` VARCHAR(150) NOT NULL,
     `balance` DECIMAL(13,2) NOT NULL DEFAULT 0.00,
 	`closing_date` DATETIME NULL,
@@ -60,7 +59,7 @@ CREATE TABLE IF NOT EXISTS tbl_account (
 -- 4. Credit Card
 CREATE TABLE IF NOT EXISTS tbl_credit_card (
     `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `resource_code` VARCHAR(50) NOT NULL UNIQUE,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
     `name` VARCHAR(150) NOT NULL,
     `credit_limit` DECIMAL(13,2) NOT NULL,
     `current_balance` DECIMAL(13,2) NOT NULL DEFAULT 0.00, 
@@ -77,7 +76,7 @@ CREATE TABLE IF NOT EXISTS tbl_credit_card (
 -- 5. Category
 CREATE TABLE IF NOT EXISTS tbl_category (
     `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `resource_code` VARCHAR(50) NOT NULL UNIQUE,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
     `name` VARCHAR(150) NOT NULL,
     `color` VARCHAR(20) NOT NULL,
     `state` TINYINT(1) NOT NULL DEFAULT 1,
@@ -90,7 +89,7 @@ CREATE TABLE IF NOT EXISTS tbl_category (
 -- 6. Transactions
 CREATE TABLE IF NOT EXISTS tbl_transaction (
     `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `resource_code` VARCHAR(50) NOT NULL UNIQUE,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
     `description` VARCHAR(500) NULL,
     `transaction_type` ENUM('INCOME', 'EXPENSE', 'TRANSFER', 'CREDIT_PAYMENT') NOT NULL,
     `amount` DECIMAL(13,2) NOT NULL,
