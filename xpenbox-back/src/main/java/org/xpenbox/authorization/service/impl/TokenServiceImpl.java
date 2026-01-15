@@ -85,7 +85,7 @@ public class TokenServiceImpl implements ITokenService {
     }
 
     private Token completeTokenData(Token token) {
-        LOG.debugf("Completing token data for token ID: %d", token.id);
+        LOG.debugf("Completing token data for token ID: %d", token.getResourceCode());
         String accessToken = generateAccessToken(token.getUser());
         String refreshToken = UUID.randomUUID().toString();
         token.setAccessToken(accessToken);
