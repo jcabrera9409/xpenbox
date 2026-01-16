@@ -1,26 +1,26 @@
 meta {
-  name: AccountCreate
+  name: CategoryCreate
   type: http
   seq: 1
 }
 
 post {
-  url: {{apiUrl}}/api/rest/v1/account
+  url: {{apiUrl}}/api/rest/v1/category
   body: json
   auth: none
 }
 
 body:json {
   {
-    "name": "Test",
-    "balance": 25
+    "name": "Categoria 1",
+    "color": "#fff"
   }
 }
 
 script:post-response {
   if (res.getStatus() == 201) {
     const response = res.getBody();
-    bru.setEnvVar("rcAccount",response.data.resourceCode)
+    bru.setEnvVar("rcCategory",response.data.resourceCode)
   }
   
 }

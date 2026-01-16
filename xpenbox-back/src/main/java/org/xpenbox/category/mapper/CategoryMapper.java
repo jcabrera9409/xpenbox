@@ -7,6 +7,7 @@ import org.xpenbox.category.dto.CategoryCreateDTO;
 import org.xpenbox.category.dto.CategoryResponseDTO;
 import org.xpenbox.category.dto.CategoryUpdateDTO;
 import org.xpenbox.category.entity.Category;
+import org.xpenbox.common.ResourceCode;
 import org.xpenbox.common.mapper.GenericMapper;
 import org.xpenbox.user.entity.User;
 
@@ -64,6 +65,7 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
     public Category toEntity(CategoryCreateDTO dto, User user) {
         LOG.infof("Mapping CategoryCreateDTO to entity: %s", dto);
         Category entity = new Category();
+        entity.setResourceCode(ResourceCode.generateCategoryResourceCode());
         entity.setName(dto.name());
         entity.setColor(dto.color());
         entity.setUser(user);

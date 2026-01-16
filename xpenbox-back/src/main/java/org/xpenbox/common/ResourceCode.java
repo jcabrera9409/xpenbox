@@ -20,7 +20,8 @@ public class ResourceCode {
      */
     private enum ResourceType {
         TOKEN("token"),
-        ACCOUNT("account");
+        ACCOUNT("account"),
+        CATEGORY("category");
 
         private final String value;
 
@@ -68,5 +69,14 @@ public class ResourceCode {
      */
     public static String generateAccountResourceCode() {
         return generateResourceCode(ResourceType.ACCOUNT);
+    }
+
+    /**
+     * Generate a category resource code.
+     *
+     * @return the generated category resource code
+     */
+    public static String generateCategoryResourceCode() {
+        return generateResourceCode(ResourceType.CATEGORY);
     }
 }

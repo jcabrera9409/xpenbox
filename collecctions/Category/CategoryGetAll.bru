@@ -1,0 +1,18 @@
+meta {
+  name: CategoryGetAll
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{apiUrl}}/api/rest/v1/category
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "name": "IBK Ahorro",
+    "balance": 1000
+  }
+}
