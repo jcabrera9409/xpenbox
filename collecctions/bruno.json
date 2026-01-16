@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "xpenbox-collecctions",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

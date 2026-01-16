@@ -8,6 +8,7 @@ import org.xpenbox.authorization.service.ITokenService;
 import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
 
+import io.quarkus.security.UnauthorizedException;
 import jakarta.enterprise.context.ApplicationScoped;
 
 /**
@@ -32,22 +33,22 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     public TokenResponseDTO login(String email, String password, Boolean rememberMe) {
         LOG.infof("Attempting login for email: %s", email);
         User user = userRepository.findByEmail(email).orElseThrow(
-            () -> new IllegalArgumentException("Email not found")
+            () -> { throw new UnauthorizedException("Email not found"); }
         );
 
         if (!user.getVerified()) {
             LOG.infof("Login attempt for unverified email: %s", email);
-            throw new IllegalStateException("Email not verified");
+            throw new UnauthorizedException("Email not verified");
         }
 
         if (!user.getState()) {
             LOG.infof("Login attempt for inactive account: %s", email);
-            throw new IllegalStateException("User account is inactive");
+            throw new UnauthorizedException("User account is inactive");
         }
 
         if(!BCrypt.checkpw(password, user.getPassword())) {
             LOG.infof("Password verification failed for email: %s", email);
-            throw new IllegalArgumentException("Invalid password");
+            throw new UnauthorizedException("Invalid password");
         }
 
         LOG.infof("Login successful for email: %s", email);

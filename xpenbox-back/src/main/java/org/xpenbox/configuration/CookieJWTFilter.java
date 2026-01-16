@@ -3,9 +3,9 @@ package org.xpenbox.configuration;
 import org.jboss.logging.Logger;
 import org.xpenbox.authorization.entity.Token;
 import org.xpenbox.authorization.repository.TokenRepository;
+import org.xpenbox.exception.UnauthorizedException;
 
 import io.quarkus.security.identity.SecurityIdentity;
-import io.smallrye.jwt.auth.principal.JWTParser;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -18,15 +18,12 @@ import jakarta.ws.rs.ext.Provider;
 public class CookieJWTFilter implements ContainerRequestFilter {
     private static final Logger LOG = Logger.getLogger(CookieJWTFilter.class);
 
-    private final JWTParser jwtParser;
     private final TokenRepository tokenRepository;
     private final SecurityIdentity securityIdentity;
 
     public CookieJWTFilter(
-        JWTParser jwtParser, 
         TokenRepository tokenRepository, 
         SecurityIdentity securityIdentity) {
-        this.jwtParser = jwtParser;
         this.tokenRepository = tokenRepository;
         this.securityIdentity = securityIdentity;
     }
@@ -58,13 +55,13 @@ public class CookieJWTFilter implements ContainerRequestFilter {
         LOG.debug("Access token from cookie: " + token);
 
         Token tokenEntity = tokenRepository.findByAccessToken(token)
-            .orElseThrow(() -> new RuntimeException("Invalid access token"));
+            .orElseThrow(() -> { throw new UnauthorizedException("Invalid access token"); });
         
         LOG.debug("Token entity found: " + tokenEntity);
 
         if (tokenEntity.getRevoked()) {
             LOG.debug("Token has been revoked");
-            throw new RuntimeException("Token has been revoked");
+            throw new UnauthorizedException("Token has been revoked");
         }
         
     }

@@ -11,6 +11,7 @@ import org.xpenbox.authorization.mapper.TokenMapper;
 import org.xpenbox.authorization.repository.TokenRepository;
 import org.xpenbox.authorization.service.ITokenService;
 import org.xpenbox.common.ResourceCode;
+import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.user.entity.User;
 
 import io.smallrye.jwt.build.Jwt;
@@ -63,7 +64,7 @@ public class TokenServiceImpl implements ITokenService {
         LOG.infof("Refreshing token with refresh token: %s", refreshToken);
 
         Token token = tokenRepository.findValidRefreshToken(refreshToken)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired refresh token"));
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid or expired refresh token"));
         
         token = completeTokenData(token);
 
@@ -78,7 +79,7 @@ public class TokenServiceImpl implements ITokenService {
     public void revokeToken(String refreshToken) {
         LOG.infof("Revoking token with refresh token: %s", refreshToken);
         Token token = tokenRepository.findValidRefreshToken(refreshToken)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired refresh token"));
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid or expired refresh token"));
         token.setRevoked(true);
         tokenRepository.persist(token);
         LOG.infof("Token revoked successfully for email: %s", token.getUser().getEmail());

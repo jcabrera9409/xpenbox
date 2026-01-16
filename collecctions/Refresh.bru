@@ -1,0 +1,11 @@
+meta {
+  name: Refresh
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{apiUrl}}/api/rest/v1/auth/refresh
+  body: json
+  auth: none
+}

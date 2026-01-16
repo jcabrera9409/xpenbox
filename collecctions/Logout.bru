@@ -1,0 +1,11 @@
+meta {
+  name: Logout
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{apiUrl}}/api/rest/v1/auth/logout
+  body: json
+  auth: none
+}

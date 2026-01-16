@@ -2,6 +2,7 @@ package org.xpenbox.user.service.impl;
 
 import org.jboss.logging.Logger;
 import org.mindrot.jbcrypt.BCrypt;
+import org.xpenbox.exception.ConflictException;
 import org.xpenbox.user.dto.UserCreateDTO;
 import org.xpenbox.user.dto.UserResponseDTO;
 import org.xpenbox.user.entity.User;
@@ -33,7 +34,7 @@ public class UserServiceImpl implements IUserService {
         User userExists = userRepository.findByEmail(userRequest.email()).orElse(null);
         if (userExists != null) {
             LOG.warnf("User with email %s already exists", userRequest.email());
-            throw new IllegalArgumentException("User with this email already exists");
+            throw new ConflictException("User with this email already exists");
         }
         
         User newUser = UserMapper.toEntity(userRequest);
