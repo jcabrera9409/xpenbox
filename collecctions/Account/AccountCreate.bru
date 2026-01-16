@@ -12,7 +12,12 @@ post {
 
 body:json {
   {
-    "name": "BBVA Ahorro",
-    "balance": 0
+    "name": "Test",
+    "balance": 25
   }
+}
+
+script:post-response {
+  const response = res.getBody();
+  bru.setEnvVar("rcAccount",response.data.resourceCode)
 }

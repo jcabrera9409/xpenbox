@@ -2,6 +2,8 @@ package org.xpenbox.common.mapper;
 
 import java.util.List;
 
+import org.xpenbox.user.entity.User;
+
 /**
  * Generic Mapper interface for converting between entities and DTOs.
  * @param <T> The entity type.
@@ -30,7 +32,7 @@ public interface GenericMapper<T, C, U, R> {
      * @param createDto The create DTO to be mapped.
      * @return The corresponding entity.
      */
-    T toEntity(C createDto);
+    T toEntity(C createDto, User user);
     
     /**
      * Maps update DTO to existing entity.

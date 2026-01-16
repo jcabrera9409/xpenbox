@@ -7,7 +7,9 @@ import org.xpenbox.account.dto.AccountCreateDTO;
 import org.xpenbox.account.dto.AccountResponseDTO;
 import org.xpenbox.account.dto.AccountUpdateDTO;
 import org.xpenbox.account.entity.Account;
+import org.xpenbox.common.ResourceCode;
 import org.xpenbox.common.mapper.GenericMapper;
+import org.xpenbox.user.entity.User;
 
 import jakarta.inject.Singleton;
 
@@ -59,11 +61,13 @@ public class AccountMapper implements GenericMapper<Account, AccountCreateDTO, A
      * @return The corresponding Account entity.
      */
     @Override
-    public Account toEntity(AccountCreateDTO dto) {
+    public Account toEntity(AccountCreateDTO dto, User user) {
         LOG.infof("Mapping AccountResponseDTO to Account entity: %s", dto);
         Account entity = new Account();
+        entity.setResourceCode(ResourceCode.generateAccountResourceCode());
         entity.setName(dto.name());
         entity.setBalance(dto.balance());
+        entity.setUser(user);
         return entity;
     }
 
