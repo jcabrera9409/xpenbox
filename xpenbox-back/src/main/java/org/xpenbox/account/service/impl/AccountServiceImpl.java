@@ -27,13 +27,16 @@ public class AccountServiceImpl implements IAccountService {
 
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
+    private final AccountMapper accountMapper;
 
     public AccountServiceImpl(
         UserRepository userRepository,
-        AccountRepository accountRepository
+        AccountRepository accountRepository,
+        AccountMapper accountMapper
     ) {
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
+        this.accountMapper = accountMapper;
     }
 
     @Override
@@ -45,14 +48,14 @@ public class AccountServiceImpl implements IAccountService {
                 throw new UnauthorizedException("User not found with email: " + userEmail); 
             });
 
-        Account newAccount = AccountMapper.toEntity(accountCreateDTO);
+        Account newAccount = accountMapper.toEntity(accountCreateDTO);
         newAccount.setResourceCode(ResourceCode.generateAccountResourceCode());
         newAccount.setUser(user);
 
         accountRepository.persist(newAccount);
         LOG.infof("Account created with resource code: %s", newAccount.getResourceCode());
 
-        return AccountMapper.toDTO(newAccount);
+        return accountMapper.toDTO(newAccount);
     }
 
     @Override
@@ -70,7 +73,7 @@ public class AccountServiceImpl implements IAccountService {
                 throw new ResourceNotFoundException("Account not found with resource code: " + resourceCode);
             });
 
-        boolean isUpdated = AccountMapper.toUpdateEntity(accountUpdateDTO, existingAccount);
+        boolean isUpdated = accountMapper.updateEntity(accountUpdateDTO, existingAccount);
         if (isUpdated) {
             accountRepository.persist(existingAccount);
             LOG.infof("Account with resource code: %s updated successfully", resourceCode);
@@ -78,7 +81,7 @@ public class AccountServiceImpl implements IAccountService {
             LOG.infof("No changes detected for account with resource code: %s", resourceCode);
         }
 
-        return AccountMapper.toDTO(existingAccount);
+        return accountMapper.toDTO(existingAccount);
     }
 
     @Override
@@ -96,7 +99,7 @@ public class AccountServiceImpl implements IAccountService {
                 throw new ResourceNotFoundException("Account not found with resource code: " + resourceCode);
             });
 
-        return AccountMapper.toDTO(existingAccount);
+        return accountMapper.toDTO(existingAccount);
     }
 
     @Override
@@ -111,7 +114,7 @@ public class AccountServiceImpl implements IAccountService {
         List<Account> accounts = accountRepository.findAllByUserId(user.id);
         LOG.infof("Found %d accounts for user email: %s", accounts.size(), userEmail);
 
-        return AccountMapper.toDTOList(accounts);
+        return accountMapper.toDTOList(accounts);
     }
     
 }

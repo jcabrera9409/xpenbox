@@ -1,7 +1,6 @@
 package org.xpenbox.transaction.mapper;
 
 import org.jboss.logging.Logger;
-import org.xpenbox.account.mapper.AccountMapper;
 import org.xpenbox.category.mapper.CategoryMapper;
 import org.xpenbox.creditcard.mapper.CreditCardMapper;
 import org.xpenbox.income.mapper.IncomeMapper;
@@ -32,9 +31,9 @@ public class TransactionMapper {
             entity.getTransactionDate(),
             entity.getCategory() != null ? CategoryMapper.toDTO(entity.getCategory()) : null,
             entity.getIncome() != null ? IncomeMapper.toDTO(entity.getIncome()) : null,
-            entity.getAccount() != null ? AccountMapper.toDTO(entity.getAccount()) : null,
+            null,//entity.getAccount() != null ? AccountMapper.toDTO(entity.getAccount()) : null,
             entity.getCreditCard() != null ? CreditCardMapper.toDTO(entity.getCreditCard()) : null,
-            entity.getDestinationAccount() != null ? AccountMapper.toDTO(entity.getDestinationAccount()) : null
+            null//entity.getDestinationAccount() != null ? AccountMapper.toDTO(entity.getDestinationAccount()) : null
         );
         return dto;
     }

@@ -7,11 +7,15 @@ import org.xpenbox.account.dto.AccountCreateDTO;
 import org.xpenbox.account.dto.AccountResponseDTO;
 import org.xpenbox.account.dto.AccountUpdateDTO;
 import org.xpenbox.account.entity.Account;
+import org.xpenbox.common.mapper.GenericMapper;
+
+import jakarta.inject.Singleton;
 
 /**
  * Mapper class for converting between Account entities and DTOs.
  */
-public class AccountMapper {
+@Singleton
+public class AccountMapper implements GenericMapper<Account, AccountCreateDTO, AccountUpdateDTO, AccountResponseDTO> {
     private static final Logger LOG = Logger.getLogger(AccountMapper.class);
 
     /**
@@ -19,7 +23,8 @@ public class AccountMapper {
      * @param entity The Account entity to be mapped.
      * @return The corresponding AccountResponseDTO.
      */
-    public static AccountResponseDTO toDTO(Account entity) {
+    @Override
+    public AccountResponseDTO toDTO(Account entity) {
         LOG.infof("Mapping Account entity to AccountResponseDTO: %s", entity);
         AccountResponseDTO dto = new AccountResponseDTO(
             entity.getResourceCode(),
@@ -29,8 +34,13 @@ public class AccountMapper {
         );
         return dto;
     }
-
-    public static List<AccountResponseDTO> toDTOList(List<Account> entities) {
+    /**
+     * Maps list of Account entities to list of AccountResponseDTOs.
+     * @param entities The list of Account entities to be mapped.
+     * @return The corresponding list of AccountResponseDTOs.
+     */
+    @Override
+    public List<AccountResponseDTO> toDTOList(List<Account> entities) {
         LOG.infof("Mapping list of Account entities to list of AccountResponseDTOs");
 
         if (entities == null || entities.isEmpty()) {
@@ -39,7 +49,7 @@ public class AccountMapper {
         }
 
         return entities.stream()
-            .map(AccountMapper::toDTO)
+            .map(this::toDTO)
             .toList();
     }
 
@@ -48,7 +58,8 @@ public class AccountMapper {
      * @param dto The AccountCreateDTO to be mapped.
      * @return The corresponding Account entity.
      */
-    public static Account toEntity(AccountCreateDTO dto) {
+    @Override
+    public Account toEntity(AccountCreateDTO dto) {
         LOG.infof("Mapping AccountResponseDTO to Account entity: %s", dto);
         Account entity = new Account();
         entity.setName(dto.name());
@@ -62,7 +73,8 @@ public class AccountMapper {
      * @param entity The existing Account entity to be updated.
      * @return true if the entity was updated, false otherwise.
      */
-    public static boolean toUpdateEntity(AccountUpdateDTO dto, Account entity) {
+    @Override
+    public boolean updateEntity(AccountUpdateDTO dto, Account entity) {
         LOG.infof("Updating Account entity with AccountUpdateDTO: %s", dto);
 
         boolean isUpdated = false;
