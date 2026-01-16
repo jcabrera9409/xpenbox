@@ -13,7 +13,7 @@ public class ResourceCode {
     public static final Logger LOG = Logger.getLogger(ResourceCode.class);
     
     private static final String RESOURCE_CODE = "rc:xpenbox";
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     /**
      * Enum representing different resource types.

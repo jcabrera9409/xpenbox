@@ -11,7 +11,6 @@ import org.xpenbox.account.mapper.AccountMapper;
 import org.xpenbox.account.repository.AccountRepository;
 import org.xpenbox.account.service.IAccountService;
 import org.xpenbox.common.ResourceCode;
-import org.xpenbox.exception.ForbiddenException;
 import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
@@ -65,16 +64,11 @@ public class AccountServiceImpl implements IAccountService {
                 throw new UnauthorizedException("User not found with email: " + userEmail); 
             });
         
-        Account existingAccount = accountRepository.findByResourceCode(resourceCode)
+        Account existingAccount = accountRepository.findByResourceCodeAndUserId(resourceCode, user.id)
             .orElseThrow(() -> {
                 LOG.errorf("Account not found with resource code: %s", resourceCode);
                 throw new ResourceNotFoundException("Account not found with resource code: " + resourceCode);
             });
-
-        if (!existingAccount.getUser().id.equals(user.id)) {
-            LOG.errorf("User %s is not authorized to update account with resource code: %s", userEmail, resourceCode);
-            throw new ForbiddenException("User is not authorized to update this account.");
-        }
 
         boolean isUpdated = AccountMapper.toUpdateEntity(accountUpdateDTO, existingAccount);
         if (isUpdated) {
@@ -96,16 +90,11 @@ public class AccountServiceImpl implements IAccountService {
                 throw new UnauthorizedException("User not found with email: " + userEmail); 
             });
         
-        Account existingAccount = accountRepository.findByResourceCode(resourceCode)
+        Account existingAccount = accountRepository.findByResourceCodeAndUserId(resourceCode, user.id)
             .orElseThrow(() -> {
                 LOG.errorf("Account not found with resource code: %s", resourceCode);
                 throw new ResourceNotFoundException("Account not found with resource code: " + resourceCode);
             });
-
-        if (!existingAccount.getUser().id.equals(user.id)) {
-            LOG.errorf("User %s is not authorized to access account with resource code: %s", userEmail, resourceCode);
-            throw new ForbiddenException("User is not authorized to access this account.");
-        }
 
         return AccountMapper.toDTO(existingAccount);
     }
@@ -119,7 +108,7 @@ public class AccountServiceImpl implements IAccountService {
                 throw new UnauthorizedException("User not found with email: " + userEmail); 
             });
 
-        List<Account> accounts = accountRepository.findAllById(user.id);
+        List<Account> accounts = accountRepository.findAllByUserId(user.id);
         LOG.infof("Found %d accounts for user email: %s", accounts.size(), userEmail);
 
         return AccountMapper.toDTOList(accounts);
