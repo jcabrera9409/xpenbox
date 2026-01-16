@@ -12,7 +12,6 @@ import org.xpenbox.common.service.impl.GenericServiceImpl;
 import org.xpenbox.user.repository.UserRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 /**
  * Account Service Implementation
@@ -20,16 +19,38 @@ import jakarta.inject.Inject;
 @ApplicationScoped
 public class AccountServiceImpl extends GenericServiceImpl<Account, AccountCreateDTO, AccountUpdateDTO, AccountResponseDTO> implements IAccountService {
     
-    public AccountServiceImpl() {
-        super();
-    }
-    
-    @Inject
+    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
+    private final AccountMapper accountMapper;
+
     public AccountServiceImpl(
         UserRepository userRepository,
         AccountRepository accountRepository,
         AccountMapper accountMapper
     ) {
-        super("Account", userRepository, accountRepository, accountMapper);
+        this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
+        this.accountMapper = accountMapper;
     }
+
+    @Override
+    protected String getEntityName() {
+        return "Account";
+    }
+
+    @Override
+    protected UserRepository getUserRepository() {
+        return userRepository;
+    }
+
+    @Override
+    protected AccountRepository getGenericRepository() {
+        return accountRepository;
+    }
+
+    @Override
+    protected AccountMapper getGenericMapper() {
+        return accountMapper;
+    }
+
 }
