@@ -1,0 +1,18 @@
+meta {
+  name: AccountGetAll
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{apiUrl}}/api/rest/v1/account
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "name": "IBK Ahorro",
+    "balance": 1000
+  }
+}

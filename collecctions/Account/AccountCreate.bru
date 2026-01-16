@@ -1,0 +1,18 @@
+meta {
+  name: AccountCreate
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{apiUrl}}/api/rest/v1/account
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "IBK Ahorro",
+    "balance": 1000
+  }
+}

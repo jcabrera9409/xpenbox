@@ -69,7 +69,7 @@ public class AuthenticationController {
 
     @POST
     @Path("/refresh")
-    @Authenticated
+    @PermitAll
     @Transactional
     public Response refresh(@CookieParam("refresh_token") String refreshToken) {
         LOG.infof("Token refresh request received");

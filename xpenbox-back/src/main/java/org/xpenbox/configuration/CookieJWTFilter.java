@@ -34,7 +34,7 @@ public class CookieJWTFilter implements ContainerRequestFilter {
 
         // Skip validation for public endpoints
         String path = requestContext.getUriInfo().getPath();
-        if (path.endsWith("/auth/login") || path.endsWith("/auth/register") || path.startsWith("health")) {
+        if (path.endsWith("/auth/login") || path.endsWith("/auth/register") || path.endsWith("/auth/refresh") || path.startsWith("health")) {
             LOG.debug("Public endpoint detected, skipping token validation: " + path);
             return;
         }
