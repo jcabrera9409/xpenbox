@@ -21,6 +21,10 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
 
+/**
+ * AuthenticationController handles HTTP requests related to user authentication.
+ * It provides endpoints for user registration, login, token refresh, and logout.
+ */
 @Path("/auth")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -41,6 +45,11 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
+    /**
+     * Register a new user
+     * @param userRequest User creation data transfer object
+     * @return Response indicating the result of the registration
+     */
     @POST
     @Path("/register")
     @PermitAll
@@ -52,6 +61,11 @@ public class AuthenticationController {
         return Response.status(Response.Status.CREATED).build();
     }
 
+    /**
+     * Login a user and issue tokens
+     * @param loginRequest Login request data transfer object
+     * @return Response containing the issued tokens in cookies
+     */
     @POST
     @Path("/login")
     @PermitAll
@@ -67,6 +81,11 @@ public class AuthenticationController {
             .build();
     }
 
+    /**
+     * Refresh access and refresh tokens
+     * @param refreshToken Refresh token from cookie
+     * @return Response containing the new tokens in cookies
+     */
     @POST
     @Path("/refresh")
     @PermitAll
@@ -81,6 +100,11 @@ public class AuthenticationController {
             .build();
     }
 
+    /**
+     * Logout a user by revoking tokens
+     * @param refreshToken Refresh token from cookie
+     * @return Response indicating the result of the logout
+     */
     @POST
     @Path("/logout")
     @Authenticated

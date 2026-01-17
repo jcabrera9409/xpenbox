@@ -22,6 +22,11 @@ import jakarta.ws.rs.ext.Provider;
 public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
     private static final Logger LOG = Logger.getLogger(GlobalExceptionHandler.class);
 
+    /**
+     * Maps exceptions to HTTP responses.
+     * @param exception The exception to be handled
+     * @return Response The HTTP response corresponding to the exception
+     */
     @Override
     public Response toResponse(Throwable exception) {
         LOG.error("Global exception caught: ", exception);

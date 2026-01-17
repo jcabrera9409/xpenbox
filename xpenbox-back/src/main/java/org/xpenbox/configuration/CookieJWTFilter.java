@@ -13,6 +13,13 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.ext.Provider;
 
+/**
+ * CookieJWTFilter is a JAX-RS filter that intercepts incoming HTTP requests
+ * to validate JWT tokens stored in cookies. It checks for the presence of
+ * an "access_token" cookie, verifies the token against the database,
+ * and ensures that the token has not been revoked. If the token is invalid
+ * or revoked, an UnauthorizedException is thrown.
+ */
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class CookieJWTFilter implements ContainerRequestFilter {
@@ -28,6 +35,10 @@ public class CookieJWTFilter implements ContainerRequestFilter {
         this.securityIdentity = securityIdentity;
     }
 
+    /**
+     * Filters incoming requests to validate JWT tokens in cookies.
+     * @param requestContext The context of the incoming request
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) {
         LOG.debug("CookieJWTFilter invoked");

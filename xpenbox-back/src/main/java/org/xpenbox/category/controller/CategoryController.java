@@ -22,6 +22,11 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
+/**
+ * CategoryController handles HTTP requests related to category operations.
+ * It provides endpoints for creating, updating, retrieving all categories,
+ * and retrieving a specific category by its resource code.
+ */
 @Path("/category")
 @Authenticated
 @Consumes(MediaType.APPLICATION_JSON)
@@ -37,6 +42,12 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    /**
+     * Create a new category
+     * @param securityContext Security context of the authenticated user
+     * @param categoryCreateDTO Data transfer object containing category creation details
+     * @return Response containing the created category information
+     */
     @POST
     @Transactional
     public Response createCategory(@Context SecurityContext securityContext, @Valid CategoryCreateDTO categoryCreateDTO) {
@@ -51,6 +62,13 @@ public class CategoryController {
         ).build();
     }
 
+    /**
+     * Update an existing category
+     * @param securityContext Security context of the authenticated user
+     * @param resourceCode Unique resource code of the category to be updated
+     * @param categoryUpdateDTO Data transfer object containing category update details
+     * @return Response containing the updated category information
+     */
     @PUT
     @Path("/{resourceCode}")
     @Transactional
@@ -66,6 +84,11 @@ public class CategoryController {
         ).build();
     }
 
+    /**
+     * Get all categories for the authenticated user
+     * @param securityContext Security context of the authenticated user
+     * @return Response containing the list of all categories
+     */
     @GET
     public Response getAllCategories(@Context SecurityContext securityContext) {
         String userEmail = securityContext.getUserPrincipal().getName();
@@ -79,6 +102,12 @@ public class CategoryController {
         ).build();
     }
     
+    /**
+     * Get a specific category by its resource code
+     * @param securityContext Security context of the authenticated user
+     * @param resourceCode Unique resource code of the category to be retrieved
+     * @return Response containing the category information
+     */
     @GET
     @Path("/{resourceCode}")
     public Response getCategoryByResourceCode(@Context SecurityContext securityContext, @PathParam("resourceCode") String resourceCode) {

@@ -1,0 +1,21 @@
+meta {
+  name: CreditCardUpdate
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{apiUrl}}/api/rest/v1/creditcard/{{rcCreditCard}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Tarketa BBVA",
+    "creditLimit": 2000,
+    "billingDay": null,
+    "paymentDay": 10,
+    "state": null
+  }
+}

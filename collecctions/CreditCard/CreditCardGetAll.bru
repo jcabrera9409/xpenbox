@@ -1,0 +1,18 @@
+meta {
+  name: CreditCardGetAll
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{apiUrl}}/api/rest/v1/creditcard
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "name": "IBK Ahorro",
+    "balance": 1000
+  }
+}

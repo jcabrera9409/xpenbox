@@ -21,7 +21,8 @@ public class ResourceCode {
     private enum ResourceType {
         TOKEN("token"),
         ACCOUNT("account"),
-        CATEGORY("category");
+        CATEGORY("category"),
+        CREDIT_CARD("creditcard");
 
         private final String value;
 
@@ -78,5 +79,14 @@ public class ResourceCode {
      */
     public static String generateCategoryResourceCode() {
         return generateResourceCode(ResourceType.CATEGORY);
+    }
+    
+    /**
+     * Generate a credit card resource code.
+     *
+     * @return the generated credit card resource code
+     */
+    public static String generateCreditCardResourceCode() {
+        return generateResourceCode(ResourceType.CREDIT_CARD);
     }
 }

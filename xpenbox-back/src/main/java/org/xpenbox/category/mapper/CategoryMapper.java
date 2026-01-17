@@ -26,6 +26,7 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
      * @param entity the Category entity to convert
      * @return the corresponding CategoryResponseDTO
      */
+    @Override
     public CategoryResponseDTO toDTO(Category entity) {
         LOG.infof("Mapping Category entity to DTO: %s", entity);
         CategoryResponseDTO dto = new CategoryResponseDTO(
@@ -62,6 +63,7 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
      * @param dto the CategoryCreateDTO to convert
      * @return the corresponding Category entity
      */
+    @Override
     public Category toEntity(CategoryCreateDTO dto, User user) {
         LOG.infof("Mapping CategoryCreateDTO to entity: %s", dto);
         Category entity = new Category();

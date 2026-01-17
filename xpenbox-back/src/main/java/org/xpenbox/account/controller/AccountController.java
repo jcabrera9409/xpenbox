@@ -22,6 +22,11 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
+/**
+ * AccountController handles HTTP requests related to account operations.
+ * It provides endpoints for creating, updating, retrieving all accounts,
+ * and retrieving a specific account by its resource code.
+ */
 @Path("/account")
 @Authenticated
 @Consumes(MediaType.APPLICATION_JSON)
@@ -37,6 +42,12 @@ public class AccountController {
         this.accountService = accountService;
     }
     
+    /**
+     * Create a new account
+     * @param securityContext Security context of the authenticated user
+     * @param accountCreateDTO Data transfer object containing account creation details
+     * @return Response containing the created account information
+     */
     @POST
     @Transactional
     public Response createAccount(@Context SecurityContext securityContext, @Valid AccountCreateDTO accountCreateDTO) {
@@ -51,6 +62,13 @@ public class AccountController {
         ).build();
     }
 
+    /**
+     * Update an existing account
+     * @param securityContext Security context of the authenticated user
+     * @param resourceCode Unique resource code of the account to be updated
+     * @param accountUpdateDTO Data transfer object containing account update details
+     * @return Response containing the updated account information
+     */
     @PUT
     @Path("/{resourceCode}")
     @Transactional
@@ -66,6 +84,11 @@ public class AccountController {
         ).build();
     }
 
+    /**
+     * Get all accounts for the authenticated user
+     * @param securityContext Security context of the authenticated user
+     * @return Response containing the list of all accounts
+     */
     @GET
     public Response getAllAccounts(@Context SecurityContext securityContext) {
         String userEmail = securityContext.getUserPrincipal().getName();
@@ -79,6 +102,12 @@ public class AccountController {
         ).build();
     }
 
+    /**
+     * Get a specific account by its resource code
+     * @param securityContext Security context of the authenticated user
+     * @param resourceCode Unique resource code of the account to be retrieved
+     * @return Response containing the account information
+     */
     @GET
     @Path("/{resourceCode}")
     public Response getAccountByResourceCode(@Context SecurityContext securityContext, @PathParam("resourceCode") String resourceCode) {
