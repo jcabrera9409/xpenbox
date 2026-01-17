@@ -22,7 +22,8 @@ public class ResourceCode {
         TOKEN("token"),
         ACCOUNT("account"),
         CATEGORY("category"),
-        CREDIT_CARD("creditcard");
+        CREDIT_CARD("creditcard"),
+        INCOME("income");
 
         private final String value;
 
@@ -88,5 +89,14 @@ public class ResourceCode {
      */
     public static String generateCreditCardResourceCode() {
         return generateResourceCode(ResourceType.CREDIT_CARD);
+    }
+
+    /**
+     * Generate an income resource code.
+     *
+     * @return the generated income resource code
+     */
+    public static String generateIncomeResourceCode() {
+        return generateResourceCode(ResourceType.INCOME);
     }
 }

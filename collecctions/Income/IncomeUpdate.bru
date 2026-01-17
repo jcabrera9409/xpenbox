@@ -1,0 +1,19 @@
+meta {
+  name: IncomeUpdate
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{apiUrl}}/api/rest/v1/income/{{rcIncome}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "concept": null,
+    "incomeDateTimestamp": 1768629586000,
+    "totalAmount": 1300.567
+  }
+}

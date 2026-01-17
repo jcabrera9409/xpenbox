@@ -1,7 +1,6 @@
 package org.xpenbox.income.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.Min;
@@ -11,7 +10,7 @@ import jakarta.validation.constraints.Size;
 /**
  * Data Transfer Object for creating new Income records.
  * @param concept      Description of the income.
- * @param incomeDate   Date and time when the income was recorded.
+ * @param incomeDateTimestamp   Timestamp when the income was recorded.
  * @param totalAmount  Total amount of the income.
  */
 @RegisterForReflection
@@ -22,7 +21,8 @@ public record IncomeCreateDTO (
     String concept,
 
     @NotNull(message = "Income date must not be null")
-    LocalDateTime incomeDate,
+    @Min(value = 1, message = "Income date must be a valid timestamp")
+    Long incomeDateTimestamp,
 
     @NotNull(message = "Total amount must not be null")
     @Min(value = 1, message = "Total amount must be at least 1")

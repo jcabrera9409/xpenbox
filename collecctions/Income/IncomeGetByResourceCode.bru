@@ -1,0 +1,18 @@
+meta {
+  name: IncomeGetByResourceCode
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}/api/rest/v1/income/{{rcIncome}}
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "name": "IBK Ahorro",
+    "balance": 1000
+  }
+}
