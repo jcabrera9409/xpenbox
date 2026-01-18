@@ -20,7 +20,6 @@ import org.xpenbox.income.entity.Income;
 import org.xpenbox.income.repository.IncomeRepository;
 import org.xpenbox.transaction.dto.TransactionCreateDTO;
 import org.xpenbox.transaction.dto.TransactionResponseDTO;
-import org.xpenbox.transaction.dto.TransactionUpdateDTO;
 import org.xpenbox.transaction.entity.Transaction;
 import org.xpenbox.transaction.entity.Transaction.TransactionType;
 import org.xpenbox.transaction.mapper.TransactionMapper;
@@ -32,7 +31,7 @@ import org.xpenbox.user.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class TransactionServiceImpl extends GenericServiceImpl<Transaction, TransactionCreateDTO, TransactionUpdateDTO, TransactionResponseDTO> implements ITransactionService {
+public class TransactionServiceImpl extends GenericServiceImpl<Transaction, TransactionCreateDTO, TransactionCreateDTO, TransactionResponseDTO> implements ITransactionService {
     private static final Logger LOG = Logger.getLogger(TransactionServiceImpl.class);
 
     private final UserRepository userRepository;
@@ -109,8 +108,33 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         return transactionMapper.toDTO(transaction);
     }
 
+    @Override
+    public void rollback(String resourceCode, String userEmail) {
+        LOG.infof("Rolling back transaction with resource code: %s for user email: %s", resourceCode, userEmail);
+
+        User user = super.validateAndGetUser(userEmail);
+        Transaction transaction = validateAndGetTransactionEntity(resourceCode, user);
+    
+        validateRollbackAndReturnEntityByType(transaction, user);
+        
+        transactionRepository.delete(transaction);
+        LOG.infof("Successfully rolled back transaction with resource code: %s for user email: %s", resourceCode, userEmail);
+    }
 
     // Auxiliary private methods
+
+    private void validateRollbackAndReturnEntityByType(Transaction transaction, User user) {
+        LOG.debugf("Validating rollback for %s ID: %d", getEntityName(), transaction.id);
+
+        LOG.debugf("Processing transaction type: %s", transaction.getTransactionType());
+        switch (transaction.getTransactionType()) {
+            case EXPENSE -> rollbackExpense(transaction, user);
+            case INCOME -> rollbackIncome(transaction, user);
+            case TRANSFER -> rollbackTransfer(transaction, user);
+            case CREDIT_PAYMENT -> rollbackCreditPayment(transaction, user);
+            default -> throw new BadRequestException(getEntityName(), "transactionType", "is invalid");
+        };
+    }
 
     /**
      * Validates the TransactionCreateDTO based on the transaction type and returns the corresponding Transaction entity.
@@ -139,6 +163,63 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
     private List<Transaction> getAllIncomeTransactionsByIncomeAndUser(Income income, User user) {
         LOG.debugf("Fetching all INCOME transactions for Income ID: %d and User ID: %d", income.id, user.id);
         return transactionRepository.findByIncomeIdAndUserIdAndType(income.id, user.id, TransactionType.INCOME);
+    }
+
+    /**
+     * Rolls back INCOME transactions by deducting the amount from the associated account.
+     * @param transaction The Transaction entity to be rolled back.
+     * @param user The user associated with the transaction.
+     */
+    private void rollbackExpense(Transaction transaction, User user) {
+        LOG.debugf("Rolling back EXPENSE transaction ID: %d", transaction.id);
+        
+        if (transaction.getAccount() != null) {
+            accountService.processAddAmount(transaction.getAccount().id, transaction.getAmount());
+            LOG.debugf("Reverted amount to Account ID: %d", transaction.getAccount().id);
+        } else if (transaction.getCreditCard() != null) {
+            creditCardService.processAddPayment(transaction.getCreditCard().id, transaction.getAmount());
+            LOG.debugf("Reverted amount from CreditCard ID: %d", transaction.getCreditCard().id);
+        }
+    }
+
+    /**
+     * Rolls back INCOME transactions by deducting the amount from the associated account.
+     * @param transaction The Transaction entity to be rolled back.
+     * @param user The user associated with the transaction.
+     */
+    private void rollbackIncome(Transaction transaction, User user) {
+        LOG.debugf("Rolling back INCOME transaction ID: %d", transaction.id);
+        
+        accountService.processSubtractAmount(transaction.getAccount().id, transaction.getAmount());
+        LOG.debugf("Deducted amount from Account ID: %d", transaction.getAccount().id);
+    }
+
+    /**
+     * Rolls back TRANSFER transactions by reversing the amount between the source and destination accounts.
+     * @param transaction The Transaction entity to be rolled back.
+     * @param user The user associated with the transaction.
+     */
+    private void rollbackTransfer(Transaction transaction, User user) {
+        LOG.debugf("Rolling back TRANSFER transaction ID: %d", transaction.id);
+
+        accountService.processSubtractAmount(transaction.getDestinationAccount().id, transaction.getAmount());
+        accountService.processAddAmount(transaction.getAccount().id, transaction.getAmount());
+        
+        LOG.debugf("Reversed transfer between Account ID: %d and Account ID: %d", transaction.getAccount().id, transaction.getDestinationAccount().id);
+    }
+
+    /**
+     * Rolls back CREDIT_PAYMENT transactions by reversing the payment between the account and credit card.
+     * @param transaction The Transaction entity to be rolled back.
+     * @param user The user associated with the transaction.
+     */
+    private void rollbackCreditPayment(Transaction transaction, User user) {
+        LOG.debugf("Rolling back CREDIT_PAYMENT transaction ID: %d", transaction.id);
+
+        creditCardService.processAddAmount(transaction.getCreditCard().id, transaction.getAmount());
+        accountService.processAddAmount(transaction.getAccount().id, transaction.getAmount());
+        
+        LOG.debugf("Reversed credit payment between Account ID: %d and CreditCard ID: %d", transaction.getAccount().id, transaction.getCreditCard().id);
     }
 
     /**
@@ -229,6 +310,13 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         return transaction;
     }
 
+    /**
+     * Handles CREDIT_PAYMENT transactions between an account and a credit card.
+     * @param transaction The Transaction entity to be processed.
+     * @param entityCreateDTO The DTO containing transaction creation data.
+     * @param user The user associated with the transaction.
+     * @return The processed Transaction entity.
+     */
     private Transaction handleCreditPayment(Transaction transaction, TransactionCreateDTO entityCreateDTO, User user) {
         LOG.debugf("Handling CREDIT_PAYMENT transaction");
 
@@ -254,6 +342,10 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
     private Category getCategoryEntity(String categoryResourceCode, User user) {
         return categoryRepository.findByResourceCodeAndUserId(categoryResourceCode, user.id)
                 .orElse(null);
+    }
+
+    private Transaction validateAndGetTransactionEntity(String transactionResourceCode, User user) {
+        return validateAndGetEntityByResourceCode(transactionResourceCode, user, transactionRepository::findByResourceCodeAndUserId, "Transaction");
     }
 
     private Income validateAndGetIncomeEntity(String incomeResourceCode, User user) {

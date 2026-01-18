@@ -34,7 +34,7 @@ public class AccountMapper implements GenericMapper<Account, AccountCreateDTO, A
             entity.getName(),
             entity.getBalance(),
             entity.getState(),
-            entity.getClosingDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            entity.getClosingDate() != null ? entity.getClosingDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null
         );
         return dto;
     }

@@ -10,6 +10,7 @@ import io.quarkus.security.Authenticated;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -62,4 +63,20 @@ public class TransactionController {
             APIResponseDTO.success("Transaction retrieved successfully", transactionResponse, Response.Status.OK.getStatusCode())
         ).build();
     }
+
+    @DELETE
+    @Path("/{resourceCode}")
+    @Transactional
+    public Response rollbackTransactionByResourceCode(@Context SecurityContext securityContext, @PathParam("resourceCode") String resourceCode) {
+        String userEmail = securityContext.getUserPrincipal().getName();
+        LOG.infof("Rollback transaction by resource code request received for user: %s, resourceCode: %s", userEmail, resourceCode);
+
+        transactionService.rollback(resourceCode, userEmail);
+        LOG.infof("Transaction rolled back successfully for user: %s, resourceCode: %s", userEmail, resourceCode);
+
+        return Response.status(Response.Status.OK).entity(
+            APIResponseDTO.success("Transaction rolled back successfully", null, Response.Status.OK.getStatusCode())
+        ).build();
+    }
+
 }

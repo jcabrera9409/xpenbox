@@ -37,7 +37,7 @@ public class CreditCardMapper implements GenericMapper<CreditCard, CreditCardCre
             entity.getState(),
             entity.getBillingDay(),
             entity.getPaymentDay(),
-            entity.getClosingDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            entity.getClosingDate() != null ? entity.getClosingDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null
         );
         return dto;
     }
