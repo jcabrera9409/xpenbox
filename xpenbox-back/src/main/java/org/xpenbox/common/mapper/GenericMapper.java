@@ -19,6 +19,13 @@ public interface GenericMapper<T, C, U, R> {
      * @return The corresponding response DTO.
      */
     R toDTO(T entity);
+
+    /**
+     * Maps entity to simple response DTO.
+     * @param entity The entity to be mapped.
+     * @return The corresponding simple response DTO.
+     */
+    R toSimpleDTO(T entity);
     
     /**
      * Maps list of entities to list of response DTOs.

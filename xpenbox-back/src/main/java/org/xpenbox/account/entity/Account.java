@@ -35,6 +35,12 @@ public class Account extends PanacheEntityBase {
     @Column(name = "balance", nullable = false, precision = 13, scale = 2)
     private BigDecimal balance;
 
+    @Column(name = "state", nullable = false)
+    private Boolean state = true;
+
+    @Column(name = "initial_balance", nullable = false, precision = 13, scale = 2)
+    private BigDecimal initialBalance;
+
     @Column(name = "closing_date", nullable = true)
     private LocalDateTime closingDate;
 
@@ -64,6 +70,22 @@ public class Account extends PanacheEntityBase {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public Boolean getState() {
+        return state;
+    }
+
+    public void setState(Boolean state) {
+        this.state = state;
+    }
+
+    public BigDecimal getInitialBalance() {
+        return initialBalance;
+    }
+
+    public void setInitialBalance(BigDecimal initialBalance) {
+        this.initialBalance = initialBalance;
     }
 
     public LocalDateTime getClosingDate() {

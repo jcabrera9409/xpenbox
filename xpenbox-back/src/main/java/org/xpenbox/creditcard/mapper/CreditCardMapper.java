@@ -42,6 +42,27 @@ public class CreditCardMapper implements GenericMapper<CreditCard, CreditCardCre
     }
 
     /**
+     * Maps CreditCard entity to simple CreditCardResponseDTO with limited fields.
+     * @param entity The CreditCard entity to be mapped.
+     * @return The corresponding simple CreditCardResponseDTO.
+     */
+    @Override
+    public CreditCardResponseDTO toSimpleDTO(CreditCard entity) {
+        LOG.infof("Mapping CreditCard entity to simple CreditCardResponseDTO: %s", entity);
+        CreditCardResponseDTO dto = new CreditCardResponseDTO(
+            entity.getResourceCode(),
+            entity.getName(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+        return dto;
+    }
+
+    /**
      * Maps list of CreditCard entities to list of CreditCardResponseDTOs.
      * @param entities The list of CreditCard entities to be mapped.
      * @return The corresponding list of CreditCardResponseDTOs.

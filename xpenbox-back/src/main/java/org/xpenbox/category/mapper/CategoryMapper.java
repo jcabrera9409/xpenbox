@@ -39,6 +39,24 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
     }
 
     /**
+     * Converts a Category entity to a simplified CategoryResponseDTO without state.
+     *
+     * @param entity the Category entity to convert
+     * @return the corresponding simplified CategoryResponseDTO
+     */
+    @Override
+    public CategoryResponseDTO toSimpleDTO(Category entity) {
+        LOG.infof("Mapping Category entity to simple DTO: %s", entity);
+        CategoryResponseDTO dto = new CategoryResponseDTO(
+            entity.getResourceCode(),
+            entity.getName(),
+            entity.getColor(),
+            null
+        );
+        return dto;
+    }
+
+    /**
      * Converts a list of Category entities to a list of CategoryResponseDTOs.
      * @param entities the list of Category entities to convert
      * @return the corresponding list of CategoryResponseDTOs

@@ -10,6 +10,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
  * @param resourceCode The unique resource code of the account.
  * @param name         The name of the account.
  * @param balance      The balance of the account as a string.
+ * @param state        The state of the account (active/inactive).
  * @param closingDate  The closing date of the account as a string.
  */
 @RegisterForReflection
@@ -17,5 +18,6 @@ public record AccountResponseDTO (
     String resourceCode,
     String name,
     BigDecimal balance,
+    Boolean state,
     LocalDateTime closingDate
 ) { }

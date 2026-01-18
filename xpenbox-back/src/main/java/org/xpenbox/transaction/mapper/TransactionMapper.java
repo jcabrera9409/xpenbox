@@ -57,13 +57,23 @@ public class TransactionMapper implements GenericMapper<Transaction, Transaction
             entity.getLatitude(),
             entity.getLongitude(),
             entity.getTransactionDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-            entity.getCategory() != null ? categoryMapper.toDTO(entity.getCategory()) : null,
-            entity.getIncome() != null ? incomeMapper.toDTO(entity.getIncome()) : null,
-            entity.getAccount() != null ? accountMapper.toDTO(entity.getAccount()) : null,
-            entity.getCreditCard() != null ? creditCardMapper.toDTO(entity.getCreditCard()) : null,
-            entity.getDestinationAccount() != null ? accountMapper.toDTO(entity.getDestinationAccount()) : null
+            entity.getCategory() != null ? categoryMapper.toSimpleDTO(entity.getCategory()) : null,
+            entity.getIncome() != null ? incomeMapper.toSimpleDTO(entity.getIncome()) : null,
+            entity.getAccount() != null ? accountMapper.toSimpleDTO(entity.getAccount()) : null,
+            entity.getCreditCard() != null ? creditCardMapper.toSimpleDTO(entity.getCreditCard()) : null,
+            entity.getDestinationAccount() != null ? accountMapper.toSimpleDTO(entity.getDestinationAccount()) : null
         );
         return dto;
+    }
+
+    /**
+     * Maps Transaction entity to simple TransactionResponseDTO with limited fields.
+     * @param entity The Transaction entity to be mapped.
+     * @return The corresponding simple TransactionResponseDTO.
+     */
+    @Override
+    public TransactionResponseDTO toSimpleDTO(Transaction entity) {
+        return toDTO(entity);
     }
 
     /**

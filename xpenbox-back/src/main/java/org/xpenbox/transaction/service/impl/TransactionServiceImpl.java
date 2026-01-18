@@ -151,13 +151,11 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         if (isValid(entityCreateDTO.accountResourceCode())) {
             Account account = validateAndGetAccountEntity(entityCreateDTO.accountResourceCode(), user);
             accountService.processSubtractAmount(account.id, entityCreateDTO.amount());
-            account = validateAndGetAccountEntity(entityCreateDTO.accountResourceCode(), user);
             transaction.setAccount(account);
             LOG.debugf("Expense processed from Account ID: %d", account.id);
         } else if (isValid(entityCreateDTO.creditCardResourceCode())) {
             CreditCard creditCard = validateAndGetCreditCardEntity(entityCreateDTO.creditCardResourceCode(), user);
             creditCardService.processAddAmount(creditCard.id, entityCreateDTO.amount());
-            creditCard = validateAndGetCreditCardEntity(entityCreateDTO.creditCardResourceCode(), user);
             transaction.setCreditCard(creditCard);
             LOG.debugf("Expense processed to CreditCard ID: %d", creditCard.id);
         }

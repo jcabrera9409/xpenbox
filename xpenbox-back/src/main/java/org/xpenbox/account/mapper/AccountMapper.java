@@ -32,10 +32,30 @@ public class AccountMapper implements GenericMapper<Account, AccountCreateDTO, A
             entity.getResourceCode(),
             entity.getName(),
             entity.getBalance(),
+            entity.getState(),
             entity.getClosingDate()
         );
         return dto;
     }
+    
+    /**
+     * Maps Account entity to simple AccountResponseDTO.
+     * @param entity The Account entity to be mapped.
+     * @return The corresponding simple AccountResponseDTO.
+     */
+    @Override
+    public AccountResponseDTO toSimpleDTO(Account entity) {
+        LOG.infof("Mapping Account entity to simple AccountResponseDTO: %s", entity);
+        AccountResponseDTO dto = new AccountResponseDTO(
+            entity.getResourceCode(),
+            entity.getName(),
+            null,
+            null,
+            null
+        );
+        return dto;
+    }
+
     /**
      * Maps list of Account entities to list of AccountResponseDTOs.
      * @param entities The list of Account entities to be mapped.
@@ -67,6 +87,7 @@ public class AccountMapper implements GenericMapper<Account, AccountCreateDTO, A
         entity.setResourceCode(ResourceCode.generateAccountResourceCode());
         entity.setName(dto.name());
         entity.setBalance(dto.balance());
+        entity.setInitialBalance(dto.balance());
         entity.setUser(user);
         return entity;
     }

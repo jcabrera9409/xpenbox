@@ -49,6 +49,8 @@ CREATE TABLE IF NOT EXISTS tbl_account (
     `resource_code` VARCHAR(100) NOT NULL UNIQUE,
     `name` VARCHAR(150) NOT NULL,
     `balance` DECIMAL(13,2) NOT NULL DEFAULT 0.00,
+    `initial_balance` DECIMAL(13,2) NOT NULL DEFAULT 0.00,
+    `state` TINYINT(1) NOT NULL DEFAULT 1,
 	`closing_date` DATETIME NULL,
     `user_id` BIGINT NOT NULL,
     `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

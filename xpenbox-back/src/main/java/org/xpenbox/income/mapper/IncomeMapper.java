@@ -40,6 +40,23 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
     }
 
     /**
+     * Maps an Income entity to a simple IncomeResponseDTO with limited fields.
+     * @param entity The Income entity to map.
+     * @return The mapped simple IncomeResponseDTO.
+     */
+    @Override
+    public IncomeResponseDTO toSimpleDTO(Income entity) {
+        LOG.infof("Mapping Income entity to simple DTO: %s", entity);
+        IncomeResponseDTO dto = new IncomeResponseDTO(
+            entity.getResourceCode(),
+            entity.getConcept(),
+            null,
+            null
+        );
+        return dto;
+    }
+
+    /**
      * Maps a list of Income entities to a list of IncomeResponseDTOs.
      * @param entities The list of Income entities to map.
      * @return The list of mapped IncomeResponseDTOs.
