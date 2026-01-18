@@ -2,7 +2,9 @@ package org.xpenbox.exception.handler;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.common.dto.APIResponseDTO;
+import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.ConflictException;
+import org.xpenbox.exception.InsufficientFoundsException;
 import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.exception.ValidationException;
 
@@ -34,6 +36,10 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
         if (exception instanceof UnauthorizedException ex) {
             return handleUnauthorizedException(ex);
         }
+
+        if (exception instanceof ValidationException ex) {
+            return handleValidationException(ex);
+        }
         
         if (exception instanceof ResourceNotFoundException ex) {
             return handleResourceNotFoundException(ex);
@@ -43,12 +49,16 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
             return handleForbiddenException(ex);
         }
 
-        if (exception instanceof ValidationException ex) {
-            return handleValidationException(ex);
-        }
-
         if (exception instanceof ConflictException ex) {
             return handleConflictException(ex);
+        }
+
+        if (exception instanceof BadRequestException ex) {
+            return handleBadRequestException(ex);
+        }
+
+        if (exception instanceof InsufficientFoundsException ex) {
+            return handleInsufficientFoundsException(ex);
         }
 
         if (exception instanceof WebApplicationException ex) {
@@ -80,6 +90,32 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
         
         APIResponseDTO<Void> response = APIResponseDTO.error(message, status);
         return Response.status(status).entity(response).build();
+    }
+
+    private Response handleInsufficientFoundsException(InsufficientFoundsException ex) {
+        LOG.warn("Insufficient funds error: " + ex.getMessage());
+        String message = "Insufficient funds to complete the transaction";
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Exception details: ", ex);
+            message += ": " + ex.getMessage();
+        }
+
+        APIResponseDTO<Void> response = APIResponseDTO.error(message, Response.Status.BAD_REQUEST.getStatusCode());
+        return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
+    }
+
+    private Response handleBadRequestException(BadRequestException ex) {
+        LOG.warn("Bad request error: " + ex.getMessage());
+        String message = "Bad request";
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Exception details: ", ex);
+            message += ": " + ex.getMessage();
+        }
+
+        APIResponseDTO<Void> response = APIResponseDTO.error(message, Response.Status.BAD_REQUEST.getStatusCode());
+        return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
     }
 
     private Response handleConflictException(ConflictException ex) {

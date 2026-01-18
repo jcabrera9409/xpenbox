@@ -1,21 +1,24 @@
 package org.xpenbox.transaction.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+
+import org.xpenbox.transaction.entity.Transaction.TransactionType;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
  * Data Transfer Object for creating a new Transaction.
+ * @param transactionType Type of the transaction.
  * @param description Description of the transaction.
  * @param amount Amount involved in the transaction.
  * @param latitude Latitude where the transaction took place.
  * @param longitude Longitude where the transaction took place.
- * @param transactionDate Date and time of the transaction.
+ * @param transactionDateTimestamp Timestamp of the transaction date and time.
  * @param categoryResourceCode Resource code of the associated category.
  * @param incomeResourceCode Resource code of the associated income.
  * @param accountResourceCode Resource code of the associated account.
@@ -24,6 +27,8 @@ import jakarta.validation.constraints.Size;
  */
 @RegisterForReflection
 public record TransactionCreateDTO (
+    @NotNull(message = "Transaction type cannot be null")
+    TransactionType transactionType,
 
     @NotNull(message = "Description cannot be null")
     @Size(max = 500, message = "Description cannot exceed 500 characters")
@@ -42,20 +47,21 @@ public record TransactionCreateDTO (
     BigDecimal longitude,
 
     @NotNull(message = "Transaction date cannot be null")
-    LocalDateTime transactionDate,
+    @Min(value = 1, message = "Transaction date timestamp must be a positive value")
+    Long transactionDateTimestamp,
 
-    @Size(min = 1, max = 50, message = "Category resource code must be between 1 and 50 characters")
+    @Size(min = 1, max = 100, message = "Category resource code must be between 1 and 100 characters")
     String categoryResourceCode,
 
-    @Size(min = 1, max = 50, message = "Income resource code must be between 1 and 50 characters")
+    @Size(min = 1, max = 100, message = "Income resource code must be between 1 and 100 characters")
     String incomeResourceCode,
 
-    @Size(min = 1, max = 50, message = "Account resource code must be between 1 and 50 characters")
+    @Size(min = 1, max = 100, message = "Account resource code must be between 1 and 100 characters")
     String accountResourceCode,
 
-    @Size(min = 1, max = 50, message = "Credit card resource code must be between 1 and 50 characters")
+    @Size(min = 1, max = 100, message = "Credit card resource code must be between 1 and 100 characters")
     String creditCardResourceCode,
 
-    @Size(min = 1, max = 50, message = "Destination account resource code must be between 1 and 50 characters")
+    @Size(min = 1, max = 100, message = "Destination account resource code must be between 1 and 100 characters")
     String destinationAccountResourceCode
 ) { }

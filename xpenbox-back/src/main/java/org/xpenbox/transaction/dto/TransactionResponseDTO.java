@@ -1,7 +1,6 @@
 package org.xpenbox.transaction.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import org.xpenbox.account.dto.AccountResponseDTO;
 import org.xpenbox.category.dto.CategoryResponseDTO;
@@ -19,7 +18,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
  * @param amount Amount involved in the transaction.
  * @param latitude Latitude where the transaction took place.
  * @param longitude Longitude where the transaction took place.
- * @param transactionDate Date and time of the transaction.
+ * @param transactionDateTimestamp Timestamp of the transaction date and time.
  * @param category Associated category details.
  * @param income Associated income details.
  * @param account Associated account details.
@@ -34,7 +33,7 @@ public record TransactionResponseDTO (
     BigDecimal amount,
     BigDecimal latitude,
     BigDecimal longitude,
-    LocalDateTime transactionDate,
+    Long transactionDateTimestamp,
     CategoryResponseDTO category,
     IncomeResponseDTO income,
     AccountResponseDTO account,

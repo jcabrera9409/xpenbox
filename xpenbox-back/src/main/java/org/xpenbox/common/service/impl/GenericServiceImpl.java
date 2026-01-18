@@ -81,7 +81,7 @@ public abstract class GenericServiceImpl<T, C, U, R> implements IGenericService<
         return getGenericMapper().toDTOList(entities);
     }
     
-    private User validateAndGetUser(String userEmail) {
+    protected User validateAndGetUser(String userEmail) {
         return getUserRepository().findByEmail(userEmail)
             .orElseThrow(() -> {
                 LOG.errorf("User not found with email: %s", userEmail);

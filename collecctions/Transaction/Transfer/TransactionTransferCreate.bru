@@ -1,0 +1,30 @@
+meta {
+  name: TransactionTransferCreate
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{apiUrl}}/api/rest/v1/transaction
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "transactionType": "TRANSFER",
+    "description": "Compra postre",
+    "amount": 150,
+    "transactionDateTimestamp": 1768629249000,
+    "accountResourceCode": "rc:xpenbox:account:20260116:10f6ee95-6186-4ba1-9767-10141f4edfda",
+    "destinationAccountResourceCode": "rc:xpenbox:account:20260116165617:ae31de1b-7e94-4ea0-a607-20bd6a36b029"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() == 201) {
+    const response = res.getBody();
+    bru.setEnvVar("rcTransaction",response.data.resourceCode)
+  }
+  
+}

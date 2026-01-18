@@ -1,0 +1,31 @@
+meta {
+  name: TransactionCreditCreate
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{apiUrl}}/api/rest/v1/transaction
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "transactionType": "CREDIT_PAYMENT",
+    "description": "PAGO TC",
+    "amount": 15,
+    "transactionDateTimestamp": 1768629249000,
+    "categoryResourceCode": "rc:xpenbox:category:20260116183021:110a9c18-d47a-4227-844f-83f59fb832e4",
+    "accountResourceCode": "rc:xpenbox:account:20260116:10f6ee95-6186-4ba1-9767-10141f4edfda",
+    "creditCardResourceCode": "rc:xpenbox:creditcard:20260116190835:56131d16-23e8-452c-9f9c-4bb96194b78a"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() == 201) {
+    const response = res.getBody();
+    bru.setEnvVar("rcTransaction",response.data.resourceCode)
+  }
+  
+}

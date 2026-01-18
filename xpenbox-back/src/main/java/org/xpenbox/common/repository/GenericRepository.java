@@ -9,7 +9,7 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 /**
  * Generic Repository class for entities with user association.
  */
-public class GenericRepository<T> implements PanacheRepository<T> {
+public abstract class GenericRepository<T> implements PanacheRepository<T> {
     
     private final Logger LOG;
 

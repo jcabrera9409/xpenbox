@@ -1,0 +1,18 @@
+meta {
+  name: TransactionGetByResourceCode
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}/api/rest/v1/transaction/{{rcTransaction}}
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "name": "IBK Ahorro",
+    "balance": 1000
+  }
+}

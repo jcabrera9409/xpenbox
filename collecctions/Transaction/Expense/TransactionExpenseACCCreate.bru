@@ -1,0 +1,30 @@
+meta {
+  name: TransactionExpenseACCCreate
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{apiUrl}}/api/rest/v1/transaction
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "transactionType": "EXPENSE",
+    "description": "Pago Luz",
+    "amount": 55.98,
+    "transactionDateTimestamp": 1768629249000,
+    "categoryResourceCode": "rc:xpenbox:category:20260116183021:110a9c18-d47a-4227-844f-83f59fb832e4",
+    "accountResourceCode": "rc:xpenbox:account:20260115:40f5af1d-7a7e-4aee-8d10-de183887083e"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() == 201) {
+    const response = res.getBody();
+    bru.setEnvVar("rcTransaction",response.data.resourceCode)
+  }
+  
+}
