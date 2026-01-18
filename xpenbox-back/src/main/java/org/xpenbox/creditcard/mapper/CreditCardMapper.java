@@ -1,5 +1,6 @@
 package org.xpenbox.creditcard.mapper;
 
+import java.time.ZoneId;
 import java.util.List;
 
 import org.jboss.logging.Logger;
@@ -36,7 +37,7 @@ public class CreditCardMapper implements GenericMapper<CreditCard, CreditCardCre
             entity.getState(),
             entity.getBillingDay(),
             entity.getPaymentDay(),
-            entity.getClosingDate()
+            entity.getClosingDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         );
         return dto;
     }

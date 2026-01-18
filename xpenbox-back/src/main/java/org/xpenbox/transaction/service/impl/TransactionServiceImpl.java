@@ -171,6 +171,13 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         return transaction;
     }
 
+    /**
+     * Handles INCOME transactions. Involves validating income and account entities and ensuring total income limits.
+     * @param transaction The Transaction entity to be processed.
+     * @param entityCreateDTO The DTO containing transaction creation data.
+     * @param user The user associated with the transaction.
+     * @return The processed Transaction entity.
+     */
     private Transaction handleIncome(Transaction transaction, TransactionCreateDTO entityCreateDTO, User user) {
         LOG.debugf("Handling INCOME transaction");
 
@@ -188,9 +195,18 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         transaction.setIncome(income);
         transaction.setAccount(account);
 
+        LOG.debugf("Income processed to Account ID: %d from Income ID: %d", account.id, income.id);
+
         return transaction;
     }
 
+    /**
+     * Handles TRANSFER transactions between two accounts.
+     * @param transaction The Transaction entity to be processed.
+     * @param entityCreateDTO The DTO containing transaction creation data.
+     * @param user The user associated with the transaction.
+     * @return The processed Transaction entity.
+     */
     private Transaction handleTransfer(Transaction transaction, TransactionCreateDTO entityCreateDTO, User user) {
         LOG.debugf("Handling TRANSFER transaction");
 
@@ -201,8 +217,14 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
 
         Account sourceAccount = validateAndGetAccountEntity(entityCreateDTO.accountResourceCode(), user);
         Account destinationAccount = validateAndGetAccountEntity(entityCreateDTO.destinationAccountResourceCode(), user);
+        
+        accountService.processSubtractAmount(sourceAccount.id, entityCreateDTO.amount());
+        accountService.processAddAmount(destinationAccount.id, entityCreateDTO.amount());
+
         transaction.setAccount(sourceAccount);
         transaction.setDestinationAccount(destinationAccount);
+
+        LOG.debugf("Transfer processed from Account ID: %d to Account ID: %d", sourceAccount.id, destinationAccount.id);
 
         return transaction;
     }
@@ -217,8 +239,14 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
 
         Account account = validateAndGetAccountEntity(entityCreateDTO.accountResourceCode(), user);
         CreditCard creditCard = validateAndGetCreditCardEntity(entityCreateDTO.creditCardResourceCode(), user);
+        
+        accountService.processSubtractAmount(account.id, entityCreateDTO.amount());
+        creditCardService.processAddPayment(creditCard.id, entityCreateDTO.amount());
+        
         transaction.setAccount(account);
         transaction.setCreditCard(creditCard);
+
+        LOG.debugf("Credit payment processed from Account ID: %d to CreditCard ID: %d", account.id, creditCard.id);
 
         return transaction;
     }

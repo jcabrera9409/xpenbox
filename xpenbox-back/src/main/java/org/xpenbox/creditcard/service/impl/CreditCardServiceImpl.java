@@ -78,5 +78,19 @@ public class CreditCardServiceImpl extends GenericServiceImpl<CreditCard, Credit
         creditCardRepository.persist(creditCard);
         LOG.infof("Amount added successfully for CreditCard ID: %d. New balance: %s", id, creditCard.getCurrentBalance());
     }
-    
+
+    @Override
+    public void processAddPayment(Long id, BigDecimal amount) {
+        LOG.infof("Processing add payment for CreditCard ID: %d with amount: %s", id, amount);
+        CreditCard creditCard = creditCardRepository.findByIdOptional(id)
+            .orElseThrow(() -> {
+                LOG.debugf("CreditCard with ID %d not found", id);
+                return new ResourceNotFoundException("CreditCard not found");
+            });
+        
+        creditCard.setCurrentBalance(creditCard.getCurrentBalance().subtract(amount));
+
+        creditCardRepository.persist(creditCard);
+        LOG.infof("Payment added successfully for CreditCard ID: %d. New balance: %s", id, creditCard.getCurrentBalance());
+    }
 }

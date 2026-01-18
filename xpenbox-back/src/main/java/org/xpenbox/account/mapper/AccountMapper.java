@@ -1,5 +1,6 @@
 package org.xpenbox.account.mapper;
 
+import java.time.ZoneId;
 import java.util.List;
 
 import org.jboss.logging.Logger;
@@ -33,7 +34,7 @@ public class AccountMapper implements GenericMapper<Account, AccountCreateDTO, A
             entity.getName(),
             entity.getBalance(),
             entity.getState(),
-            entity.getClosingDate()
+            entity.getClosingDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         );
         return dto;
     }

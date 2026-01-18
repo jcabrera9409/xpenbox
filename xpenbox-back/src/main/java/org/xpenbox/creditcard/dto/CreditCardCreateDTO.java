@@ -27,7 +27,6 @@ public record CreditCardCreateDTO (
     BigDecimal creditLimit,
 
     @NotNull(message = "Current balance cannot be null")
-    @Min(value = 0, message = "Current balance cannot be negative")
     BigDecimal currentBalance,
 
     @NotNull(message = "Billing day cannot be null")

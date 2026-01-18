@@ -19,4 +19,11 @@ public interface ICreditCardService extends IGenericService<CreditCard, CreditCa
      * @param amount the amount to add
      */
     public void processAddAmount(Long id, BigDecimal amount);
+
+    /**
+     * Process adding payment to the credit card.
+     * @param id the credit card id
+     * @param amount the payment amount
+     */
+    public void processAddPayment(Long id, BigDecimal amount);
 }
