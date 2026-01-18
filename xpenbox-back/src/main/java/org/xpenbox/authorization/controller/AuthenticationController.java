@@ -8,7 +8,6 @@ import org.xpenbox.authorization.service.ITokenService;
 import org.xpenbox.user.dto.UserCreateDTO;
 import org.xpenbox.user.service.IUserService;
 
-import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -107,7 +106,7 @@ public class AuthenticationController {
      */
     @POST
     @Path("/logout")
-    @Authenticated
+    @PermitAll
     @Transactional
     public Response logout(@CookieParam("refresh_token") String refreshToken) {
         LOG.infof("Logout request received");
