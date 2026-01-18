@@ -1,5 +1,6 @@
 package org.xpenbox.common.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.jboss.logging.Logger;
@@ -33,7 +34,7 @@ public abstract class GenericRepository<T> implements PanacheRepository<T> {
      * @param userId the ID of the user
      * @return a list of entities associated with the user ID
      */
-    public java.util.List<T> findAllByUserId(Long userId) {
+    public List<T> findAllByUserId(Long userId) {
         LOG.infof("Finding all entities for user id: %d", userId);
         return list("user.id", userId);
     }

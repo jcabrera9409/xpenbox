@@ -1,5 +1,7 @@
 package org.xpenbox.transaction.service.impl;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
@@ -20,6 +22,7 @@ import org.xpenbox.transaction.dto.TransactionCreateDTO;
 import org.xpenbox.transaction.dto.TransactionResponseDTO;
 import org.xpenbox.transaction.dto.TransactionUpdateDTO;
 import org.xpenbox.transaction.entity.Transaction;
+import org.xpenbox.transaction.entity.Transaction.TransactionType;
 import org.xpenbox.transaction.mapper.TransactionMapper;
 import org.xpenbox.transaction.repository.TransactionRepository;
 import org.xpenbox.transaction.service.ITransactionService;
@@ -133,6 +136,11 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         };
     }
 
+    private List<Transaction> getAllIncomeTransactionsByIncomeAndUser(Income income, User user) {
+        LOG.debugf("Fetching all INCOME transactions for Income ID: %d and User ID: %d", income.id, user.id);
+        return transactionRepository.findByIncomeIdAndUserIdAndType(income.id, user.id, TransactionType.INCOME);
+    }
+
     /**
      * Handles EXPENSE transactions. Options include deducting from an account or adding to a credit card.
      * @param transaction The Transaction entity to be processed.
@@ -173,6 +181,10 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
 
         Income income = validateAndGetIncomeEntity(entityCreateDTO.incomeResourceCode(), user);
         Account account = validateAndGetAccountEntity(entityCreateDTO.accountResourceCode(), user);
+        
+        validateTotalIncomeDoesNotExceedTransactions(income, user, transaction.getAmount());
+        accountService.processAddAmount(account.id, entityCreateDTO.amount());
+
         transaction.setIncome(income);
         transaction.setAccount(account);
 
@@ -235,6 +247,18 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
                     LOG.debugf("%s with resource code %s not found for user ID %d", entityName, resourceCode, user.id);
                     throw new BadRequestException(getEntityName(), entityName + " resource code", "is invalid");
                 });
+    }
+
+    private void validateTotalIncomeDoesNotExceedTransactions(Income income, User user, BigDecimal newAmount) {
+        List<Transaction> incomeTransactions = getAllIncomeTransactionsByIncomeAndUser(income, user);
+        BigDecimal totalIncomeFromTransactions = incomeTransactions.stream()
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (totalIncomeFromTransactions.add(newAmount).compareTo(income.getTotalAmount()) > 0) {
+            LOG.debugf("Total income from transactions exceeds Income ID: %d total amount", income.id);
+            throw new BadRequestException(getEntityName(), "amount", "exceeds the total income limit");
+        }
     }
 
     private boolean isValid(Object value) {

@@ -68,7 +68,7 @@ public class AccountServiceImpl extends GenericServiceImpl<Account, AccountCreat
                 return new BadRequestException("Account not found");
             });
 
-        if (account.getBalance().compareTo(amount.abs()) < 0) {
+        if (account.getBalance().compareTo(amount) < 0) {
             LOG.debugf("Insufficient funds for Account ID %d: Current balance %s, Requested amount %s", id, account.getBalance(), amount);
             throw new InsufficientFoundsException("Insufficient funds for the transaction");
         }
@@ -76,6 +76,19 @@ public class AccountServiceImpl extends GenericServiceImpl<Account, AccountCreat
 
         accountRepository.persist(account);
         LOG.infof("Transaction processed successfully for Account ID: %d. New balance: %s", id, account.getBalance());
+    }
+
+    @Override
+    public void processAddAmount(Long id, BigDecimal amount) {
+        LOG.infof("Processing add amount for Account ID: %d with amount: %s", id, amount);
+        Account account = accountRepository.findByIdOptional(id)
+            .orElseThrow(() -> {
+                LOG.debugf("Account with ID %d not found", id);
+                return new BadRequestException("Account not found");
+            });
+        account.setBalance(account.getBalance().add(amount));
+        accountRepository.persist(account);
+        LOG.infof("Amount added successfully for Account ID: %d. New balance: %s", id, account.getBalance());
     }
 
 }

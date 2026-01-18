@@ -19,4 +19,11 @@ public interface IAccountService extends IGenericService<Account, AccountCreateD
      * @param amount the amount to subtract
      */
     public void processSubtractAmount(Long id, BigDecimal amount);
+
+    /**
+     * Process to add amount to account balance
+     * @param id the account id
+     * @param amount the amount to add
+     */
+    public void processAddAmount(Long id, BigDecimal amount);
 }
