@@ -1,8 +1,10 @@
 package org.xpenbox.transaction.controller;
 
 import org.jboss.logging.Logger;
+import org.xpenbox.common.dto.APIPageableDTO;
 import org.xpenbox.common.dto.APIResponseDTO;
 import org.xpenbox.transaction.dto.TransactionCreateDTO;
+import org.xpenbox.transaction.dto.TransactionFilterDTO;
 import org.xpenbox.transaction.dto.TransactionResponseDTO;
 import org.xpenbox.transaction.service.ITransactionService;
 
@@ -36,6 +38,12 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
+    /**
+     * Create a new transaction
+     * @param securityContext the security context containing user information
+     * @param transactionCreateDTO the transaction data transfer object
+     * @return a response indicating the result of the create operation
+     */
     @POST
     @Transactional
     public Response createTransaction(@Context SecurityContext securityContext, @Valid TransactionCreateDTO transactionCreateDTO) {
@@ -50,6 +58,32 @@ public class TransactionController {
         ).build();
     }
 
+    /**
+     * Filter transactions based on criteria
+     * @param securityContext the security context containing user information
+     * @param filterDTO the transaction filter data transfer object
+     * @return a response containing the filtered transactions
+     */
+    @POST
+    @Path("/filter")
+    public Response filterTransactions(@Context SecurityContext securityContext, @Valid TransactionFilterDTO filterDTO) {
+        String userEmail = securityContext.getUserPrincipal().getName();
+        LOG.infof("Filter transactions request received for user: %s", userEmail);
+
+        APIPageableDTO<TransactionResponseDTO> filteredTransactions = transactionService.filterTransactions(filterDTO, userEmail);
+        LOG.infof("Filtered transactions retrieved successfully for user: %s", userEmail);
+
+        return Response.status(Response.Status.OK).entity(
+            APIResponseDTO.success("Filtered transactions retrieved successfully", filteredTransactions, Response.Status.OK.getStatusCode())
+        ).build();
+    }
+
+    /**
+     * Get transaction by resource code
+     * @param securityContext the security context containing user information
+     * @param resourceCode the resource code of the transaction
+     * @return a response containing the transaction details
+     */
     @GET
     @Path("/{resourceCode}")
     public Response getTransactionByResourceCode(@Context SecurityContext securityContext, @PathParam("resourceCode") String resourceCode) {
@@ -64,6 +98,12 @@ public class TransactionController {
         ).build();
     }
 
+    /**
+     * Rollback transaction by resource code
+     * @param securityContext the security context containing user information
+     * @param resourceCode the resource code of the transaction to rollback
+     * @return a response indicating the result of the rollback operation
+     */
     @DELETE
     @Path("/{resourceCode}")
     @Transactional
@@ -74,8 +114,8 @@ public class TransactionController {
         transactionService.rollback(resourceCode, userEmail);
         LOG.infof("Transaction rolled back successfully for user: %s, resourceCode: %s", userEmail, resourceCode);
 
-        return Response.status(Response.Status.OK).entity(
-            APIResponseDTO.success("Transaction rolled back successfully", null, Response.Status.OK.getStatusCode())
+        return Response.status(Response.Status.NO_CONTENT).entity(
+            APIResponseDTO.success("Transaction rolled back successfully", null, Response.Status.NO_CONTENT.getStatusCode())
         ).build();
     }
 

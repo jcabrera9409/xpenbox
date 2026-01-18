@@ -1,0 +1,27 @@
+meta {
+  name: TransactionGetByFilter
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{apiUrl}}/api/rest/v1/transaction/filter
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "resourceCode": null,
+    "transactionType": null,
+    "description": null,
+    "transactionDateTimestampFrom": null,
+    "transactionDateTimestampTo": null,
+    "categoryResourceCode": null,
+    "incomeResourceCode": null,
+    "accountResourceCode": null,
+    "creditCardResourceCode": null,
+    "pageNumber": 0,
+    "pageSize": 15
+  }
+}

@@ -11,6 +11,7 @@ import org.xpenbox.account.repository.AccountRepository;
 import org.xpenbox.account.service.IAccountService;
 import org.xpenbox.category.entity.Category;
 import org.xpenbox.category.repository.CategoryRepository;
+import org.xpenbox.common.dto.APIPageableDTO;
 import org.xpenbox.common.service.impl.GenericServiceImpl;
 import org.xpenbox.creditcard.entity.CreditCard;
 import org.xpenbox.creditcard.repository.CreditCardRepository;
@@ -19,6 +20,7 @@ import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.income.entity.Income;
 import org.xpenbox.income.repository.IncomeRepository;
 import org.xpenbox.transaction.dto.TransactionCreateDTO;
+import org.xpenbox.transaction.dto.TransactionFilterDTO;
 import org.xpenbox.transaction.dto.TransactionResponseDTO;
 import org.xpenbox.transaction.entity.Transaction;
 import org.xpenbox.transaction.entity.Transaction.TransactionType;
@@ -30,6 +32,9 @@ import org.xpenbox.user.repository.UserRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
+/**
+ * Service implementation for managing Transactions.
+ */
 @ApplicationScoped
 public class TransactionServiceImpl extends GenericServiceImpl<Transaction, TransactionCreateDTO, TransactionCreateDTO, TransactionResponseDTO> implements ITransactionService {
     private static final Logger LOG = Logger.getLogger(TransactionServiceImpl.class);
@@ -108,6 +113,11 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         return transactionMapper.toDTO(transaction);
     }
 
+    /**
+     * Rolls back a transaction based on the provided resource code and user email.
+     * @param resourceCode The resource code of the transaction to be rolled back.
+     * @param userEmail The email of the user requesting the rollback.
+     */
     @Override
     public void rollback(String resourceCode, String userEmail) {
         LOG.infof("Rolling back transaction with resource code: %s for user email: %s", resourceCode, userEmail);
@@ -121,8 +131,38 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         LOG.infof("Successfully rolled back transaction with resource code: %s for user email: %s", resourceCode, userEmail);
     }
 
+    /**
+     * Filters transactions based on the provided filter DTO and user email.
+     * @param filterDTO The DTO containing filter criteria.
+     * @param userEmail The email of the user requesting the filtered transactions.
+     * @return A pageable DTO containing the filtered transactions.
+     */
+    @Override
+    public APIPageableDTO<TransactionResponseDTO> filterTransactions(TransactionFilterDTO filterDTO, String userEmail) {
+        LOG.infof("Filtering transactions for user email: %s with filter: %s", userEmail, filterDTO);
+
+        User user = super.validateAndGetUser(userEmail);
+
+        List<Transaction> filteredTransactions = transactionRepository.findByFilter(filterDTO, user);
+        Integer totalElements = transactionRepository.countByFilter(filterDTO, user);
+        
+        LOG.infof("Found %d transactions for user email: %s with filter: %s", filteredTransactions.size(), userEmail, filterDTO);
+
+        return APIPageableDTO.generatePageableDTO(
+            filterDTO.pageNumber(),
+            filterDTO.pageSize(),
+            totalElements,
+            transactionMapper.toDTOList(filteredTransactions)
+        );
+    }
+
     // Auxiliary private methods
 
+    /**
+     * Validates the rollback of a transaction based on its type.
+     * @param transaction the transaction to be rolled back
+     * @param user the user associated with the transaction
+     */
     private void validateRollbackAndReturnEntityByType(Transaction transaction, User user) {
         LOG.debugf("Validating rollback for %s ID: %d", getEntityName(), transaction.id);
 
@@ -160,6 +200,12 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         };
     }
 
+    /**
+     * Gets all INCOME transactions for a given income and user.
+     * @param income the income entity
+     * @param user the user entity
+     * @return a list of transactions associated with the income and user
+     */
     private List<Transaction> getAllIncomeTransactionsByIncomeAndUser(Income income, User user) {
         LOG.debugf("Fetching all INCOME transactions for Income ID: %d and User ID: %d", income.id, user.id);
         return transactionRepository.findByIncomeIdAndUserIdAndType(income.id, user.id, TransactionType.INCOME);
