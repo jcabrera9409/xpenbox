@@ -1,0 +1,144 @@
+<div class="min-h-screen flex items-center justify-center px-4 py-8 xpb-bg-main">
+  <div class="w-full max-w-md">
+    <!-- Card -->
+    <div class="xpb-bg-card rounded-lg xpb-shadow border xpb-border p-6 sm:p-8">
+      <!-- Header -->
+      <div class="text-center mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold xpb-text-primary mb-2">Crear cuenta</h1>
+        <p class="text-sm xpb-text-secondary">Regístrate para comenzar a administrar tus finanzas</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <!-- Email -->
+        <div>
+          <label for="email" class="block text-sm font-medium xpb-text-primary mb-1">
+            Email
+          </label>
+          <div class="relative">
+            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+              email
+            </span>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              placeholder="tu@email.com"
+              class="w-full pl-10 pr-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 transition-all"
+              [class.xpb-border]="!hasError('email')"
+              [class.focus:ring-blue-500]="!hasError('email')"
+              [class.focus:border-blue-500]="!hasError('email')"
+              [class.border-red-500]="hasError('email')"
+              [class.focus:ring-red-500]="hasError('email')"
+              [class.focus:border-red-500]="hasError('email')"
+            />
+          </div>
+          @if (hasError('email')) {
+            <p class="mt-1 text-sm xpb-text-expense flex items-center gap-1">
+              <span class="material-icons text-base">error</span>
+              {{ getErrorMessage('email') }}
+            </p>
+          }
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="password" class="block text-sm font-medium xpb-text-primary mb-1">
+            Contraseña
+          </label>
+          <div class="relative">
+            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+              lock
+            </span>
+            <input
+              [type]="showPassword() ? 'text' : 'password'"
+              id="password"
+              formControlName="password"
+              placeholder="Mínimo 8 caracteres"
+              class="w-full pl-10 pr-12 py-2.5 border rounded-lg focus:outline-none focus:ring-2 transition-all"
+              [class.xpb-border]="!hasError('password')"
+              [class.focus:ring-blue-500]="!hasError('password')"
+              [class.focus:border-blue-500]="!hasError('password')"
+              [class.border-red-500]="hasError('password')"
+              [class.focus:ring-red-500]="hasError('password')"
+              [class.focus:border-red-500]="hasError('password')"
+            />
+            <button
+              type="button"
+              (click)="togglePasswordVisibility()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 xpb-text-secondary hover:xpb-text-primary transition-colors"
+              [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <span class="material-icons text-xl">
+                {{ showPassword() ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
+          </div>
+          @if (hasError('password')) {
+            <p class="mt-1 text-sm xpb-text-expense flex items-center gap-1">
+              <span class="material-icons text-base">error</span>
+              {{ getErrorMessage('password') }}
+            </p>
+          }
+        </div>
+
+        <!-- Default Currency -->
+        <div>
+          <label for="currency" class="block text-sm font-medium xpb-text-primary mb-1">
+            Moneda por defecto
+          </label>
+          <div class="relative">
+            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+              account_balance_wallet
+            </span>
+            <select
+              id="currency"
+              formControlName="defaultCurrency"
+              class="w-full pl-10 pr-4 py-2.5 border xpb-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none xpb-bg-card cursor-pointer"
+            >
+              @for (currency of currencies; track currency.value) {
+                <option [value]="currency.value">{{ currency.label }}</option>
+              }
+            </select>
+            <span class="material-icons absolute right-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl pointer-events-none">
+              expand_more
+            </span>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          [disabled]="isSubmitting()"
+          class="w-full py-3 px-4 xpb-btn-primary font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2"
+        >
+          @if (isSubmitting()) {
+            <span class="material-icons animate-spin text-xl">refresh</span>
+            <span>Creando cuenta...</span>
+          } @else {
+            <span class="material-icons text-xl">person_add</span>
+            <span>Crear cuenta</span>
+          }
+        </button>
+      </form>
+
+      <!-- Login Link -->
+      <div class="mt-6 text-center">
+        <p class="text-sm xpb-text-secondary">
+          ¿Ya tienes una cuenta?
+          <a 
+            routerLink="/login" 
+            class="xpb-text-primary-accent font-medium ml-1 transition-colors focus:outline-none focus:underline"
+          >
+            Inicia sesión
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer Info -->
+    <p class="text-center text-xs xpb-text-secondary mt-6 px-4">
+      Al registrarte, aceptas nuestros términos de servicio y política de privacidad
+    </p>
+  </div>
+</div>

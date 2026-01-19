@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+/* =============================================================================
+   XpenBox Design System - Official Color Variables
+   Finance-oriented theme for personal expense management
+   ============================================================================= */
+
+:root {
+  /* Backgrounds (Surfaces) */
+  --xpb-bg-main: #F8F9FA;
+  --xpb-bg-card: #FFFFFF;
+  --xpb-bg-sidebar: #F1F3F5;
+
+  /* Typography (Text Colors) */
+  --xpb-text-primary: #212529;
+  --xpb-text-secondary: #6C757D;
+  --xpb-text-disabled: #ADB5BD;
+
+  /* Financial Status Colors (Semantic) */
+  --xpb-income: #588157;
+  --xpb-expense: #BC4749;
+  --xpb-transfer: #4A7C95;
+
+  /* Borders & Elevation */
+  --xpb-border: #DEE2E6;
+  --xpb-shadow: rgba(0, 0, 0, 0.05);
+
+  /* Accent & Primary Actions */
+  --xpb-primary: #4361EE;
+  --xpb-primary-hover: #374BB5;
+}
+
+/* =============================================================================
+   Utility Classes - Backgrounds
+   ============================================================================= */
+
+.xpb-bg-main {
+  background-color: var(--xpb-bg-main);
+}
+
+.xpb-bg-card {
+  background-color: var(--xpb-bg-card);
+}
+
+.xpb-bg-sidebar {
+  background-color: var(--xpb-bg-sidebar);
+}
+
+/* =============================================================================
+   Utility Classes - Text Colors
+   ============================================================================= */
+
+.xpb-text-primary {
+  color: var(--xpb-text-primary);
+}
+
+.xpb-text-secondary {
+  color: var(--xpb-text-secondary);
+}
+
+.xpb-text-disabled {
+  color: var(--xpb-text-disabled);
+}
+
+/* =============================================================================
+   Utility Classes - Financial Status (Semantic)
+   ============================================================================= */
+
+.xpb-text-income {
+  color: var(--xpb-income);
+}
+
+.xpb-text-expense {
+  color: var(--xpb-expense);
+}
+
+.xpb-text-transfer {
+  color: var(--xpb-transfer);
+}
+
+.xpb-bg-income {
+  background-color: var(--xpb-income);
+}
+
+.xpb-bg-expense {
+  background-color: var(--xpb-expense);
+}
+
+.xpb-bg-transfer {
+  background-color: var(--xpb-transfer);
+}
+
+/* =============================================================================
+   Utility Classes - Borders
+   ============================================================================= */
+
+.xpb-border {
+  border-color: var(--xpb-border);
+}
+
+.xpb-border-t {
+  border-top-color: var(--xpb-border);
+}
+
+.xpb-border-b {
+  border-bottom-color: var(--xpb-border);
+}
+
+.xpb-border-l {
+  border-left-color: var(--xpb-border);
+}
+
+.xpb-border-r {
+  border-right-color: var(--xpb-border);
+}
+
+/* =============================================================================
+   Utility Classes - Primary Actions
+   ============================================================================= */
+
+.xpb-btn-primary {
+  background-color: var(--xpb-primary);
+  color: #FFFFFF;
+  transition: background-color 0.2s;
+}
+
+.xpb-btn-primary:hover:not(:disabled) {
+  background-color: var(--xpb-primary-hover);
+}
+
+.xpb-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.xpb-text-primary-accent {
+  color: var(--xpb-primary);
+}
+
+.xpb-text-primary-accent:hover {
+  color: var(--xpb-primary-hover);
+}
+
+/* =============================================================================
+   Utility Classes - Shadows
+   ============================================================================= */
+
+.xpb-shadow {
+  box-shadow: 0 1px 3px var(--xpb-shadow);
+}
+
+.xpb-shadow-md {
+  box-shadow: 0 4px 6px var(--xpb-shadow);
+}
+
+.xpb-shadow-lg {
+  box-shadow: 0 10px 15px var(--xpb-shadow);
+}

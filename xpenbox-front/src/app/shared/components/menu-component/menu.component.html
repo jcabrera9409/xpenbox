@@ -1,0 +1,127 @@
+<!-- Top Header (Desktop & Mobile) -->
+<header class="fixed top-0 left-0 right-0 h-16 xpb-bg-card border-b xpb-border shadow-sm z-50">
+  <div class="flex items-center h-full">
+    <!-- Logo Section (Desktop only - aligned with sidebar) -->
+    <div class="hidden lg:flex lg:items-center lg:justify-start lg:w-64 lg:px-6 lg:xpb-border">
+      <h1 class="text-2xl font-bold xpb-text-primary">XpenBox</h1>
+    </div>
+
+    <!-- User Profile (Mobile only) -->
+    <div class="lg:hidden flex items-center gap-3 px-4">
+      @if (userProfile().photo) {
+        <img
+          [src]="userProfile().photo"
+          [alt]="userProfile().name"
+          class="w-10 h-10 rounded-full object-cover border-2 xpb-border"
+        />
+      } @else {
+        <div
+          class="w-10 h-10 rounded-full bg-[var(--xpb-primary)] text-white font-semibold flex items-center justify-center text-sm"
+        >
+          {{ getUserInitials(userProfile().name) }}
+        </div>
+      }
+      <div class="flex flex-col">
+        <span class="text-xs xpb-text-secondary">Hola</span>
+        <span class="font-medium xpb-text-primary text-sm">{{ userProfile().name }}</span>
+      </div>
+    </div>
+
+    <!-- Spacer -->
+    <div class="flex-1"></div>
+
+    <!-- Right Section: Profile & Notifications -->
+    <div class="flex items-center gap-3 lg:gap-4 px-4 lg:px-6">
+      <!-- User Profile (Desktop only) -->
+      <div class="hidden lg:flex items-center gap-3">
+        @if (userProfile().photo) {
+          <img
+            [src]="userProfile().photo"
+            [alt]="userProfile().name"
+            class="w-10 h-10 rounded-full object-cover border-2 xpb-border"
+          />
+        } @else {
+          <div
+            class="w-10 h-10 rounded-full bg-[var(--xpb-primary)] text-white font-semibold flex items-center justify-center text-sm"
+          >
+            {{ getUserInitials(userProfile().name) }}
+          </div>
+        }
+        <div class="flex flex-col">
+          <span class="text-xs xpb-text-secondary">Hola</span>
+          <span class="font-medium xpb-text-primary text-sm">{{ userProfile().name }}</span>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <button
+        class="relative p-2 rounded-lg hover:xpb-bg-sidebar transition-colors"
+        aria-label="Notificaciones"
+      >
+        <span class="material-icons xpb-text-secondary">notifications</span>
+        @if (notificationCount() > 0) {
+          <span
+            class="absolute top-1 right-1 w-5 h-5 bg-[var(--xpb-expense)] text-white text-xs font-bold rounded-full flex items-center justify-center"
+          >
+            {{ notificationCount() }}
+          </span>
+        }
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Desktop Sidebar Menu -->
+<aside class="hidden lg:flex lg:flex-col lg:fixed lg:left-0 lg:top-16 lg:bottom-0 lg:w-64 xpb-bg-sidebar border-r xpb-border shadow-sm z-40">
+  <!-- Navigation Links -->
+  <nav class="flex-1 p-4 space-y-2">
+    @for (item of menuItems; track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="xpb-bg-card shadow-sm"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:xpb-bg-card hover:shadow-sm"
+      >
+        <span class="material-icons xpb-text-secondary">{{ item.icon }}</span>
+        <span class="font-medium xpb-text-primary">{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <!-- Quick Expense Button -->
+  <div class="p-4 border-t xpb-border">
+    <button
+      (click)="onQuickExpense()"
+      class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white font-medium transition-colors shadow-md"
+    >
+      <span class="material-icons">add</span>
+      <span>Registrar Gasto</span>
+    </button>
+  </div>
+</aside>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 xpb-bg-card border-t xpb-border shadow-lg z-40">
+  <div class="flex items-center justify-around h-16 relative">
+    @for (item of menuItems; track item.route; let i = $index) {
+      @if (i === 2) {
+        <!-- Central Quick Expense Button (before 3rd item) -->
+        <button
+          (click)="onQuickExpense()"
+          class="absolute left-1/2 -translate-x-1/2 -top-6 w-14 h-14 rounded-full bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] shadow-xl flex items-center justify-center text-white transition-colors"
+          aria-label="Registrar gasto rápido"
+        >
+          <span class="material-icons text-3xl">add</span>
+        </button>
+      }
+      
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="text-[var(--xpb-primary)]"
+        class="flex flex-col items-center justify-center flex-1 h-full xpb-text-secondary transition-colors"
+      >
+        <span class="material-icons text-2xl">{{ item.icon }}</span>
+        <span class="text-xs mt-1">{{ item.label }}</span>
+      </a>
+    }
+  </div>
+</nav>

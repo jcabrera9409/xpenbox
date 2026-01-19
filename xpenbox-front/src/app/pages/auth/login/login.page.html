@@ -1,0 +1,136 @@
+<div class="min-h-screen flex items-center justify-center xpb-bg-main px-4">
+  <div class="w-full max-w-md">
+    <!-- Login Card -->
+    <div class="xpb-bg-card rounded-lg xpb-shadow p-6 sm:p-8">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-2xl sm:text-3xl font-bold xpb-text-primary mb-2">Iniciar Sesión</h1>
+        <p class="xpb-text-secondary text-sm sm:text-base">Accede a tu cuenta de XpenBox</p>
+      </div>
+
+      <!-- Login Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
+        <!-- Email Field -->
+        <div>
+          <label for="email" class="block text-sm font-medium xpb-text-primary mb-1.5">
+            Correo Electrónico
+          </label>
+          <div class="relative">
+            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+              email
+            </span>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="tu@ejemplo.com"
+              class="w-full pl-11 pr-4 py-2.5 border xpb-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent xpb-text-primary placeholder:xpb-text-disabled"
+              [class.border-[var(--xpb-expense)]]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            />
+          </div>
+          <p
+            *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            class="mt-1.5 text-xs xpb-text-expense"
+          >
+            <span *ngIf="loginForm.get('email')?.hasError('required')">El correo electrónico es requerido</span>
+            <span *ngIf="loginForm.get('email')?.hasError('email')">Ingresa un correo electrónico válido</span>
+          </p>
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <label for="password" class="block text-sm font-medium xpb-text-primary mb-1.5">
+            Contraseña
+          </label>
+          <div class="relative">
+            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+              lock
+            </span>
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Mínimo 8 caracteres"
+              class="w-full pl-11 pr-12 py-2.5 border xpb-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent xpb-text-primary placeholder:xpb-text-disabled"
+              [class.border-[var(--xpb-expense)]]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            />
+            <button
+              type="button"
+              (click)="togglePasswordVisibility()"
+              class="material-icons absolute right-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl hover:xpb-text-primary cursor-pointer transition-colors"
+              aria-label="Mostrar/ocultar contraseña"
+            >
+              {{ showPassword() ? 'visibility_off' : 'visibility' }}
+            </button>
+          </div>
+          <p
+            *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            class="mt-1.5 text-xs xpb-text-expense"
+          >
+            <span *ngIf="loginForm.get('password')?.hasError('required')">La contraseña es requerida</span>
+            <span *ngIf="loginForm.get('password')?.hasError('minlength')">La contraseña debe tener al menos 8 caracteres</span>
+          </p>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center justify-between">
+          <label class="flex items-center cursor-pointer group">
+            <input
+              type="checkbox"
+              formControlName="rememberMe"
+              class="w-4 h-4 rounded xpb-border text-[var(--xpb-primary)] focus:ring-2 focus:ring-[var(--xpb-primary)] cursor-pointer"
+            />
+            <span class="ml-2 text-sm xpb-text-primary group-hover:xpb-text-primary-accent transition-colors">
+              Recuérdame
+            </span>
+          </label>
+          <a
+            href="#"
+            class="text-sm xpb-text-primary-accent hover:text-[var(--xpb-primary-hover)] hover:underline transition-colors"
+          >
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          [disabled]="isSubmitting()"
+          class="w-full xpb-btn-primary font-medium py-3 rounded-lg flex items-center justify-center gap-2"
+        >
+          <span *ngIf="!isSubmitting()">Iniciar Sesión</span>
+          <span *ngIf="isSubmitting()" class="flex items-center gap-2">
+            <span class="material-icons animate-spin">refresh</span>
+            Iniciando...
+          </span>
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="relative my-6">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t xpb-border"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-4 xpb-bg-card xpb-text-secondary">¿No tienes cuenta?</span>
+        </div>
+      </div>
+
+      <!-- Register Link -->
+      <a
+        routerLink="/register"
+        class="block w-full text-center py-3 border xpb-border rounded-lg xpb-text-primary-accent hover:xpb-bg-main hover:border-[var(--xpb-primary)] font-medium transition-all"
+      >
+        Crear una cuenta
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-xs sm:text-sm xpb-text-secondary mt-6">
+      Al iniciar sesión, aceptas nuestros
+      <a href="#" class="xpb-text-primary-accent hover:underline">Términos de Servicio</a>
+      y
+      <a href="#" class="xpb-text-primary-accent hover:underline">Política de Privacidad</a>
+    </p>
+  </div>
+</div>
