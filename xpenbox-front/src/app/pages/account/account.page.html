@@ -1,0 +1,302 @@
+<div class="min-h-screen xpb-bg-main p-3 sm:p-4">
+  <!-- Header -->
+  <div class="mb-4">
+    <h1 class="text-xl sm:text-2xl font-bold xpb-text-primary mb-1">Mis Cuentas</h1>
+    <p class="xpb-text-secondary text-sm">Gestiona tus cuentas bancarias y tarjetas de crédito</p>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+    <!-- Total Liquidity -->
+    <div class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs xpb-text-secondary mb-1">Liquidez Total</p>
+          <p class="text-2xl sm:text-3xl font-bold xpb-text-income">$24,170.50</p>
+          <p class="text-xs xpb-text-secondary mt-1">2 cuentas activas</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] flex items-center justify-center">
+          <span class="material-icons xpb-text-income text-2xl">account_balance</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Credit Balance -->
+    <div class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs xpb-text-secondary mb-1">Balance Total Tarjetas</p>
+          <p class="text-2xl sm:text-3xl font-bold xpb-text-expense">-$32,420.00</p>
+          <p class="text-xs xpb-text-secondary mt-1">2 tarjetas activas</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] flex items-center justify-center">
+          <span class="material-icons xpb-text-expense text-2xl">credit_card</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two Column/Row Layout with Independent Scroll -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 h-[calc(100vh-220px)] sm:h-[calc(100vh-240px)]">
+    <!-- Bank Accounts Section -->
+    <section class="flex flex-col min-h-0">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg sm:text-xl font-semibold xpb-text-primary flex items-center gap-2">
+          <span class="material-icons text-xl sm:text-2xl">account_balance</span>
+          Cuentas Bancarias
+        </h2>
+        <button 
+          class="flex items-center gap-1.5 px-3 py-2 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors text-sm"
+          type="button">
+          <span class="material-icons text-lg">add</span>
+          <span class="hidden sm:inline">Nueva</span>
+        </button>
+      </div>
+
+    <!-- Bank Accounts List -->
+    <div class="space-y-3 overflow-y-auto pr-2 flex-1">
+      <app-account-card ngSkipHydration class="block"
+        [accountCardName]="'Cuenta ahorro viaje'"
+        [accountCardBalance]="12500.75"
+        [accountCardState]="true"
+        [accountCardResourceCode]="'abc123'"
+      ></app-account-card>
+      <app-account-card ngSkipHydration class="block"
+        [accountCardName]="'Cuenta ahorro sueldo'"
+        [accountCardBalance]="1000.10"
+        [accountCardState]="true"
+        [accountCardResourceCode]="'xyz789'"
+      ></app-account-card>
+      <app-account-card ngSkipHydration class="block"
+        [accountCardName]="'Cuenta corriente gastos'"
+        [accountCardBalance]="6670.65"
+        [accountCardState]="true"
+        [accountCardResourceCode]="'lmn456'"
+      ></app-account-card>
+    </div>
+  </section>
+
+    <!-- Credit Cards Section -->
+    <section class="flex flex-col min-h-0">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg sm:text-xl font-semibold xpb-text-primary flex items-center gap-2">
+          <span class="material-icons text-xl sm:text-2xl">credit_card</span>
+          Tarjetas de Crédito
+        </h2>
+        <button 
+          class="flex items-center gap-1.5 px-3 py-2 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors text-sm"
+          type="button">
+          <span class="material-icons text-lg">add</span>
+          <span class="hidden sm:inline">Nueva</span>
+        </button>
+      </div>
+
+      <!-- Credit Cards List -->
+      <div class="space-y-3 overflow-y-auto pr-2 flex-1">
+      <!-- Credit Card 1 -->
+      <article class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] overflow-hidden hover:shadow-md transition-shadow">
+        <div class="p-4">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="material-icons xpb-text-primary text-xl">credit_card</span>
+                <h3 class="font-semibold xpb-text-primary text-sm sm:text-base truncate">Visa Premium</h3>
+              </div>
+              <div class="flex items-center gap-3 flex-wrap text-xs xpb-text-secondary">
+                <span>Límite: <strong class="xpb-text-primary">$50,000.00</strong></span>
+                <span>•</span>
+                <span>Balance: <strong class="xpb-text-expense">-$7,620.00</strong></span>
+              </div>
+            </div>
+            <span class="px-2 py-1 text-xs rounded-full xpb-bg-income text-white font-medium flex-shrink-0">Activa</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mb-3">
+            <div class="flex justify-between text-xs xpb-text-secondary mb-1">
+              <span>Disponible: $42,380.00</span>
+              <span>85%</span>
+            </div>
+            <div class="w-full bg-[var(--xpb-bg-sidebar)] rounded-full h-2">
+              <div class="bg-[var(--xpb-income)] h-2 rounded-full transition-all" style="width: 85%"></div>
+            </div>
+          </div>
+
+          <!-- Payment Dates -->
+          <div class="flex items-center gap-4 mb-3 text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="material-icons xpb-text-secondary" style="font-size: 16px;">event</span>
+              <span class="xpb-text-secondary">Facturación: <strong class="xpb-text-primary">15 Feb</strong></span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="material-icons xpb-text-secondary" style="font-size: 16px;">alarm</span>
+              <span class="xpb-text-secondary">Límite pago: <strong class="xpb-text-primary">28 Feb</strong></span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2 pt-3 border-t border-[var(--xpb-border)]">
+            <button 
+              class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors text-sm font-medium"
+              type="button"
+              title="Ver movimientos">
+              <span class="material-icons text-lg">receipt_long</span>
+              <span class="hidden lg:inline">Movimientos</span>
+            </button>
+            <button 
+              class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors text-sm font-medium"
+              type="button"
+              title="Editar">
+              <span class="material-icons text-lg">edit</span>
+              <span class="hidden lg:inline">Editar</span>
+            </button>
+            <button 
+              class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-expense rounded-lg transition-colors text-sm font-medium"
+              type="button"
+              title="Deshabilitar">
+              <span class="material-icons text-lg">block</span>
+              <span class="hidden lg:inline">Deshabilitar</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Credit Card 2 -->
+      <article class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] overflow-hidden hover:shadow-md transition-shadow">
+        <div class="p-4">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="material-icons xpb-text-primary text-xl">credit_card</span>
+                <h3 class="font-semibold xpb-text-primary text-sm sm:text-base truncate">Mastercard Gold</h3>
+              </div>
+              <div class="flex items-center gap-3 flex-wrap text-xs xpb-text-secondary">
+                <span>Límite: <strong class="xpb-text-primary">$30,000.00</strong></span>
+                <span>•</span>
+                <span>Balance: <strong class="xpb-text-expense">-$24,800.00</strong></span>
+              </div>
+            </div>
+            <span class="px-2 py-1 text-xs rounded-full xpb-bg-income text-white font-medium flex-shrink-0">Activa</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mb-3">
+            <div class="flex justify-between text-xs xpb-text-secondary mb-1">
+              <span>Disponible: $5,200.00</span>
+              <span>17%</span>
+            </div>
+            <div class="w-full bg-[var(--xpb-bg-sidebar)] rounded-full h-2">
+              <div class="bg-[var(--xpb-expense)] h-2 rounded-full transition-all" style="width: 17%"></div>
+            </div>
+          </div>
+
+          <!-- Payment Dates -->
+          <div class="flex items-center gap-4 mb-3 text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="material-icons xpb-text-secondary" style="font-size: 16px;">event</span>
+              <span class="xpb-text-secondary">Facturación: <strong class="xpb-text-primary">20 Feb</strong></span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="material-icons xpb-text-secondary" style="font-size: 16px;">alarm</span>
+              <span class="xpb-text-secondary">Límite pago: <strong class="xpb-text-expense">05 Mar</strong></span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2 pt-3 border-t border-[var(--xpb-border)]">
+            <button 
+              class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors text-sm font-medium"
+              type="button"
+              title="Ver movimientos">
+              <span class="material-icons text-lg">receipt_long</span>
+              <span class="hidden lg:inline">Movimientos</span>
+            </button>
+            <button 
+              class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors text-sm font-medium"
+              type="button"
+              title="Editar">
+              <span class="material-icons text-lg">edit</span>
+              <span class="hidden lg:inline">Editar</span>
+            </button>
+            <button 
+              class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-expense rounded-lg transition-colors text-sm font-medium"
+              type="button"
+              title="Deshabilitar">
+              <span class="material-icons text-lg">block</span>
+              <span class="hidden lg:inline">Deshabilitar</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Credit Card 3 -->
+      <article class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] overflow-hidden hover:shadow-md transition-shadow">
+        <div class="p-4">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="material-icons xpb-text-primary text-xl">credit_card</span>
+                <h3 class="font-semibold xpb-text-primary text-sm sm:text-base truncate">American Express</h3>
+              </div>
+              <div class="flex items-center gap-3 flex-wrap text-xs xpb-text-secondary">
+                <span>Límite: <strong class="xpb-text-primary">$80,000.00</strong></span>
+                <span>•</span>
+                <span>Balance: <strong class="xpb-text-income">$0.00</strong></span>
+              </div>
+            </div>
+            <span class="px-2 py-1 text-xs rounded-full xpb-bg-income text-white font-medium flex-shrink-0">Activa</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mb-3">
+            <div class="flex justify-between text-xs xpb-text-secondary mb-1">
+              <span>Disponible: $80,000.00</span>
+              <span>100%</span>
+            </div>
+            <div class="w-full bg-[var(--xpb-bg-sidebar)] rounded-full h-2">
+              <div class="bg-[var(--xpb-income)] h-2 rounded-full transition-all" style="width: 100%"></div>
+            </div>
+          </div>
+
+          <!-- Payment Dates -->
+          <div class="flex items-center gap-4 mb-3 text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="material-icons xpb-text-secondary" style="font-size: 16px;">event</span>
+              <span class="xpb-text-secondary">Facturación: <strong class="xpb-text-primary">25 Feb</strong></span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="material-icons xpb-text-secondary" style="font-size: 16px;">alarm</span>
+              <span class="xpb-text-secondary">Límite pago: <strong class="xpb-text-primary">10 Mar</strong></span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2 pt-3 border-t border-[var(--xpb-border)]">
+            <button 
+              class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors text-sm font-medium"
+              type="button"
+              title="Ver movimientos">
+              <span class="material-icons text-lg">receipt_long</span>
+              <span class="hidden lg:inline">Movimientos</span>
+            </button>
+            <button 
+              class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors text-sm font-medium"
+              type="button"
+              title="Editar">
+              <span class="material-icons text-lg">edit</span>
+              <span class="hidden lg:inline">Editar</span>
+            </button>
+            <button 
+              class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-expense rounded-lg transition-colors text-sm font-medium"
+              type="button"
+              title="Deshabilitar">
+              <span class="material-icons text-lg">block</span>
+              <span class="hidden lg:inline">Deshabilitar</span>
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+    </section>
+  </div>
+</div>

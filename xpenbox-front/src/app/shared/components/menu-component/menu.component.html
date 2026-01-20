@@ -78,7 +78,8 @@
     @for (item of menuItems; track item.route) {
       <a
         [routerLink]="item.route"
-        routerLinkActive="xpb-bg-card shadow-sm"
+          routerLinkActive="xpb-bg-card shadow-sm"
+          [routerLinkActiveOptions]="{ exact: true }"
         class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:xpb-bg-card hover:shadow-sm"
       >
         <span class="material-icons xpb-text-secondary">{{ item.icon }}</span>
@@ -116,7 +117,8 @@
       
       <a
         [routerLink]="item.route"
-        routerLinkActive="text-[var(--xpb-primary)]"
+          routerLinkActive="text-[var(--xpb-primary)]"
+          [routerLinkActiveOptions]="{ exact: true }"
         class="flex flex-col items-center justify-center flex-1 h-full xpb-text-secondary transition-colors"
       >
         <span class="material-icons text-2xl">{{ item.icon }}</span>

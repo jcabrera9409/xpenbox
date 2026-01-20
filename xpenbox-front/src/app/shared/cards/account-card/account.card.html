@@ -1,0 +1,86 @@
+<article class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] p-4 hover:shadow-md transition-shadow">
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 flex-1 min-w-0">
+        <div class="w-10 h-10 rounded-full bg-[var(--xpb-bg-sidebar)] flex items-center justify-center flex-shrink-0">
+            <span class="material-icons xpb-text-primary text-xl">account_balance_wallet</span>
+        </div>
+        <div class="flex-1 min-w-0">
+            <h3 class="font-semibold xpb-text-primary text-sm sm:text-base truncate">{{accountCardName()}}</h3>
+            <p class="text-lg sm:text-xl font-bold xpb-text-income">${{accountCardBalance().toFixed(2)}}</p>
+        </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+        <span class="px-2 py-1 text-xs rounded-full xpb-bg-income text-white font-medium hidden sm:inline-block">Activa</span>
+        <button 
+            class="p-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors"
+            type="button"
+            (click)="onViewTransactions()"
+            title="Ver movimientos">
+            <span class="material-icons text-lg">receipt_long</span>
+        </button>
+        <button 
+            class="p-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors"
+            type="button"
+            (click)="onEditAccount()"
+            title="Editar">
+            <span class="material-icons text-lg">edit</span>
+        </button>
+        <button 
+            class="p-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-expense rounded-lg transition-colors"
+            type="button"
+            (click)="onDisableAccount()"
+            title="Deshabilitar">
+            <span class="material-icons text-lg">block</span>
+        </button>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Account Card 3 - Disabled Example -->
+<!--
+<article class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] p-4 opacity-60">
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 flex-1 min-w-0">
+        <div class="w-10 h-10 rounded-full bg-[var(--xpb-bg-sidebar)] flex items-center justify-center flex-shrink-0">
+            <span class="material-icons xpb-text-disabled text-xl">account_balance</span>
+        </div>
+        <div class="flex-1 min-w-0">
+            <h3 class="font-semibold xpb-text-disabled text-sm sm:text-base truncate">Cuenta Empresarial</h3>
+            <p class="text-lg sm:text-xl font-bold xpb-text-disabled">$0.00</p>
+        </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+        <span class="px-2 py-1 text-xs rounded-full bg-[var(--xpb-text-disabled)] text-white font-medium hidden sm:inline-block">Deshabilitada</span>
+        <button 
+            class="p-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors"
+            type="button"
+            title="Ver movimientos">
+            <span class="material-icons text-lg">receipt_long</span>
+        </button>
+        <button 
+            class="p-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors"
+            type="button"
+            title="Editar">
+            <span class="material-icons text-lg">edit</span>
+        </button>
+        <button 
+            class="p-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-income rounded-lg transition-colors"
+            type="button"
+            title="Habilitar">
+            <span class="material-icons text-lg">check_circle</span>
+        </button>
+        </div>
+    </div>
+</article>
+-->
