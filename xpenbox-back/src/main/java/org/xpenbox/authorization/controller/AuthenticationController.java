@@ -8,11 +8,13 @@ import org.xpenbox.authorization.service.ITokenService;
 import org.xpenbox.user.dto.UserCreateDTO;
 import org.xpenbox.user.service.IUserService;
 
+import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.CookieParam;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -118,17 +120,25 @@ public class AuthenticationController {
             .build();
     }
 
+    @GET
+    @Authenticated
+    @Path("/check")
+    public Response check() {
+        LOG.infof("Session check request received");
+        return Response.ok().build();
+    }
+
     @SuppressWarnings("deprecation")
     private NewCookie accessCookie(TokenResponseDTO token) { 
         LOG.infof("Creating access cookie with expiration: %d", token.accessTokenExpiresIn());
         return new NewCookie(
             "access_token", 
             token.accessToken(), 
-            "/api/rest/v1", 
+            "/", // Cambiar a / para que sea accesible desde todas las rutas
             null, 
             null, 
-            (int) (token.accessTokenExpiresIn() == null ? -1 : token.accessTokenExpiresIn().longValue()), 
-            false, 
+            (int) token.accessTokenExpiresIn().longValue(), 
+            false, // Secure=false para desarrollo (cambiar a true en producción con HTTPS)
             true
         );
     }
@@ -139,11 +149,11 @@ public class AuthenticationController {
         return new NewCookie(
             "refresh_token", 
             token.refreshToken(), 
-            "/api/rest/v1", 
+            "/", // Cambiar a / para que sea accesible desde todas las rutas
             null, 
             null, 
-            (int) (token.refreshTokenExpiresIn() == null ? -1 : token.refreshTokenExpiresIn().longValue()), 
-            false, 
+            (int) token.refreshTokenExpiresIn().longValue(), 
+            false, // Secure=false para desarrollo (cambiar a true en producción con HTTPS)
             true
         );
     }
@@ -151,6 +161,6 @@ public class AuthenticationController {
     @SuppressWarnings("deprecation")
     private NewCookie expire(String name) {
         LOG.infof("Expiring cookie: %s", name);
-        return new NewCookie(name, "", "/api/rest/v1", null, null, -1, false, true);
+        return new NewCookie(name, "", "/", null, null, 0, false, true);
     }
 }

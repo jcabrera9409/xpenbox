@@ -14,6 +14,7 @@ import org.xpenbox.common.ResourceCode;
 import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.user.entity.User;
 
+import io.quarkus.security.UnauthorizedException;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -30,15 +31,21 @@ public class TokenServiceImpl implements ITokenService {
     @ConfigProperty(name = "mp.jwt.expiration.time")
     private Long expirationTime;
 
-    @ConfigProperty(name = "mp.jwt.refresh.expiration.time")
-    private Long refreshExpirationTime;
+    @ConfigProperty(name = "mp.jwt.refresh.min.time")
+    private Long refreshExpirationMinTime;
+
+    @ConfigProperty(name = "mp.jwt.refresh.max.time")
+    private Long refreshExpirationMaxTime;
 
     private final TokenRepository tokenRepository;
+    private final TokenMapper tokenMapper;
 
     public TokenServiceImpl(
-        TokenRepository tokenRepository
+        TokenRepository tokenRepository,
+        TokenMapper tokenMapper
     ) {
         this.tokenRepository = tokenRepository;
+        this.tokenMapper = tokenMapper;
     }
 
     @Override
@@ -49,6 +56,9 @@ public class TokenServiceImpl implements ITokenService {
         token.setResourceCode(ResourceCode.generateTokenResourceCode());
         token.setUser(user);
         token.setPersistentSession(rememberMe);
+        token.setRefreshTokenExpiresAt(LocalDateTime.now().plusSeconds(
+            rememberMe ? refreshExpirationMaxTime : refreshExpirationMinTime
+        ));
         
         token = completeTokenData(token);
 
@@ -56,7 +66,7 @@ public class TokenServiceImpl implements ITokenService {
 
         LOG.infof("Token created successfully for email: %s", user.getEmail());
 
-        return TokenMapper.toAuthDTO(token);
+        return tokenMapper.toAuthDTO(token);
     }
 
     @Override
@@ -66,20 +76,29 @@ public class TokenServiceImpl implements ITokenService {
         Token token = tokenRepository.findValidRefreshToken(refreshToken)
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid or expired refresh token"));
         
+        if (LocalDateTime.now().isAfter(token.getRefreshTokenExpiresAt())) {
+            LOG.warnf("Refresh token expired for email: %s", token.getUser().getEmail());
+            throw new UnauthorizedException("Refresh token has expired");
+        }
+
         token = completeTokenData(token);
 
         tokenRepository.persist(token);
 
         LOG.infof("Token refreshed successfully for email: %s", token.getUser().getEmail());
 
-        return TokenMapper.toAuthDTO(token);
+        return tokenMapper.toAuthDTO(token);
     }
 
     @Override
     public void revokeToken(String refreshToken) {
         LOG.infof("Revoking token with refresh token: %s", refreshToken);
         Token token = tokenRepository.findValidRefreshToken(refreshToken)
-                .orElseThrow(() -> new ResourceNotFoundException("Invalid or expired refresh token"));
+                .orElse(null);
+        if (token == null) {
+            LOG.warnf("No valid token found for revocation with refresh token: %s", refreshToken);
+            return;
+        }
         token.setRevoked(true);
         tokenRepository.persist(token);
         LOG.infof("Token revoked successfully for email: %s", token.getUser().getEmail());
@@ -94,11 +113,7 @@ public class TokenServiceImpl implements ITokenService {
         token.setIssuedAt(LocalDateTime.now());
         token.setLastUsedAt(LocalDateTime.now());
         token.setAccessTokenExpiresAt(LocalDateTime.now().plusSeconds(expirationTime));
-
-        if (token.getPersistentSession()) {
-            token.setRefreshTokenExpiresAt(LocalDateTime.now().plusSeconds(refreshExpirationTime));
-        }
-
+        
         return token;
     }
 

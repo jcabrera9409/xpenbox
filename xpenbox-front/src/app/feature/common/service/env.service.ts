@@ -1,6 +1,11 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
+/**
+ * Service to access environment variables defined in the global __env object.
+ * This allows for dynamic configuration of the application without rebuilding.
+ * The __env object should be defined in the index.html or loaded via a separate script.
+ */
 @Injectable({
   providedIn: 'root'
 })
