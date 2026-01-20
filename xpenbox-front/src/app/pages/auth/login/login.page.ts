@@ -45,23 +45,19 @@ export class LoginPage {
       this.authService.login(credentials).subscribe({
         next: () => {
           this.isSubmitting.set(false);
-          // Redirigir al dashboard después del login exitoso
           this.router.navigate(['/landing']);
         },
         error: (error) => {
           this.isSubmitting.set(false);
           console.error('Error al iniciar sesión:', error);
-          // TODO: Mostrar mensaje de error al usuario
         }
       });
 
-      // Reset submitting state after API call
       setTimeout(() => {
         this.isSubmitting.set(false);
       }, 1000);
 
     } else {
-      // Mark all fields as touched to show validation errors
       Object.keys(this.loginForm.controls).forEach(key => {
         this.loginForm.get(key)?.markAsTouched();
       });

@@ -37,15 +37,12 @@ export class RegisterPage {
       this.isSubmitting.set(true);
       
       const formData = this.registerForm.value;
-      console.log('Registro:', formData);
+      console.log('FormData:', formData);
       
-      // TODO: Implementar llamada al servicio de autenticación
-      // Simulación de registro
       setTimeout(() => {
         this.isSubmitting.set(false);
       }, 2000);
     } else {
-      // Marcar todos los campos como tocados para mostrar errores
       Object.keys(this.registerForm.controls).forEach(key => {
         this.registerForm.get(key)?.markAsTouched();
       });

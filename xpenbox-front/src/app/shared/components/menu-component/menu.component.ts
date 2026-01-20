@@ -26,22 +26,18 @@ export class MenuComponent {
     { label: 'Configuración', icon: 'settings', route: '/configuracion' },
   ];
 
-  // User profile data - TODO: Obtener desde servicio de autenticación
   userProfile = signal<UserProfile>({
     name: 'Usuario',
     photo: undefined,
   });
 
-  // Notification count - TODO: Obtener desde servicio de notificaciones
   notificationCount = signal<number>(3);
 
   onQuickExpense(): void {
-    // TODO: Implementar lógica para abrir modal de registro rápido de gastos
     console.log('Registrar gasto rápido');
   }
 
   onLogout(): void {
-    // TODO: Implementar lógica de logout
     console.log('Cerrando sesión...');
   }
 
