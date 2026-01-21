@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -18,8 +18,10 @@ export class AccountCard {
   accountCardBalance = input<number>();
   accountCardState = input<boolean>();
 
+  accountCardEdit = output<string>();
+
   onEditAccount() {
-    console.log('Edit account clicked for', this.accountCardResourceCode());
+    this.accountCardEdit.emit(this.accountCardResourceCode() || '');
   }
 
   onViewTransactions() {

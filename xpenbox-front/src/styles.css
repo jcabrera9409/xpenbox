@@ -28,6 +28,27 @@
   /* Accent & Primary Actions */
   --xpb-primary: #4361EE;
   --xpb-primary-hover: #374BB5;
+
+  /* Accent & Neutral Actions */
+  --xpb-neutral-primary: #c0c0c0;
+  --xpb-neutral-primary-hover: #999999;
+
+}
+
+/* =============================================================================
+   Global Html Styles
+   =============================================================================
+*/
+a, button {
+  cursor: pointer;
+}
+
+a:disabled, button:disabled {
+  cursor: not-allowed;
+}
+
+*:disabled {
+  cursor: none;
 }
 
 /* =============================================================================
@@ -139,6 +160,32 @@
 
 .xpb-text-primary-accent:hover {
   color: var(--xpb-primary-hover);
+}
+
+/* =============================================================================
+   Utility Classes - Neutral Actions
+   ============================================================================= */
+.xpb-btn-neutral {
+  background-color: var(--xpb-neutral-primary);
+  color: #FFFFFF;
+  transition: background-color 0.2s;
+}
+
+.xpb-btn-neutral:hover:not(:disabled) {
+  background-color: var(--xpb-neutral-primary-hover);
+}
+
+.xpb-btn-neutral:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.xpb-text-neutral-accent {
+  color: var(--xpb-neutral-primary);
+}
+
+.xpb-text-neutral-accent:hover {
+  color: var(--xpb-neutral-primary-hover);
 }
 
 /* =============================================================================

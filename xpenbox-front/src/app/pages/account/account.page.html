@@ -2,7 +2,7 @@
   <!-- Header -->
   <div class="mb-4">
     <h1 class="text-xl sm:text-2xl font-bold xpb-text-primary mb-1">Mis Cuentas</h1>
-    <p class="xpb-text-secondary text-sm">Gestiona tus cuentas bancarias y tarjetas de crédito</p>
+    <p class="xpb-text-secondary text-sm">Gestiona tus cuentas y tarjetas de crédito</p>
   </div>
 
   <!-- Summary Cards -->
@@ -79,9 +79,10 @@
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-lg sm:text-xl font-semibold xpb-text-primary flex items-center gap-2">
           <span class="material-icons text-xl sm:text-2xl">account_balance</span>
-          Cuentas Bancarias
+          Cuentas
         </h2>
         <button 
+          (click)="openAccountEditionModal()"
           class="flex items-center gap-1.5 px-3 py-2 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors text-sm"
           type="button">
           <span class="material-icons text-lg">add</span>
@@ -112,6 +113,7 @@
             [accountCardBalance]="account.balance"
             [accountCardState]="account.state"
             [accountCardResourceCode]="account.resourceCode"
+            (accountCardEdit) = "openAccountEditionModal($event)"
           ></app-account-card>
         }
       }
@@ -166,3 +168,7 @@
     </section>
   </div>
 </div>
+
+@if (showAccountEditionModal()) {
+  <app-account-edition-modal (close)="closeAccountEditionModal()" [resourceCodeSelected]="resourceCodeSelected()"></app-account-edition-modal>
+}

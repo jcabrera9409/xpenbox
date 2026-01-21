@@ -5,10 +5,11 @@ import { landingRoutes } from './pages/landing.routes';
 import { LandingPage } from './pages/landing/landing.page';
 import { guestGuard } from './feature/common/auth/guest.guard';
 import { authGuard } from './feature/common/auth/auth.guard';
+import { AccountEditionModal } from './modal/account/account-edition-modal/account-edition.modal';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/landing', pathMatch: 'full' },
     { path: 'login', component: LoginPage, canActivate: [guestGuard] },
     { path: 'register', component: RegisterPage, canActivate: [guestGuard] },
-    { path: 'landing', component: LandingPage, children: landingRoutes, canActivate: [authGuard] },
+    { path: 'landing', component: LandingPage, children: landingRoutes, canActivate: [authGuard] }
 ];

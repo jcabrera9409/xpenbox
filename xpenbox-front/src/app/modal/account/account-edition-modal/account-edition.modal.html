@@ -1,0 +1,103 @@
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4" (click)="onClose()">
+    <div 
+        class="xpb-bg-main min-h-[300px] flex flex-col justify-center items-center p-6 rounded-lg shadow-md w-full max-w-md mx-auto"
+        (click)="$event.stopPropagation()">
+        <h2 class="text-2xl font-semibold xpb-text-primary mb-4">
+            @if (isEditMode) {
+                Modificar Cuenta
+            } @else {
+                Nueva Cuenta
+            }
+        </h2>
+        @if (loading() && isEditMode) {
+            <div class="flex items-center justify-center py-20">
+                <div class="text-center">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-neutral-300 border-t-black mb-4"></div>
+                <p class="text-neutral-600">Cargando cuenta...</p>
+                </div>
+            </div>
+        } @else if(errorMessage() && isEditMode) {
+            <div class="flex items-center justify-center py-20 px-6">
+                <div class="text-center max-w-md">
+                <span class="material-icons text-6xl text-neutral-400 mb-4">error_outline</span>
+                <h3 class="text-xl font-semibold text-neutral-900 mb-2">Error al cargar</h3>
+                <p class="text-neutral-600 mb-6">{{ errorMessage() }}</p>
+                <button
+                    type="button"
+                    (click)="onClose()"
+                    class="px-6 py-3 bg-black text-white rounded-lg hover:bg-neutral-800 transition-colors"
+                >
+                    Cerrar
+                </button>
+                </div>
+            </div>
+        } @else if(accountData() || !isEditMode) {
+            <form [formGroup]="formAccount" (ngSubmit)="onSubmit()" class="w-full flex flex-col gap-4">
+                <div>
+                    <label for="name" class="block text-sm xpb-text-secondary mb-1">Nombre de la cuenta</label>
+                    <input id="name" type="text" formControlName="name"
+                        class="xpb-bg-card border xpb-border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)]"
+                        maxlength="150" autocomplete="off" aria-required="true" aria-label="Nombre de la cuenta" />
+                    @if (formAccount.get('name')?.touched && formAccount.get('name')?.invalid) {
+                        <div class="text-xs xpb-text-negative mt-1 xpb-text-expense">
+                            @if (formAccount.get('name')?.errors?.['required']) {
+                                <span>El nombre es obligatorio.</span>
+                            }
+                            @if (formAccount.get('name')?.errors?.['minlength']) {
+                                <span>Mínimo 3 caracteres.</span>
+                            }
+                            @if (formAccount.get('name')?.errors?.['maxlength']) {
+                                <span>Máximo 150 caracteres.</span>
+                            }
+                        </div>
+                    }
+                </div>
+                @if (!isEditMode) {
+                    <div>
+                        <label for="initialBalance" class="block text-sm xpb-text-secondary mb-1">Saldo inicial</label>
+                        <input id="initialBalance" type="number" formControlName="initialBalance"
+                            class="xpb-bg-card border xpb-border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)]"
+                            min="0" step="0.01" aria-required="true" aria-label="Saldo inicial" />
+                        @if (formAccount.get('initialBalance')?.touched && formAccount.get('initialBalance')?.invalid) {
+                            <div class="text-xs xpb-text-negative mt-1 xpb-text-expense">
+                                @if (formAccount.get('initialBalance')?.errors?.['min']) {
+                                    <span>El saldo no puede ser negativo.</span>
+                                }
+                                @if (formAccount.get('initialBalance')?.errors?.['required']) {
+                                    <span>El saldo es obligatorio.</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                <div class="grid grid-cols-2 gap-3">
+                    <button type="button"
+                        (click)="onClose()"
+                        class="bg-[var(--xpb-neutral-primary)] text-black font-medium py-2 rounded mt-2 hover:bg-[var(--xpb-neutral-primary-hover)] transition">
+                        <span>Cancelar</span>
+                    </button>
+                    <button type="submit"
+                        class="bg-[var(--xpb-primary)] text-white font-medium py-2 rounded mt-2 hover:bg-[var(--xpb-primary-hover)] transition disabled:opacity-50"
+                        [disabled]="formAccount.invalid || sendingForm()">
+                        @if (!sendingForm()) {
+                            <span>
+                                @if (isEditMode) {
+                                    Actualizar Cuenta
+                                } @else {
+                                    Registrar Cuenta
+                                }
+                            </span>
+                        }
+                        @if (sendingForm()) {
+                            <span class="material-icons animate-spin align-middle">autorenew</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        }
+
+        
+    </div>
+</div>
+
