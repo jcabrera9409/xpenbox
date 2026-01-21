@@ -1,0 +1,70 @@
+<article class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] overflow-hidden hover:shadow-md transition-shadow">
+    <div class="p-4">
+        <div class="flex items-start justify-between gap-3 mb-3">
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+            <span class="material-icons xpb-text-primary text-xl">credit_card</span>
+            <h3 class="font-semibold xpb-text-primary text-sm sm:text-base truncate">{{creditCardName()}}</h3>
+            </div>
+            <div class="flex items-center gap-3 flex-wrap text-xs xpb-text-secondary">
+            <span>Límite: <strong class="xpb-text-primary">{{creditCardLimit() | currency:'PEN ':'symbol':'1.2-2'}}</strong></span>
+            <span>•</span>
+            <span>Balance: <strong class="xpb-text-expense">{{creditCardBalance() | currency:'PEN ':'symbol':'1.2-2'}}</strong></span>
+            </div>
+        </div>
+        <span class="px-2 py-1 text-xs rounded-full xpb-bg-income text-white font-medium flex-shrink-0">Activa</span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-3">
+            <div class="flex justify-between text-xs xpb-text-secondary mb-1">
+                <span>Disponible: {{(creditCardLimit() || 0) - (creditCardBalance() || 0) | currency:'PEN ':'symbol':'1.2-2'}}</span>
+                <span>{{creditCardBalancePercentage | number:'1.0-0'}} %</span>
+            </div>
+            <div class="w-full bg-[var(--xpb-bg-sidebar)] rounded-full h-2">
+                <div class="{{creditCardBalancePercentage < 20 ? 'bg-[var(--xpb-expense)]' : 'bg-[var(--xpb-income)]'}} h-2 rounded-full transition-all" [style.width.%]="creditCardBalancePercentage"></div>
+            </div>
+        </div>
+
+        <!-- Payment Dates -->
+        <div class="flex items-center gap-4 mb-3 text-xs">
+        <div class="flex items-center gap-1.5">
+            <span class="material-icons xpb-text-secondary" style="font-size: 16px;">event</span>
+            <span class="xpb-text-secondary">Facturación: <strong class="xpb-text-primary">{{creditCardBillingDate | date:'dd MMM'}}</strong></span>
+        </div>
+        <div class="flex items-center gap-1.5">
+            <span class="material-icons xpb-text-secondary" style="font-size: 16px;">alarm</span>
+            <span class="xpb-text-secondary">Límite pago: 
+                <strong class="{{creditCardBalancePercentage < 20 ? 'xpb-text-expense' : 'xpb-text-primary'}}">
+                {{creditCardPaymentDate | date:'dd MMM'}}
+            </strong>
+            </span>
+        </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-2 pt-3 border-t border-[var(--xpb-border)]">
+        <button (click)="onViewTransactions()"
+            class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors text-sm font-medium"
+            type="button"
+            title="Ver movimientos">
+            <span class="material-icons text-lg">receipt_long</span>
+            <span class="hidden lg:inline">Movimientos</span>
+        </button>
+        <button (click)="onEditCreditCard()"
+            class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors text-sm font-medium"
+            type="button"
+            title="Editar">
+            <span class="material-icons text-lg">edit</span>
+            <span class="hidden lg:inline">Editar</span>
+        </button>
+        <button (click)="onDisableCreditCard()"
+            class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-expense rounded-lg transition-colors text-sm font-medium"
+            type="button"
+            title="Deshabilitar">
+            <span class="material-icons text-lg">block</span>
+            <span class="hidden lg:inline">Deshabilitar</span>
+        </button>
+        </div>
+    </div>
+</article>

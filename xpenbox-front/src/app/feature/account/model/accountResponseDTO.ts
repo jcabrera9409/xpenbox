@@ -1,0 +1,11 @@
+/**
+ * DTO representing the response structure for an account.
+ * Includes resource code, name, balance, state, and optional closing date timestamp.
+ */
+export interface AccountResponseDTO {
+    resourceCode: string;
+    name: string;
+    balance: number;
+    state: boolean;
+    closingDateTimestamp: number | null;
+}

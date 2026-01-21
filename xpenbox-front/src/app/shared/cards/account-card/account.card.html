@@ -6,7 +6,9 @@
         </div>
         <div class="flex-1 min-w-0">
             <h3 class="font-semibold xpb-text-primary text-sm sm:text-base truncate">{{accountCardName()}}</h3>
-            <p class="text-lg sm:text-xl font-bold xpb-text-income">${{accountCardBalance().toFixed(2)}}</p>
+            <p class="text-lg sm:text-xl font-bold xpb-text-income">
+                {{accountCardBalance() | currency:'PEN ':'symbol':'1.2-2'}}
+            </p>
         </div>
         </div>
         <div class="flex items-center gap-2 flex-shrink-0">

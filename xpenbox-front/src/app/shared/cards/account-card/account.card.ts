@@ -1,8 +1,9 @@
 import { Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-account-card',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './account.card.html',
   styleUrl: './account.card.css',
   host: {
@@ -13,9 +14,9 @@ import { Component, input } from '@angular/core';
 export class AccountCard {
 
   accountCardResourceCode = input<string>();
-  accountCardName = input<string>("hola");
-  accountCardBalance = input<number>(1000.10);
-  accountCardState = input<boolean>(true);
+  accountCardName = input<string>();
+  accountCardBalance = input<number>();
+  accountCardState = input<boolean>();
 
   onEditAccount() {
     console.log('Edit account clicked for', this.accountCardResourceCode());
