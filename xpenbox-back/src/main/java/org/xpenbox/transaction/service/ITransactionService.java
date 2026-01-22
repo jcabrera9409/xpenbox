@@ -5,12 +5,13 @@ import org.xpenbox.common.service.IGenericService;
 import org.xpenbox.transaction.dto.TransactionCreateDTO;
 import org.xpenbox.transaction.dto.TransactionFilterDTO;
 import org.xpenbox.transaction.dto.TransactionResponseDTO;
+import org.xpenbox.transaction.dto.TransactionUpdateDTO;
 import org.xpenbox.transaction.entity.Transaction;
 
 /**
  * Service interface for managing transactions.
  */
-public interface ITransactionService extends IGenericService<Transaction, TransactionCreateDTO, TransactionCreateDTO, TransactionResponseDTO> {
+public interface ITransactionService extends IGenericService<Transaction, TransactionCreateDTO, TransactionUpdateDTO, TransactionResponseDTO> {
     
     /**
      * Rollbacks a transaction by its resource code.

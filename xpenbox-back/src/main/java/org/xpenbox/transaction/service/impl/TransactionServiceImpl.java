@@ -17,11 +17,13 @@ import org.xpenbox.creditcard.entity.CreditCard;
 import org.xpenbox.creditcard.repository.CreditCardRepository;
 import org.xpenbox.creditcard.service.ICreditCardService;
 import org.xpenbox.exception.BadRequestException;
+import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.income.entity.Income;
 import org.xpenbox.income.repository.IncomeRepository;
 import org.xpenbox.transaction.dto.TransactionCreateDTO;
 import org.xpenbox.transaction.dto.TransactionFilterDTO;
 import org.xpenbox.transaction.dto.TransactionResponseDTO;
+import org.xpenbox.transaction.dto.TransactionUpdateDTO;
 import org.xpenbox.transaction.entity.Transaction;
 import org.xpenbox.transaction.entity.Transaction.TransactionType;
 import org.xpenbox.transaction.mapper.TransactionMapper;
@@ -36,7 +38,7 @@ import jakarta.enterprise.context.ApplicationScoped;
  * Service implementation for managing Transactions.
  */
 @ApplicationScoped
-public class TransactionServiceImpl extends GenericServiceImpl<Transaction, TransactionCreateDTO, TransactionCreateDTO, TransactionResponseDTO> implements ITransactionService {
+public class TransactionServiceImpl extends GenericServiceImpl<Transaction, TransactionCreateDTO, TransactionUpdateDTO, TransactionResponseDTO> implements ITransactionService {
     private static final Logger LOG = Logger.getLogger(TransactionServiceImpl.class);
 
     private final UserRepository userRepository;
@@ -103,13 +105,53 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
     public TransactionResponseDTO create(TransactionCreateDTO entityCreateDTO, String userEmail) {
         LOG.infof("Starting creation of %s for user email: %s", getEntityName(), userEmail);
 
-        User user = super.validateAndGetUser(userEmail);
+        User user = validateAndGetUser(userEmail);
 
         Transaction transaction = validateCreateAndReturnEntityByType(entityCreateDTO, user);
        
         transactionRepository.persist(transaction);
 
         LOG.infof("Successfully created %s with ID: %d for user email: %s", getEntityName(), transaction.id, userEmail);
+        return transactionMapper.toDTO(transaction);
+    }
+
+    /**
+     * Updates a Transaction based on the provided resourceCode, DTO and user email
+     * @param resourceCode The resourceCode of the transaction to update.
+     * @param entityUpdateDTO The DTO containing transaction update data.
+     * @userEmail The email of the user updating the transaction.
+     * @return The updated Transaction as a DTO
+     */
+    @Override
+    public TransactionResponseDTO update(String resourceCode, TransactionUpdateDTO entityUpdateDTO, String userEmail) {
+        LOG.infof("Starting update of %s with resourceCode %s for user email: %s", entityUpdateDTO, resourceCode, userEmail);
+
+        User user = validateAndGetUser(userEmail);
+
+        Transaction transaction = validateAndGetTransactionEntity(resourceCode, user);
+
+        boolean updated = transactionMapper.updateEntity(entityUpdateDTO, transaction);
+
+        if (entityUpdateDTO.categoryResourceCode() != null) {
+            Category category = categoryRepository.findByResourceCodeAndUserId(entityUpdateDTO.categoryResourceCode(), user.id)
+                .orElseThrow(() -> {
+                    LOG.errorf("Category not found with resource code: %s for user email: %s", entityUpdateDTO.categoryResourceCode(), userEmail);
+                    throw new ResourceNotFoundException("Category not found with resource code: " + entityUpdateDTO.categoryResourceCode() + " for user email: " + userEmail);
+                });
+            
+            if (!entityUpdateDTO.categoryResourceCode().equals(category.getResourceCode())) {
+                transaction.setCategory(category);
+                updated = true;
+            }
+        }
+
+        if (updated) {
+            transactionRepository.persist(transaction);
+            LOG.infof("%s updated with resource code: %s", getEntityName(), resourceCode);
+        } else {
+            LOG.infof("No changes detected for %s with resource code: %s", getEntityName(), resourceCode);
+        }
+
         return transactionMapper.toDTO(transaction);
     }
 
@@ -122,7 +164,7 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
     public void rollback(String resourceCode, String userEmail) {
         LOG.infof("Rolling back transaction with resource code: %s for user email: %s", resourceCode, userEmail);
 
-        User user = super.validateAndGetUser(userEmail);
+        User user = validateAndGetUser(userEmail);
         Transaction transaction = validateAndGetTransactionEntity(resourceCode, user);
     
         validateRollbackAndReturnEntityByType(transaction, user);
@@ -141,7 +183,7 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
     public APIPageableDTO<TransactionResponseDTO> filterTransactions(TransactionFilterDTO filterDTO, String userEmail) {
         LOG.infof("Filtering transactions for user email: %s with filter: %s", userEmail, filterDTO);
 
-        User user = super.validateAndGetUser(userEmail);
+        User user = validateAndGetUser(userEmail);
 
         List<Transaction> filteredTransactions = transactionRepository.findByFilter(filterDTO, user);
         Integer totalElements = transactionRepository.countByFilter(filterDTO, user);

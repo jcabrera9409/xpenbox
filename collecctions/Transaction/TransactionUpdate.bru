@@ -1,0 +1,19 @@
+meta {
+  name: TransactionUpdate
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{apiUrl}}/api/rest/v1/transaction/rc:xpenbox:transaction:20260117200546:43e6db73-3c49-4223-8837-c0a8e8ea44ae
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "description": "Pago Agua",
+    "categoryResourceCode": null,
+    "transactionDateTimestamp": null
+  }
+}

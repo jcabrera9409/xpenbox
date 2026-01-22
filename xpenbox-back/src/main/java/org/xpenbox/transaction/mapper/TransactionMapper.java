@@ -13,6 +13,7 @@ import org.xpenbox.creditcard.mapper.CreditCardMapper;
 import org.xpenbox.income.mapper.IncomeMapper;
 import org.xpenbox.transaction.dto.TransactionCreateDTO;
 import org.xpenbox.transaction.dto.TransactionResponseDTO;
+import org.xpenbox.transaction.dto.TransactionUpdateDTO;
 import org.xpenbox.transaction.entity.Transaction;
 import org.xpenbox.user.entity.User;
 
@@ -22,7 +23,7 @@ import jakarta.inject.Singleton;
  * Mapper class for converting between Transaction entities and DTOs.
  */
 @Singleton
-public class TransactionMapper implements GenericMapper<Transaction, TransactionCreateDTO, TransactionCreateDTO, TransactionResponseDTO> {
+public class TransactionMapper implements GenericMapper<Transaction, TransactionCreateDTO, TransactionUpdateDTO, TransactionResponseDTO> {
     private static final Logger LOG = Logger.getLogger(TransactionMapper.class);
 
     private final CategoryMapper categoryMapper;
@@ -101,7 +102,7 @@ public class TransactionMapper implements GenericMapper<Transaction, Transaction
      */
     @Override
     public Transaction toEntity(TransactionCreateDTO dto, User user) {
-        LOG.infof("Mapping TransactionResponseDTO to Transaction entity: %s", dto);
+        LOG.infof("Mapping TransactionCreateDTO to Transaction entity: %s", dto);
         Transaction entity = new Transaction();
         entity.setResourceCode(ResourceCode.generateTransactionResourceCode());
         entity.setTransactionType(dto.transactionType());
@@ -123,7 +124,23 @@ public class TransactionMapper implements GenericMapper<Transaction, Transaction
      * @return true if the entity was updated, false otherwise.
      */
     @Override
-    public boolean updateEntity(TransactionCreateDTO updateDto, Transaction entity) {
-        throw new UnsupportedOperationException("Update operation is not supported for Transaction entity.");
+    public boolean updateEntity(TransactionUpdateDTO updateDto, Transaction entity) {
+        LOG.infof("Mapping TransactionUpdateDTO to Transaction Entity: %s", updateDto);
+        boolean isUpdated = false;
+
+        if (updateDto.description() != null && !updateDto.description().equals(entity.getDescription())) {
+            entity.setDescription(updateDto.description());
+            isUpdated = true;
+        }
+
+        Long entityTransactionDateTimestamp = entity.getTransactionDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        if (updateDto.transactionDateTimestamp() != null && !updateDto.transactionDateTimestamp().equals(entityTransactionDateTimestamp)) {
+            entity.setTransactionDate(
+                Instant.ofEpochMilli(updateDto.transactionDateTimestamp()).atZone(ZoneId.systemDefault()).toLocalDateTime()
+            );
+            isUpdated = true;
+        }
+
+        return isUpdated;
     }
 }

@@ -6,6 +6,7 @@ import org.xpenbox.common.dto.APIResponseDTO;
 import org.xpenbox.transaction.dto.TransactionCreateDTO;
 import org.xpenbox.transaction.dto.TransactionFilterDTO;
 import org.xpenbox.transaction.dto.TransactionResponseDTO;
+import org.xpenbox.transaction.dto.TransactionUpdateDTO;
 import org.xpenbox.transaction.service.ITransactionService;
 
 import io.quarkus.security.Authenticated;
@@ -15,6 +16,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -55,6 +57,28 @@ public class TransactionController {
 
         return Response.status(Response.Status.CREATED).entity(
             APIResponseDTO.success("Transaction created successfully", transactionResponse, Response.Status.CREATED.getStatusCode())
+        ).build();
+    }
+
+    /**
+     * Update an existing transaction
+     * @param securityContext Security context of the authenticated user
+     * @param resourceCode Unique resource code of the transaction to be updated
+     * @param transactionUpdateDTO Data transfer object containing transaction update details
+     * @return Response containing the updated transaction information
+     */
+    @PUT
+    @Path("/{resourceCode}")
+    @Transactional
+    public Response updateTransaction(@Context SecurityContext securityContext, @PathParam("resourceCode") String resourceCode, @Valid TransactionUpdateDTO transactionUpdateDTO) {
+        String userEmail = securityContext.getUserPrincipal().getName();
+        LOG.infof("Update transaction request received for user: %s", userEmail);
+
+        TransactionResponseDTO transactionResponse = transactionService.update(resourceCode, transactionUpdateDTO, userEmail);
+        LOG.infof("Transaction updated successfully for user: %s", userEmail);
+        
+        return Response.ok(
+            APIResponseDTO.success("Transaction updated successfully", transactionResponse, Response.Status.OK.getStatusCode())
         ).build();
     }
 
