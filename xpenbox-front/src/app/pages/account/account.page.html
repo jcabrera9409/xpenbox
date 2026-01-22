@@ -128,6 +128,7 @@
           Tarjetas de Crédito
         </h2>
         <button 
+          (click)="openCreditCardEditionModal()"
           class="flex items-center gap-1.5 px-3 py-2 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors text-sm"
           type="button">
           <span class="material-icons text-lg">add</span>
@@ -161,6 +162,7 @@
               [creditCardBillingDay]="creditCard.billingDay"
               [creditCardPaymentDay]="creditCard.paymentDay"
               [creditCardResourceCode]="creditCard.resourceCode"
+              (creditCardEdit) = "openCreditCardEditionModal($event)"
             ></app-credit-card>
           }
         }
@@ -170,5 +172,9 @@
 </div>
 
 @if (showAccountEditionModal()) {
-  <app-account-edition-modal (close)="closeAccountEditionModal()" [resourceCodeSelected]="resourceCodeSelected()"></app-account-edition-modal>
+  <app-account-edition-modal (close)="closeAccountEditionModal()" [resourceCodeSelected]="resourceCodeAccountSelected()"></app-account-edition-modal>
+}
+
+@if (showCreditCardEditionModal()) {
+  <app-creditcard-edition-modal (close)="closeCreditCardEditionModal()" [resourceCodeSelected]="resourceCodeCreditCardSelected()"></app-creditcard-edition-modal>
 }

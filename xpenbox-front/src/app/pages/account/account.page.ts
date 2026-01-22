@@ -8,10 +8,11 @@ import { isPlatformServer } from '@angular/common';
 import { CreditCardService } from '../../feature/creditcard/service/creditcard.service';
 import { creditCardState } from '../../feature/creditcard/service/creditcard.state';
 import { AccountEditionModal } from '../../modal/account/account-edition-modal/account-edition.modal';
+import { CreditcardEditionModal } from '../../modal/account/creditcard-edition-modal/creditcard-edition.modal';
 
 @Component({
   selector: 'app-account-page',
-  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal],
+  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal],
   templateUrl: './account.page.html',
   styleUrl: './account.page.css',
 })
@@ -21,7 +22,10 @@ export class AccountPage {
   creditCardState = creditCardState;
 
   showAccountEditionModal = signal(false);
-  resourceCodeSelected = signal<string | null>(null);
+  resourceCodeAccountSelected = signal<string | null>(null);
+
+  showCreditCardEditionModal = signal(false);
+  resourceCodeCreditCardSelected = signal<string | null>(null);
 
   constructor(
     private accountService: AccountService,
@@ -32,12 +36,12 @@ export class AccountPage {
       return;
     }
 
-    this.accountService.loadAccounts();
-    this.creditCardService.loadCreditCards();
+    this.accountService.load();
+    this.creditCardService.load();
   }
 
-  openAccountEditionModal(resourceCodeSelected: string | null = null) {
-    this.resourceCodeSelected.set(resourceCodeSelected);
+  openAccountEditionModal(resourceCodeAccountSelected: string | null = null) {
+    this.resourceCodeAccountSelected.set(resourceCodeAccountSelected);
     this.showAccountEditionModal.set(true);
   }
 
@@ -45,4 +49,12 @@ export class AccountPage {
     this.showAccountEditionModal.set(false);
   }
   
+  openCreditCardEditionModal(resourceCodeCreditCardSelected: string | null = null) {
+    this.resourceCodeCreditCardSelected.set(resourceCodeCreditCardSelected);
+    this.showCreditCardEditionModal.set(true);
+  }
+
+  closeCreditCardEditionModal() {
+    this.showCreditCardEditionModal.set(false);
+  }
 }

@@ -1,34 +1,42 @@
 import { Injectable } from '@angular/core';
 import { EnvService } from '../../common/service/env.service';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { ApiResponseDTO } from '../../common/model/apiResponseDTO';
 import { CreditCardResponseDTO } from '../model/creditCardResponseDTO';
 import { creditCardState } from './creditcard.state';
+import { CreditCardRequestDTO } from '../model/creditCardRequestDTO';
+import { GenericService } from '../../common/service/generic.service';
 
+/**
+ * Service for managing credit cards, including creating, updating, and fetching credit card data.
+ * This service interacts with the backend API to perform CRUD operations on credit cards.
+ * It also updates the credit card state to reflect the current list of credit cards and their total balance.
+ */
 @Injectable({
   providedIn: 'root',
 })
-export class CreditCardService {
-
-  private apiUrl: string;
+export class CreditCardService extends GenericService<CreditCardRequestDTO, CreditCardResponseDTO> {
 
   constructor(
-    private http: HttpClient,
-    private envService: EnvService
+    protected override http: HttpClient,
+    protected envService: EnvService
   ) {
-    this.apiUrl = `${this.envService.getApiUrl()}/creditcard`;
+    super ( 
+      http,
+      `${envService.getApiUrl()}/creditcard`
+    )
   }
 
-  getCreditCards(): Observable<ApiResponseDTO<CreditCardResponseDTO[]>> {
-    return this.http.get<ApiResponseDTO<CreditCardResponseDTO[]>>(this.apiUrl, { withCredentials: true });
-  }
-
-  loadCreditCards(): void {
+  /**
+   * Loads credit cards and updates the credit card state with the fetched data.
+   * Calculates the total balance of all credit cards and updates the state accordingly.
+   * Handles loading and error states.
+   */
+  override load(): void {
     creditCardState.isLoading.set(true);
     creditCardState.error.set(null);
 
-    this.getCreditCards().subscribe({
+    this.getAll().subscribe({
       next: (response: ApiResponseDTO<CreditCardResponseDTO[]>) => {
         const totalBalance = response.data?.reduce((sum, card) => sum + (card.currentBalance || 0), 0) || 0;
         creditCardState.creditCards.set(response.data || []);
@@ -41,9 +49,5 @@ export class CreditCardService {
         creditCardState.isLoading.set(false);
       }
     })
-  }
-
-  refreshCreditCards(): void {
-    this.loadCreditCards();
   }
 }

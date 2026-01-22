@@ -30,8 +30,8 @@
   --xpb-primary-hover: #374BB5;
 
   /* Accent & Neutral Actions */
-  --xpb-neutral-primary: #c0c0c0;
-  --xpb-neutral-primary-hover: #999999;
+  --xpb-neutral: #c0c0c0;
+  --xpb-neutral-hover: #999999;
 
 }
 
@@ -166,13 +166,13 @@ a:disabled, button:disabled {
    Utility Classes - Neutral Actions
    ============================================================================= */
 .xpb-btn-neutral {
-  background-color: var(--xpb-neutral-primary);
+  background-color: var(--xpb-neutral);
   color: #FFFFFF;
   transition: background-color 0.2s;
 }
 
 .xpb-btn-neutral:hover:not(:disabled) {
-  background-color: var(--xpb-neutral-primary-hover);
+  background-color: var(--xpb-neutral-hover);
 }
 
 .xpb-btn-neutral:disabled {
@@ -181,11 +181,11 @@ a:disabled, button:disabled {
 }
 
 .xpb-text-neutral-accent {
-  color: var(--xpb-neutral-primary);
+  color: var(--xpb-neutral);
 }
 
 .xpb-text-neutral-accent:hover {
-  color: var(--xpb-neutral-primary-hover);
+  color: var(--xpb-neutral-hover);
 }
 
 /* =============================================================================

@@ -1,7 +1,7 @@
 <!-- Modal Overlay -->
 <div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4" (click)="onClose()">
     <div 
-        class="xpb-bg-main min-h-[300px] flex flex-col justify-center items-center p-6 rounded-lg shadow-md w-full max-w-md mx-auto"
+        class="xpb-bg-main min-h-auto flex flex-col justify-center items-center p-6 rounded-lg shadow-md w-full max-w-md mx-auto"
         (click)="$event.stopPropagation()">
         <h2 class="text-2xl font-semibold xpb-text-primary mb-4">
             @if (isEditMode) {
@@ -74,7 +74,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <button type="button"
                         (click)="onClose()"
-                        class="bg-[var(--xpb-neutral-primary)] text-black font-medium py-2 rounded mt-2 hover:bg-[var(--xpb-neutral-primary-hover)] transition">
+                        class="bg-[var(--xpb-neutral)] text-black font-medium py-2 rounded mt-2 hover:bg-[var(--xpb-neutral-hover)] transition">
                         <span>Cancelar</span>
                     </button>
                     <button type="submit"

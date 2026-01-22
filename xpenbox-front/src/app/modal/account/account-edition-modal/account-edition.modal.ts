@@ -29,8 +29,7 @@ export class AccountEditionModal implements OnInit {
   constructor(
     private fb: FormBuilder,
     private accountService: AccountService
-  ) {
-  }
+  ) { }
 
   ngOnInit(): void {
     this.loadAccountData()
@@ -50,19 +49,19 @@ export class AccountEditionModal implements OnInit {
     const accountData = this.buildAccountData();
 
     const observable = this.isEditMode
-      ? this.accountService.updateAccount(this.resourceCodeSelected()!, accountData)
-      : this.accountService.createAccount(accountData);
+      ? this.accountService.update(this.resourceCodeSelected()!, accountData)
+      : this.accountService.create(accountData);
 
     observable.subscribe({
       next: (response: ApiResponseDTO<AccountResponseDTO>) => {
         this.sendingForm.set(false);
 
         if (response.success && response.data) {
-          this.accountService.refreshAccounts();
+          this.accountService.refresh();
           this.close.emit();
         } else {
           console.error('Error creating account:', response.message);
-          alert('Error creating account: ' + response.message);
+          this.errorMessage.set('Error creating account: ' + response.message);
         }
       }, error: (error) => {
         console.error('Error creating account:', error);
@@ -103,7 +102,7 @@ export class AccountEditionModal implements OnInit {
 
     this.loading.set(true);
 
-    this.accountService.getAccountByResourceCode(this.resourceCodeSelected()!).subscribe({
+    this.accountService.getByResourceCode(this.resourceCodeSelected()!).subscribe({
       next: (response: ApiResponseDTO<AccountResponseDTO>) => {
         if (response.success && response.data) {
           this.accountData.set(response.data);

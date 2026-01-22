@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -21,6 +21,8 @@ export class CreditCard {
   creditCardBillingDay = input<number>();
   creditCardPaymentDay = input<number>();
 
+  creditCardEdit = output<string>();
+
   get creditCardBalancePercentage(): number {
     if (this.creditCardLimit() === 0 || this.creditCardBalance() === 0) return 0;
 
@@ -42,7 +44,7 @@ export class CreditCard {
   }
 
   onEditCreditCard() {
-    console.log('Edit credit card clicked for', this.creditCardResourceCode());
+    this.creditCardEdit.emit(this.creditCardResourceCode() || '');
   }
 
   onViewTransactions() {
