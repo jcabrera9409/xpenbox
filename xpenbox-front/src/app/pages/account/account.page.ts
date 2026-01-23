@@ -48,6 +48,10 @@ export class AccountPage {
   closeAccountEditionModal() {
     this.showAccountEditionModal.set(false);
   }
+
+  reloadAccounts() {
+    this.accountService.refresh();
+  }
   
   openCreditCardEditionModal(resourceCodeCreditCardSelected: string | null = null) {
     this.resourceCodeCreditCardSelected.set(resourceCodeCreditCardSelected);
@@ -56,5 +60,9 @@ export class AccountPage {
 
   closeCreditCardEditionModal() {
     this.showCreditCardEditionModal.set(false);
+  }
+
+  reloadCreditCards() {
+    this.creditCardService.refresh();
   }
 }

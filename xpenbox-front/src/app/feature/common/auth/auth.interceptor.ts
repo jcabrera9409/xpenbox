@@ -2,7 +2,10 @@ import { HttpErrorResponse, HttpHandlerFn, HttpRequest } from "@angular/common/h
 import { inject } from "@angular/core";
 import { AuthService } from "../../auth/service/auth.service";
 import { Router } from "@angular/router";
-import { catchError, switchMap, throwError } from "rxjs";
+import { catchError, Observable, switchMap, throwError } from "rxjs";
+
+// Singleton para manejar un único refresh a la vez
+let ongoingRefresh$: Observable<void> | null = null;
 
 /**
  * Authentication Interceptor to handle token refresh on 401 errors
@@ -21,6 +24,7 @@ export function authInterceptor(
         catchError((error: HttpErrorResponse) => {
             if (req.url.endsWith('/auth/refresh')) {
                 authService.clearAuthState();
+                ongoingRefresh$ = null;
                 return throwError(() => error);
             }
 
@@ -37,22 +41,30 @@ export function authInterceptor(
                 return throwError(() => error);
             }
 
-            return authService.refresh().pipe(
-                switchMap(() => 
-                    next(req.clone({withCredentials: true}))
-                ),
-                catchError((refreshError) => {
-                    authService.logout().subscribe({
-                        complete: () => {
-                            authService.clearAuthState();
-                            router.navigate(['/login']);
-                        },
-                        error: () => {
-                            authService.clearAuthState();
-                            router.navigate(['/login']);
-                        }
-                    });
-                    return throwError(() => refreshError);
+            // Si ya hay un refresh en curso, reutilizarlo
+            if (!ongoingRefresh$) {
+                ongoingRefresh$ = authService.refresh().pipe(
+                    catchError((refreshError) => {
+                        ongoingRefresh$ = null;
+                        authService.logout().subscribe({
+                            complete: () => {
+                                authService.clearAuthState();
+                                router.navigate(['/login']);
+                            },
+                            error: () => {
+                                authService.clearAuthState();
+                                router.navigate(['/login']);
+                            }
+                        });
+                        return throwError(() => refreshError);
+                    })
+                );
+            }
+
+            return ongoingRefresh$.pipe(
+                switchMap(() => {
+                    ongoingRefresh$ = null;
+                    return next(req.clone({withCredentials: true}));
                 })
             );
         })

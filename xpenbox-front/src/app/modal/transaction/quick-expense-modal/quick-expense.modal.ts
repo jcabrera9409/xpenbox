@@ -1,5 +1,13 @@
-import { Component, output, signal } from '@angular/core';
+import { Component, effect, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { categoryState } from '../../../feature/category/service/category.state';
+import { accountState } from '../../../feature/account/service/account.state';
+import { creditCardState } from '../../../feature/creditcard/service/creditcard.state';
+import { CategoryService } from '../../../feature/category/service/category.service';
+import { AccountService } from '../../../feature/account/service/account.service';
+import { CreditCardService } from '../../../feature/creditcard/service/creditcard.service';
+import { CategoryRequestDTO } from '../../../feature/category/model/categoryRequestDTO';
+import { CategoryResponseDTO } from '../../../feature/category/model/categoryResponseDTO';
 
 @Component({
   selector: 'app-quick-expense-modal',
@@ -12,21 +20,46 @@ export class QuickExpenseModal {
 
   close = output<void>();
 
+  // Application states
+  categoryState = categoryState;
+  accountState = accountState;
+  creditCardState = creditCardState;  
+
+  selectedCategory = signal<CategoryResponseDTO | null>(null);
+
   // Numeric input state (signals)
   amount = signal('');
   description = signal('');
   loading = signal(false);
   showError = signal(false);
 
-  // Example categories and accounts (replace with real data integration)
-  categories = [
-    { id: 1, name: 'Alimentos', color: '#F87171'},
-    { id: 2, name: 'Transporte', color: '#60A5FA'},
-    { id: 3, name: 'Entretenimiento', color: '#FBBF24'},
-    { id: 4, name: 'Salud', color: '#34D399'},
-    { id: 5, name: 'Educación', color: '#A78BFA'},
-    { id: 6, name: 'Otros', color: '#9CA3AF'},
-  ];
+  constructor(
+    private categoryService: CategoryService,
+    private accountService: AccountService,
+    private creditCardService: CreditCardService
+  ) {
+    if (this.categoryState.categories().length === 0) {
+      this.categoryService.load();
+    }
+    if (this.accountState.accounts().length === 0) {
+      this.accountService.load();
+    }
+    if (this.creditCardState.creditCards().length === 0) {
+      this.creditCardService.load();
+    }
+
+    // Auto-select first category when loaded
+    effect(() => {
+      const categories = this.categories;
+      if (categories.length > 0 && !this.selectedCategory()) {
+        this.selectedCategory.set(categories[0] || null);
+      }
+    });
+  } 
+
+  get categories(): CategoryResponseDTO[] {
+    return this.categoryState.categories().filter(c => c.state);
+  }
 
   accounts = [
     { id: 1, name: 'Efectivo', type: 'cash', balance: 1250.50 },
@@ -35,7 +68,6 @@ export class QuickExpenseModal {
     { id: 4, name: 'Cuenta Bancaria', type: 'bank', balance: 12500.75 },
   ];
 
-  selectedCategory = signal(this.categories[0]);
   selectedAccount = signal(this.accounts[0]);
 
   // Numeric keyboard keys (1-9 and decimal point)
@@ -79,8 +111,8 @@ export class QuickExpenseModal {
     this.amount.set('');
   }
 
-  onCategoryChange(categoryId: string) {
-    const category = this.categories.find(c => c.id === parseInt(categoryId));
+  onCategoryChange(categoryResourceCode: string) {
+    const category = this.categoryState.categories().find(c => c.resourceCode === categoryResourceCode);
     if (category) {
       this.selectedCategory.set(category);
     }
@@ -93,7 +125,7 @@ export class QuickExpenseModal {
     }
   }
 
-  selectCategory(category: { id: number; name: string; color: string }) {
+  selectCategory(category: CategoryResponseDTO) {
     this.selectedCategory.set(category);
   }
 
@@ -101,8 +133,8 @@ export class QuickExpenseModal {
     this.selectedAccount.set(account);
   }
 
-  isSelectedCategory(categoryId: number): boolean {
-    return this.selectedCategory().id === categoryId;
+  isSelectedCategory(categoryResourceCode: string): boolean {
+    return this.selectedCategory()?.resourceCode === categoryResourceCode;
   }
 
   isSelectedAccount(accountId: number): boolean {

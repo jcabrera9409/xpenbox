@@ -42,4 +42,8 @@ export class CategoryPage {
   closeCategoryEditionModal() {
     this.showCategoryEditionModal.set(false);
   }
+
+  reloadCategories() {
+    this.categoryService.refresh();
+  }
 }
