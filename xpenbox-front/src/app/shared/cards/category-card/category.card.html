@@ -1,0 +1,67 @@
+<div class="xpb-bg-card rounded-lg border xpb-border p-4 hover:shadow-md transition-shadow">
+    <!-- Category Header -->
+    <div class="flex items-start justify-between mb-3">
+    <div class="flex items-center gap-3 flex-1 min-w-0">
+        <!-- Color Indicator -->
+        <div 
+        class="w-10 h-10 rounded-lg flex-shrink-0 shadow-sm border xpb-border"
+        [style.background-color]="categoryCardColor()">
+        </div>
+        <!-- Category Name -->
+        <div class="flex-1 min-w-0">
+        <h3 class="font-semibold xpb-text-primary text-base truncate">
+            {{ categoryCardName() }}
+        </h3>
+        </div>
+    </div>
+    <!-- State Badge -->
+    <div class="flex-shrink-0">
+        @if (categoryCardState()) {
+        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--xpb-income)]/10 text-[var(--xpb-income)] text-xs font-medium">
+            <span class="material-icons" style="font-size: 14px;">check_circle</span>
+            Activa
+        </span>
+        } @else {
+        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md xpb-bg-main xpb-text-secondary text-xs font-medium">
+            <span class="material-icons" style="font-size: 14px;">cancel</span>
+            Inactiva
+        </span>
+        }
+    </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex gap-2 mt-4">
+    <button 
+        (click)="onEditCategory()"
+        class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 xpb-bg-main hover:bg-[var(--xpb-border)] xpb-text-primary rounded-lg font-medium transition-colors text-sm"
+        type="button"
+        [attr.aria-label]="'Editar categoría ' + categoryCardName()">
+        <span class="material-icons text-lg">edit</span>
+        <span>Editar</span>
+    </button>
+    <button 
+        (click)="onDisableCategory()"
+        class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg font-medium transition-colors text-sm"
+        [class]="categoryCardState()
+        ? 'bg-[var(--xpb-expense)]/10 hover:bg-[var(--xpb-expense)]/20 text-[var(--xpb-expense)]' 
+        : 'bg-[var(--xpb-income)]/10 hover:bg-[var(--xpb-income)]/20 text-[var(--xpb-income)]'"
+        type="button"
+        [attr.aria-label]="(categoryCardState() ? 'Inhabilitar' : 'Habilitar') + ' categoría ' + categoryCardName()">
+        <span class="material-icons text-lg">
+        @if (categoryCardState()) {
+            block
+        } @else {
+            check_circle
+        }
+        </span>
+        <span>
+        @if (categoryCardState()) {
+            Inhabilitar
+        } @else {
+            Habilitar
+        }
+        </span>
+    </button>
+    </div>
+</div>

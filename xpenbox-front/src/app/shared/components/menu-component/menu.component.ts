@@ -22,7 +22,7 @@ export class MenuComponent {
   menuItems: MenuItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/landing' },
     { label: 'Cuentas', icon: 'account_balance_wallet', route: '/landing/account' },
-    { label: 'Categorías', icon: 'category', route: '/landing/categorias' },
+    { label: 'Categorías', icon: 'category', route: '/landing/category' },
     { label: 'Configuración', icon: 'settings', route: '/landing/configuracion' },
   ];
 

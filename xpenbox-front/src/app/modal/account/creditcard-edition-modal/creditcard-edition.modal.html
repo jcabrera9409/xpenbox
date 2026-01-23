@@ -1,159 +1,308 @@
 <!-- Modal Overlay -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4" (click)="onClose()">
-    <div class="xpb-bg-main min-h-auto flex flex-col justify-center items-center p-6 rounded-lg shadow-md w-full max-w-md mx-auto"
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
+    <div 
+        class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-lg mx-auto overflow-hidden"
         (click)="$event.stopPropagation()">
-        <h2 class="text-2xl font-semibold xpb-text-primary mb-4">
-            @if (isEditMode) {
-                Modificar Tarjeta de Crédito
-            } @else {
-                Nueva Tarjeta de Crédito
-            }
-        </h2>
-        @if (loading() && isEditMode) {
-            <div class="flex items-center justify-center py-20">
-                <div class="text-center">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-neutral-300 border-t-black mb-4"></div>
-                <p class="text-neutral-600">Cargando tarjeta de crédito...</p>
+        
+        <!-- Header -->
+        <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+                        <span class="material-icons text-[var(--xpb-primary)] text-2xl">
+                            @if (isEditMode) {
+                                edit
+                            } @else {
+                                credit_card
+                            }
+                        </span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold xpb-text-primary">
+                            @if (isEditMode) {
+                                Modificar Tarjeta de Crédito
+                            } @else {
+                                Nueva Tarjeta de Crédito
+                            }
+                        </h2>
+                        <p class="text-sm xpb-text-secondary">
+                            @if (isEditMode) {
+                                Actualiza la información de tu tarjeta
+                            } @else {
+                                Registra una nueva tarjeta de crédito
+                            }
+                        </p>
+                    </div>
                 </div>
-            </div>
-        } @else if(errorMessage() && isEditMode) {
-            <div class="flex items-center justify-center py-20 px-6">
-                <div class="text-center max-w-md">
-                <span class="material-icons text-6xl text-neutral-400 mb-4">error_outline</span>
-                <h3 class="text-xl font-semibold text-neutral-900 mb-2">Error al cargar</h3>
-                <p class="text-neutral-600 mb-6">{{ errorMessage() }}</p>
                 <button
                     type="button"
                     (click)="onClose()"
-                    class="px-6 py-3 bg-black text-white rounded-lg hover:bg-neutral-800 transition-colors"
+                    class="xpb-text-secondary hover:xpb-text-primary hover:bg-[var(--xpb-main)] rounded-lg p-2 transition-colors"
+                    aria-label="Cerrar modal"
                 >
-                    Cerrar
+                    <span class="material-icons text-2xl">close</span>
                 </button>
-                </div>
             </div>
-        } @else if(creditCardData() || !isEditMode) {
-            <form [formGroup]="formCreditCard" (ngSubmit)="onSubmit()" class="w-full flex flex-col gap-4">
-                <div>
-                    <label for="name" class="block text-sm xpb-text-secondary mb-1">Nombre de la tarjeta</label>
-                    <input id="name" type="text" formControlName="name"
-                        class="xpb-bg-card border xpb-border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)]"
-                        maxlength="150" autocomplete="off" aria-required="true" aria-label="Nombre de la tarjeta" />
-                    @if (formCreditCard.get('name')?.touched && formCreditCard.get('name')?.invalid) {
-                        <div class="text-xs xpb-text-negative mt-1 xpb-text-expense">
-                            @if (formCreditCard.get('name')?.errors?.['required']) {
-                                <span>El nombre es obligatorio.</span>
-                            }
-                            @if (formCreditCard.get('name')?.errors?.['minlength']) {
-                                <span>Mínimo 3 caracteres.</span>
-                            }
-                            @if (formCreditCard.get('name')?.errors?.['maxlength']) {
-                                <span>Máximo 150 caracteres.</span>
-                            }
-                        </div>
-                    }
+        </div>
+
+        <!-- Content -->
+        <div class="p-6">
+            @if (loading() && isEditMode) {
+                <div class="flex items-center justify-center py-16">
+                    <div class="text-center">
+                        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 xpb-border border-t-[var(--xpb-primary)] mb-4"></div>
+                        <p class="xpb-text-secondary">Cargando tarjeta de crédito...</p>
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            } @else if(errorMessage() && isEditMode) {
+                <div class="flex items-center justify-center py-12">
+                    <div class="text-center max-w-md">
+                        <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                            <span class="material-icons text-5xl text-[var(--xpb-expense)]">error_outline</span>
+                        </div>
+                        <h3 class="text-lg font-semibold xpb-text-primary mb-2">Error al cargar</h3>
+                        <p class="xpb-text-secondary mb-6">{{ errorMessage() }}</p>
+                        <button
+                            type="button"
+                            (click)="onClose()"
+                            class="xpb-btn-secondary inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-colors"
+                        >
+                            <span class="material-icons text-lg">close</span>
+                            <span>Cerrar</span>
+                        </button>
+                    </div>
+                </div>
+            } @else if(creditCardData() || !isEditMode) {
+                <form [formGroup]="formCreditCard" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+                    <!-- Nombre de la tarjeta -->
                     <div>
-                        <label for="creditLimit" class="block text-sm xpb-text-secondary mb-1">Límite de crédito</label>
-                        <input id="creditLimit" type="number" formControlName="creditLimit"
-                            class="xpb-bg-card border xpb-border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)]"
-                            min="1" step="0.01" aria-required="true" aria-label="Límite de crédito" />
-                        @if (formCreditCard.get('creditLimit')?.touched && formCreditCard.get('creditLimit')?.invalid) {
-                            <div class="text-xs xpb-text-negative mt-1 xpb-text-expense">
-                                @if (formCreditCard.get('creditLimit')?.errors?.['min']) {
-                                    <span>El límite de crédito debe ser mayor a 0.</span>
-                                }
-                                @if (formCreditCard.get('creditLimit')?.errors?.['required']) {
-                                    <span>El límite de crédito es obligatorio.</span>
-                                }
+                        <label for="name" class="block text-sm font-medium xpb-text-primary mb-2">
+                            Nombre de la tarjeta
+                        </label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                                credit_card
+                            </span>
+                            <input 
+                                id="name" 
+                                type="text" 
+                                formControlName="name"
+                                class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                                placeholder="Ej: Visa Gold Banco Nacional"
+                                maxlength="150" 
+                                autocomplete="off" 
+                                aria-required="true" 
+                                aria-label="Nombre de la tarjeta" 
+                            />
+                        </div>
+                        @if (formCreditCard.get('name')?.touched && formCreditCard.get('name')?.invalid) {
+                            <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                    @if (formCreditCard.get('name')?.errors?.['required']) {
+                                        <p>El nombre es obligatorio.</p>
+                                    }
+                                    @if (formCreditCard.get('name')?.errors?.['minlength']) {
+                                        <p>Debe tener mínimo 3 caracteres.</p>
+                                    }
+                                    @if (formCreditCard.get('name')?.errors?.['maxlength']) {
+                                        <p>Máximo 150 caracteres.</p>
+                                    }
+                                </div>
                             </div>
                         }
                     </div>
-                    
-                    @if (!isEditMode) {
+
+                    <!-- Grid de campos -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <!-- Límite de crédito -->
                         <div>
-                            <label for="currentBalance" class="block text-sm xpb-text-secondary mb-1">Saldo actual</label>
-                            <input id="currentBalance" type="number" formControlName="currentBalance"
-                                class="xpb-bg-card border xpb-border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)]"
-                                min="0" step="0.01" aria-required="true" aria-label="Saldo actual" />
-                            @if (formCreditCard.get('currentBalance')?.touched && formCreditCard.get('currentBalance')?.invalid) {
-                                <div class="text-xs xpb-text-negative mt-1 xpb-text-expense">
-                                    @if (formCreditCard.get('currentBalance')?.errors?.['min']) {
-                                        <span>El saldo no puede ser negativo.</span>
-                                    }
-                                    @if (formCreditCard.get('currentBalance')?.errors?.['required']) {
-                                        <span>El saldo es obligatorio.</span>
-                                    }
+                            <label for="creditLimit" class="block text-sm font-medium xpb-text-primary mb-2">
+                                Límite de crédito
+                            </label>
+                            <div class="relative">
+                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                                    account_balance_wallet
+                                </span>
+                                <input 
+                                    id="creditLimit" 
+                                    type="number" 
+                                    formControlName="creditLimit"
+                                    class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                                    placeholder="0.00"
+                                    min="1" 
+                                    step="0.01" 
+                                    aria-required="true" 
+                                    aria-label="Límite de crédito" 
+                                />
+                            </div>
+                            @if (formCreditCard.get('creditLimit')?.touched && formCreditCard.get('creditLimit')?.invalid) {
+                                <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                    <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                        @if (formCreditCard.get('creditLimit')?.errors?.['min']) {
+                                            <p>Debe ser mayor a 0.</p>
+                                        }
+                                        @if (formCreditCard.get('creditLimit')?.errors?.['required']) {
+                                            <p>Este campo es obligatorio.</p>
+                                        }
+                                    </div>
                                 </div>
                             }
                         </div>
-                    }
-
-                    <div>
-                        <label for="billingDay" class="block text-sm xpb-text-secondary mb-1">Día de facturación</label>
-                        <input id="billingDay" type="number" formControlName="billingDay"
-                            class="xpb-bg-card border xpb-border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)]"
-                            min="1" max="28" step="1" aria-required="true" aria-label="Día de facturación" />
-                        @if (formCreditCard.get('billingDay')?.touched && formCreditCard.get('billingDay')?.invalid) {
-                            <div class="text-xs xpb-text-negative mt-1 xpb-text-expense">
-                                @if (formCreditCard.get('billingDay')?.errors?.['min']) {
-                                    <span>El día de facturación debe ser entre 1 y 28.</span>
-                                }
-                                @if (formCreditCard.get('billingDay')?.errors?.['max']) {
-                                    <span>El día de facturación debe ser entre 1 y 28.</span>
-                                }
-                                @if (formCreditCard.get('billingDay')?.errors?.['required']) {
-                                    <span>El día de facturación es obligatorio.</span>
-                                }
-                            </div>
-                        }
-                    </div>
-
-                    <div>
-                        <label for="paymentDay" class="block text-sm xpb-text-secondary mb-1">Día Límite de Pago</label>
-                        <input id="paymentDay" type="number" formControlName="paymentDay"
-                            class="xpb-bg-card border xpb-border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)]"
-                            min="1" max="28" step="1" aria-required="true" aria-label="Día Límite de Pago" />
-                        @if (formCreditCard.get('paymentDay')?.touched && formCreditCard.get('paymentDay')?.invalid) {
-                            <div class="text-xs xpb-text-negative mt-1 xpb-text-expense">
-                                @if (formCreditCard.get('paymentDay')?.errors?.['min']) {
-                                    <span>El día de pago debe ser entre 1 y 28.</span>
-                                }
-                                @if (formCreditCard.get('paymentDay')?.errors?.['max']) {
-                                    <span>El día de pago debe ser entre 1 y 28.</span>
-                                }
-                                @if (formCreditCard.get('paymentDay')?.errors?.['required']) {
-                                    <span>El día de pago es obligatorio.</span>
+                        
+                        <!-- Saldo actual (solo en creación) -->
+                        @if (!isEditMode) {
+                            <div>
+                                <label for="currentBalance" class="block text-sm font-medium xpb-text-primary mb-2">
+                                    Saldo actual
+                                </label>
+                                <div class="relative">
+                                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                                        payments
+                                    </span>
+                                    <input 
+                                        id="currentBalance" 
+                                        type="number" 
+                                        formControlName="currentBalance"
+                                        class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                                        placeholder="0.00"
+                                        min="0" 
+                                        step="0.01" 
+                                        aria-required="true" 
+                                        aria-label="Saldo actual" 
+                                    />
+                                </div>
+                                @if (formCreditCard.get('currentBalance')?.touched && formCreditCard.get('currentBalance')?.invalid) {
+                                    <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                        <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                            @if (formCreditCard.get('currentBalance')?.errors?.['min']) {
+                                                <p>El saldo no puede ser negativo.</p>
+                                            }
+                                            @if (formCreditCard.get('currentBalance')?.errors?.['required']) {
+                                                <p>Este campo es obligatorio.</p>
+                                            }
+                                        </div>
+                                    </div>
                                 }
                             </div>
                         }
-                    </div>
-                </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <button type="button"
-                        (click)="onClose()"
-                        class="bg-[var(--xpb-neutral)] text-black font-medium py-2 rounded mt-2 hover:bg-[var(--xpb-neutral-hover)] transition">
-                        <span>Cancelar</span>
-                    </button>
-                    <button type="submit"
-                        class="bg-[var(--xpb-primary)] text-white font-medium py-2 rounded mt-2 hover:bg-[var(--xpb-primary-hover)] transition disabled:opacity-50"
-                        [disabled]="formCreditCard.invalid || sendingForm()">
-                        @if (!sendingForm()) {
-                            <span>
-                                @if (isEditMode) {
-                                    Actualizar Tarjeta
-                                } @else {
-                                    Registrar Tarjeta
-                                }
-                            </span>
-                        }
-                        @if (sendingForm()) {
-                            <span class="material-icons animate-spin align-middle">autorenew</span>
-                        }
-                    </button>
-                </div>
-            </form>
-        }
+                        <!-- Día de facturación -->
+                        <div>
+                            <label for="billingDay" class="block text-sm font-medium xpb-text-primary mb-2">
+                                Día de facturación
+                            </label>
+                            <div class="relative">
+                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                                    calendar_today
+                                </span>
+                                <input 
+                                    id="billingDay" 
+                                    type="number" 
+                                    formControlName="billingDay"
+                                    class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                                    placeholder="Día 1-28"
+                                    min="1" 
+                                    max="28" 
+                                    step="1" 
+                                    aria-required="true" 
+                                    aria-label="Día de facturación" 
+                                />
+                            </div>
+                            @if (formCreditCard.get('billingDay')?.touched && formCreditCard.get('billingDay')?.invalid) {
+                                <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                    <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                        @if (formCreditCard.get('billingDay')?.errors?.['min'] || formCreditCard.get('billingDay')?.errors?.['max']) {
+                                            <p>Debe ser entre 1 y 28.</p>
+                                        }
+                                        @if (formCreditCard.get('billingDay')?.errors?.['required']) {
+                                            <p>Este campo es obligatorio.</p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Día límite de pago -->
+                        <div>
+                            <label for="paymentDay" class="block text-sm font-medium xpb-text-primary mb-2">
+                                Día límite de pago
+                            </label>
+                            <div class="relative">
+                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                                    event
+                                </span>
+                                <input 
+                                    id="paymentDay" 
+                                    type="number" 
+                                    formControlName="paymentDay"
+                                    class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                                    placeholder="Día 1-28"
+                                    min="1" 
+                                    max="28" 
+                                    step="1" 
+                                    aria-required="true" 
+                                    aria-label="Día límite de pago" 
+                                />
+                            </div>
+                            @if (formCreditCard.get('paymentDay')?.touched && formCreditCard.get('paymentDay')?.invalid) {
+                                <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                    <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                        @if (formCreditCard.get('paymentDay')?.errors?.['min'] || formCreditCard.get('paymentDay')?.errors?.['max']) {
+                                            <p>Debe ser entre 1 y 28.</p>
+                                        }
+                                        @if (formCreditCard.get('paymentDay')?.errors?.['required']) {
+                                            <p>Este campo es obligatorio.</p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="flex gap-3 pt-4">
+                        <button 
+                            type="button"
+                            (click)="onClose()"
+                            class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-colors"
+                        >
+                            <span class="material-icons text-lg">close</span>
+                            <span>Cancelar</span>
+                        </button>
+                        <button 
+                            type="submit"
+                            class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            [disabled]="formCreditCard.invalid || sendingForm()"
+                        >
+                            @if (!sendingForm()) {
+                                <span class="material-icons text-lg">
+                                    @if (isEditMode) {
+                                        check
+                                    } @else {
+                                        add
+                                    }
+                                </span>
+                                <span>
+                                    @if (isEditMode) {
+                                        Actualizar
+                                    } @else {
+                                        Registrar
+                                    }
+                                </span>
+                            }
+                            @if (sendingForm()) {
+                                <span class="material-icons animate-spin">autorenew</span>
+                                <span>Guardando...</span>
+                            }
+                        </button>
+                    </div>
+                </form>
+            }
+        </div>
     </div>
 </div>

@@ -12,23 +12,23 @@
                             @if (isEditMode) {
                                 edit
                             } @else {
-                                account_balance_wallet
+                                category
                             }
                         </span>
                     </div>
                     <div>
                         <h2 class="text-xl font-semibold xpb-text-primary">
                             @if (isEditMode) {
-                                Modificar Cuenta
+                                Modificar Categoría
                             } @else {
-                                Nueva Cuenta
+                                Nueva Categoría
                             }
                         </h2>
                         <p class="text-sm xpb-text-secondary">
                             @if (isEditMode) {
-                                Actualiza la información de tu cuenta
+                                Actualiza la información de tu categoría
                             } @else {
-                                Registra una nueva cuenta bancaria
+                                Registra una nueva categoría para tus transacciones
                             }
                         </p>
                     </div>
@@ -50,7 +50,7 @@
                 <div class="flex items-center justify-center py-16">
                     <div class="text-center">
                         <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 xpb-border border-t-[var(--xpb-primary)] mb-4"></div>
-                        <p class="xpb-text-secondary">Cargando cuenta...</p>
+                        <p class="xpb-text-secondary">Cargando categoría...</p>
                     </div>
                 </div>
             } @else if(errorMessage() && isEditMode) {
@@ -71,84 +71,104 @@
                         </button>
                     </div>
                 </div>
-            } @else if(accountData() || !isEditMode) {
-                <form [formGroup]="formAccount" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
-                    <!-- Nombre de la cuenta -->
+            } @else if(categoryData() || !isEditMode) {
+                <form [formGroup]="formCategory" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+                    <!-- Nombre de la categoría -->
                     <div>
                         <label for="name" class="block text-sm font-medium xpb-text-primary mb-2">
-                            Nombre de la cuenta
+                            Nombre de la categoría
                         </label>
                         <div class="relative">
                             <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-                                account_balance
+                                category
                             </span>
                             <input 
                                 id="name" 
                                 type="text" 
                                 formControlName="name"
                                 class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
-                                placeholder="Ej: Cuenta Corriente Santander"
-                                maxlength="150" 
+                                placeholder="Ej: Categoría de Gastos/Ingresos"
+                                maxlength="25" 
                                 autocomplete="off" 
                                 aria-required="true" 
-                                aria-label="Nombre de la cuenta" 
+                                aria-label="Nombre de la categoría" 
                             />
                         </div>
-                        @if (formAccount.get('name')?.touched && formAccount.get('name')?.invalid) {
+                        @if (formCategory.get('name')?.touched && formCategory.get('name')?.invalid) {
                             <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
                                 <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
                                 <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                    @if (formAccount.get('name')?.errors?.['required']) {
+                                    @if (formCategory.get('name')?.errors?.['required']) {
                                         <p>El nombre es obligatorio.</p>
                                     }
-                                    @if (formAccount.get('name')?.errors?.['minlength']) {
+                                    @if (formCategory.get('name')?.errors?.['minlength']) {
                                         <p>Debe tener mínimo 3 caracteres.</p>
                                     }
-                                    @if (formAccount.get('name')?.errors?.['maxlength']) {
-                                        <p>Máximo 150 caracteres.</p>
+                                    @if (formCategory.get('name')?.errors?.['maxlength']) {
+                                        <p>Máximo 25 caracteres.</p>
                                     }
                                 </div>
                             </div>
                         }
                     </div>
 
-                    <!-- Saldo inicial (solo en modo creación) -->
-                    @if (!isEditMode) {
-                        <div>
-                            <label for="initialBalance" class="block text-sm font-medium xpb-text-primary mb-2">
-                                Saldo inicial
-                            </label>
-                            <div class="relative">
-                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-                                    payments
-                                </span>
-                                <input 
-                                    id="initialBalance" 
-                                    type="number" 
-                                    formControlName="initialBalance"
-                                    class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
-                                    placeholder="0.00"
-                                    min="0" 
-                                    step="0.01" 
-                                    aria-required="true" 
-                                    aria-label="Saldo inicial" 
-                                />
-                            </div>
-                            @if (formAccount.get('initialBalance')?.touched && formAccount.get('initialBalance')?.invalid) {
-                                <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                                    <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
-                                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                        @if (formAccount.get('initialBalance')?.errors?.['min']) {
-                                            <p>El saldo no puede ser negativo.</p>
-                                        }
-                                        @if (formAccount.get('initialBalance')?.errors?.['required']) {
-                                            <p>El saldo es obligatorio.</p>
-                                        }
-                                    </div>
+                    <!-- Color de la categoría -->
+                     <div>
+                        <label for="color" class="block text-sm font-medium xpb-text-primary mb-2">
+                            Color de la categoría
+                        </label>
+                        <div class="flex items-center gap-3">
+                            <!-- Preview del color seleccionado -->
+                            <div 
+                                class="w-16 h-16 rounded-xl border-2 xpb-border shadow-sm transition-all hover:scale-105 hover:shadow-md hover:border-[var(--xpb-primary)] cursor-pointer"
+                                [style.background-color]="formCategory.get('color')?.value"
+                                (click)="colorInput.click()"
+                                title="Haz clic para cambiar el color"
+                            ></div>
+                            
+                            <!-- Input y valor hex -->
+                            <div class="flex-1">
+                                <div class="relative">
+                                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                                        color_lens
+                                    </span>
+                                    <input 
+                                        #colorInput
+                                        id="color" 
+                                        type="color" 
+                                        formControlName="color"
+                                        class="absolute opacity-0 w-0 h-0"
+                                        aria-required="true" 
+                                        aria-label="Color de la categoría" 
+                                    />
+                                    <input 
+                                        type="text"
+                                        [value]="formCategory.get('color')?.value"
+                                        readonly
+                                        (click)="colorInput.click()"
+                                        class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all cursor-pointer uppercase font-mono text-sm"
+                                        placeholder="#000000"
+                                    />
                                 </div>
-                            }
+                                <p class="text-xs xpb-text-secondary mt-1.5 ml-1">
+                                    Haz clic en el cuadro o el código para cambiar
+                                </p>
+                            </div>
                         </div>
-                    }
+                        @if (formCategory.get('color')?.touched && formCategory.get('color')?.invalid) {
+                            <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                    @if (formCategory.get('color')?.errors?.['required']) {
+                                        <p>El color es obligatorio.</p>
+                                    }
+                                    @if (formCategory.get('color')?.errors?.['pattern']) {
+                                        <p>El color debe ser un valor hexadecimal válido.</p>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
 
                     <!-- Botones de acción -->
                     <div class="flex gap-3 pt-4">
@@ -163,7 +183,7 @@
                         <button 
                             type="submit"
                             class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            [disabled]="formAccount.invalid || sendingForm()"
+                            [disabled]="formCategory.invalid || sendingForm()"
                         >
                             @if (!sendingForm()) {
                                 <span class="material-icons text-lg">

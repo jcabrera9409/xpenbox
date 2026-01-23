@@ -141,6 +141,76 @@ Rules:
 - Use input() / output() signals
 - Tailwind utilities only
 
+## Modal Design Pattern (MANDATORY)
+All modals MUST follow this structure for consistency:
+
+### Structure
+```html
+<!-- Overlay with backdrop -->
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
+  <!-- Modal container -->
+  <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto overflow-hidden">
+    <!-- Header with icon, title, subtitle, and close button -->
+    <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
+      <!-- Content -->
+    </div>
+    <!-- Body content -->
+    <div class="p-6">
+      <!-- Form or content -->
+    </div>
+  </div>
+</div>
+```
+
+### Modal Header (REQUIRED)
+- Icon container: `xpb-bg-card rounded-lg p-2 shadow-sm`
+- Icon: Material icon with `text-[var(--xpb-primary)] text-2xl`
+- Title: `text-xl font-semibold xpb-text-primary`
+- Subtitle: `text-sm xpb-text-secondary` (explains action)
+- Close button (X): Top-right corner with hover effect
+
+### Form Inputs (REQUIRED)
+- Icon integrated in input: absolute positioned left-3
+- Input with icon: `pl-11` for proper spacing
+- Classes: `xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full`
+- Focus state: `focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all`
+- Always include placeholder text
+
+### Error Messages (REQUIRED)
+Use alert-style error display:
+```html
+<div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+  <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+  <div class="text-sm text-[var(--xpb-expense)] flex-1">
+    <p>Error message here</p>
+  </div>
+</div>
+```
+
+### Modal Buttons (REQUIRED)
+- Layout: `flex gap-3 pt-4`
+- Secondary button: `flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2`
+- Primary button: `flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2`
+- Always include Material icon with text
+- Loading state: spinning `autorenew` icon with "Guardando..." text
+- Disabled state: `disabled:opacity-50 disabled:cursor-not-allowed`
+
+### Loading States
+- Spinner: `animate-spin rounded-full h-12 w-12 border-4 xpb-border border-t-[var(--xpb-primary)]`
+- Text: `xpb-text-secondary`
+- Container: centered with padding `py-16`
+
+### Error States
+- Icon container: `xpb-bg-main rounded-full w-20 h-20`
+- Error icon: `text-5xl text-[var(--xpb-expense)]`
+- Title: `text-lg font-semibold xpb-text-primary`
+- Message: `xpb-text-secondary`
+
+### Responsiveness
+- Modal width: `max-w-md` for simple forms, `max-w-lg` for complex forms
+- Grid inputs: `grid grid-cols-1 sm:grid-cols-2 gap-5`
+- Always test on mobile screens
+
 ## Forms
 - Reactive Forms only
 - Accessible

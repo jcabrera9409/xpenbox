@@ -1,0 +1,113 @@
+<div class="h-screen xpb-bg-main p-3 sm:p-4 flex flex-col overflow-hidden">
+  <!-- Header -->
+  <div class="mb-4 flex-shrink-0">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold xpb-text-primary mb-1">Categorías</h1>
+        <p class="xpb-text-secondary text-sm">Gestiona las categorías de tus transacciones</p>
+      </div>
+      <button 
+        (click)="openCategoryEditionModal()"
+        class="flex items-center gap-2 px-4 py-2.5 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors shadow-sm"
+        type="button">
+        <span class="material-icons text-lg">add</span>
+        <span class="hidden sm:inline">Nueva Categoría</span>
+        <span class="sm:hidden">Nueva</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Card -->
+  <div class="mb-4 flex-shrink-0">
+    <div class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs xpb-text-secondary mb-1">Total de Categorías</p>
+          <p class="text-2xl sm:text-3xl font-bold xpb-text-primary">
+            @if (categoryState.isLoading()) {
+              ...
+            } @else {
+              {{ categoryState.categories().length }}
+            }
+          </p>
+          <p class="text-xs xpb-text-secondary mt-1">
+            @if (categoryState.isLoading()) {
+              ...
+            } @else {
+              @if (activeCategoriesCount() > 1) {
+                {{ activeCategoriesCount() }} categorías activas
+              } @else if (activeCategoriesCount() === 1) {
+                {{ activeCategoriesCount() }} categoría activa
+              } @else {
+                Ninguna categoría activa
+              }
+            }
+          </p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] flex items-center justify-center">
+          <span class="material-icons text-[var(--xpb-primary)] text-2xl">category</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categories List -->
+  <div class="flex-1 overflow-hidden">
+    <div class="h-full overflow-y-auto pr-2">
+      @if (categoryState.isLoading()) {
+        <div class="flex items-center justify-center py-16">
+          <div class="text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 xpb-border border-t-[var(--xpb-primary)] mb-4"></div>
+            <p class="xpb-text-secondary">Cargando categorías...</p>
+          </div>
+        </div>
+      } @else if (categoryState.error()) {
+        <div class="flex items-center justify-center py-16">
+          <div class="text-center max-w-md">
+            <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+              <span class="material-icons text-5xl text-[var(--xpb-expense)]">error_outline</span>
+            </div>
+            <h3 class="text-lg font-semibold xpb-text-primary mb-2">Error al cargar</h3>
+            <p class="xpb-text-secondary">{{ categoryState.error() }}</p>
+          </div>
+        </div>
+      } @else if (categoryState.categories().length === 0) {
+        <div class="flex items-center justify-center py-16">
+          <div class="text-center max-w-md">
+            <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+              <span class="material-icons text-5xl xpb-text-secondary">category</span>
+            </div>
+            <h3 class="text-lg font-semibold xpb-text-primary mb-2">No hay categorías</h3>
+            <p class="xpb-text-secondary mb-6">Comienza creando tu primera categoría para organizar tus transacciones</p>
+            <button 
+              (click)="openCategoryEditionModal()"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors shadow-sm">
+              <span class="material-icons">add</span>
+              <span>Crear Primera Categoría</span>
+            </button>
+          </div>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 pb-4">
+          @for (category of categoryState.categories(); track category.resourceCode) {
+            <app-category-card ngSkipHydration 
+              class="block"
+              [categoryCardName]="category.name"
+              [categoryCardColor]="category.color"
+              [categoryCardState]="category.state"
+              [categoryCardResourceCode]="category.resourceCode"
+              (categoryCardEdit)="openCategoryEditionModal($event)">
+            </app-category-card>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+@if (showCategoryEditionModal()) {
+    <app-category-edition-modal 
+        (close)="closeCategoryEditionModal()" 
+        [resourceCodeSelected]="resourceCodeCategorySelected()">
+    </app-category-edition-modal>
+}

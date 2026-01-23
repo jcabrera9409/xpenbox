@@ -1,12 +1,12 @@
-<div class="min-h-screen xpb-bg-main p-3 sm:p-4">
+<div class="h-screen xpb-bg-main p-3 sm:p-4 flex flex-col overflow-hidden">
   <!-- Header -->
-  <div class="mb-4">
+  <div class="mb-4 flex-shrink-0">
     <h1 class="text-xl sm:text-2xl font-bold xpb-text-primary mb-1">Mis Cuentas</h1>
     <p class="xpb-text-secondary text-sm">Gestiona tus cuentas y tarjetas de crédito</p>
   </div>
 
   <!-- Summary Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 flex-shrink-0">
     <!-- Total Liquidity -->
     <div class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] p-4">
       <div class="flex items-center justify-between">
@@ -73,10 +73,10 @@
   </div>
 
   <!-- Two Column/Row Layout with Independent Scroll -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 h-[calc(100vh-220px)] sm:h-[calc(100vh-240px)]">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 flex-1 min-h-0">
     <!-- Bank Accounts Section -->
-    <section class="flex flex-col min-h-0">
-      <div class="flex items-center justify-between mb-3">
+    <section class="flex flex-col h-full overflow-hidden">
+      <div class="flex items-center justify-between mb-3 flex-shrink-0">
         <h2 class="text-lg sm:text-xl font-semibold xpb-text-primary flex items-center gap-2">
           <span class="material-icons text-xl sm:text-2xl">account_balance</span>
           Cuentas
@@ -91,7 +91,7 @@
       </div>
 
     <!-- Bank Accounts List -->
-    <div class="space-y-3 overflow-y-auto pr-2 flex-1">
+    <div class="space-y-3 overflow-y-auto pr-2 flex-1 min-h-0">
       @if (accountState.isLoading()) {
         <div class="flex items-center justify-center py-16">
           <div class="text-center">
@@ -121,8 +121,8 @@
   </section>
 
     <!-- Credit Cards Section -->
-    <section class="flex flex-col min-h-0">
-      <div class="flex items-center justify-between mb-3">
+    <section class="flex flex-col h-full overflow-hidden">
+      <div class="flex items-center justify-between mb-3 flex-shrink-0">
         <h2 class="text-lg sm:text-xl font-semibold xpb-text-primary flex items-center gap-2">
           <span class="material-icons text-xl sm:text-2xl">credit_card</span>
           Tarjetas de Crédito
@@ -137,7 +137,7 @@
       </div>
 
       <!-- Credit Cards List -->
-      <div class="space-y-3 overflow-y-auto pr-2 flex-1">
+      <div class="space-y-3 overflow-y-auto pr-2 flex-1 min-h-0">
         @if (creditCardState.isLoading()) {
           <div class="flex items-center justify-center py-16">
             <div class="text-center">
