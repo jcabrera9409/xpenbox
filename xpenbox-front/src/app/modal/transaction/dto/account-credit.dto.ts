@@ -2,6 +2,7 @@
 export interface AccountCreditDTO {
     resourceCode: string;
     type: AccountCreditType;
+    icon: string;
     name: string;
     balance: number;
 }

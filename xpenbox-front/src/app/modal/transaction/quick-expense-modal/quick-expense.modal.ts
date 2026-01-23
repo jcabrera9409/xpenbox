@@ -64,24 +64,26 @@ export class QuickExpenseModal {
       const creditCards = this.creditCardState.creditCards();
 
       if (!this.accountState.isLoading() && !this.creditCardState.isLoading()) {
-        if (accounts.length > 0) {
-          const accountCreditsList: AccountCreditDTO[] = accounts.map(acc => ({
+        const accountCreditsList: AccountCreditDTO[] = [
+          ...accounts.map(acc => ({
             resourceCode: acc.resourceCode,
             type: AccountCreditType.ACCOUNT,
+            icon: 'account_balance',
             name: acc.name,
             balance: acc.balance,
-          }));
-          this.accountCredits.set(accountCreditsList);
-        }
-
-        if (creditCards.length > 0) {
-          const creditCardCredits: AccountCreditDTO[] = creditCards.map(cc => ({
+          })),
+          ...creditCards.map(cc => ({
             resourceCode: cc.resourceCode,
             type: AccountCreditType.CREDIT_CARD,
+            icon: 'credit_card',
             name: cc.name,
             balance: cc.creditLimit - cc.currentBalance,
-          }));
-          this.accountCredits.set([...this.accountCredits(), ...creditCardCredits]);
+          }))
+        ];
+        this.accountCredits.set(accountCreditsList);
+
+        if (accountCreditsList.length > 0 && !this.selectedAccount()) {
+          this.selectedAccount.set(accountCreditsList[0]);
         }
       }
     });
