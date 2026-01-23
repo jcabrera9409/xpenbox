@@ -3,7 +3,7 @@ import { CommonModule, isPlatformServer } from '@angular/common';
 import { CategoryService } from '../../feature/category/service/category.service';
 import { categoryState } from '../../feature/category/service/category.state';
 import { CategoryCard } from '../../shared/cards/category-card/category.card';
-import { CategoryEditionModal } from '../../modal/category-edition.modal/category-edition.modal';
+import { CategoryEditionModal } from '../../modal/category-edition-modal/category-edition.modal';
 
 @Component({
   selector: 'app-category-page',

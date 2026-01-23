@@ -1,0 +1,180 @@
+<!-- Overlay con backdrop -->
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
+  <!-- Modal container -->
+  <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto overflow-hidden">
+    
+    <!-- Header -->
+    <div class="xpb-bg-sidebar px-4 py-3 border-b xpb-border relative">
+      <div class="flex items-center gap-4">
+        <!-- Icono -->
+        <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+          <span class="material-icons text-[var(--xpb-expense)] text-2xl">receipt_long</span>
+        </div>
+        <!-- Título y subtítulo -->
+        <div class="flex-1">
+          <h3 class="text-xl font-semibold xpb-text-primary">Registro de Gasto</h3>
+        </div>
+        <!-- Botón cerrar -->
+        <button 
+          (click)="onClose()" 
+          class="text-gray-400 hover:text-gray-600 transition-colors -mt-1">
+          <span class="material-icons text-lg">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="p-4">
+      <!-- Display del monto -->
+      <div class="mb-3">
+        <label class="block text-xs font-semibold xpb-text-secondary text-center">Monto</label>
+        <div class="px-3 py-2 text-center relative">
+          <div class="flex items-center justify-center gap-2">
+            <span class="text-base font-bold text-gray-400">PEN </span>
+            <span class="text-2xl font-bold text-gray-600">
+              {{ amount() || '0' }}
+            </span>
+          </div>
+          @if (amount()) {
+            <button
+              (click)="onClear()"
+              type="button"
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+              title="Limpiar monto">
+              <span class="material-icons text-lg">clear</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Teclado numérico -->
+      <div class="mb-3">
+        <div class="grid grid-cols-3 gap-1.5">
+          @for (key of keys; track key) {
+            <button 
+              (click)="onKeyPress(key)"
+              type="button"
+              class="hover:text-white py-2 text-xl font-semibold xpb-text-primary transition-all active:scale-95">
+              {{ key }}
+            </button>
+          }
+          <!-- Botón 0 que ocupa 2 columnas -->
+          <button 
+            (click)="onKeyPress('0')"
+            type="button"
+            class="hover:text-white py-2 text-xl font-semibold xpb-text-primary transition-all active:scale-95">
+            0
+          </button>
+          <!-- Botón backspace -->
+          <button 
+            (click)="onBackspace()"
+            type="button"
+            class="hover:text-white py-2 text-xl font-semibold xpb-text-primary transition-all active:scale-95">
+            <span class="material-icons text-xl">backspace</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="mb-3">
+        <label class="block text-sm font-medium xpb-text-secondary mb-2">
+          Descripción <span class="text-xs xpb-text-secondary">(opcional)</span>
+        </label>
+        <div class="relative">
+          <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">description</span>
+          <input 
+            type="text"
+            [value]="description()"
+            (input)="description.set($any($event.target).value)"
+            placeholder="Ej: Compra en supermercado"
+            class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full xpb-text-primary placeholder:xpb-text-secondary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all" />
+        </div>
+      </div>
+
+      <!-- Selección de categoría (Carrusel) -->
+      <div class="mb-3">
+        <label class="block text-sm font-medium xpb-text-secondary mb-2">Categoría</label>
+        <div class="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:[&::-webkit-scrollbar]:block md:[scrollbar-width:thin] md:scrollbar-thin md:scrollbar-thumb-gray-300 md:scrollbar-track-transparent">
+          <div class="flex gap-2 px-1 py-2">
+            @for (category of categories; track category.id) {
+              <button 
+                type="button"
+                (click)="selectCategory(category)"
+                [style.border]="isSelectedCategory(category.id) ? '2px solid ' + category.color : '2px solid transparent'"
+                [style.color]="isSelectedCategory(category.id) ? category.color : ''"
+                [class.font-bold]="isSelectedCategory(category.id)"
+                [style.box-shadow]="isSelectedCategory(category.id) ? '0 0 12px rgba(0, 0, 0, 0.15)' : '0 0 8px rgba(0, 0, 0, 0.1)'"
+                class="flex-shrink-0 flex flex-col items-center justify-center gap-1 bg-white rounded-lg px-3 py-2 w-[85px] hover:border-[var(--xpb-primary)] transition-all cursor-pointer active:scale-95" 
+                style="box-shadow: 0 0 8px rgba(0, 0, 0, 0.1)">
+                <span class="text-xs font-medium truncate w-full text-center">{{ category.name }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Selección de cuenta/tarjeta (Carrusel) -->
+      <div class="mb-3">
+        <label class="block text-sm font-medium xpb-text-secondary mb-2">Cuenta o Tarjeta</label>
+        <div class="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:[&::-webkit-scrollbar]:block md:[scrollbar-width:thin] md:scrollbar-thin md:scrollbar-thumb-gray-300 md:scrollbar-track-transparent">
+          <div class="flex gap-2 px-1 py-2">
+            @for (account of accounts; track account.id) {
+              <button
+                type="button"
+                (click)="selectAccount(account)"
+                [style.border]="isSelectedAccount(account.id) ? '2px solid var(--xpb-primary)' : '2px solid transparent'"
+                [class.bg-[var(--xpb-primary)]]="isSelectedAccount(account.id)"
+                [class.font-bold]="isSelectedAccount(account.id)"
+                [style.box-shadow]="isSelectedAccount(account.id) ? '0 0 12px rgba(0, 0, 0, 0.15)' : '0 0 8px rgba(0, 0, 0, 0.1)'"
+                class="flex-shrink-0 flex flex-col items-start gap-1 bg-white rounded-lg px-3 py-2 w-[130px] hover:border-[var(--xpb-primary)] transition-all cursor-pointer active:scale-95" 
+                style="box-shadow: 0 0 8px rgba(0, 0, 0, 0.1)">
+                <div class="flex items-center gap-2 w-full">
+                  <span class="material-icons text-base">account_balance_wallet</span>
+                  <span class="text-xs font-medium truncate flex-1">{{ account.name }}</span>
+                </div>
+                <span class="text-xs font-semibold w-full truncate" [class.xpb-text-secondary]="!isSelectedAccount(account.id)">
+                  PEN {{ account.balance | number:'1.2-2' }}
+                </span>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensaje de error (si hay validación) -->
+      @if (showError()) {
+        <div class="mb-4 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+          <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+          <div class="text-sm text-[var(--xpb-expense)] flex-1">
+            <p>Por favor ingresa un monto mayor a cero</p>
+          </div>
+        </div>
+      }
+
+      <!-- Botones de acción -->
+      <div class="flex gap-3 pt-3">
+        <button 
+          (click)="onClose()"
+          type="button"
+          [disabled]="loading()"
+          class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed py-2">
+          <span class="material-icons text-lg">close</span>
+          <span>Cancelar</span>
+        </button>
+        <button 
+          (click)="onSave()"
+          type="button"
+          [disabled]="loading()"
+          class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed py-2">
+          @if (loading()) {
+            <span class="material-icons text-lg animate-spin">autorenew</span>
+            <span>Guardando...</span>
+          } @else {
+            <span class="material-icons text-lg">save</span>
+            <span>Guardar</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

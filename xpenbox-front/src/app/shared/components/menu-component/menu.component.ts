@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, output, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 interface MenuItem {
@@ -19,6 +19,9 @@ interface UserProfile {
   styleUrl: './menu.component.css',
 })
 export class MenuComponent {
+
+  openQuickExpense = output<void>();
+
   menuItems: MenuItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/landing' },
     { label: 'Cuentas', icon: 'account_balance_wallet', route: '/landing/account' },
@@ -34,7 +37,7 @@ export class MenuComponent {
   notificationCount = signal<number>(3);
 
   onQuickExpense(): void {
-    console.log('Registrar gasto rápido');
+    this.openQuickExpense.emit();
   }
 
   onLogout(): void {
