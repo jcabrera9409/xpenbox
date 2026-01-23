@@ -6,8 +6,8 @@ import { creditCardState } from '../../../feature/creditcard/service/creditcard.
 import { CategoryService } from '../../../feature/category/service/category.service';
 import { AccountService } from '../../../feature/account/service/account.service';
 import { CreditCardService } from '../../../feature/creditcard/service/creditcard.service';
-import { CategoryRequestDTO } from '../../../feature/category/model/categoryRequestDTO';
 import { CategoryResponseDTO } from '../../../feature/category/model/categoryResponseDTO';
+import { AccountCreditDTO, AccountCreditType } from '../dto/account-credit.dto';
 
 @Component({
   selector: 'app-quick-expense-modal',
@@ -26,6 +26,8 @@ export class QuickExpenseModal {
   creditCardState = creditCardState;  
 
   selectedCategory = signal<CategoryResponseDTO | null>(null);
+  selectedAccount = signal<AccountCreditDTO | null>(null);
+  accountCredits = signal<AccountCreditDTO[]>([]);
 
   // Numeric input state (signals)
   amount = signal('');
@@ -55,20 +57,39 @@ export class QuickExpenseModal {
         this.selectedCategory.set(categories[0] || null);
       }
     });
+
+    // Combine accounts and credit cards into accountCredits
+    effect(() => {
+      const accounts = this.accountState.accounts();
+      const creditCards = this.creditCardState.creditCards();
+
+      if (!this.accountState.isLoading() && !this.creditCardState.isLoading()) {
+        if (accounts.length > 0) {
+          const accountCreditsList: AccountCreditDTO[] = accounts.map(acc => ({
+            resourceCode: acc.resourceCode,
+            type: AccountCreditType.ACCOUNT,
+            name: acc.name,
+            balance: acc.balance,
+          }));
+          this.accountCredits.set(accountCreditsList);
+        }
+
+        if (creditCards.length > 0) {
+          const creditCardCredits: AccountCreditDTO[] = creditCards.map(cc => ({
+            resourceCode: cc.resourceCode,
+            type: AccountCreditType.CREDIT_CARD,
+            name: cc.name,
+            balance: cc.creditLimit - cc.currentBalance,
+          }));
+          this.accountCredits.set([...this.accountCredits(), ...creditCardCredits]);
+        }
+      }
+    });
   } 
 
   get categories(): CategoryResponseDTO[] {
     return this.categoryState.categories().filter(c => c.state);
   }
-
-  accounts = [
-    { id: 1, name: 'Efectivo', type: 'cash', balance: 1250.50 },
-    { id: 2, name: 'Tarjeta Débito', type: 'debit', balance: 3840.00 },
-    { id: 3, name: 'Tarjeta Crédito', type: 'credit', balance: 5000.00 },
-    { id: 4, name: 'Cuenta Bancaria', type: 'bank', balance: 12500.75 },
-  ];
-
-  selectedAccount = signal(this.accounts[0]);
 
   // Numeric keyboard keys (1-9 and decimal point)
   keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
@@ -118,8 +139,8 @@ export class QuickExpenseModal {
     }
   }
 
-  onAccountChange(accountId: string) {
-    const account = this.accounts.find(a => a.id === parseInt(accountId));
+  onAccountChange(accountResourceCode: string) {
+    const account = this.accountCredits().find(a => a.resourceCode === accountResourceCode);
     if (account) {
       this.selectedAccount.set(account);
     }
@@ -129,7 +150,7 @@ export class QuickExpenseModal {
     this.selectedCategory.set(category);
   }
 
-  selectAccount(account: { id: number; name: string; type: string; balance: number }) {
+  selectAccount(account: AccountCreditDTO) {
     this.selectedAccount.set(account);
   }
 
@@ -137,8 +158,8 @@ export class QuickExpenseModal {
     return this.selectedCategory()?.resourceCode === categoryResourceCode;
   }
 
-  isSelectedAccount(accountId: number): boolean {
-    return this.selectedAccount().id === accountId;
+  isSelectedAccount(accountResourceCode: string): boolean {
+    return this.selectedAccount()?.resourceCode === accountResourceCode;
   }
 
   onClose() {
