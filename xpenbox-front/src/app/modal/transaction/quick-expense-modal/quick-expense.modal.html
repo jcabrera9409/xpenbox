@@ -1,10 +1,10 @@
 <!-- Overlay con backdrop -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
   <!-- Modal container -->
-  <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto overflow-hidden">
+  <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto my-auto max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden">
     
     <!-- Header -->
-    <div class="xpb-bg-sidebar px-4 py-3 border-b xpb-border relative">
+    <div class="xpb-bg-sidebar px-4 py-3 border-b xpb-border relative flex-shrink-0">
       <div class="flex items-center gap-4">
         <!-- Icono -->
         <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
@@ -24,7 +24,7 @@
     </div>
 
     <!-- Body -->
-    <div class="p-4">
+    <div class="p-4 overflow-y-auto flex-1">
       <!-- Display del monto -->
       <div class="mb-3">
         <label class="block text-xs font-semibold xpb-text-secondary text-center">Monto</label>
@@ -54,7 +54,7 @@
             <button 
               (click)="onKeyPress(key)"
               type="button"
-              class="bg-white rounded-lg py-3 text-xl font-semibold text-gray-700 transition-all active:bg-[var(--xpb-primary)] active:text-white active:scale-95 active:shadow-lg">
+              class="bg-white rounded-lg py-2.5 text-lg font-semibold text-gray-700 transition-all active:bg-[var(--xpb-primary)] active:text-white active:scale-95 active:shadow-lg">
               {{ key }}
             </button>
           }
@@ -62,15 +62,15 @@
           <button 
             (click)="onKeyPress('0')"
             type="button"
-            class="bg-white rounded-lg py-3 text-xl font-semibold text-gray-700 transition-all active:bg-[var(--xpb-primary)] active:text-white active:scale-95 active:shadow-lg">
+            class="bg-white rounded-lg py-2.5 text-lg font-semibold text-gray-700 transition-all active:bg-[var(--xpb-primary)] active:text-white active:scale-95 active:shadow-lg">
             0
           </button>
           <!-- Botón backspace -->
           <button 
             (click)="onBackspace()"
             type="button"
-            class="bg-white rounded-lg py-3 text-xl font-semibold text-gray-700 transition-all active:bg-[var(--xpb-neutral)] active:text-white active:scale-95 active:shadow-lg">
-            <span class="material-icons text-xl">backspace</span>
+            class="bg-white rounded-lg py-2.5 text-lg font-semibold text-gray-700 transition-all active:bg-[var(--xpb-neutral)] active:text-white active:scale-95 active:shadow-lg">
+            <span class="material-icons text-lg">backspace</span>
           </button>
         </div>
       </div>
@@ -107,18 +107,25 @@
                 </div>
               </div>
             } @else {
-              @for (category of categoryState.categories(); track category.resourceCode) {
-                <button 
-                  type="button"
-                  (click)="selectCategory(category)"
-                  [style.border]="isSelectedCategory(category.resourceCode) ? '2px solid ' + category.color : '2px solid transparent'"
-                  [style.color]="isSelectedCategory(category.resourceCode) ? category.color : ''"
-                  [class.font-bold]="isSelectedCategory(category.resourceCode)"
-                  [style.box-shadow]="isSelectedCategory(category.resourceCode) ? '0 0 12px rgba(0, 0, 0, 0.15)' : '0 0 8px rgba(0, 0, 0, 0.1)'"
-                  class="flex-shrink-0 flex flex-col items-center justify-center gap-1 bg-white rounded-lg px-3 py-2 w-[85px] hover:border-[var(--xpb-primary)] transition-all cursor-pointer active:scale-95" 
-                  style="box-shadow: 0 0 8px rgba(0, 0, 0, 0.1)">
-                  <span class="text-xs font-medium truncate w-full text-center">{{ category.name }}</span>
-                </button>
+              @if (categoriesList().length === 0) {
+                <div class="w-full">
+                  <div class="text-center text-xs xpb-text-secondary">No tienes categorías disponibles
+                  </div>
+                </div>
+              } @else {
+                @for (category of categoriesList(); track category.resourceCode) {
+                  <button 
+                    type="button"
+                    (click)="selectCategory(category)"
+                    [style.border]="isSelectedCategory(category.resourceCode) ? '2px solid ' + category.color : '2px solid transparent'"
+                    [style.color]="isSelectedCategory(category.resourceCode) ? category.color : ''"
+                    [class.font-bold]="isSelectedCategory(category.resourceCode)"
+                    [style.box-shadow]="isSelectedCategory(category.resourceCode) ? '0 0 12px rgba(0, 0, 0, 0.15)' : '0 0 8px rgba(0, 0, 0, 0.1)'"
+                    class="flex-shrink-0 flex flex-col items-center justify-center gap-1 bg-white rounded-lg px-3 py-2 w-[85px] hover:border-[var(--xpb-primary)] transition-all cursor-pointer active:scale-95" 
+                    style="box-shadow: 0 0 8px rgba(0, 0, 0, 0.1)">
+                    <span class="text-xs font-medium truncate w-full text-center">{{ category.name }}</span>
+                  </button>
+                }
               }
             }
           </div>
@@ -140,24 +147,31 @@
                 </div>
               </div>
             } @else {
-              @for (account of accountCredits(); track account.resourceCode) {
-                <button
-                  type="button"
-                  (click)="selectAccount(account)"
-                  [style.border]="isSelectedAccount(account.resourceCode) ? '2px solid var(--xpb-primary)' : '2px solid transparent'"
-                  [class.bg-[var(--xpb-primary)]]="isSelectedAccount(account.resourceCode)"
-                  [class.font-bold]="isSelectedAccount(account.resourceCode)"
-                  [style.box-shadow]="isSelectedAccount(account.resourceCode) ? '0 0 12px rgba(0, 0, 0, 0.15)' : '0 0 8px rgba(0, 0, 0, 0.1)'"
-                  class="flex-shrink-0 flex flex-col items-start bg-white rounded-lg px-3 py-2 w-[130px] hover:border-[var(--xpb-primary)] transition-all cursor-pointer active:scale-95" 
-                  style="box-shadow: 0 0 8px rgba(0, 0, 0, 0.1)">
-                  <div class="flex items-center gap-2 w-full">
-                    <span class="material-icons text-base">{{account.icon}}</span>
-                    <span class="text-xs font-medium truncate flex-1">{{ account.name }}</span>
+              @if (accountCredits().length === 0) {
+                <div class="w-full">
+                  <div class="text-center text-xs xpb-text-secondary">No tienes cuentas o tarjetas disponibles
                   </div>
-                  <span class="text-xs font-semibold w-full truncate" [class.xpb-text-secondary]="!isSelectedAccount(account.resourceCode)">
-                    PEN {{ account.balance | number:'1.2-2' }}
-                  </span>
-                </button>
+                </div>
+              } @else {
+                @for (account of accountCredits(); track account.resourceCode) {
+                  <button
+                    type="button"
+                    (click)="selectAccount(account)"
+                    [style.border]="isSelectedAccount(account.resourceCode) ? '2px solid var(--xpb-primary)' : '2px solid transparent'"
+                    [class.bg-[var(--xpb-primary)]]="isSelectedAccount(account.resourceCode)"
+                    [class.font-bold]="isSelectedAccount(account.resourceCode)"
+                    [style.box-shadow]="isSelectedAccount(account.resourceCode) ? '0 0 12px rgba(0, 0, 0, 0.15)' : '0 0 8px rgba(0, 0, 0, 0.1)'"
+                    class="flex-shrink-0 flex flex-col items-start bg-white rounded-lg px-3 py-2 w-[130px] hover:border-[var(--xpb-primary)] transition-all cursor-pointer active:scale-95" 
+                    style="box-shadow: 0 0 8px rgba(0, 0, 0, 0.1)">
+                    <div class="flex items-center gap-2 w-full">
+                      <span class="material-icons text-base">{{account.icon}}</span>
+                      <span class="text-xs font-medium truncate flex-1">{{ account.name }}</span>
+                    </div>
+                    <span class="text-xs font-semibold w-full truncate" [class.xpb-text-secondary]="!isSelectedAccount(account.resourceCode)">
+                      PEN {{ account.balance | number:'1.2-2' }}
+                    </span>
+                  </button>
+                }
               }
             }
           </div>
@@ -165,7 +179,7 @@
       </div>
 
       <!-- Mensaje de error (si hay validación) -->
-      @if (showError()) {
+      @if (showErrorAmount()) {
         <div class="mb-4 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
           <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
           <div class="text-sm text-[var(--xpb-expense)] flex-1">
@@ -179,17 +193,17 @@
         <button 
           (click)="onClose()"
           type="button"
-          [disabled]="loading()"
+          [disabled]="sendingForm()"
           class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg disabled:cursor-not-allowed py-2">
           <span class="material-icons text-lg">close</span>
           <span>Cancelar</span>
         </button>
         <button 
-          (click)="onSave()"
+          (click)="onSubmit()"
           type="button"
-          [disabled]="loading()"
+          [disabled]="sendingForm() || !isFormValid"
           class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg disabled:cursor-not-allowed py-2">
-          @if (loading()) {
+          @if (sendingForm()) {
             <span class="material-icons text-lg animate-spin">autorenew</span>
             <span>Guardando...</span>
           } @else {

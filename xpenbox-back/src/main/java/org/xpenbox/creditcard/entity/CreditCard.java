@@ -38,6 +38,12 @@ public class CreditCard extends PanacheEntityBase {
     @Column(name = "current_balance", nullable = false, precision = 13, scale = 2)
     private BigDecimal currentBalance;
 
+    @Column(name = "last_used_date", nullable = true)
+    private LocalDateTime lastUsedDate;
+
+    @Column(name = "usage_count", nullable = false)
+    private Long usageCount = 0L;
+
     @Column(name = "state", nullable = false)
     private Boolean state = true;
 
@@ -84,6 +90,22 @@ public class CreditCard extends PanacheEntityBase {
 
     public void setCurrentBalance(BigDecimal currentBalance) {
         this.currentBalance = currentBalance;
+    }
+
+    public LocalDateTime getLastUsedDate() {
+        return lastUsedDate;
+    }
+
+    public void setLastUsedDate(LocalDateTime lastUsedDate) {
+        this.lastUsedDate = lastUsedDate;
+    }
+
+    public Long getUsageCount() {
+        return usageCount;
+    }
+
+    public void setUsageCount(Long usageCount) {
+        this.usageCount = usageCount;
     }
 
     public Boolean getState() {

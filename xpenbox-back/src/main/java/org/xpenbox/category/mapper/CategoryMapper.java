@@ -33,6 +33,8 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
             entity.getResourceCode(),
             entity.getName(),
             entity.getColor(),
+            entity.getLastUsedDate() != null ? entity.getLastUsedDate().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
+            entity.getUsageCount(),
             entity.getState()
         );
         return dto;
@@ -51,6 +53,8 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
             entity.getResourceCode(),
             entity.getName(),
             entity.getColor(),
+            null,
+            null,
             null
         );
         return dto;

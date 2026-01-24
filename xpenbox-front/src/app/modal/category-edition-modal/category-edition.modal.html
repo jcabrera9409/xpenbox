@@ -137,7 +137,7 @@
                                         id="color" 
                                         type="color" 
                                         formControlName="color"
-                                        class="absolute opacity-0 w-0 h-0"
+                                        class="absolute left-0 top-0 w-full h-full opacity-0 cursor-pointer"
                                         aria-required="true" 
                                         aria-label="Color de la categoría" 
                                     />
@@ -146,7 +146,7 @@
                                         [value]="formCategory.get('color')?.value"
                                         readonly
                                         (click)="colorInput.click()"
-                                        class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all cursor-pointer uppercase font-mono text-sm"
+                                        class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all cursor-pointer uppercase font-mono text-sm relative"
                                         placeholder="#000000"
                                     />
                                 </div>

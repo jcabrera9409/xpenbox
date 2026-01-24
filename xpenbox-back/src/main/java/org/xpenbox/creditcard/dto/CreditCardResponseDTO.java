@@ -10,6 +10,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
  * @param name                  Name of the credit card.
  * @param creditLimit           Credit limit of the card.
  * @param currentBalance        Current balance on the credit card.
+ * @param lastUsedDateTimestamp Timestamp of the last usage date of the credit card.
+ * @param usageCount            Number of times the credit card has been used.
  * @param state                 State of the credit card (active/inactive).
  * @param billingDay            Billing day of the month.
  * @param paymentDay            Payment day of the month.
@@ -21,6 +23,8 @@ public record CreditCardResponseDTO (
     String name,
     BigDecimal creditLimit,
     BigDecimal currentBalance,
+    Long lastUsedDateTimestamp,
+    Long usageCount,
     Boolean state,
     Byte billingDay,
     Byte paymentDay,

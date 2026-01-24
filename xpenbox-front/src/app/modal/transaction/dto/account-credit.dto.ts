@@ -5,6 +5,8 @@ export interface AccountCreditDTO {
     icon: string;
     name: string;
     balance: number;
+    lastUsedDateTimestamp: number;
+    usageCount: number;
 }
 
 export enum AccountCreditType {

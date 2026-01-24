@@ -34,6 +34,8 @@ public class CreditCardMapper implements GenericMapper<CreditCard, CreditCardCre
             entity.getName(),
             entity.getCreditLimit(),
             entity.getCurrentBalance(),
+            entity.getLastUsedDate() != null ? entity.getLastUsedDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
+            entity.getUsageCount(),
             entity.getState(),
             entity.getBillingDay(),
             entity.getPaymentDay(),
@@ -53,6 +55,8 @@ public class CreditCardMapper implements GenericMapper<CreditCard, CreditCardCre
         CreditCardResponseDTO dto = new CreditCardResponseDTO(
             entity.getResourceCode(),
             entity.getName(),
+            null,
+            null,
             null,
             null,
             null,

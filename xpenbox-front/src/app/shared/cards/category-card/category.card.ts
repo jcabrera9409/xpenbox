@@ -17,6 +17,7 @@ export class CategoryCard {
   categoryCardName = input<string>();
   categoryCardColor = input<string>();
   categoryCardState = input<boolean>();
+  categoryTotalUses = input<number>();
 
   categoryCardEdit = output<string>();
 

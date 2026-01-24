@@ -33,6 +33,8 @@ public class AccountMapper implements GenericMapper<Account, AccountCreateDTO, A
             entity.getResourceCode(),
             entity.getName(),
             entity.getBalance(),
+            entity.getLastUsedDate() != null ? entity.getLastUsedDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
+            entity.getUsageCount(),
             entity.getState(),
             entity.getClosingDate() != null ? entity.getClosingDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null
         );
@@ -50,6 +52,8 @@ public class AccountMapper implements GenericMapper<Account, AccountCreateDTO, A
         AccountResponseDTO dto = new AccountResponseDTO(
             entity.getResourceCode(),
             entity.getName(),
+            null,
+            null,
             null,
             null,
             null

@@ -1,5 +1,7 @@
 package org.xpenbox.category.entity;
 
+import java.time.LocalDateTime;
+
 import org.xpenbox.user.entity.User;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -32,6 +34,12 @@ public class Category extends PanacheEntityBase {
     @Column(name = "color", nullable = false, length = 20)
     private String color;
 
+    @Column(name = "last_used_date", nullable = true)
+    private LocalDateTime lastUsedDate;
+
+    @Column(name = "usage_count", nullable = false)
+    private Long usageCount = 0L;
+
     @Column(name = "state", nullable = false)
     private Boolean state = true;
 
@@ -61,6 +69,22 @@ public class Category extends PanacheEntityBase {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public LocalDateTime getLastUsedDate() {
+        return lastUsedDate;
+    }
+
+    public void setLastUsedDate(LocalDateTime lastUsedDate) {
+        this.lastUsedDate = lastUsedDate;
+    }
+
+    public Long getUsageCount() {
+        return usageCount;
+    }
+
+    public void setUsageCount(Long usageCount) {
+        this.usageCount = usageCount;
     }
 
     public Boolean getState() {

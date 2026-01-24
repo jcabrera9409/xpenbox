@@ -33,6 +33,9 @@ export class CreditCard {
     const day = this.creditCardBillingDay();
     if (!day) return null;
     const now = new Date();
+    if (day < now.getDate()) {
+      return new Date(now.getFullYear(), now.getMonth() + 1, day);
+    }
     return new Date(now.getFullYear(), now.getMonth(), day);
   }
 
@@ -40,6 +43,9 @@ export class CreditCard {
     const day = this.creditCardPaymentDay();
     if (!day) return null;
     const now = new Date();
+    if (day < now.getDate()) {
+      return new Date(now.getFullYear(), now.getMonth() + 1, day);
+    }
     return new Date(now.getFullYear(), now.getMonth(), day);
   }
 

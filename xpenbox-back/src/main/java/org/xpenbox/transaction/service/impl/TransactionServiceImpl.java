@@ -140,6 +140,13 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
                 });
             
             if (!entityUpdateDTO.categoryResourceCode().equals(category.getResourceCode())) {
+                category.setLastUsedDate(transaction.getTransactionDate());
+                category.setUsageCount(category.getUsageCount() + 1);
+                categoryRepository.persist(category);
+
+                transaction.getCategory().setUsageCount(transaction.getCategory().getUsageCount() - 1);
+                categoryRepository.persist(transaction.getCategory());
+
                 transaction.setCategory(category);
                 updated = true;
             }
@@ -263,10 +270,21 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         
         if (transaction.getAccount() != null) {
             accountService.processAddAmount(transaction.getAccount().id, transaction.getAmount());
+
+            transaction.getAccount().setUsageCount(transaction.getAccount().getUsageCount() - 1);
+            accountRepository.persist(transaction.getAccount());
+
             LOG.debugf("Reverted amount to Account ID: %d", transaction.getAccount().id);
         } else if (transaction.getCreditCard() != null) {
             creditCardService.processAddPayment(transaction.getCreditCard().id, transaction.getAmount());
+
+            transaction.getCreditCard().setUsageCount(transaction.getCreditCard().getUsageCount() - 1);
+            creditCardRepository.persist(transaction.getCreditCard());
+
             LOG.debugf("Reverted amount from CreditCard ID: %d", transaction.getCreditCard().id);
+        } else {
+            LOG.debugf("No associated Account or CreditCard found for EXPENSE transaction ID: %d", transaction.id);
+            throw new BadRequestException(getEntityName(), "account/creditCard", "no associated account or credit card found for EXPENSE transaction");
         }
     }
 
@@ -328,13 +346,29 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         if (isValid(entityCreateDTO.accountResourceCode())) {
             Account account = validateAndGetAccountEntity(entityCreateDTO.accountResourceCode(), user);
             accountService.processSubtractAmount(account.id, entityCreateDTO.amount());
+
+            account.setLastUsedDate(transaction.getTransactionDate());
+            account.setUsageCount(account.getUsageCount() + 1);
+            accountRepository.persist(account);
+
             transaction.setAccount(account);
             LOG.debugf("Expense processed from Account ID: %d", account.id);
         } else if (isValid(entityCreateDTO.creditCardResourceCode())) {
             CreditCard creditCard = validateAndGetCreditCardEntity(entityCreateDTO.creditCardResourceCode(), user);
             creditCardService.processAddAmount(creditCard.id, entityCreateDTO.amount());
+
+            creditCard.setLastUsedDate(transaction.getTransactionDate());
+            creditCard.setUsageCount(creditCard.getUsageCount() + 1);
+            creditCardRepository.persist(creditCard);
+
             transaction.setCreditCard(creditCard);
             LOG.debugf("Expense processed to CreditCard ID: %d", creditCard.id);
+        }
+
+        if (transaction.getCategory() != null) {
+            transaction.getCategory().setLastUsedDate(transaction.getTransactionDate());
+            transaction.getCategory().setUsageCount(transaction.getCategory().getUsageCount() + 1);
+            categoryRepository.persist(transaction.getCategory());
         }
 
         return transaction;

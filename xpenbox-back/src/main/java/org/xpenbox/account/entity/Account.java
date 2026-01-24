@@ -41,6 +41,12 @@ public class Account extends PanacheEntityBase {
     @Column(name = "initial_balance", nullable = false, precision = 13, scale = 2)
     private BigDecimal initialBalance;
 
+    @Column(name = "last_used_date", nullable = true)
+    private LocalDateTime lastUsedDate;
+
+    @Column(name = "usage_count", nullable = false)
+    private Long usageCount = 0L;
+
     @Column(name = "closing_date", nullable = true)
     private LocalDateTime closingDate;
 
@@ -86,6 +92,22 @@ public class Account extends PanacheEntityBase {
 
     public void setInitialBalance(BigDecimal initialBalance) {
         this.initialBalance = initialBalance;
+    }
+
+    public LocalDateTime getLastUsedDate() {
+        return lastUsedDate;
+    }
+
+    public void setLastUsedDate(LocalDateTime lastUsedDate) {
+        this.lastUsedDate = lastUsedDate;
+    }
+
+    public Long getUsageCount() {
+        return usageCount;
+    }
+
+    public void setUsageCount(Long usageCount) {
+        this.usageCount = usageCount;
     }
 
     public LocalDateTime getClosingDate() {
