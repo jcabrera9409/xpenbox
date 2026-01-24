@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { EnvService } from '../../common/service/env.service';
 import { HttpClient } from '@angular/common/http';
-import { CategoryResponseDTO } from '../model/categoryResponseDTO';
-import { ApiResponseDTO } from '../../common/model/apiResponseDTO';
-import { CategoryRequestDTO } from '../model/categoryRequestDTO';
+import { CategoryResponseDTO } from '../model/category.response.dto';
+import { ApiResponseDTO } from '../../common/model/api.response.dto';
+import { CategoryRequestDTO } from '../model/category.request.dto';
 import { GenericService } from '../../common/service/generic.service';
 import { categoryState } from './category.state';
 

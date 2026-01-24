@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { ApiResponseDTO } from "../model/apiResponseDTO";
+import { ApiResponseDTO } from "../model/api.response.dto";
 import { Observable } from "rxjs";
 
 /**

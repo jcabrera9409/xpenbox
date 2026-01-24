@@ -1,10 +1,10 @@
 import { Component, OnInit, output, signal, input } from '@angular/core';
-import { CreditCardResponseDTO } from '../../../feature/creditcard/model/creditCardResponseDTO';
+import { CreditCardResponseDTO } from '../../../feature/creditcard/model/creditcard.response.dto';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreditCardService } from '../../../feature/creditcard/service/creditcard.service';
 import { CommonModule } from '@angular/common';
-import { CreditCardRequestDTO } from '../../../feature/creditcard/model/creditCardRequestDTO';
-import { ApiResponseDTO } from '../../../feature/common/model/apiResponseDTO';
+import { CreditCardRequestDTO } from '../../../feature/creditcard/model/creditcard.request.dto';
+import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 
 @Component({
   selector: 'app-creditcard-edition-modal',

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../feature/auth/service/auth.service';
-import { LoginRequestDTO } from '../../../feature/auth/model/loginRequestDTO';
+import { LoginRequestDTO } from '../../../feature/auth/model/login.request.dto';
 
 @Component({
   selector: 'app-login-page',

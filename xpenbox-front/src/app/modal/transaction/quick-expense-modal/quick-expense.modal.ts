@@ -6,12 +6,12 @@ import { creditCardState } from '../../../feature/creditcard/service/creditcard.
 import { CategoryService } from '../../../feature/category/service/category.service';
 import { AccountService } from '../../../feature/account/service/account.service';
 import { CreditCardService } from '../../../feature/creditcard/service/creditcard.service';
-import { CategoryResponseDTO } from '../../../feature/category/model/categoryResponseDTO';
+import { CategoryResponseDTO } from '../../../feature/category/model/category.response.dto';
 import { AccountCreditDTO, AccountCreditType } from '../dto/account-credit.dto';
-import { TransactionRequestDTO } from '../../../feature/transaction/model/transactionRequestDTO';
+import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
-import { ApiResponseDTO } from '../../../feature/common/model/apiResponseDTO';
-import { TransactionResponseDTO } from '../../../feature/transaction/model/transactionResponseDTO';
+import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
+import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 
 @Component({
   selector: 'app-quick-expense-modal',

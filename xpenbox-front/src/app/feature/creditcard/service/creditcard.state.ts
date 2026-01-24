@@ -1,5 +1,5 @@
 import { signal } from "@angular/core";
-import { CreditCardResponseDTO } from "../model/creditCardResponseDTO";
+import { CreditCardResponseDTO } from "../model/creditcard.response.dto";
 
 export const creditCardState = {
     isLoading: signal<boolean>(false),

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { TransactionResponseDTO } from '../model/transactionResponseDTO';
-import { TransactionRequestDTO } from '../model/transactionRequestDTO';
+import { TransactionResponseDTO } from '../model/transaction.response.dto';
+import { TransactionRequestDTO } from '../model/transaction.request.dto';
 import { GenericService } from '../../common/service/generic.service';
 import { EnvService } from '../../common/service/env.service';
 import { HttpClient } from '@angular/common/http';
 import { transactionState } from './transaction.state';
-import { ApiResponseDTO } from '../../common/model/apiResponseDTO';
+import { ApiResponseDTO } from '../../common/model/api.response.dto';
 
 /**
  * Service for managing transactions, including creating, updating, and fetching transaction data.

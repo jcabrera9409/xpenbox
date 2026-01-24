@@ -1,9 +1,9 @@
 import { Component, input, OnInit, output, signal } from '@angular/core';
-import { CategoryResponseDTO } from '../../feature/category/model/categoryResponseDTO';
+import { CategoryResponseDTO } from '../../feature/category/model/category.response.dto';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CategoryService } from '../../feature/category/service/category.service';
-import { ApiResponseDTO } from '../../feature/common/model/apiResponseDTO';
-import { CategoryRequestDTO } from '../../feature/category/model/categoryRequestDTO';
+import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
+import { CategoryRequestDTO } from '../../feature/category/model/category.request.dto';
 import { CommonModule } from '@angular/common';
 
 @Component({

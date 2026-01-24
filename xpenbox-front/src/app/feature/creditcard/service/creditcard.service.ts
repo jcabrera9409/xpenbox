@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { EnvService } from '../../common/service/env.service';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponseDTO } from '../../common/model/apiResponseDTO';
-import { CreditCardResponseDTO } from '../model/creditCardResponseDTO';
+import { ApiResponseDTO } from '../../common/model/api.response.dto';
+import { CreditCardResponseDTO } from '../model/creditcard.response.dto';
 import { creditCardState } from './creditcard.state';
-import { CreditCardRequestDTO } from '../model/creditCardRequestDTO';
+import { CreditCardRequestDTO } from '../model/creditcard.request.dto';
 import { GenericService } from '../../common/service/generic.service';
 
 /**

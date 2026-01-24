@@ -1,5 +1,5 @@
 import { signal } from "@angular/core";
-import { CategoryResponseDTO } from "../model/categoryResponseDTO";
+import { CategoryResponseDTO } from "../model/category.response.dto";
 
 /**
  * State management for category-related data.

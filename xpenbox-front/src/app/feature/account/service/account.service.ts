@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { EnvService } from '../../common/service/env.service';
 import { HttpClient } from '@angular/common/http';
-import { AccountResponseDTO } from '../model/accountResponseDTO';
+import { AccountResponseDTO } from '../model/account.response.dto';
 import { accountState } from './account.state';
-import { ApiResponseDTO } from '../../common/model/apiResponseDTO';
-import { AccountRequestDTO } from '../model/accountRequestDTO';
+import { ApiResponseDTO } from '../../common/model/api.response.dto';
+import { AccountRequestDTO } from '../model/account.request.dto';
 import { GenericService } from '../../common/service/generic.service';
 
 /**

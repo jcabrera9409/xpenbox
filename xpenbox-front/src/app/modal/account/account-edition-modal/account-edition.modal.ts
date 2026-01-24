@@ -2,9 +2,9 @@ import { Component, ChangeDetectionStrategy, output, input, OnInit, signal } fro
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AccountService } from '../../../feature/account/service/account.service';
-import { AccountRequestDTO } from '../../../feature/account/model/accountRequestDTO';
-import { ApiResponseDTO } from '../../../feature/common/model/apiResponseDTO';
-import { AccountResponseDTO } from '../../../feature/account/model/accountResponseDTO';
+import { AccountRequestDTO } from '../../../feature/account/model/account.request.dto';
+import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
+import { AccountResponseDTO } from '../../../feature/account/model/account.response.dto';
 
 
 @Component({

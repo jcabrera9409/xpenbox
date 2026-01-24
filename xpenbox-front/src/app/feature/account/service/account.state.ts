@@ -1,5 +1,5 @@
 import { signal } from "@angular/core";
-import { AccountResponseDTO } from "../model/accountResponseDTO";
+import { AccountResponseDTO } from "../model/account.response.dto";
 
 /**
  * State management for account-related data.

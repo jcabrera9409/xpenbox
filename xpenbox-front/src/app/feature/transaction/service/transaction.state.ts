@@ -1,5 +1,5 @@
 import { signal } from "@angular/core";
-import { TransactionResponseDTO } from "../model/transactionResponseDTO";
+import { TransactionResponseDTO } from "../model/transaction.response.dto";
 
 /**
  * State management for transactions.

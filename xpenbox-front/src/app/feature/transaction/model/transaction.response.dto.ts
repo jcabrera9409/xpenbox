@@ -1,7 +1,7 @@
-import { AccountResponseDTO } from "../../account/model/accountResponseDTO";
-import { CategoryResponseDTO } from "../../category/model/categoryResponseDTO";
-import { CreditCardResponseDTO } from "../../creditcard/model/creditCardResponseDTO";
-import { TransactionType } from "./transactionRequestDTO";
+import { AccountResponseDTO } from "../../account/model/account.response.dto";
+import { CategoryResponseDTO } from "../../category/model/category.response.dto";
+import { CreditCardResponseDTO } from "../../creditcard/model/creditcard.response.dto";
+import { TransactionType } from "./transaction.request.dto";
 
 export interface TransactionResponseDTO {
     resourceCode: string;
