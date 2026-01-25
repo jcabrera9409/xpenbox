@@ -5,6 +5,8 @@ import { CategoryService } from '../../feature/category/service/category.service
 import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
 import { CategoryRequestDTO } from '../../feature/category/model/category.request.dto';
 import { CommonModule } from '@angular/common';
+import { NotificationService } from '../../feature/common/service/notification.service';
+import { categoryState } from '../../feature/category/service/category.state';
 
 @Component({
   selector: 'app-category-edition-modal',
@@ -17,6 +19,7 @@ export class CategoryEditionModal implements OnInit {
   resourceCodeSelected = input<string | null>();
   close = output<void>();
 
+  categoryState = categoryState;
   categoryData = signal<CategoryResponseDTO | null>(null);
 
   formCategory!: FormGroup;
@@ -26,7 +29,8 @@ export class CategoryEditionModal implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -55,15 +59,14 @@ export class CategoryEditionModal implements OnInit {
         this.sendingForm.set(false);
 
         if (response.success && response.data) {
+          this.notificationService.success(`Categoria ${this.isEditMode ? 'actualizada' : 'creada'} con éxito.`);
           this.categoryService.refresh();
           this.close.emit();
         } else {
-          console.error('Error saving category:', response);
-          this.errorMessage.set('Error saving category: ' + response.message);
+          this.categoryState.error.set(response.message);
         }
-      }, error: (error) => {
-        console.error('Error saving category:', error);
-        this.errorMessage.set('Error saving category: ' + error.message);
+      }, error: () => {
+        this.categoryState.error.set('Error guardando la categoría. Por favor, inténtalo de nuevo más tarde.');
         this.sendingForm.set(false);
       }
     });
@@ -102,13 +105,11 @@ export class CategoryEditionModal implements OnInit {
             color: response.data.color
           });
         } else {
-          console.error('Error loading category data:', response);
-          this.errorMessage.set('Error loading category data: ' + response.message);
+          this.errorMessage.set(response.message);
         }
         this.loading.set(false);
-      }, error: (error) => {
-        console.error('Error loading category data:', error);
-        this.errorMessage.set('Error loading category data: ' + error.message);
+      }, error: () => {
+        this.errorMessage.set('Error cargando los datos de la categoría. Por favor, inténtalo de nuevo más tarde.');
         this.loading.set(false);
       }
     });
