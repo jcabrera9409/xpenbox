@@ -5,6 +5,8 @@ import { CreditCardService } from '../../../feature/creditcard/service/creditcar
 import { CommonModule } from '@angular/common';
 import { CreditCardRequestDTO } from '../../../feature/creditcard/model/creditcard.request.dto';
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
+import { creditCardState } from '../../../feature/creditcard/service/creditcard.state';
+import { NotificationService } from '../../../feature/common/service/notification.service';
 
 @Component({
   selector: 'app-creditcard-edition-modal',
@@ -18,6 +20,7 @@ export class CreditcardEditionModal implements OnInit {
   close = output<void>();
 
   creditCardData = signal<CreditCardResponseDTO | null>(null);
+  creditCardState = creditCardState;
 
   formCreditCard!: FormGroup;
   loading = signal<boolean>(false);
@@ -26,7 +29,8 @@ export class CreditcardEditionModal implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private creditCardService: CreditCardService
+    private creditCardService: CreditCardService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -55,15 +59,14 @@ export class CreditcardEditionModal implements OnInit {
         this.sendingForm.set(false);
 
         if(response.success && response.data) {
+          this.notificationService.success(`Tarjeta de crédito ${this.isEditMode ? 'actualizada' : 'creada'} con éxito.`);
           this.creditCardService.refresh();
           this.close.emit()
         } else {
-          console.error('Error creating credit card:', response.message);
-          this.errorMessage.set('Error creating account: ' + response.message);
+          this.creditCardState.error.set(response.message);
         }
-      }, error: (error) => {
-        console.error('Error creating credit card:', error);
-        this.errorMessage.set(error.message || 'Error creating credit card');
+      }, error: () => {
+        this.creditCardState.error.set('Error guardando la tarjeta de crédito. Por favor, inténtalo de nuevo más tarde.');
         this.sendingForm.set(false);
       }
     });

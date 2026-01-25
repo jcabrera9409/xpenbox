@@ -5,6 +5,8 @@ import { AccountService } from '../../../feature/account/service/account.service
 import { AccountRequestDTO } from '../../../feature/account/model/account.request.dto';
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { AccountResponseDTO } from '../../../feature/account/model/account.response.dto';
+import { accountState } from '../../../feature/account/service/account.state';
+import { NotificationService } from '../../../feature/common/service/notification.service';
 
 
 @Component({
@@ -20,6 +22,7 @@ export class AccountEditionModal implements OnInit {
   close = output<void>();
 
   accountData = signal<AccountResponseDTO | null>(null);
+  accountState = accountState;
 
   formAccount!: FormGroup;
   loading = signal<boolean>(false);
@@ -28,7 +31,8 @@ export class AccountEditionModal implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -57,15 +61,14 @@ export class AccountEditionModal implements OnInit {
         this.sendingForm.set(false);
 
         if (response.success && response.data) {
+          this.notificationService.success(`Cuenta ${this.isEditMode ? 'actualizada' : 'creada'} con éxito.`);
           this.accountService.refresh();
           this.close.emit();
         } else {
-          console.error('Error creating account:', response.message);
-          this.errorMessage.set('Error creating account: ' + response.message);
+          this.accountState.error.set(response.message);
         }
-      }, error: (error) => {
-        console.error('Error creating account:', error);
-        this.errorMessage.set(error.message || 'Error creating account');
+      }, error: () => {
+        this.accountState.error.set('Error guardando la cuenta. Por favor, inténtalo de nuevo más tarde.');
         this.sendingForm.set(false);
       }
     });
