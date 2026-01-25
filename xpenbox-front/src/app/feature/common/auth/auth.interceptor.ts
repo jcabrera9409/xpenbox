@@ -3,8 +3,9 @@ import { inject } from "@angular/core";
 import { AuthService } from "../../auth/service/auth.service";
 import { Router } from "@angular/router";
 import { catchError, Observable, switchMap, throwError } from "rxjs";
+import { NotificationService } from "../service/notification.service";
 
-// Singleton para manejar un único refresh a la vez
+// Singleton to track ongoing refresh token requests
 let ongoingRefresh$: Observable<void> | null = null;
 
 /**
@@ -17,6 +18,7 @@ export function authInterceptor(
     req: HttpRequest<any>,
     next: HttpHandlerFn
 ) {
+    const notificationService = inject(NotificationService);
     const authService = inject(AuthService);
     const router = inject(Router);
 
@@ -41,13 +43,14 @@ export function authInterceptor(
                 return throwError(() => error);
             }
 
-            // Si ya hay un refresh en curso, reutilizarlo
+            // If a refresh is already in progress, reuse it
             if (!ongoingRefresh$) {
                 ongoingRefresh$ = authService.refresh().pipe(
                     catchError((refreshError) => {
                         ongoingRefresh$ = null;
                         authService.logout().subscribe({
                             complete: () => {
+                                notificationService.error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
                                 authService.clearAuthState();
                                 router.navigate(['/login']);
                             },

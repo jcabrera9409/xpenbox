@@ -106,10 +106,20 @@
           </div>
         </div>
 
+        <!-- Error Message -->
+        @if (errorMessage()) {
+          <div class="p-4 rounded-lg bg-[var(--xpb-expense)]/10 border border-[var(--xpb-expense)]/20 flex items-start gap-3">
+            <span class="material-icons xpb-text-expense text-xl mt-0.5">error</span>
+            <div class="flex-1">
+              <p class="text-sm xpb-text-expense font-medium">{{ errorMessage() }}</p>
+            </div>
+          </div>
+        }
+
         <!-- Submit Button -->
         <button
           type="submit"
-          [disabled]="isSubmitting()"
+          [disabled]="isSubmitting() || registerForm.invalid"
           class="w-full py-3 px-4 xpb-btn-primary font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2"
         >
           @if (isSubmitting()) {

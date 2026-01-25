@@ -5,6 +5,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.xpenbox.authorization.dto.TokenResponseDTO;
 import org.xpenbox.authorization.service.IAuthenticationService;
 import org.xpenbox.authorization.service.ITokenService;
+import org.xpenbox.exception.ForbiddenException;
 import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
 
@@ -38,12 +39,12 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
         if (!user.getVerified()) {
             LOG.infof("Login attempt for unverified email: %s", email);
-            throw new UnauthorizedException("Email not verified");
+            throw new ForbiddenException("Email not verified");
         }
 
         if (!user.getState()) {
             LOG.infof("Login attempt for inactive account: %s", email);
-            throw new UnauthorizedException("User account is inactive");
+            throw new ForbiddenException("User account is inactive");
         }
 
         if(!BCrypt.checkpw(password, user.getPassword())) {

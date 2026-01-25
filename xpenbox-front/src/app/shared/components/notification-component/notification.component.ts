@@ -10,7 +10,7 @@ import { NotificationDTO, NotificationType } from '../../../feature/common/model
  * Uses Angular's ChangeDetectionStrategy.OnPush for performance optimization.
  */
 @Component({
-  selector: 'app-notification',
+  selector: 'app-notification-component',
   imports: [CommonModule],
   templateUrl: './notification.component.html',
   styleUrl: './notification.component.css',

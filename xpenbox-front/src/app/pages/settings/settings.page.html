@@ -1,0 +1,107 @@
+<div class="min-h-screen xpb-bg-main p-4 sm:p-6 lg:p-8">
+  <div class="max-w-2xl mx-auto">
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-2xl sm:text-3xl font-bold xpb-text-primary mb-2">Configuración</h1>
+      <p class="xpb-text-secondary">Información de tu cuenta</p>
+    </div>
+
+    <!-- User Information Card -->
+    <div class="xpb-bg-card rounded-xl shadow-sm p-6 mb-6">
+      <h2 class="text-lg font-semibold xpb-text-primary mb-6 flex items-center gap-2">
+        <span class="material-icons text-[var(--xpb-primary)]">person</span>
+        Información del Usuario
+      </h2>
+
+      @if (userState.userLogged()) {
+        <div class="space-y-5">
+          <!-- Profile Image -->
+          <div class="flex justify-center pb-2">
+            @if (profileImageUrl()) {
+              <img 
+                [src]="profileImageUrl()" 
+                alt="Foto de perfil"
+                class="w-24 h-24 rounded-full object-cover border-2 xpb-border shadow-sm"
+              />
+            } @else {
+              <div class="w-24 h-24 rounded-full xpb-bg-main border-2 xpb-border flex items-center justify-center">
+                <span class="material-icons text-5xl xpb-text-secondary">person</span>
+              </div>
+            }
+          </div>
+
+          <!-- Email -->
+          <div class="flex items-start gap-4">
+            <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
+              <span class="material-icons text-[var(--xpb-primary)] text-2xl">email</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm xpb-text-secondary mb-1">Correo Electrónico</p>
+              <p class="font-medium xpb-text-primary break-words">{{ userState.userLogged()?.email }}</p>
+            </div>
+          </div>
+
+          <!-- Currency -->
+          <div class="flex items-start gap-4">
+            <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
+              <span class="material-icons text-[var(--xpb-primary)] text-2xl">payments</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm xpb-text-secondary mb-1">Divisa por Defecto</p>
+              <p class="font-medium xpb-text-primary">{{ userState.userLogged()?.currency }}</p>
+            </div>
+          </div>
+
+          <!-- Verification Status -->
+          <div class="flex items-start gap-4">
+            <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
+              <span class="material-icons text-[var(--xpb-primary)] text-2xl">
+                {{ userState.userLogged()?.verified ? 'verified' : 'pending' }}
+              </span>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm xpb-text-secondary mb-1">Estado de Verificación</p>
+              <div class="flex items-center gap-2">
+                <p class="font-medium xpb-text-primary">
+                  {{ userState.userLogged()?.verified ? 'Verificado' : 'Pendiente de verificación' }}
+                </p>
+                @if (userState.userLogged()?.verified) {
+                  <span class="material-icons text-[var(--xpb-income)] text-sm">check_circle</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <!-- Loading State -->
+        <div class="py-8 text-center">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 xpb-border border-t-[var(--xpb-primary)] mb-4"></div>
+          <p class="xpb-text-secondary">Cargando información...</p>
+        </div>
+      }
+    </div>
+
+    <!-- Logout Section -->
+    <div class="xpb-bg-card rounded-xl shadow-sm p-6">
+      <h2 class="text-lg font-semibold xpb-text-primary mb-4 flex items-center gap-2">
+        <span class="material-icons text-[var(--xpb-expense)]">logout</span>
+        Sesión
+      </h2>
+      
+      <div class="xpb-bg-main rounded-lg p-4 mb-4">
+        <p class="text-sm xpb-text-secondary">
+          Al cerrar sesión, será redirigido a la página de inicio de sesión. 
+          Deberá ingresar sus credenciales nuevamente para acceder a su cuenta.
+        </p>
+      </div>
+
+      <button 
+        (click)="logout()"
+        class="w-full sm:w-auto xpb-btn-secondary inline-flex items-center justify-center gap-2 p-2 rounded-lg text-[var(--xpb-expense)] hover:bg-[var(--xpb-expense)] hover:text-white transition-colors"
+      >
+        <span class="material-icons">logout</span>
+        Cerrar Sesión
+      </button>
+    </div>
+  </div>
+</div>

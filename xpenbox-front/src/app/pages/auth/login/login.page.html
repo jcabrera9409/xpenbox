@@ -28,13 +28,16 @@
               [class.border-[var(--xpb-expense)]]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
             />
           </div>
-          <p
-            *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-            class="mt-1.5 text-xs xpb-text-expense"
-          >
-            <span *ngIf="loginForm.get('email')?.hasError('required')">El correo electrónico es requerido</span>
-            <span *ngIf="loginForm.get('email')?.hasError('email')">Ingresa un correo electrónico válido</span>
-          </p>
+          @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+            <p class="mt-1.5 text-xs xpb-text-expense">
+              @if (loginForm.get('email')?.hasError('required')) {
+                <span>El correo electrónico es requerido</span>
+              }
+              @if (loginForm.get('email')?.hasError('email')) {
+                <span>Ingresa un correo electrónico válido</span>
+              }
+            </p>
+          }
         </div>
 
         <!-- Password Field -->
@@ -63,13 +66,16 @@
               {{ showPassword() ? 'visibility_off' : 'visibility' }}
             </button>
           </div>
-          <p
-            *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-            class="mt-1.5 text-xs xpb-text-expense"
-          >
-            <span *ngIf="loginForm.get('password')?.hasError('required')">La contraseña es requerida</span>
-            <span *ngIf="loginForm.get('password')?.hasError('minlength')">La contraseña debe tener al menos 8 caracteres</span>
-          </p>
+          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+            <p class="mt-1.5 text-xs xpb-text-expense">
+              @if (loginForm.get('password')?.hasError('required')) {
+                <span>La contraseña es requerida</span>
+              }
+              @if (loginForm.get('password')?.hasError('minlength')) {
+                <span>La contraseña debe tener al menos 8 caracteres</span>
+              }
+            </p>
+          }
         </div>
 
         <!-- Remember Me Checkbox -->
@@ -85,24 +91,37 @@
             </span>
           </label>
           <a
-            href="#"
             class="text-sm xpb-text-primary-accent hover:text-[var(--xpb-primary-hover)] hover:underline transition-colors"
           >
             ¿Olvidaste tu contraseña?
           </a>
         </div>
 
+        <!-- Error Message -->
+        @if (errorMessage()) {
+          <div class="p-4 rounded-lg bg-[var(--xpb-expense)]/10 border border-[var(--xpb-expense)]/20 flex items-start gap-3">
+            <span class="material-icons xpb-text-expense text-xl mt-0.5">error</span>
+            <div class="flex-1">
+              <p class="text-sm xpb-text-expense font-medium">{{ errorMessage() }}</p>
+            </div>
+          </div>
+        }
+
         <!-- Submit Button -->
         <button
           type="submit"
-          [disabled]="isSubmitting()"
+          [disabled]="isSubmitting() || loginForm.invalid"
           class="w-full xpb-btn-primary font-medium py-3 rounded-lg flex items-center justify-center gap-2"
         >
-          <span *ngIf="!isSubmitting()">Iniciar Sesión</span>
-          <span *ngIf="isSubmitting()" class="flex items-center gap-2">
-            <span class="material-icons animate-spin">refresh</span>
-            Iniciando...
-          </span>
+          @if (!isSubmitting()) {
+            <span>Iniciar Sesión</span>
+          }
+          @if (isSubmitting()) {
+            <span class="flex items-center gap-2">
+              <span class="material-icons animate-spin">refresh</span>
+              Iniciando...
+            </span>
+          }
         </button>
       </form>
 
@@ -128,9 +147,9 @@
     <!-- Footer -->
     <p class="text-center text-xs sm:text-sm xpb-text-secondary mt-6">
       Al iniciar sesión, aceptas nuestros
-      <a href="#" class="xpb-text-primary-accent hover:underline">Términos de Servicio</a>
+      <a class="xpb-text-primary-accent hover:underline">Términos de Servicio</a>
       y
-      <a href="#" class="xpb-text-primary-accent hover:underline">Política de Privacidad</a>
+      <a class="xpb-text-primary-accent hover:underline">Política de Privacidad</a>
     </p>
   </div>
 </div>

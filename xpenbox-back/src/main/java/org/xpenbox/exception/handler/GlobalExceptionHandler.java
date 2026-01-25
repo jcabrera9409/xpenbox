@@ -4,11 +4,11 @@ import org.jboss.logging.Logger;
 import org.xpenbox.common.dto.APIResponseDTO;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.ConflictException;
+import org.xpenbox.exception.ForbiddenException;
 import org.xpenbox.exception.InsufficientFoundsException;
 import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.exception.ValidationException;
 
-import io.quarkus.security.ForbiddenException;
 import io.quarkus.security.UnauthorizedException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;

@@ -1,5 +1,7 @@
 import { Component, output, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { userState } from '../../../feature/user/service/user.state';
+import { CommonModule } from '@angular/common';
 
 interface MenuItem {
   label: string;
@@ -7,49 +9,34 @@ interface MenuItem {
   route: string;
 }
 
-interface UserProfile {
-  name: string;
-  photo?: string;
-}
-
 @Component({
   selector: 'app-menu-component',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css',
 })
 export class MenuComponent {
 
+  userState = userState;
+
   openQuickExpense = output<void>();
+
+  notificationCount = signal<number>(3);
 
   menuItems: MenuItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/landing' },
     { label: 'Cuentas', icon: 'account_balance_wallet', route: '/landing/account' },
     { label: 'Categorías', icon: 'category', route: '/landing/category' },
-    { label: 'Configuración', icon: 'settings', route: '/landing/configuracion' },
+    { label: 'Configuración', icon: 'settings', route: '/landing/settings' },
   ];
 
-  userProfile = signal<UserProfile>({
-    name: 'Usuario',
-    photo: undefined,
-  });
-
-  notificationCount = signal<number>(3);
+  get userName(): string {
+    const name = this.userState.userLogged()?.email || 'Usuario';
+    return name.split('@')[0];
+  }
 
   onQuickExpense(): void {
     this.openQuickExpense.emit();
   }
 
-  onLogout(): void {
-    console.log('Cerrando sesión...');
-  }
-
-  getUserInitials(name: string): string {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  }
 }

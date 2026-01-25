@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { LoginRequestDTO } from '../model/login.request.dto';
 import { authState } from './auth.state';
 import { Observable, tap, catchError, throwError, map } from 'rxjs';
+import { ApiResponseDTO } from '../../common/model/api.response.dto';
+import { UserRequestDTO } from '../../user/model/user.request.dto';
 
 /**
  * Service for handling authentication-related operations
@@ -19,6 +21,10 @@ export class AuthService {
     private envService: EnvService
   ) {
     this.apiUrl = `${this.envService.getApiUrl()}/auth`;
+  }
+
+  register(userRequest: UserRequestDTO): Observable<ApiResponseDTO<void>> {
+    return this.http.post<ApiResponseDTO<void>>(`${this.apiUrl}/register`, userRequest);
   }
 
   /**

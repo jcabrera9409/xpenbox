@@ -3,6 +3,7 @@ package org.xpenbox.user.service.impl;
 import org.jboss.logging.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 import org.xpenbox.exception.ConflictException;
+import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.user.dto.UserCreateDTO;
 import org.xpenbox.user.dto.UserResponseDTO;
 import org.xpenbox.user.entity.User;
@@ -45,6 +46,20 @@ public class UserServiceImpl implements IUserService {
         LOG.infof("User with email %s registered successfully", userRequest.email());
 
         return UserMapper.toDTO(newUser);
+    }
+
+    @Override
+    public UserResponseDTO getUserByEmail(String email) {
+        LOG.infof("Retrieving user with email: %s", email);
+
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            LOG.warnf("User with email %s not found", email);
+            throw new ResourceNotFoundException("User with this email does not exist");
+        }
+
+        LOG.infof("User with email %s retrieved successfully", email);
+        return UserMapper.toDTO(user);
     }
     
 }

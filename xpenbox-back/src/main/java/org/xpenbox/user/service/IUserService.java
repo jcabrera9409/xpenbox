@@ -15,4 +15,12 @@ public interface IUserService {
      * @return the created user's response data
      */
     UserResponseDTO register(UserCreateDTO userRequest);
+
+    /**
+     * Retrieves user information by email.
+     *
+     * @param email the email of the user to retrieve
+     * @return the user's response data
+     */
+    UserResponseDTO getUserByEmail(String email);
 }

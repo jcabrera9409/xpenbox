@@ -8,22 +8,14 @@
 
     <!-- User Profile (Mobile only) -->
     <div class="lg:hidden flex items-center gap-3 px-4">
-      @if (userProfile().photo) {
-        <img
-          [src]="userProfile().photo"
-          [alt]="userProfile().name"
-          class="w-10 h-10 rounded-full object-cover border-2 xpb-border"
-        />
-      } @else {
-        <div
-          class="w-10 h-10 rounded-full bg-[var(--xpb-primary)] text-white font-semibold flex items-center justify-center text-sm"
-        >
-          {{ getUserInitials(userProfile().name) }}
-        </div>
-      }
+      <img
+        src="https://api.dicebear.com/9.x/identicon/svg?seed={{this.userName }}"
+        [alt]="this.userName"
+        class="w-10 h-10 rounded-full object-cover border-2 xpb-border"
+      />
       <div class="flex flex-col">
         <span class="text-xs xpb-text-secondary">Hola</span>
-        <span class="font-medium xpb-text-primary text-sm">{{ userProfile().name }}</span>
+        <span class="font-medium xpb-text-primary text-sm">{{ this.userName }}</span>
       </div>
     </div>
 
@@ -34,27 +26,20 @@
     <div class="flex items-center gap-3 lg:gap-4 px-4 lg:px-6">
       <!-- User Profile (Desktop only) -->
       <div class="hidden lg:flex items-center gap-3">
-        @if (userProfile().photo) {
-          <img
-            [src]="userProfile().photo"
-            [alt]="userProfile().name"
-            class="w-10 h-10 rounded-full object-cover border-2 xpb-border"
-          />
-        } @else {
-          <div
-            class="w-10 h-10 rounded-full bg-[var(--xpb-primary)] text-white font-semibold flex items-center justify-center text-sm"
-          >
-            {{ getUserInitials(userProfile().name) }}
-          </div>
-        }
+        <img
+          src="https://api.dicebear.com/9.x/identicon/svg?seed={{this.userName }}"
+          [alt]="this.userName"
+          class="w-10 h-10 rounded-full object-cover border-2 xpb-border"
+        />
         <div class="flex flex-col">
           <span class="text-xs xpb-text-secondary">Hola</span>
-          <span class="font-medium xpb-text-primary text-sm">{{ userProfile().name }}</span>
+          <span class="font-medium xpb-text-primary text-sm">{{ this.userName }}</span>
         </div>
       </div>
 
       <!-- Notifications -->
       <button
+        style="display: none;"
         class="relative p-2 rounded-lg hover:xpb-bg-sidebar transition-colors"
         aria-label="Notificaciones"
       >

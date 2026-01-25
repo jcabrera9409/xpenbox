@@ -17,6 +17,7 @@ export class LoginPage {
   protected readonly loginForm: FormGroup;
   protected readonly showPassword = signal(false);
   protected readonly isSubmitting = signal(false);
+  protected readonly errorMessage = signal<string | null>(null);
 
   constructor(
     private readonly fb: FormBuilder,
@@ -48,6 +49,13 @@ export class LoginPage {
           this.router.navigate(['/landing']);
         },
         error: (error) => {
+          if (error.status === 401) {
+            this.errorMessage.set('Correo electrónico o contraseña incorrectos.');
+          } else if (error.status === 403) {
+            this.errorMessage.set('Tu correo no está verificado o está deshabilitado.');
+          } else {
+            this.errorMessage.set('Ocurrió un error al iniciar sesión. Por favor, inténtalo de nuevo más tarde.');
+          }
           this.isSubmitting.set(false);
           console.error('Error al iniciar sesión:', error);
         }
