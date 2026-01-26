@@ -1,0 +1,342 @@
+<div class="h-screen xpb-bg-main p-3 sm:p-4 flex flex-col overflow-hidden">
+  <!-- Header -->
+  <div class="mb-4 flex-shrink-0">
+    <div class="flex items-center justify-between mb-2">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold xpb-text-primary mb-1">Mis Ingresos</h1>
+        <p class="xpb-text-secondary text-sm">Gestiona tus ingresos y asignaciones</p>
+      </div>
+      <button 
+        (click)="openCreateIncomeModal()"
+        class="flex items-center gap-1.5 px-3 py-2 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors text-sm"
+        type="button">
+        <span class="material-icons text-lg">add</span>
+        <span class="hidden sm:inline">Nuevo Ingreso</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtro por Fechas -->
+  <div class="mb-4 flex-shrink-0">
+    <div class="xpb-bg-card rounded-lg border xpb-border overflow-hidden">
+      <!-- Header del acordeón (solo visible en mobile) -->
+      <button 
+        (click)="toggleFilter()"
+        class="md:hidden w-full p-4 flex items-center justify-between xpb-text-primary hover:xpb-bg-sidebar transition-colors"
+        type="button">
+        <div class="flex items-center gap-3">
+          <span class="material-icons">date_range</span>
+          <span class="text-sm font-medium">Filtrar por rango de fechas</span>
+        </div>
+        <span class="material-icons transition-transform" [class.rotate-180]="filterExpanded()">
+          expand_more
+        </span>
+      </button>
+      
+      <!-- Contenido del filtro -->
+      <div [class.hidden]="!filterExpanded()" class="md:!block p-4">
+        <div class="flex items-start gap-3">
+          <span class="material-icons xpb-text-primary mt-1 hidden md:block">date_range</span>
+          <div class="flex-1">
+            <label class="hidden md:block text-sm font-medium xpb-text-primary mb-2">Filtrar por rango de fechas</label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label for="start-date" class="block text-xs xpb-text-secondary mb-1">Fecha inicio</label>
+                <input 
+                  type="date" 
+                  id="start-date"
+                  name="start-date"
+                  [value]="tempStartDate"
+                  [max]="maxDate"
+                  (change)="onStartDateChange($event)"
+                  class="w-full xpb-bg-main border xpb-border rounded-lg px-3 py-2 xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent">
+              </div>
+              <div>
+                <label for="end-date" class="block text-xs xpb-text-secondary mb-1">Fecha fin</label>
+                <input 
+                  type="date" 
+                  id="end-date"
+                  name="end-date"
+                  [value]="tempEndDate"
+                  [max]="maxDate"
+                  (change)="onEndDateChange($event)"
+                  class="w-full xpb-bg-main border xpb-border rounded-lg px-3 py-2 xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent">
+              </div>
+              <div class="flex items-end">
+                <button 
+                  (click)="applyFilter()"
+                  class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors text-sm"
+                  type="button">
+                  <span class="material-icons text-lg">search</span>
+                  <span>Filtrar</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-3 mb-3 md:mb-4 flex-shrink-0">
+    <!-- Total de Ingresos -->
+    <div class="xpb-bg-card rounded-lg border xpb-border p-2 md:p-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div class="flex-1 text-center md:text-left">
+          <p class="text-[10px] md:text-xs xpb-text-secondary mb-1">Total Ingresos</p>
+          <p class="text-xs md:text-2xl font-bold xpb-text-income truncate">
+            @if (incomeState.isLoading()) {
+              <span class="text-[10px] md:text-base">Cargando...</span>
+            } @else {
+              {{ totalMonthIncome() | currency:'PEN ':'symbol':'1.2-2' }}
+            }
+          </p>
+          <p class="text-[9px] md:text-xs xpb-text-secondary mt-0.5 md:mt-1 hidden md:block">
+            @if (incomeState.isLoading()) {
+              ...
+            } @else {
+              {{ filteredIncomes().length }} ingreso(s)
+            }
+          </p>
+        </div>
+        <div class="hidden md:flex w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] items-center justify-center">
+          <span class="material-icons xpb-text-income text-2xl">trending_up</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Asignado -->
+    <div class="xpb-bg-card rounded-lg border xpb-border p-2 md:p-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div class="flex-1 text-center md:text-left">
+          <p class="text-[10px] md:text-xs xpb-text-secondary mb-1">Asignado</p>
+          <p class="text-xs md:text-2xl font-bold text-[var(--xpb-transfer)] truncate">
+            @if (incomeState.isLoading()) {
+              <span class="text-[10px] md:text-base">Cargando...</span>
+            } @else {
+              {{ totalMonthAllocated() | currency:'PEN ':'symbol':'1.2-2' }}
+            }
+          </p>
+          <p class="text-[9px] md:text-xs xpb-text-secondary mt-0.5 md:mt-1 hidden md:block">A cuentas</p>
+        </div>
+        <div class="hidden md:flex w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] items-center justify-center">
+          <span class="material-icons text-[var(--xpb-transfer)] text-2xl">account_balance_wallet</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pendiente de Asignar -->
+    <div class="xpb-bg-card rounded-lg border xpb-border p-2 md:p-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div class="flex-1 text-center md:text-left">
+          <p class="text-[10px] md:text-xs xpb-text-secondary mb-1">Pendiente</p>
+          <p class="text-xs md:text-2xl font-bold xpb-text-secondary truncate">
+            @if (incomeState.isLoading()) {
+              <span class="text-[10px] md:text-base">Cargando...</span>
+            } @else {
+              {{ totalPendingAllocation() | currency:'PEN ':'symbol':'1.2-2' }}
+            }
+          </p>
+          <p class="text-[9px] md:text-xs xpb-text-secondary mt-0.5 md:mt-1 hidden md:block">Sin asignar</p>
+        </div>
+        <div class="hidden md:flex w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] items-center justify-center">
+          <span class="material-icons xpb-text-secondary text-2xl">hourglass_empty</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de Ingresos -->
+  <div class="flex-1 min-h-0 overflow-hidden">
+    <div class="xpb-bg-card rounded-lg border xpb-border h-full flex flex-col">
+      <!-- Header de la tabla -->
+      <div class="px-4 py-3 border-b xpb-border flex-shrink-0">
+        <h2 class="text-lg font-semibold xpb-text-primary flex items-center gap-2">
+          <span class="material-icons text-xl">receipt_long</span>
+          Historial de Ingresos
+        </h2>
+      </div>
+
+      <!-- Contenido scrolleable -->
+      <div class="flex-1 overflow-y-auto">
+        @if (incomeState.isLoading()) {
+          <div class="flex items-center justify-center py-16">
+            <div class="text-center">
+              <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 xpb-border border-t-[var(--xpb-primary)]"></div>
+              <p class="mt-4 xpb-text-secondary">Cargando ingresos...</p>
+            </div>
+          </div>
+        } @else if (incomeState.error()) {
+          <div class="flex items-center justify-center py-16">
+            <div class="text-center">
+              <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <span class="material-icons text-5xl text-[var(--xpb-expense)]">error_outline</span>
+              </div>
+              <p class="text-lg font-semibold xpb-text-primary mb-2">Error al cargar</p>
+              <p class="xpb-text-secondary mb-4">{{ incomeState.error() }}</p>
+              <button type="button"
+                (click)="reloadIncomes()" 
+                class="xpb-btn-primary inline-flex items-center gap-2 px-4 py-2">
+                <span class="material-icons text-lg">refresh</span>
+                Reintentar
+              </button>
+            </div>
+          </div>
+        } @else if (filteredIncomes().length === 0) {
+          <div class="flex items-center justify-center py-16">
+            <div class="text-center">
+              <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <span class="material-icons text-5xl xpb-text-secondary">inbox</span>
+              </div>
+              <p class="text-lg font-semibold xpb-text-primary mb-2">No hay ingresos</p>
+              <p class="xpb-text-secondary mb-4">No se encontraron ingresos para este mes</p>
+              <button type="button"
+                (click)="openCreateIncomeModal()" 
+                class="xpb-btn-primary inline-flex items-center gap-2 px-4 py-2">
+                <span class="material-icons text-lg">add</span>
+                Crear Ingreso
+              </button>
+            </div>
+          </div>
+        } @else {
+          <!-- Desktop View -->
+          <div class="hidden md:block">
+            <table class="w-full">
+              <thead class="xpb-bg-sidebar">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Concepto</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Fecha</th>
+                  <th class="px-4 py-3 text-right text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Monto Total</th>
+                  <th class="px-4 py-3 text-right text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Monto Asignado</th>
+                  <th class="px-4 py-3 text-right text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Pendiente</th>
+                  <th class="px-4 py-3 text-center text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y xpb-border">
+                @for (income of filteredIncomes(); track income.resourceCode) {
+                  <tr class="hover:xpb-bg-sidebar transition-colors">
+                    <td class="px-4 py-3">
+                      <div class="flex items-center gap-2">
+                        <span class="material-icons xpb-text-income text-lg">payments</span>
+                        <span class="font-medium xpb-text-primary">{{ income.concept }}</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3">
+                      <span class="text-sm xpb-text-secondary">{{ formatDate(income.incomeDateTimestamp) }}</span>
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                      <span class="font-semibold xpb-text-income">{{ income.totalAmount | currency:'PEN ':'symbol':'1.2-2' }}</span>
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                      <span class="font-medium text-[var(--xpb-transfer)]">{{ income.allocatedAmount | currency:'PEN ':'symbol':'1.2-2' }}</span>
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                      <span class="font-medium xpb-text-secondary">{{ (income.totalAmount - income.allocatedAmount) | currency:'PEN ':'symbol':'1.2-2' }}</span>
+                    </td>
+                    <td class="px-4 py-3">
+                      <div class="flex items-center justify-center gap-1">
+                        <button 
+                          (click)="assignIncome(income.resourceCode)"
+                          class="p-1.5 rounded-lg hover:xpb-bg-main transition-colors"
+                          type="button"
+                          title="Asignar a cuentas">
+                          <span class="material-icons text-[var(--xpb-transfer)] text-lg">account_balance_wallet</span>
+                        </button>
+                        <button 
+                          (click)="viewIncomeTransactions(income.resourceCode)"
+                          class="p-1.5 rounded-lg hover:xpb-bg-main transition-colors"
+                          type="button"
+                          title="Ver transacciones">
+                          <span class="material-icons text-[var(--xpb-primary)] text-lg">receipt</span>
+                        </button>
+                        <button 
+                          (click)="openEditIncomeModal(income.resourceCode)"
+                          class="p-1.5 rounded-lg hover:xpb-bg-main transition-colors"
+                          type="button"
+                          title="Editar ingreso">
+                          <span class="material-icons text-[var(--xpb-primary)] text-lg">edit</span>
+                        </button>
+                        <button 
+                          (click)="deleteIncome(income.resourceCode)"
+                          class="p-1.5 rounded-lg hover:xpb-bg-main transition-colors"
+                          type="button"
+                          title="Eliminar ingreso">
+                          <span class="material-icons text-[var(--xpb-expense)] text-lg">delete</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile View -->
+          <div class="md:hidden space-y-3 p-3">
+            @for (income of filteredIncomes(); track income.resourceCode) {
+              <div class="xpb-bg-sidebar rounded-lg p-4 border xpb-border">
+                <!-- Título y fecha centrados -->
+                <div class="text-center mb-4">
+                  <div class="flex items-center justify-center gap-2 mb-1">
+                    <span class="material-icons xpb-text-income text-xl">payments</span>
+                    <p class="font-semibold xpb-text-primary">{{ income.concept }}</p>
+                  </div>
+                  <p class="text-xs xpb-text-secondary">{{ formatDate(income.incomeDateTimestamp) }}</p>
+                </div>
+                
+                <!-- Total, asignado y pendiente centrados -->
+                <div class="grid grid-cols-3 gap-2 text-center mb-4">
+                  <div>
+                    <p class="text-xs xpb-text-secondary mb-1">Total</p>
+                    <p class="text-sm font-semibold xpb-text-income">{{ income.totalAmount | currency:'PEN ':'symbol':'1.2-2' }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs xpb-text-secondary mb-1">Asignado</p>
+                    <p class="text-sm font-semibold text-[var(--xpb-transfer)]">{{ income.allocatedAmount | currency:'PEN ':'symbol':'1.2-2' }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs xpb-text-secondary mb-1">Pendiente</p>
+                    <p class="text-sm font-semibold xpb-text-secondary">{{ (income.totalAmount - income.allocatedAmount) | currency:'PEN ':'symbol':'1.2-2' }}</p>
+                  </div>
+                </div>
+                
+                <!-- Botones de acciones centrados en una fila -->
+                <div class="flex items-center justify-center gap-2">
+                  <button 
+                    (click)="assignIncome(income.resourceCode)"
+                    class="p-2 rounded-lg hover:xpb-bg-main transition-colors"
+                    type="button"
+                    title="Asignar a cuentas">
+                    <span class="material-icons text-[var(--xpb-transfer)] text-xl">account_balance_wallet</span>
+                  </button>
+                  <button 
+                    (click)="viewIncomeTransactions(income.resourceCode)"
+                    class="p-2 rounded-lg hover:xpb-bg-main transition-colors"
+                    type="button"
+                    title="Ver transacciones">
+                    <span class="material-icons text-[var(--xpb-primary)] text-xl">receipt</span>
+                  </button>
+                  <button 
+                    (click)="openEditIncomeModal(income.resourceCode)"
+                    class="p-2 rounded-lg hover:xpb-bg-main transition-colors"
+                    type="button"
+                    title="Editar ingreso">
+                    <span class="material-icons text-[var(--xpb-primary)] text-xl">edit</span>
+                  </button>
+                  <button 
+                    (click)="deleteIncome(income.resourceCode)"
+                    class="p-2 rounded-lg hover:xpb-bg-main transition-colors"
+                    type="button"
+                    title="Eliminar ingreso">
+                    <span class="material-icons text-[var(--xpb-expense)] text-xl">delete</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
