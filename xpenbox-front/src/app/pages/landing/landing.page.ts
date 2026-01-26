@@ -6,10 +6,11 @@ import { QuickExpenseModal } from '../../modal/transaction/quick-expense-modal/q
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../feature/user/service/user.service';
 import { userState } from '../../feature/user/service/user.state';
+import { SuccessTransactionComponent } from '../../shared/components/success-transaction-component/success-transaction.component';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule],
+  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule, SuccessTransactionComponent],
   templateUrl: './landing.page.html',
   styleUrl: './landing.page.css',
 })

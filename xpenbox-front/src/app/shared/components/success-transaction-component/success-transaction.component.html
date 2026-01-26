@@ -1,0 +1,12 @@
+@if (visible()) {
+	<div [class.opacity-0]="fading()" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-[rgba(88,129,87,0.15)] transition-opacity duration-700">
+		<div class="flex flex-col items-center justify-center">
+			<div class="xpb-bg-card rounded-full shadow-lg flex items-center justify-center mb-2 aspect-square w-44" style="background:rgba(88,129,87,0.18);">
+				<svg class="w-40 h-40 p-1" viewBox="0 0 52 52">
+					<circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+					<path class="checkmark-check" fill="none" d="M14 27l7 7 16-16" />
+				</svg>
+			</div>
+		</div>
+	</div>
+}

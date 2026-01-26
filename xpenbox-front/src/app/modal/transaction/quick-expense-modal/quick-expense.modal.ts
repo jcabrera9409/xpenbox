@@ -12,6 +12,7 @@ import { TransactionRequestDTO } from '../../../feature/transaction/model/transa
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
+import { transactionState } from '../../../feature/transaction/service/transaction.state';
 
 @Component({
   selector: 'app-quick-expense-modal',
@@ -28,6 +29,7 @@ export class QuickExpenseModal {
   categoryState = categoryState;
   accountState = accountState;
   creditCardState = creditCardState;  
+  transactionState = transactionState;
 
   selectedCategory = signal<CategoryResponseDTO | null>(null);
   selectedAccount = signal<AccountCreditDTO | null>(null);
@@ -327,14 +329,21 @@ export class QuickExpenseModal {
 
         if (response.success && response.data) {
           this.close.emit();
+          this.transactionState.isSuccess.set(true);
+
+          this.accountService.refresh();
+          this.creditCardService.refresh();
         } else {
-          console.error('Error creating expense:', response.message);
-          this.errorMessage.set('Error creating expense: ' + response.message);
+          this.transactionState.error.set(response.message);
         }
       }, error: (error) => {
-        console.error('Error creating expense:', error);
-        this.errorMessage.set(error.message || 'Error creating expense');
         this.sendingForm.set(false);
+        console.error('Error creating expense:', error);
+        if (error.status === 500) {
+          this.transactionState.error.set('Error guardando la transacción. Por favor, inténtalo de nuevo.');
+        } else {
+          this.transactionState.error.set(error.error.message || 'Error guardando la transacción.');
+        }
       }
     })
   }

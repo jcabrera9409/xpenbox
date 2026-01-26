@@ -9,4 +9,5 @@ export const transactionState = {
     isLoading: signal<boolean>(false),
     error: signal<string | null>(null),
     transactions: signal<TransactionResponseDTO[]>([]),
+    isSuccess: signal<boolean>(false),
 };

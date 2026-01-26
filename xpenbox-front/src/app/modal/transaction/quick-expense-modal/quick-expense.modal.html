@@ -188,8 +188,18 @@
         </div>
       }
 
+      <!-- Mensaje de error al enviar -->
+        @if (this.transactionState.error()) {
+            <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                    {{ this.transactionState.error() }}
+                </div>
+            </div>
+        }
+
       <!-- Botones de acción -->
-      <div class="flex gap-3 pt-3">
+      <div class="flex gap-3">
         <button 
           (click)="onClose()"
           type="button"
