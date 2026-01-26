@@ -339,7 +339,7 @@ export class QuickExpenseModal {
       }, error: (error) => {
         this.sendingForm.set(false);
         console.error('Error creating expense:', error);
-        if (error.status === 500) {
+        if (error.status === 500 || error.status === 0) {
           this.transactionState.error.set('Error guardando la transacción. Por favor, inténtalo de nuevo.');
         } else {
           this.transactionState.error.set(error.error.message || 'Error guardando la transacción.');

@@ -6,6 +6,17 @@
       <h1 class="text-2xl font-bold xpb-text-primary">XpenBox</h1>
     </div>
 
+    <!-- Mobile Menu Toggle Button -->
+    <button
+      (click)="toggleMobileMenu()"
+      class="lg:hidden p-2 rounded-lg hover:xpb-bg-sidebar transition-colors ml-4"
+      aria-label="Toggle menu"
+    >
+      <span class="material-icons xpb-text-primary text-2xl">
+        {{ isMobileMenuOpen() ? 'close' : 'menu' }}
+      </span>
+    </button>
+
     <!-- User Profile (Mobile only) -->
     <div class="lg:hidden flex items-center gap-3 px-4">
       <img
@@ -56,13 +67,25 @@
   </div>
 </header>
 
-<!-- Desktop Sidebar Menu -->
-<aside class="hidden lg:flex lg:flex-col lg:fixed lg:left-0 lg:top-16 lg:bottom-0 lg:w-64 xpb-bg-sidebar border-r xpb-border shadow-sm z-40">
+<!-- Mobile Menu Backdrop -->
+@if (isMobileMenuOpen()) {
+  <div
+    (click)="closeMobileMenu()"
+    class="lg:hidden fixed inset-0 bg-black/50 z-40 top-16"
+  ></div>
+}
+
+<!-- Desktop Sidebar Menu / Mobile Drawer -->
+<aside
+  [class]="isMobileMenuOpen() ? 'translate-x-0' : '-translate-x-full'"
+  class="lg:translate-x-0 flex flex-col fixed left-0 top-16 bottom-0 w-64 xpb-bg-sidebar border-r xpb-border shadow-sm z-50 transition-transform duration-300 ease-in-out lg:shadow-none"
+>
   <!-- Navigation Links -->
   <nav class="flex-1 p-4 space-y-2">
-    @for (item of menuItems; track item.route) {
+    @for (item of menuItemsDesktop; track item.route) {
       <a
         [routerLink]="item.route"
+        (click)="closeMobileMenu()"
           routerLinkActive="xpb-bg-card shadow-sm"
           [routerLinkActiveOptions]="{ exact: true }"
         class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:xpb-bg-card hover:shadow-sm"
@@ -88,7 +111,7 @@
 <!-- Mobile Bottom Navigation -->
 <nav class="lg:hidden fixed bottom-0 left-0 right-0 xpb-bg-card border-t xpb-border shadow-lg z-40">
   <div class="flex items-center justify-around h-16 relative">
-    @for (item of menuItems; track item.route; let i = $index) {
+    @for (item of menuItemsMobile; track item.route; let i = $index) {
       @if (i === 2) {
         <!-- Central Quick Expense Button (before 3rd item) -->
         <button

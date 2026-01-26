@@ -1,6 +1,13 @@
 package org.xpenbox.income.service.impl;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
+import org.jboss.logging.Logger;
 import org.xpenbox.common.service.impl.GenericServiceImpl;
+import org.xpenbox.exception.BadRequestException;
+import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.income.dto.IncomeCreateDTO;
 import org.xpenbox.income.dto.IncomeResponseDTO;
 import org.xpenbox.income.dto.IncomeUpdateDTO;
@@ -8,6 +15,10 @@ import org.xpenbox.income.entity.Income;
 import org.xpenbox.income.mapper.IncomeMapper;
 import org.xpenbox.income.repository.IncomeRepository;
 import org.xpenbox.income.service.IIncomeService;
+import org.xpenbox.transaction.entity.Transaction;
+import org.xpenbox.transaction.entity.Transaction.TransactionType;
+import org.xpenbox.transaction.repository.TransactionRepository;
+import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,17 +28,21 @@ import jakarta.enterprise.context.ApplicationScoped;
  */
 @ApplicationScoped
 public class IncomeServiceImpl extends GenericServiceImpl<Income, IncomeCreateDTO, IncomeUpdateDTO, IncomeResponseDTO> implements IIncomeService {
+    private static final Logger LOG = Logger.getLogger(IncomeServiceImpl.class);
 
     private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
     private final IncomeRepository incomeRepository;
     private final IncomeMapper incomeMapper;
 
     public IncomeServiceImpl(
         UserRepository userRepository,
+        TransactionRepository transactionRepository,
         IncomeRepository incomeRepository,
         IncomeMapper incomeMapper
     ) {
         this.userRepository = userRepository;
+        this.transactionRepository = transactionRepository;
         this.incomeRepository = incomeRepository;
         this.incomeMapper = incomeMapper;
     }
@@ -52,4 +67,103 @@ public class IncomeServiceImpl extends GenericServiceImpl<Income, IncomeCreateDT
         return incomeMapper;
     }
     
+    /**
+     * Update an existing income
+     * @param resourceCode the resource code of the income to update
+     * @param incomeUpdateDTO the income update data transfer object
+     * @param userEmail the email of the user performing the update
+     * @return the updated income response DTO
+     */
+    @Override
+    public IncomeResponseDTO update(String resourceCode, IncomeUpdateDTO incomeUpdateDTO, String userEmail) {
+        LOG.infof("Updating income with resource code %s for user email: %s", resourceCode, userEmail);
+        
+        User user = validateAndGetUser(userEmail);
+
+        Income existingIncome = incomeRepository.findByResourceCodeAndUserId(resourceCode, user.id)
+            .orElseThrow(() -> {
+                LOG.errorf("Income not found with resource code: %s for user email: %s", resourceCode, userEmail);
+                throw new ResourceNotFoundException("Income not found with resource code: " + resourceCode + " for user email: " + userEmail); 
+            });
+            
+        BigDecimal totalAssignedToTransactions = calculateTotalIncomeAsignedToTransactions(existingIncome.id, user.id);
+        if (incomeUpdateDTO.totalAmount().compareTo(totalAssignedToTransactions) < 0) {
+            LOG.errorf("Updated income amount %s is less than total assigned to transactions %s for income resource code: %s and user email: %s", 
+                incomeUpdateDTO.totalAmount(), totalAssignedToTransactions, resourceCode, userEmail);
+            throw new BadRequestException("Updated income amount cannot be less than total amount assigned to transactions: " + totalAssignedToTransactions);
+        }
+
+        boolean updated = incomeMapper.updateEntity(incomeUpdateDTO, existingIncome);
+
+        if (updated) {
+            incomeRepository.persist(existingIncome);
+            LOG.infof("Income updated with resource code: %s", resourceCode);
+        } else {
+            LOG.infof("No changes detected for income with resource code: %s", resourceCode);
+        }
+
+        return super.update(resourceCode, incomeUpdateDTO, userEmail);
+    }
+
+    /**
+     * Get all incomes for a user
+     * @param userEmail the email of the user
+     * @return a list of income response DTOs
+     */
+    @Override
+    public List<IncomeResponseDTO> getAll(String userEmail) {
+        LOG.infof("Retrieving all incomes for user email: %s", userEmail);
+        User user = validateAndGetUser(userEmail);
+
+        List<Income> incomes = incomeRepository.findAllByUserId(user.id);
+        LOG.infof("Found %d incomes for user email: %s", incomes.size(), userEmail);
+        
+        List<Long> incomeIds = incomes.stream()
+            .map(income -> income.id)
+            .toList();
+        Map<Long, BigDecimal> allocatedAmounts = transactionRepository.findAssignedAmountByIncomeIdsAndUserIdAndTransactionType(incomeIds, user.id, TransactionType.INCOME);
+
+        LOG.infof("Calculated allocated amounts for incomes: %s", allocatedAmounts);
+        return incomeMapper.toDTOListAllocated(incomes, allocatedAmounts);
+    }
+
+    /**
+     * Get an income by its resource code, including allocated amount.
+     * @param resourceCode the resource code of the income
+     * @param userEmail the email of the user
+     * @return the income response DTO
+     */
+    @Override
+    public IncomeResponseDTO getByResourceCode(String resourceCode, String userEmail) {
+        LOG.infof("Retrieving income with resource code %s for user email: %s", resourceCode, userEmail);
+        User user = validateAndGetUser(userEmail);
+
+        Income existingIncome = incomeRepository.findByResourceCodeAndUserId(resourceCode, user.id)
+            .orElseThrow(() -> {
+                LOG.errorf("Income not found with resource code: %s for user email: %s", resourceCode, userEmail);
+                throw new ResourceNotFoundException("Income not found with resource code: " + resourceCode + " for user email: " + userEmail); 
+            });
+
+        BigDecimal allocatedAmount = calculateTotalIncomeAsignedToTransactions(existingIncome.id, user.id);
+        LOG.infof("Calculated allocated amount %s for income with resource code: %s", allocatedAmount, resourceCode);
+
+        IncomeResponseDTO incomeResponseDTO = incomeMapper.toDTOAllocated(existingIncome, allocatedAmount);
+        return incomeResponseDTO;
+    }
+
+    /**
+     * Calculate the total income assigned to transactions for a given income and user.
+     * @param incomeId the ID of the income
+     * @param userId the ID of the user
+     * @return the total income assigned to transactions
+     */
+    private BigDecimal calculateTotalIncomeAsignedToTransactions(Long incomeId, Long userId) {
+        LOG.debugf("Calculating total income assigned to transactions for incomeId: %d and userId: %d", incomeId, userId);
+        List<Transaction> transactions = transactionRepository.findByIncomeIdAndUserIdAndType(incomeId, userId, TransactionType.INCOME);
+        BigDecimal total = transactions.stream()
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        LOG.debugf("Total income assigned to transactions: %s", total);
+        return total;
+    }
 }

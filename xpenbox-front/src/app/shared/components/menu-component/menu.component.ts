@@ -7,6 +7,7 @@ interface MenuItem {
   label: string;
   icon: string;
   route: string;
+  onlyMobile?: boolean;
 }
 
 @Component({
@@ -22,13 +23,25 @@ export class MenuComponent {
   openQuickExpense = output<void>();
 
   notificationCount = signal<number>(3);
+  
+  isMobileMenuOpen = signal<boolean>(false);
 
-  menuItems: MenuItem[] = [
-    { label: 'Dashboard', icon: 'dashboard', route: '/landing' },
-    { label: 'Cuentas', icon: 'account_balance_wallet', route: '/landing/account' },
-    { label: 'Categorías', icon: 'category', route: '/landing/category' },
-    { label: 'Configuración', icon: 'settings', route: '/landing/settings' },
+  private menuItems: MenuItem[] = [
+    { label: 'Dashboard', icon: 'dashboard', route: '/landing', onlyMobile: true },
+    { label: 'Transacciones', icon: 'receipt_long', route: '/landing/transaction', onlyMobile: true },
+    { label: 'Cuentas', icon: 'account_balance_wallet', route: '/landing/account', onlyMobile: true },
+    { label: 'Ingresos', icon: 'trending_up', route: '/landing/income', onlyMobile: false },
+    { label: 'Categorías', icon: 'category', route: '/landing/category', onlyMobile: false },
+    { label: 'Configuración', icon: 'settings', route: '/landing/settings', onlyMobile: true },
   ];
+
+  get menuItemsDesktop(): MenuItem[] {
+    return this.menuItems;
+  }
+
+  get menuItemsMobile(): MenuItem[] {
+    return this.menuItems.filter(item => item.onlyMobile);
+  }
 
   get userName(): string {
     const name = this.userState.userLogged()?.email || 'Usuario';
@@ -37,6 +50,14 @@ export class MenuComponent {
 
   onQuickExpense(): void {
     this.openQuickExpense.emit();
+  }
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen.set(!this.isMobileMenuOpen());
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen.set(false);
   }
 
 }

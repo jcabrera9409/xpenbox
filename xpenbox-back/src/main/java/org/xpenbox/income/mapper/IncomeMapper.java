@@ -1,8 +1,10 @@
 package org.xpenbox.income.mapper;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.common.ResourceCode;
@@ -34,7 +36,26 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
             entity.getResourceCode(),
             entity.getConcept(),
             entity.getIncomeDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-            entity.getTotalAmount()
+            entity.getTotalAmount(),
+            BigDecimal.ZERO
+        );
+        return dto;
+    }
+
+    /**
+     * Maps an Income entity to an IncomeResponseDTO including allocated amount.
+     * @param entity The Income entity to map.
+     * @param allocatedAmount The allocated amount to include in the DTO.
+     * @return The mapped IncomeResponseDTO with allocated amount.
+     */
+    public IncomeResponseDTO toDTOAllocated(Income entity, BigDecimal allocatedAmount) {
+        LOG.infof("Mapping Income entity to DTO with allocated amount: %s, %s", entity, allocatedAmount);
+        IncomeResponseDTO dto = new IncomeResponseDTO(
+            entity.getResourceCode(),
+            entity.getConcept(),
+            entity.getIncomeDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+            entity.getTotalAmount(),
+            allocatedAmount
         );
         return dto;
     }
@@ -50,6 +71,7 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
         IncomeResponseDTO dto = new IncomeResponseDTO(
             entity.getResourceCode(),
             entity.getConcept(),
+            null,
             null,
             null
         );
@@ -72,6 +94,25 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
 
         return entities.stream()
             .map(this::toDTO)
+            .toList();
+    }
+
+    /**
+     * Maps a list of Income entities to a list of IncomeResponseDTOs including allocated amounts.
+     * @param entities The list of Income entities to map.
+     * @param allocatedAmounts A map of income IDs to their allocated amounts.
+     * @return The list of mapped IncomeResponseDTOs with allocated amounts.
+     */
+    public List<IncomeResponseDTO> toDTOListAllocated(List<Income> entities, Map<Long, BigDecimal> allocatedAmounts) {
+        LOG.infof("Mapping list of Income entities to DTOs with allocated amounts: %s", entities);
+        
+        if (entities == null || entities.isEmpty()) {
+            LOG.infof("No Income entities to map, returning empty list");
+            return List.of();
+        }
+
+        return entities.stream()
+            .map(income -> toDTOAllocated(income, allocatedAmounts.getOrDefault(income.id, BigDecimal.ZERO)))
             .toList();
     }
 

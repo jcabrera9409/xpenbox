@@ -1,9 +1,12 @@
 package org.xpenbox.transaction.repository;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.common.repository.GenericRepository;
@@ -21,6 +24,35 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class TransactionRepository extends GenericRepository<Transaction> {
     private static final Logger LOG = Logger.getLogger(TransactionRepository.class);
+
+    /**
+     * Find assigned amounts by income IDs, user ID, and transaction type.
+     * @param incomeIds the list of income IDs
+     * @param userId the user ID
+     * @param transactionType the type of transaction
+     * @return a map of income ID to assigned amount
+     */
+    public Map<Long, BigDecimal> findAssignedAmountByIncomeIdsAndUserIdAndTransactionType(List<Long> incomeIds, Long userId, TransactionType transactionType) {
+        LOG.debugf("Calculating assigned amounts for Income IDs: %s, User ID: %d with type: %s", incomeIds, userId, transactionType);
+        String query = "SELECT income.id, SUM(amount) FROM Transaction "
+                     + "WHERE income.id IN :incomeIds AND user.id = :userId AND transactionType = :transactionType "
+                     + "GROUP BY income.id";
+        
+        List<Object[]> results = getEntityManager().createQuery(query, Object[].class)
+                .setParameter("incomeIds", incomeIds)
+                .setParameter("userId", userId)
+                .setParameter("transactionType", transactionType)
+                .getResultList();
+        
+        Map<Long, BigDecimal> assignedAmounts = results.stream()
+                .collect(Collectors.toMap(
+                    row -> (Long) row[0],
+                    row -> (BigDecimal) row[1]
+                ));
+        
+        LOG.debugf("Assigned amounts calculated: %s", assignedAmounts);
+        return assignedAmounts;
+    }
 
     /**
      * Find transactions by user ID and transaction type.
