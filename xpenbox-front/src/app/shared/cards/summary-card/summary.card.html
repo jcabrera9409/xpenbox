@@ -1,0 +1,24 @@
+<div class="xpb-bg-card rounded-lg border xpb-border p-2 md:p-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+    <div class="flex-1 text-center md:text-left">
+        <p class="text-[10px] md:text-xs xpb-text-secondary mb-1">{{ titleCard() }}</p>
+        <p class="text-xs md:text-2xl font-bold {{contentClassCard()}} truncate">
+        @if (isLoading()) {
+            <span class="text-[10px] md:text-base">Cargando...</span>
+        } @else {
+            {{ contentCard() }}
+        }
+        </p>
+        <p class="text-[9px] md:text-xs xpb-text-secondary mt-0.5 md:mt-1 hidden md:block">
+        @if (isLoading()) {
+            ...
+        } @else {
+            {{ subtitleCard() }}
+        }
+        </p>
+    </div>
+    <div class="hidden md:flex w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] items-center justify-center">
+        <span class="material-icons {{contentClassCard()}} text-2xl">{{ iconCard() }}</span>
+    </div>
+    </div>
+</div>

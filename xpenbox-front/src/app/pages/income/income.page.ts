@@ -3,10 +3,11 @@ import { CommonModule, isPlatformServer } from '@angular/common';
 import { IncomeService } from '../../feature/income/service/income.service';
 import { incomeState } from '../../feature/income/service/income.state';
 import { FormsModule } from '@angular/forms';
+import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
 
 @Component({
   selector: 'app-income-page',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SummaryCard],
   templateUrl: './income.page.html',
   styleUrl: './income.page.css',
 })

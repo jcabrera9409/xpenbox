@@ -16,10 +16,10 @@
     </div>
   </div>
 
-  <!-- Filtro por Fechas -->
+  <!-- Filter by dates -->
   <div class="mb-4 flex-shrink-0">
     <div class="xpb-bg-card rounded-lg border xpb-border overflow-hidden">
-      <!-- Header del acordeón (solo visible en mobile) -->
+      <!-- Header  of accordion (only visible on mobile) -->
       <button 
         (click)="toggleFilter()"
         class="md:hidden w-full p-4 flex items-center justify-between xpb-text-primary hover:xpb-bg-sidebar transition-colors"
@@ -33,7 +33,7 @@
         </span>
       </button>
       
-      <!-- Contenido del filtro -->
+      <!-- Content of the filter -->
       <div [class.hidden]="!filterExpanded()" class="md:!block p-4">
         <div class="flex items-start gap-3">
           <span class="material-icons xpb-text-primary mt-1 hidden md:block">date_range</span>
@@ -80,77 +80,41 @@
 
   <!-- Summary Cards -->
   <div class="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-3 mb-3 md:mb-4 flex-shrink-0">
-    <!-- Total de Ingresos -->
-    <div class="xpb-bg-card rounded-lg border xpb-border p-2 md:p-4">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-        <div class="flex-1 text-center md:text-left">
-          <p class="text-[10px] md:text-xs xpb-text-secondary mb-1">Total Ingresos</p>
-          <p class="text-xs md:text-2xl font-bold xpb-text-income truncate">
-            @if (incomeState.isLoading()) {
-              <span class="text-[10px] md:text-base">Cargando...</span>
-            } @else {
-              {{ totalMonthIncome() | currency:'PEN ':'symbol':'1.2-2' }}
-            }
-          </p>
-          <p class="text-[9px] md:text-xs xpb-text-secondary mt-0.5 md:mt-1 hidden md:block">
-            @if (incomeState.isLoading()) {
-              ...
-            } @else {
-              {{ filteredIncomes().length }} ingreso(s)
-            }
-          </p>
-        </div>
-        <div class="hidden md:flex w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] items-center justify-center">
-          <span class="material-icons xpb-text-income text-2xl">trending_up</span>
-        </div>
-      </div>
-    </div>
+    <!-- Total Income -->
+    <app-summary-card
+      [isLoading]="incomeState.isLoading()"
+      [titleCard]="'Total Ingresos'"
+      [contentCard]="totalMonthIncome() | currency:'PEN ':'symbol':'1.2-2'"
+      [subtitleCard]="filteredIncomes().length + ' ingreso(s)'"
+      [iconCard]="'trending_up'"
+      [contentClassCard]="'xpb-text-income'"
+    ></app-summary-card>
 
-    <!-- Total Asignado -->
-    <div class="xpb-bg-card rounded-lg border xpb-border p-2 md:p-4">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-        <div class="flex-1 text-center md:text-left">
-          <p class="text-[10px] md:text-xs xpb-text-secondary mb-1">Asignado</p>
-          <p class="text-xs md:text-2xl font-bold text-[var(--xpb-transfer)] truncate">
-            @if (incomeState.isLoading()) {
-              <span class="text-[10px] md:text-base">Cargando...</span>
-            } @else {
-              {{ totalMonthAllocated() | currency:'PEN ':'symbol':'1.2-2' }}
-            }
-          </p>
-          <p class="text-[9px] md:text-xs xpb-text-secondary mt-0.5 md:mt-1 hidden md:block">A cuentas</p>
-        </div>
-        <div class="hidden md:flex w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] items-center justify-center">
-          <span class="material-icons text-[var(--xpb-transfer)] text-2xl">account_balance_wallet</span>
-        </div>
-      </div>
-    </div>
+    <!-- Total Allocated -->
+    <app-summary-card
+      [isLoading]="incomeState.isLoading()"
+      [titleCard]="'Asignado'"
+      [contentCard]="totalMonthAllocated() | currency:'PEN ':'symbol':'1.2-2'"
+      [subtitleCard]="'A cuentas'"
+      [iconCard]="'account_balance_wallet'"
+      [contentClassCard]="'text-[var(--xpb-transfer)]'"
+    ></app-summary-card>
 
-    <!-- Pendiente de Asignar -->
-    <div class="xpb-bg-card rounded-lg border xpb-border p-2 md:p-4">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-        <div class="flex-1 text-center md:text-left">
-          <p class="text-[10px] md:text-xs xpb-text-secondary mb-1">Pendiente</p>
-          <p class="text-xs md:text-2xl font-bold xpb-text-secondary truncate">
-            @if (incomeState.isLoading()) {
-              <span class="text-[10px] md:text-base">Cargando...</span>
-            } @else {
-              {{ totalPendingAllocation() | currency:'PEN ':'symbol':'1.2-2' }}
-            }
-          </p>
-          <p class="text-[9px] md:text-xs xpb-text-secondary mt-0.5 md:mt-1 hidden md:block">Sin asignar</p>
-        </div>
-        <div class="hidden md:flex w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] items-center justify-center">
-          <span class="material-icons xpb-text-secondary text-2xl">hourglass_empty</span>
-        </div>
-      </div>
-    </div>
+    <!-- Pending Allocation -->
+    <app-summary-card
+      [isLoading]="incomeState.isLoading()"
+      [titleCard]="'Pendiente'"
+      [contentCard]="totalPendingAllocation() | currency:'PEN ':'symbol':'1.2-2'"
+      [subtitleCard]="'Sin asignar'"
+      [iconCard]="'hourglass_empty'"
+      [contentClassCard]="'xpb-text-secondary'"
+    ></app-summary-card>
   </div>
 
-  <!-- Lista de Ingresos -->
+  <!-- Income List -->
   <div class="flex-1 min-h-0 overflow-hidden">
     <div class="xpb-bg-card rounded-lg border xpb-border h-full flex flex-col">
-      <!-- Header de la tabla -->
+      <!-- Table Header -->
       <div class="px-4 py-3 border-b xpb-border flex-shrink-0">
         <h2 class="text-lg font-semibold xpb-text-primary flex items-center gap-2">
           <span class="material-icons text-xl">receipt_long</span>
@@ -158,7 +122,7 @@
         </h2>
       </div>
 
-      <!-- Contenido scrolleable -->
+      <!-- Scrollable Content -->
       <div class="flex-1 overflow-y-auto">
         @if (incomeState.isLoading()) {
           <div class="flex items-center justify-center py-16">
