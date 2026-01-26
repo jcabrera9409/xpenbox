@@ -1,12 +1,12 @@
 import { Component, input, OnInit, output, signal } from '@angular/core';
-import { CategoryResponseDTO } from '../../feature/category/model/category.response.dto';
+import { CategoryResponseDTO } from '../../../feature/category/model/category.response.dto';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CategoryService } from '../../feature/category/service/category.service';
-import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
-import { CategoryRequestDTO } from '../../feature/category/model/category.request.dto';
+import { CategoryService } from '../../../feature/category/service/category.service';
+import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
+import { CategoryRequestDTO } from '../../../feature/category/model/category.request.dto';
 import { CommonModule } from '@angular/common';
-import { NotificationService } from '../../feature/common/service/notification.service';
-import { categoryState } from '../../feature/category/service/category.state';
+import { NotificationService } from '../../../feature/common/service/notification.service';
+import { categoryState } from '../../../feature/category/service/category.state';
 
 @Component({
   selector: 'app-category-edition-modal',

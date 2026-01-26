@@ -1,63 +1,41 @@
-import { Component, computed, inject, PLATFORM_ID, signal } from '@angular/core';
+import { Component, computed, effect, inject, PLATFORM_ID, signal } from '@angular/core';
 import { CommonModule, isPlatformServer } from '@angular/common';
 import { IncomeService } from '../../feature/income/service/income.service';
 import { incomeState } from '../../feature/income/service/income.state';
 import { FormsModule } from '@angular/forms';
 import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
+import { IncomeAssignModal } from '../../modal/income/income-assign-modal/income-assign.modal';
 
 @Component({
   selector: 'app-income-page',
-  imports: [CommonModule, FormsModule, SummaryCard],
+  imports: [CommonModule, FormsModule, SummaryCard, IncomeAssignModal],
   templateUrl: './income.page.html',
   styleUrl: './income.page.css',
 })
 export class IncomePage {
   incomeState = incomeState;
   
-  // Control del acordeón de filtros (solo mobile)
+  // Income assignment modal state
+  incomeAssignModalVisible = signal<boolean>(false)
+  selectedIncomeResourceCode = signal<string | null>(null);
+
+  // Control of the filter accordion
   filterExpanded = signal<boolean>(false);
   
-  // Filtro temporal (antes de aplicar)
-  tempStartDate: string = this.getFirstDayOfCurrentMonth();
-  tempEndDate: string = this.getTodayDate();
+  // Temporary date inputs
+  tempStartDate!: string;
+  tempEndDate!: string;
   
-  // Filtro aplicado
-  startDate = signal<string>(this.getFirstDayOfCurrentMonth());
-  endDate = signal<string>(this.getTodayDate());
+  // Date range signals
+  startDate = this.incomeState.startDate;
+  endDate = this.incomeState.endDate;
+  totalIncome = signal<number>(0);
+  totalAllocated = signal<number>(0);
+  totalPending = signal<number>(0);
   
-  // Fecha máxima permitida (hoy)
-  maxDate = this.getTodayDate();
-  
-  // Ingresos filtrados por rango de fechas
-  filteredIncomes = computed(() => {
-    const start = this.startDate();
-    const end = this.endDate();
-    
-    if (!start || !end) return this.incomeState.incomes();
-    
-    const startTimestamp = new Date(start).getTime();
-    const endTimestamp = new Date(end + 'T23:59:59').getTime(); // Incluir todo el día final
-    
-    return this.incomeState.incomes().filter(income => {
-      return income.incomeDateTimestamp >= startTimestamp && 
-             income.incomeDateTimestamp <= endTimestamp;
-    });
-  });
-  
-  // Total de ingresos del mes seleccionado
-  totalMonthIncome = computed(() => {
-    return this.filteredIncomes().reduce((sum, income) => sum + income.totalAmount, 0);
-  });
-  
-  // Total asignado del mes seleccionado
-  totalMonthAllocated = computed(() => {
-    return this.filteredIncomes().reduce((sum, income) => sum + income.allocatedAmount, 0);
-  });
-  
-  // Total pendiente de asignar
-  totalPendingAllocation = computed(() => {
-    return this.totalMonthIncome() - this.totalMonthAllocated();
-  });
+  // Max date for date inputs (today)
+  minDate = this.formatDateToInput(new Date(this.getTodayDate().setFullYear(this.getTodayDate().getFullYear() - 5)));
+  maxDate = this.formatDateToInput(this.getTodayDate());
 
   constructor(private incomeService: IncomeService) {
     const platformId = inject(PLATFORM_ID);
@@ -65,23 +43,32 @@ export class IncomePage {
       return;
     }
 
+    this.tempStartDate = this.formatDateToInput(this.startDate() || this.getFirstDayOfCurrentMonth());
+    this.tempEndDate = this.formatDateToInput(this.endDate() || this.getTodayDate());
+
     this.incomeService.load();
+
+    effect(() => {
+      const incomes = this.incomeState.incomes();
+      const totalIncome = incomes.reduce((sum, income) => sum + income.totalAmount, 0);
+      const totalAllocated = incomes.reduce((sum, income) => sum + income.allocatedAmount, 0);
+      const totalPending = totalIncome - totalAllocated;
+
+      this.totalIncome.set(totalIncome);
+      this.totalAllocated.set(totalAllocated);
+      this.totalPending.set(totalPending);
+    });
   }
-  
-  onStartDateChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.tempStartDate = target.value;
-  }
-  
-  onEndDateChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.tempEndDate = target.value;
-  }
-  
+
   applyFilter(): void {
-    this.startDate.set(this.tempStartDate);
-    this.endDate.set(this.tempEndDate);
-    this.filterExpanded.set(false); // Cerrar acordeón después de filtrar
+    const parsedStart = this.parseDateString(this.tempStartDate);
+    const parsedEnd = this.parseDateString(this.tempEndDate);
+
+    this.startDate.set(parsedStart);
+    this.endDate.set(parsedEnd);
+    this.filterExpanded.set(false); 
+
+    this.reloadIncomes();
   }
   
   toggleFilter(): void {
@@ -103,9 +90,14 @@ export class IncomePage {
     console.log('Eliminar ingreso:', resourceCode);
   }
   
-  assignIncome(resourceCode: string): void {
-    // TODO: Implementar modal de asignación de ingresos a cuentas
-    console.log('Asignar ingreso a cuentas:', resourceCode);
+  openIncomeAssignModal(resourceCode: string): void {
+    this.selectedIncomeResourceCode.set(resourceCode);
+    this.incomeAssignModalVisible.set(true);
+  }
+
+  closeIncomeAssignModal() {
+    this.incomeAssignModalVisible.set(false);
+    this.selectedIncomeResourceCode.set(null);
   }
   
   viewIncomeTransactions(resourceCode: string): void {
@@ -125,15 +117,13 @@ export class IncomePage {
     });
   }
   
-  private getTodayDate(): string {
-    const today = new Date();
-    return this.formatDateToInput(today);
+  private getTodayDate(): Date {
+    return new Date();
   }
   
-  private getFirstDayOfCurrentMonth(): string {
+  private getFirstDayOfCurrentMonth(): Date {
     const today = new Date();
-    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-    return this.formatDateToInput(firstDay);
+    return new Date(today.getFullYear(), today.getMonth(), 1);
   }
   
   private formatDateToInput(date: Date): string {
@@ -142,15 +132,11 @@ export class IncomePage {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
-  
-  private getCurrentMonth(): string {
-    const now = new Date();
-    return this.formatDateToMonth(now);
+
+  private parseDateString(dateString: string): Date {
+    // Parsear fecha en formato YYYY-MM-DD sin problemas de zona horaria
+    const [year, month, day] = dateString.split('-').map(num => parseInt(num, 10));
+    return new Date(year, month - 1, day);
   }
-  
-  private formatDateToMonth(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    return `${year}-${month}`;
-  }
+
 }

@@ -22,18 +22,31 @@ export class IncomeService extends GenericService<IncomeRequestDTO, IncomeRespon
     )
   }
 
+  getByDateRange(startDate: Date, endDate: Date) {
+    const startTimestamp = startDate.getTime();
+    const endTimestamp = endDate.getTime();
+
+    return this.http.get<ApiResponseDTO<IncomeResponseDTO[]>>(
+      `${this.apiUrl}/filter?from=${startTimestamp}&to=${endTimestamp}`, 
+      { withCredentials: true }
+    );
+  }
+
   override load(): void {
     incomeState.isLoading.set(true);
     incomeState.error.set(null);
 
-    this.getAll().subscribe({
+    const startDate = incomeState.startDate() || new Date(new Date().setDate(1));
+    const endDate = incomeState.endDate() || new Date();
+
+    this.getByDateRange(startDate, endDate).subscribe({
       next: (response: ApiResponseDTO<IncomeResponseDTO[]>) => {
         incomeState.incomes.set(response.data || []);
         incomeState.isLoading.set(false);
       },
       error: (error) => {
         console.error('Error fetching incomes:', error);
-        incomeState.error.set(error.message || 'Error fetching incomes');
+        incomeState.error.set(error.error.message || 'Error fetching incomes');
         incomeState.isLoading.set(false);
       }
     })

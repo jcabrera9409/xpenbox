@@ -6,7 +6,7 @@ export class TransactionRequestDTO {
     longitude?: number;
     transactionDateTimestamp?: number;
     categoryResourceCode?: string;
-    incomeAccountResourceCode?: string;
+    incomeResourceCode?: string;
     accountResourceCode?: string;
     creditCardResourceCode?: string;
     destinationAccountResourceCode?: string;
@@ -32,6 +32,17 @@ export class TransactionRequestDTO {
         transaction.creditCardResourceCode = creditCardResourceCode;
         transaction.categoryResourceCode = categoryResourceCode;
 
+        return transaction;
+    }
+
+    static generateIncomeAssignmentTransaction(amount: number, description: string, incomeResourceCode: string, accountResourceCode: string, transactionDateTimestamp?: number): TransactionRequestDTO {
+        const transaction = new TransactionRequestDTO();
+        transaction.transactionType = TransactionType.INCOME;
+        transaction.amount = amount;
+        transaction.description = description;
+        transaction.transactionDateTimestamp = transactionDateTimestamp || Date.now();
+        transaction.incomeResourceCode = incomeResourceCode;
+        transaction.accountResourceCode = accountResourceCode;
         return transaction;
     }
 }

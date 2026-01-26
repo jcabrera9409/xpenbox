@@ -46,9 +46,9 @@
                   type="date" 
                   id="start-date"
                   name="start-date"
-                  [value]="tempStartDate"
+                  [(ngModel)]="tempStartDate"
                   [max]="maxDate"
-                  (change)="onStartDateChange($event)"
+                  [min]="minDate"
                   class="w-full xpb-bg-main border xpb-border rounded-lg px-3 py-2 xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent">
               </div>
               <div>
@@ -57,9 +57,9 @@
                   type="date" 
                   id="end-date"
                   name="end-date"
-                  [value]="tempEndDate"
+                  [(ngModel)]="tempEndDate"
                   [max]="maxDate"
-                  (change)="onEndDateChange($event)"
+                  [min]="minDate"
                   class="w-full xpb-bg-main border xpb-border rounded-lg px-3 py-2 xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent">
               </div>
               <div class="flex items-end">
@@ -84,8 +84,8 @@
     <app-summary-card
       [isLoading]="incomeState.isLoading()"
       [titleCard]="'Total Ingresos'"
-      [contentCard]="totalMonthIncome() | currency:'PEN ':'symbol':'1.2-2'"
-      [subtitleCard]="filteredIncomes().length + ' ingreso(s)'"
+      [contentCard]="totalIncome() | currency:'PEN ':'symbol':'1.2-2'"
+      [subtitleCard]="this.incomeState.incomes().length + ' ingreso(s)'"
       [iconCard]="'trending_up'"
       [contentClassCard]="'xpb-text-income'"
     ></app-summary-card>
@@ -94,7 +94,7 @@
     <app-summary-card
       [isLoading]="incomeState.isLoading()"
       [titleCard]="'Asignado'"
-      [contentCard]="totalMonthAllocated() | currency:'PEN ':'symbol':'1.2-2'"
+      [contentCard]="totalAllocated() | currency:'PEN ':'symbol':'1.2-2'"
       [subtitleCard]="'A cuentas'"
       [iconCard]="'account_balance_wallet'"
       [contentClassCard]="'text-[var(--xpb-transfer)]'"
@@ -104,7 +104,7 @@
     <app-summary-card
       [isLoading]="incomeState.isLoading()"
       [titleCard]="'Pendiente'"
-      [contentCard]="totalPendingAllocation() | currency:'PEN ':'symbol':'1.2-2'"
+      [contentCard]="totalPending() | currency:'PEN ':'symbol':'1.2-2'"
       [subtitleCard]="'Sin asignar'"
       [iconCard]="'hourglass_empty'"
       [contentClassCard]="'xpb-text-secondary'"
@@ -118,7 +118,11 @@
       <div class="px-4 py-3 border-b xpb-border flex-shrink-0">
         <h2 class="text-lg font-semibold xpb-text-primary flex items-center gap-2">
           <span class="material-icons text-xl">receipt_long</span>
-          Historial de Ingresos
+          Historial de Ingresos {{
+            startDate() && endDate() 
+              ? 'de ' + (startDate() | date:'dd/MM/yyyy') + ' a ' + (endDate() | date:'dd/MM/yyyy') 
+              : ''
+          }}
         </h2>
       </div>
 
@@ -147,7 +151,7 @@
               </button>
             </div>
           </div>
-        } @else if (filteredIncomes().length === 0) {
+        } @else if (this.incomeState.incomes().length === 0) {
           <div class="flex items-center justify-center py-16">
             <div class="text-center">
               <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
@@ -178,7 +182,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y xpb-border">
-                @for (income of filteredIncomes(); track income.resourceCode) {
+                @for (income of this.incomeState.incomes(); track income.resourceCode) {
                   <tr class="hover:xpb-bg-sidebar transition-colors">
                     <td class="px-4 py-3">
                       <div class="flex items-center gap-2">
@@ -200,13 +204,16 @@
                     </td>
                     <td class="px-4 py-3">
                       <div class="flex items-center justify-center gap-1">
+                        @if (income.totalAmount - income.allocatedAmount > 0) {
                         <button 
-                          (click)="assignIncome(income.resourceCode)"
+                          (click)="openIncomeAssignModal(income.resourceCode)"
                           class="p-1.5 rounded-lg hover:xpb-bg-main transition-colors"
                           type="button"
                           title="Asignar a cuentas">
                           <span class="material-icons text-[var(--xpb-transfer)] text-lg">account_balance_wallet</span>
                         </button>
+                        }
+                        @if (income.allocatedAmount > 0) {
                         <button 
                           (click)="viewIncomeTransactions(income.resourceCode)"
                           class="p-1.5 rounded-lg hover:xpb-bg-main transition-colors"
@@ -214,6 +221,8 @@
                           title="Ver transacciones">
                           <span class="material-icons text-[var(--xpb-primary)] text-lg">receipt</span>
                         </button>
+                        }
+                        @if (income.totalAmount - income.allocatedAmount > 0) {
                         <button 
                           (click)="openEditIncomeModal(income.resourceCode)"
                           class="p-1.5 rounded-lg hover:xpb-bg-main transition-colors"
@@ -221,6 +230,8 @@
                           title="Editar ingreso">
                           <span class="material-icons text-[var(--xpb-primary)] text-lg">edit</span>
                         </button>
+                        }
+                        @if (income.allocatedAmount === 0) {
                         <button 
                           (click)="deleteIncome(income.resourceCode)"
                           class="p-1.5 rounded-lg hover:xpb-bg-main transition-colors"
@@ -228,6 +239,7 @@
                           title="Eliminar ingreso">
                           <span class="material-icons text-[var(--xpb-expense)] text-lg">delete</span>
                         </button>
+                        }
                       </div>
                     </td>
                   </tr>
@@ -238,7 +250,7 @@
 
           <!-- Mobile View -->
           <div class="md:hidden space-y-3 p-3">
-            @for (income of filteredIncomes(); track income.resourceCode) {
+            @for (income of this.incomeState.incomes(); track income.resourceCode) {
               <div class="xpb-bg-sidebar rounded-lg p-4 border xpb-border">
                 <!-- Título y fecha centrados -->
                 <div class="text-center mb-4">
@@ -267,13 +279,16 @@
                 
                 <!-- Botones de acciones centrados en una fila -->
                 <div class="flex items-center justify-center gap-2">
+                  @if (income.totalAmount - income.allocatedAmount > 0) {
                   <button 
-                    (click)="assignIncome(income.resourceCode)"
+                    (click)="openIncomeAssignModal(income.resourceCode)"
                     class="p-2 rounded-lg hover:xpb-bg-main transition-colors"
                     type="button"
                     title="Asignar a cuentas">
                     <span class="material-icons text-[var(--xpb-transfer)] text-xl">account_balance_wallet</span>
                   </button>
+                  }
+                  @if (income.allocatedAmount > 0) {
                   <button 
                     (click)="viewIncomeTransactions(income.resourceCode)"
                     class="p-2 rounded-lg hover:xpb-bg-main transition-colors"
@@ -281,6 +296,8 @@
                     title="Ver transacciones">
                     <span class="material-icons text-[var(--xpb-primary)] text-xl">receipt</span>
                   </button>
+                  }
+                  @if (income.totalAmount - income.allocatedAmount > 0) {
                   <button 
                     (click)="openEditIncomeModal(income.resourceCode)"
                     class="p-2 rounded-lg hover:xpb-bg-main transition-colors"
@@ -288,6 +305,8 @@
                     title="Editar ingreso">
                     <span class="material-icons text-[var(--xpb-primary)] text-xl">edit</span>
                   </button>
+                  }
+                  @if (income.allocatedAmount === 0) {
                   <button 
                     (click)="deleteIncome(income.resourceCode)"
                     class="p-2 rounded-lg hover:xpb-bg-main transition-colors"
@@ -295,6 +314,7 @@
                     title="Eliminar ingreso">
                     <span class="material-icons text-[var(--xpb-expense)] text-xl">delete</span>
                   </button>
+                  }
                 </div>
               </div>
             }
@@ -304,3 +324,9 @@
     </div>
   </div>
 </div>
+
+<app-income-assign-modal
+  *ngIf="incomeAssignModalVisible()"
+  [incomeResourceCode]="selectedIncomeResourceCode()"
+  (close)="closeIncomeAssignModal()"
+></app-income-assign-modal>

@@ -1,0 +1,186 @@
+<!-- Overlay con backdrop -->
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
+  <!-- Modal container -->
+  <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto my-auto max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden">
+    
+    <!-- Header -->
+    <div class="xpb-bg-sidebar px-4 py-3 border-b xpb-border relative flex-shrink-0">
+      <div class="flex items-center gap-4">
+        <!-- Icono -->
+        <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+          <span class="material-icons text-[var(--xpb-income)] text-2xl">account_balance_wallet</span>
+        </div>
+        <!-- Título y subtítulo -->
+        <div class="flex-1">
+          <h3 class="text-xl font-semibold xpb-text-primary">Asignar Ingreso</h3>
+          <p class="text-sm xpb-text-secondary">Distribuye tu ingreso a una cuenta</p>
+        </div>
+        <!-- Botón cerrar -->
+        <button 
+          (click)="onClose()" 
+          class="text-gray-400 hover:text-gray-600 transition-colors -mt-1">
+          <span class="material-icons text-lg">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="p-4 overflow-y-auto flex-1">
+      <!-- Display del monto -->
+      <div class="mb-3">
+        <label class="block text-xs font-semibold xpb-text-secondary text-center">Monto a Asignar</label>
+        <div class="px-3 py-2 text-center relative">
+          <div class="flex items-center justify-center gap-2">
+            <span class="text-base font-bold text-gray-400">PEN </span>
+            <span class="text-2xl font-bold text-gray-600">
+              {{ amount() || '0' }}
+            </span>
+          </div>
+          @if (amount()) {
+            <button
+              (click)="onClear()"
+              type="button"
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+              title="Limpiar monto">
+              <span class="material-icons text-lg">clear</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Teclado numérico -->
+      <div class="mb-3">
+        <div class="grid grid-cols-3 gap-1.5">
+          @for (key of keys; track key) {
+            <button 
+              (click)="onKeyPress(key)"
+              type="button"
+              class="bg-white rounded-lg py-2.5 text-lg font-semibold text-gray-700 transition-all active:bg-[var(--xpb-primary)] active:text-white active:scale-95 active:shadow-lg">
+              {{ key }}
+            </button>
+          }
+          <!-- Botón 0 que ocupa 2 columnas -->
+          <button 
+            (click)="onKeyPress('0')"
+            type="button"
+            class="bg-white rounded-lg py-2.5 text-lg font-semibold text-gray-700 transition-all active:bg-[var(--xpb-primary)] active:text-white active:scale-95 active:shadow-lg">
+            0
+          </button>
+          <!-- Botón backspace -->
+          <button 
+            (click)="onBackspace()"
+            type="button"
+            class="bg-white rounded-lg py-2.5 text-lg font-semibold text-gray-700 transition-all active:bg-[var(--xpb-neutral)] active:text-white active:scale-95 active:shadow-lg">
+            <span class="material-icons text-lg">backspace</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="mb-3">
+        <label class="block text-sm font-medium xpb-text-secondary mb-2">
+          Descripción <span class="text-xs xpb-text-secondary">(opcional)</span>
+        </label>
+        <div class="relative">
+          <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">description</span>
+          <input 
+            type="text"
+            maxlength="250"
+            [value]="description()"
+            (input)="description.set($any($event.target).value)"
+            placeholder="Ej: Asignación para ahorro"
+            class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full xpb-text-primary placeholder:xpb-text-secondary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all" />
+        </div>
+      </div>
+
+      <!-- Selección de cuenta destino (Carrusel) -->
+      <div class="mb-3">
+        <label class="block text-sm font-medium xpb-text-secondary mb-2">Cuenta Destino</label>
+        <div class="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:[&::-webkit-scrollbar]:block md:[scrollbar-width:thin] md:scrollbar-thin md:scrollbar-thumb-gray-300 md:scrollbar-track-transparent">
+          <div class="flex gap-2 px-1 py-2">
+            @if (accountState.isLoading()) {
+              <div class="flex items-center justify-center w-full">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+              </div>
+            } @else if (accountState.error()) {
+              <div class="w-full">
+                <div class="text-center text-xs xpb-text-expense">Error al cargar cuentas</div>
+              </div>
+            } @else {
+              @if (accountsList().length === 0) {
+                <div class="w-full">
+                  <div class="text-center text-xs xpb-text-secondary">No tienes cuentas disponibles</div>
+                </div>
+              } @else {
+                @for (account of accountsList(); track account.resourceCode) {
+                  <button
+                    type="button"
+                    (click)="selectAccount(account)"
+                    [style.border]="isSelectedAccount(account.resourceCode) ? '2px solid var(--xpb-primary)' : '2px solid transparent'"
+                    [class.bg-[var(--xpb-primary)]]="isSelectedAccount(account.resourceCode)"
+                    [class.font-bold]="isSelectedAccount(account.resourceCode)"
+                    [style.box-shadow]="isSelectedAccount(account.resourceCode) ? '0 0 12px rgba(0, 0, 0, 0.15)' : '0 0 8px rgba(0, 0, 0, 0.1)'"
+                    class="flex-shrink-0 flex flex-col items-start bg-white rounded-lg px-3 py-2 w-[130px] hover:border-[var(--xpb-primary)] transition-all cursor-pointer active:scale-95" 
+                    style="box-shadow: 0 0 8px rgba(0, 0, 0, 0.1)">
+                    <div class="flex items-center gap-2 w-full">
+                      <span class="material-icons text-base">account_balance</span>
+                      <span class="text-xs font-medium truncate flex-1">{{ account.name }}</span>
+                    </div>
+                    <span class="text-xs font-semibold w-full truncate" [class.xpb-text-secondary]="!isSelectedAccount(account.resourceCode)">
+                      PEN {{ account.balance | number:'1.2-2' }}
+                    </span>
+                  </button>
+                }
+              }
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensaje de error (si hay validación) -->
+      @if (showErrorAmount()) {
+        <div class="mb-4 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+          <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+          <div class="text-sm text-[var(--xpb-expense)] flex-1">
+            <p>Por favor ingresa un monto mayor a cero</p>
+          </div>
+        </div>
+      }
+
+      <!-- Mensaje de error al enviar -->
+      @if (this.transactionState.error()) {
+        <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+          <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+          <div class="text-sm text-[var(--xpb-expense)] flex-1">
+            {{ this.transactionState.error() }}
+          </div>
+        </div>
+      }
+
+      <!-- Botones de acción -->
+      <div class="flex gap-3">
+        <button 
+          (click)="onClose()"
+          type="button"
+          [disabled]="sendingForm()"
+          class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg disabled:cursor-not-allowed py-2">
+          <span class="material-icons text-lg">close</span>
+          <span>Cancelar</span>
+        </button>
+        <button 
+          (click)="onSubmit()"
+          type="button"
+          [disabled]="sendingForm() || !isFormValid"
+          class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg disabled:cursor-not-allowed py-2">
+          @if (sendingForm()) {
+            <span class="material-icons text-lg animate-spin">autorenew</span>
+            <span>Guardando...</span>
+          } @else {
+            <span class="material-icons text-lg">save</span>
+            <span>Asignar</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

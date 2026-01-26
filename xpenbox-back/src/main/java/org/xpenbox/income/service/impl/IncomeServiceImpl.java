@@ -1,6 +1,10 @@
 package org.xpenbox.income.service.impl;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -149,6 +153,35 @@ public class IncomeServiceImpl extends GenericServiceImpl<Income, IncomeCreateDT
 
         IncomeResponseDTO incomeResponseDTO = incomeMapper.toDTOAllocated(existingIncome, allocatedAmount);
         return incomeResponseDTO;
+    }
+
+    @Override
+    public List<IncomeResponseDTO> filterIncomesByDateRange(String userEmail, Long startDateTimestamp, Long endDateTimestamp) {
+        LOG.infof("Filtering incomes for user email: %s between timestamps %d and %d", userEmail, startDateTimestamp, endDateTimestamp);
+        User user = validateAndGetUser(userEmail);
+
+        
+        LocalDate startDate = Instant.ofEpochMilli(startDateTimestamp).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate endDate = Instant.ofEpochMilli(endDateTimestamp).atZone(ZoneId.systemDefault()).toLocalDate();
+
+        if (endDate.compareTo(startDate) < 1) {
+            LOG.errorf("Invalid date range: start date %s is after end date %s for user email: %s", startDate, endDate, userEmail);
+            throw new BadRequestException("End date must be after start date.");
+        } else if (startDate.until(endDate, ChronoUnit.DAYS) > 365) {
+            LOG.errorf("Date range exceeds one year: start date %s to end date %s for user email: %s", startDate, endDate, userEmail);
+            throw new BadRequestException("Date range cannot exceed one year.");
+        }
+
+        List<Income> incomes = incomeRepository.findByUserIdAndDateRange(user.id, startDate, endDate);
+        LOG.infof("Found %d incomes for user email: %s in date range", incomes.size(), userEmail);
+
+        List<Long> incomeIds = incomes.stream()
+            .map(income -> income.id)
+            .toList();
+        
+        Map<Long, BigDecimal> allocatedAmounts = transactionRepository.findAssignedAmountByIncomeIdsAndUserIdAndTransactionType(incomeIds, user.id, TransactionType.INCOME);
+
+        return incomeMapper.toDTOListAllocated(incomes, allocatedAmounts);
     }
 
     /**

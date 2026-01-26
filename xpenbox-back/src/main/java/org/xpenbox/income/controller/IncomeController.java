@@ -1,5 +1,7 @@
 package org.xpenbox.income.controller;
 
+import java.util.List;
+
 import org.jboss.logging.Logger;
 import org.xpenbox.common.dto.APIResponseDTO;
 import org.xpenbox.income.dto.IncomeCreateDTO;
@@ -17,6 +19,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -119,6 +122,27 @@ public class IncomeController {
 
         return Response.status(Response.Status.OK).entity(
             APIResponseDTO.success("Income retrieved successfully", incomeResponse, Response.Status.OK.getStatusCode())
+        ).build();
+    }
+
+    /**
+     * Filter incomes by date range
+     * @param securityContext Security context of the authenticated user
+     * @param startDateTimestamp Start date timestamp in milliseconds
+     * @param endDateTimestamp End date timestamp in milliseconds
+     * @return Response containing the list of filtered incomes
+     */
+    @GET
+    @Path("/filter")
+    public Response filterIncomesByDateRange(@Context SecurityContext securityContext, @QueryParam("from") Long startDateTimestamp, @QueryParam("to") Long endDateTimestamp) {
+        String userEmail = securityContext.getUserPrincipal().getName();
+        LOG.infof("Filter incomes by date range request received for user: %s, startDate: %s, endDate: %s", userEmail, startDateTimestamp, endDateTimestamp);
+
+        List<IncomeResponseDTO> incomeResponses = incomeService.filterIncomesByDateRange(userEmail, startDateTimestamp, endDateTimestamp);
+        LOG.infof("Filtered %d incomes for user: %s between %s and %s", incomeResponses.size(), userEmail, startDateTimestamp, endDateTimestamp);
+        
+        return Response.status(Response.Status.OK).entity(
+            APIResponseDTO.success("Incomes filtered successfully", incomeResponses, Response.Status.OK.getStatusCode())
         ).build();
     }
 }
