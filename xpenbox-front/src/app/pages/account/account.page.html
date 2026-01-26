@@ -6,70 +6,36 @@
   </div>
 
   <!-- Summary Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 flex-shrink-0">
+  <div class="grid grid-cols-2 sm:grid-cols-2 gap-3 mb-4 flex-shrink-0">
     <!-- Total Liquidity -->
-    <div class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] p-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs xpb-text-secondary mb-1">Liquidez Total</p>
-          <p class="text-2xl sm:text-3xl font-bold xpb-text-income">
-            @if (accountState.isLoading()) {
-              Cargando...
-            } @else {
-              {{ accountState.totalLiquidBalance() | currency:'PEN ':'symbol':'1.2-2' }}
-            }
-          </p>
-          <p class="text-xs xpb-text-secondary mt-1">
-            @if (accountState.isLoading()) {
-              ...
-            } @else {
-              @if (accountState.accounts().length > 1) {
-                {{ accountState.accounts().length }} cuentas activas
-              } @else if (accountState.accounts().length == 1) {
-                {{ accountState.accounts().length }} cuenta activa
-              } @else {
-                Ninguna cuenta activa
-              }
-            }
-          </p>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] flex items-center justify-center">
-          <span class="material-icons xpb-text-income text-2xl">account_balance</span>
-        </div>
-      </div>
-    </div>
+    <app-summary-card
+      [isLoading]="accountState.isLoading()"
+      [titleCard]="'Liquidez Total'"
+      [contentCard]="accountState.totalLiquidBalance() | currency:'PEN ':'symbol':'1.2-2'"
+      [subtitleCard]="
+        accountState.accounts().length > 1 ? accountState.accounts().length + ' cuentas activas' :
+        accountState.accounts().length == 1 ? accountState.accounts().length + ' cuenta activa' :
+        'Ninguna cuenta activa'
+      "
+      [iconCard]="'account_balance'"
+      [contentClassCard]="'xpb-text-income'"
+    ></app-summary-card>
 
     <!-- Total Credit Balance -->
-    <div class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] p-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs xpb-text-secondary mb-1">Balance Total Tarjetas</p>
-          <p class="text-2xl sm:text-3xl font-bold xpb-text-expense">
-            @if (creditCardState.isLoading()) {
-              Cargando...
-            } @else {
-              - {{ creditCardState.totalCreditBalance() | currency:'PEN ':'symbol':'1.2-2' }}
-            }
-          </p>
-          <p class="text-xs xpb-text-secondary mt-1">
-            @if (creditCardState.isLoading()) {
-              ...
-            } @else {
-              @if (creditCardState.creditCards().length > 1) {
-                {{ creditCardState.creditCards().length }} tarjetas activas
-              } @else if (creditCardState.creditCards().length == 1) {
-                {{ creditCardState.creditCards().length }} tarjeta activa
-              } @else {
-                Ninguna tarjeta activa
-              }
-            }
-          </p>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] flex items-center justify-center">
-          <span class="material-icons xpb-text-expense text-2xl">credit_card</span>
-        </div>
-      </div>
-    </div>
+    <app-summary-card
+      [isLoading]="creditCardState.isLoading()"
+      [titleCard]="'Balance Total Tarjetas'"
+      [contentCard]="
+        '- ' + (creditCardState.totalCreditBalance() | currency:'PEN ':'symbol':'1.2-2')
+      "
+      [subtitleCard]="
+        creditCardState.creditCards().length > 1 ? creditCardState.creditCards().length + ' tarjetas activas' :
+        creditCardState.creditCards().length == 1 ? creditCardState.creditCards().length + ' tarjeta activa' :
+        'Ninguna tarjeta activa'
+      "
+      [iconCard]="'credit_card'"
+      [contentClassCard]="'xpb-text-expense'"
+    ></app-summary-card>
   </div>
 
   <!-- Two Column/Row Layout with Independent Scroll -->

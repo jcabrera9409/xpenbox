@@ -18,38 +18,19 @@
   </div>
 
   <!-- Summary Card -->
-  <div class="mb-4 flex-shrink-0">
-    <div class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] p-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs xpb-text-secondary mb-1">Total de Categorías</p>
-          <p class="text-2xl sm:text-3xl font-bold xpb-text-primary">
-            @if (categoryState.isLoading()) {
-              ...
-            } @else {
-              {{ categoryState.categories().length }}
-            }
-          </p>
-          <p class="text-xs xpb-text-secondary mt-1">
-            @if (categoryState.isLoading()) {
-              ...
-            } @else {
-              @if (activeCategoriesCount() > 1) {
-                {{ activeCategoriesCount() }} categorías activas
-              } @else if (activeCategoriesCount() === 1) {
-                {{ activeCategoriesCount() }} categoría activa
-              } @else {
-                Ninguna categoría activa
-              }
-            }
-          </p>
-        </div>
-        <div class="w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] flex items-center justify-center">
-          <span class="material-icons text-[var(--xpb-primary)] text-2xl">category</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <app-summary-card
+    class="mb-4 flex-shrink-0"
+    [isLoading]="categoryState.isLoading()"
+    [titleCard]="'Total de Categorías'"
+    [contentCard]="categoryState.categories().length.toString()"
+    [subtitleCard]="
+      activeCategoriesCount() > 1 ? activeCategoriesCount() + ' categorías activas' :
+      activeCategoriesCount() === 1 ? activeCategoriesCount() + ' categoría activa' :
+      'Ninguna categoría activa'
+    "
+    [iconCard]="'category'"
+    [contentClassCard]="'xpb-text-primary'"
+  ></app-summary-card>
 
   <!-- Categories List -->
   <div class="flex-1 overflow-hidden">

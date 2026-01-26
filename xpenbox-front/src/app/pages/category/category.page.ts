@@ -4,10 +4,11 @@ import { CategoryService } from '../../feature/category/service/category.service
 import { categoryState } from '../../feature/category/service/category.state';
 import { CategoryCard } from '../../shared/cards/category-card/category.card';
 import { CategoryEditionModal } from '../../modal/category-edition-modal/category-edition.modal';
+import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
 
 @Component({
   selector: 'app-category-page',
-  imports: [CommonModule, CategoryCard, CategoryEditionModal],
+  imports: [CommonModule, CategoryCard, CategoryEditionModal, SummaryCard],
   templateUrl: './category.page.html',
   styleUrl: './category.page.css',
 })
