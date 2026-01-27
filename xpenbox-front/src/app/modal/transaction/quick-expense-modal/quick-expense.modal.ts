@@ -44,7 +44,6 @@ export class QuickExpenseModal implements OnInit {
   description = signal('');
 
   sendingForm = signal(false);
-  errorMessage = signal<string | null>(null);
 
   constructor(
     private categoryService: CategoryService,
@@ -204,7 +203,6 @@ export class QuickExpenseModal implements OnInit {
       : TransactionRequestDTO.generateExpenseCreditCardTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode);
 
     this.sendingForm.set(true);
-    this.errorMessage.set(null);
     
     this.transactionService.create(transactionRequest).subscribe({
       next: (response: ApiResponseDTO<TransactionResponseDTO>) => {

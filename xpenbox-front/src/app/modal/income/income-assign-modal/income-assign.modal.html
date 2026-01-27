@@ -89,31 +89,13 @@
                   <div class="text-center text-xs xpb-text-expense">Error al cargar cuentas</div>
                 </div>
               } @else {
-                @if (accountsList().length === 0) {
-                  <div class="w-full">
-                    <div class="text-center text-xs xpb-text-secondary">No tienes cuentas disponibles</div>
-                  </div>
-                } @else {
-                  @for (account of accountsList(); track account.resourceCode) {
-                    <button
-                      type="button"
-                      (click)="selectAccount(account)"
-                      [style.border]="isSelectedAccount(account.resourceCode) ? '2px solid var(--xpb-primary)' : '2px solid transparent'"
-                      [class.bg-[var(--xpb-primary)]]="isSelectedAccount(account.resourceCode)"
-                      [class.font-bold]="isSelectedAccount(account.resourceCode)"
-                      [style.box-shadow]="isSelectedAccount(account.resourceCode) ? '0 0 12px rgba(0, 0, 0, 0.15)' : '0 0 8px rgba(0, 0, 0, 0.1)'"
-                      class="flex-shrink-0 flex flex-col items-start bg-white rounded-lg px-3 py-2 w-[130px] hover:border-[var(--xpb-primary)] transition-all cursor-pointer active:scale-95" 
-                      style="box-shadow: 0 0 8px rgba(0, 0, 0, 0.1)">
-                      <div class="flex items-center gap-2 w-full">
-                        <span class="material-icons text-base">account_balance</span>
-                        <span class="text-xs font-medium truncate flex-1">{{ account.name }}</span>
-                      </div>
-                      <span class="text-xs font-semibold w-full truncate" [class.xpb-text-secondary]="!isSelectedAccount(account.resourceCode)">
-                        PEN {{ account.balance | number:'1.2-2' }}
-                      </span>
-                    </button>
-                  }
-                }
+                <app-accounts-carousel-component
+                  ngSkipHydration class="block"
+                  [accountsList]="accountsList()"
+                  [currentSelectedAccount]="selectedAccount()"
+                  [noAccountsMessage]="'No tienes cuentas disponibles'"
+                  (selectedAccountOutput)="this.selectedAccount.set($event)">
+                </app-accounts-carousel-component>
               }
             </div>
           </div>

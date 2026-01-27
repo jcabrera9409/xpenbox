@@ -11,11 +11,14 @@ import { transactionState } from '../../../feature/transaction/service/transacti
 import { IncomeService } from '../../../feature/income/service/income.service';
 import { IncomeResponseDTO } from '../../../feature/income/model/income.response.dto';
 import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtual-keyboard.ui';
+import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
+import { AccountCreditService } from '../../../shared/service/account-credit.service';
+import { AccountCreditDTO } from '../../../shared/dto/account-credit.dto';
 
 @Component({
   selector: 'app-income-assign-modal',
   standalone: true,
-  imports: [CommonModule, VirtualKeyboardUi],
+  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent],
   templateUrl: './income-assign.modal.html',
   styleUrl: './income-assign.modal.css',
 })
@@ -31,8 +34,8 @@ export class IncomeAssignModal implements OnInit {
   loading = signal<boolean>(false);
   errorLoading = signal<string | null>(null);
 
-  selectedAccount = signal<AccountResponseDTO | null>(null);
-  accountsList = signal<AccountResponseDTO[]>([]);
+  selectedAccount = signal<AccountCreditDTO | null>(null);
+  accountsList = signal<AccountCreditDTO[]>([]);
 
   // Numeric input state (signals)
   amount = signal(0);
@@ -44,7 +47,8 @@ export class IncomeAssignModal implements OnInit {
   constructor(
     private incomeService: IncomeService,
     private accountService: AccountService,
-    private transactionService: TransactionService
+    private transactionService: TransactionService,
+    private accountCreditService: AccountCreditService
   ) {
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
@@ -52,13 +56,13 @@ export class IncomeAssignModal implements OnInit {
 
     // Auto-select first account when loaded and sort accounts
     effect(() => {
-      const accounts = this.accountState.accounts().filter(a => a.state);
-      if (accounts.length > 0) {
-        const sortedAccounts = this.filterAndSortAccounts([...accounts]);
-        this.accountsList.set(sortedAccounts);
+      const accounts = this.accountCreditService.combineAccountAndCreditCardData(this.accountState.accounts(), []);
+      const filteredAccounts = this.accountCreditService.filterAndSortAccountCredits(accounts, 0);
+      if (filteredAccounts.length > 0) {
+        this.accountsList.set(filteredAccounts);
         
         if (!this.selectedAccount()) {
-          this.selectedAccount.set(sortedAccounts[0] || null);
+          this.selectedAccount.set(filteredAccounts[0] || null);
         }
       }
     });
@@ -79,48 +83,14 @@ export class IncomeAssignModal implements OnInit {
 
     return isAmountValid && isAccountValid;
   }
-
-  /**
-   * Filter and sort accounts to have the two most recently used at the top,
-   * followed by the rest sorted by usage count and balance.
-   * @param accounts The list of accounts to filter and sort.
-   * @returns The filtered and sorted list of accounts.
-   */
-  private filterAndSortAccounts(accounts: AccountResponseDTO[]): AccountResponseDTO[] {
-    const sortedByLastUsed = [...accounts]
-      .filter(a => a.lastUsedDateTimestamp)
-      .sort((a, b) => (b.lastUsedDateTimestamp || 0) - (a.lastUsedDateTimestamp || 0));
-
-    const lastTwo = sortedByLastUsed.slice(0, 2);
-    const lastTwoIds = new Set(lastTwo.map(a => a.resourceCode));
-
-    const rest = accounts
-      .filter(a => !lastTwoIds.has(a.resourceCode))
-      .sort((a, b) => {
-        const usageDiff = b.usageCount - a.usageCount;
-        if (usageDiff !== 0) return usageDiff;
-        return b.balance - a.balance;
-      });
-
-    return [...lastTwo, ...rest];
-  }
   
   /**
    * Select an account
    * @param account The account to select
    * @returns void
    */
-  selectAccount(account: AccountResponseDTO): void {
+  selectAccount(account: AccountCreditDTO): void {
     this.selectedAccount.set(account);
-  }
-
-  /**
-   * Check if an account is selected
-   * @param accountResourceCode The resource code of the account to check
-   * @returns boolean
-   */
-  isSelectedAccount(accountResourceCode: string): boolean {
-    return this.selectedAccount()?.resourceCode === accountResourceCode;
   }
 
   /**
