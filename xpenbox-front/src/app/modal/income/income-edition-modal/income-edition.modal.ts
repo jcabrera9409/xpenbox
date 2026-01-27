@@ -35,10 +35,6 @@ export class IncomeEditionModal implements OnInit {
   assignToAccount = signal<boolean>(false);
   
   formIncome!: FormGroup;
-  loading = signal<boolean>(false);
-  sendingForm = signal(false);
-  errorMessage = signal<string | null>(null);
-  errorMessageSending = signal<string | null>(null);
 
   maxDate = signal('');
 
@@ -87,8 +83,8 @@ export class IncomeEditionModal implements OnInit {
   onSubmit(): void {
     if (!this.isValidForm) return;
 
-    this.sendingForm.set(true);
-    this.errorMessage.set(null);
+    this.incomeState.isLoadingSendingIncome.set(true);
+    this.incomeState.errorSendingIncome.set(null);
     
     const incomeRequest = this.buildIncomeData();
 
@@ -98,22 +94,20 @@ export class IncomeEditionModal implements OnInit {
 
     observable.subscribe({
       next: (response: ApiResponseDTO<IncomeResponseDTO>) => {
-        this.sendingForm.set(false);
+        this.incomeState.isLoadingSendingIncome.set(false);
 
         if (response.success && response.data) {
           this.notificationService.success(`Ingreso ${this.isEditMode ? 'actualizado' : 'creado'} con éxito.`);
           this.incomeService.refresh();
           this.close.emit();
-        } else {
-          this.errorMessageSending.set(response.message);
         }
       }, error: (error) => {
         if (error.status === 500 || error.status === 0) {
-          this.errorMessageSending.set('Error guardando el ingreso. Por favor, inténtalo de nuevo más tarde.');
+          this.incomeState.errorSendingIncome.set('Error guardando el ingreso. Por favor, inténtalo de nuevo más tarde.');
         } else {
-          this.errorMessageSending.set(error.error.message || 'Error guardando el ingreso');
+          this.incomeState.errorSendingIncome.set(error.error.message || 'Error guardando el ingreso');
         }
-        this.sendingForm.set(false);
+        this.incomeState.isLoadingSendingIncome.set(false);
       }
     });
   }
@@ -194,11 +188,11 @@ export class IncomeEditionModal implements OnInit {
   private loadIncomeData(): void {
     if (!this.isEditMode) return;
 
-    this.loading.set(true);
+    this.incomeState.isLoadingGetIncome.set(true);
 
     this.incomeService.getByResourceCode(this.resourceCodeSelected()!).subscribe({
       next: (response: ApiResponseDTO<IncomeResponseDTO>) => {
-        this.loading.set(false);
+        this.incomeState.isLoadingGetIncome.set(false);
         if (response.success && response.data) {
           this.incomeData.set(response.data);
           const incomeDate = new Date(response.data.incomeDateTimestamp);
@@ -209,15 +203,15 @@ export class IncomeEditionModal implements OnInit {
             incomeDate: formattedDate
           });
         } else {
-          this.errorMessage.set(response.message);
+          this.incomeState.errorGetIncome.set(response.message);
         }
       }, error: (error) => {
         if (error.status === 500 || error.status === 0) {
-          this.errorMessage.set('Error cargando los datos del ingreso. Por favor, inténtalo de nuevo.');
+          this.incomeState.errorGetIncome.set('Error cargando los datos del ingreso. Por favor, inténtalo de nuevo.');
         } else {
-          this.errorMessage.set(error.error.message || 'Error cargando los datos del ingreso');
+          this.incomeState.errorGetIncome.set(error.error.message || 'Error cargando los datos del ingreso');
         }
-        this.loading.set(false);
+        this.incomeState.isLoadingGetIncome.set(false);
       }
     });
   }

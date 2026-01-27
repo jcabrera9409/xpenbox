@@ -64,6 +64,11 @@ export class IncomePage {
     this.tempStartDate = this.formatDateToInput(this.startDate() || this.getFirstDayOfPreviousMonth());
     this.tempEndDate = this.formatDateToInput(this.endDate() || this.getTodayDate());
 
+    if (!this.startDate() || !this.endDate()) {
+      this.startDate.set(this.getFirstDayOfPreviousMonth());
+      this.endDate.set(this.getTodayDate());
+    }
+
     this.incomeService.load();
 
     effect(() => {

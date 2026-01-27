@@ -82,7 +82,7 @@
   <div class="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-3 mb-3 md:mb-4 flex-shrink-0">
     <!-- Total Income -->
     <app-summary-card
-      [isLoading]="incomeState.isLoading()"
+      [isLoading]="this.incomeState.isLoadingGetList()"
       [titleCard]="'Total Ingresos'"
       [contentCard]="totalIncome() | currency:'PEN ':'symbol':'1.2-2'"
       [subtitleCard]="this.incomeState.incomes().length + ' ingreso(s)'"
@@ -92,7 +92,7 @@
 
     <!-- Total Allocated -->
     <app-summary-card
-      [isLoading]="incomeState.isLoading()"
+      [isLoading]="this.incomeState.isLoadingGetList()"
       [titleCard]="'Asignado'"
       [contentCard]="totalAllocated() | currency:'PEN ':'symbol':'1.2-2'"
       [subtitleCard]="'A cuentas'"
@@ -102,7 +102,7 @@
 
     <!-- Pending Allocation -->
     <app-summary-card
-      [isLoading]="incomeState.isLoading()"
+      [isLoading]="this.incomeState.isLoadingGetList()"
       [titleCard]="'Pendiente'"
       [contentCard]="totalPending() | currency:'PEN ':'symbol':'1.2-2'"
       [subtitleCard]="'Sin asignar'"
@@ -137,16 +137,16 @@
 
       <!-- Scrollable Content -->
       <div class="flex-1 overflow-y-auto">
-        @if (incomeState.isLoading()) {
+        @if (this.incomeState.isLoadingGetList()) {
           <app-loading-ui></app-loading-ui>
-        } @else if (incomeState.error()) {
+        } @else if (this.incomeState.errorGetList()) {
           <div class="flex items-center justify-center py-16">
             <div class="text-center">
               <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
                 <span class="material-icons text-5xl text-[var(--xpb-expense)]">error_outline</span>
               </div>
               <p class="text-lg font-semibold xpb-text-primary mb-2">Error al cargar</p>
-              <p class="xpb-text-secondary mb-4">{{ incomeState.error() }}</p>
+              <p class="xpb-text-secondary mb-4">{{ this.incomeState.errorGetList() }}</p>
               <button type="button"
                 (click)="reloadIncomes()" 
                 class="xpb-btn-primary inline-flex items-center gap-2 px-4 py-2">

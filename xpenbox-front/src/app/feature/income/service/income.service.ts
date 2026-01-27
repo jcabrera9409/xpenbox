@@ -33,8 +33,8 @@ export class IncomeService extends GenericService<IncomeRequestDTO, IncomeRespon
   }
 
   override load(): void {
-    incomeState.isLoading.set(true);
-    incomeState.error.set(null);
+    incomeState.isLoadingGetList.set(true);
+    incomeState.errorGetList.set(null);
 
     const startDate = incomeState.startDate() || new Date(new Date().setDate(1));
     const endDate = incomeState.endDate() || new Date();
@@ -42,12 +42,12 @@ export class IncomeService extends GenericService<IncomeRequestDTO, IncomeRespon
     this.getByDateRange(startDate, endDate).subscribe({
       next: (response: ApiResponseDTO<IncomeResponseDTO[]>) => {
         incomeState.incomes.set(response.data || []);
-        incomeState.isLoading.set(false);
+        incomeState.isLoadingGetList.set(false);
       },
       error: (error) => {
         console.error('Error fetching incomes:', error);
-        incomeState.error.set(error.error.message || 'Error fetching incomes');
-        incomeState.isLoading.set(false);
+        incomeState.errorGetList.set(error.error.message || 'Error fetching incomes');
+        incomeState.isLoadingGetList.set(false);
       }
     })
   }
