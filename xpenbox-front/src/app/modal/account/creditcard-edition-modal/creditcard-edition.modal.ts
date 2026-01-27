@@ -24,9 +24,6 @@ export class CreditcardEditionModal implements OnInit {
   creditCardState = creditCardState;
 
   formCreditCard!: FormGroup;
-  loading = signal<boolean>(false);
-  sendingForm = signal<boolean>(false);
-  errorMessage = signal<string | null>(null);
 
   constructor(
     private fb: FormBuilder,
@@ -46,8 +43,8 @@ export class CreditcardEditionModal implements OnInit {
   onSubmit() {
     if (this.formCreditCard.invalid) return;
 
-    this.sendingForm.set(true);
-    this.errorMessage.set(null);
+    this.creditCardState.isLoadingSendingCreditCard.set(true);
+    this.creditCardState.errorSendingCreditCard.set(null);
 
     const creditCardData = this.buildCreditCardData()
 
@@ -57,18 +54,18 @@ export class CreditcardEditionModal implements OnInit {
 
     observable.subscribe({
       next: (response: ApiResponseDTO<CreditCardResponseDTO>) => {
-        this.sendingForm.set(false);
+        this.creditCardState.isLoadingSendingCreditCard.set(false);
 
         if(response.success && response.data) {
           this.notificationService.success(`Tarjeta de crédito ${this.isEditMode ? 'actualizada' : 'creada'} con éxito.`);
           this.creditCardService.refresh();
           this.close.emit()
         } else {
-          this.creditCardState.error.set(response.message);
+          this.creditCardState.errorSendingCreditCard.set(response.message);
         }
       }, error: () => {
-        this.creditCardState.error.set('Error guardando la tarjeta de crédito. Por favor, inténtalo de nuevo más tarde.');
-        this.sendingForm.set(false);
+        this.creditCardState.errorSendingCreditCard.set('Error guardando la tarjeta de crédito. Por favor, inténtalo de nuevo más tarde.');
+        this.creditCardState.isLoadingSendingCreditCard.set(false);
       }
     });
   }
@@ -115,11 +112,11 @@ export class CreditcardEditionModal implements OnInit {
   private loadCreditCardData() {
     if (!this.isEditMode) return;
 
-    this.loading.set(true);
+    this.creditCardState.isLoadingGetCreditCard.set(true);
 
     this.creditCardService.getByResourceCode(this.resourceCodeSelected()!).subscribe({
       next: (response: ApiResponseDTO<CreditCardResponseDTO>) => {
-        this.loading.set(false);
+        this.creditCardState.isLoadingGetCreditCard.set(false);
         if (response.success && response.data) {
           this.creditCardData.set(response.data)
           this.formCreditCard.patchValue({
@@ -128,15 +125,16 @@ export class CreditcardEditionModal implements OnInit {
             billingDay: response.data.billingDay,
             paymentDay: response.data.paymentDay,
           });
-        } else {
-          console.error('Error fetching credit card data:', response.message);
-          this.errorMessage.set('Error fetching credit card data: ' + response.message);
         }
       },
       error: (error) => {
+        this.creditCardState.isLoadingGetCreditCard.set(false);
+        if (error.status === 500 || error.status === 0) {
+          this.creditCardState.errorGetCreditCard.set('Error del servidor. Por favor, inténtalo de nuevo.');
+        } else {
+          this.creditCardState.errorGetCreditCard.set(error.error.message || 'Error fetching credit card data');
+        }
         console.error('Error fetching credit card data:', error);
-        this.errorMessage.set(error.message || 'Error fetching credit card data');
-        this.loading.set(false);
       }
     })
   }

@@ -33,20 +33,20 @@ export class CreditCardService extends GenericService<CreditCardRequestDTO, Cred
    * Handles loading and error states.
    */
   override load(): void {
-    creditCardState.isLoading.set(true);
-    creditCardState.error.set(null);
+    creditCardState.isLoadingGetList.set(true);
+    creditCardState.errorGetList.set(null);
 
     this.getAll().subscribe({
       next: (response: ApiResponseDTO<CreditCardResponseDTO[]>) => {
         const totalBalance = response.data?.reduce((sum, card) => sum + (card.currentBalance || 0), 0) || 0;
         creditCardState.creditCards.set(response.data || []);
         creditCardState.totalCreditBalance.set(totalBalance);
-        creditCardState.isLoading.set(false);
+        creditCardState.isLoadingGetList.set(false);
       },
       error: (error) => {
         console.error('Error fetching credit cards:', error);
-        creditCardState.error.set(error.message || 'Error fetching credit cards');
-        creditCardState.isLoading.set(false);
+        creditCardState.errorGetList.set(error.message || 'Error fetching credit cards');
+        creditCardState.isLoadingGetList.set(false);
       }
     })
   }

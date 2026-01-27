@@ -23,14 +23,14 @@
 
     <!-- Total Credit Balance -->
     <app-summary-card
-      [isLoading]="creditCardState.isLoading()"
+      [isLoading]="this.creditCardState.isLoadingGetList()"
       [titleCard]="'Balance Total Tarjetas'"
       [contentCard]="
-        '- ' + (creditCardState.totalCreditBalance() | currency:'PEN ':'symbol':'1.2-2')
+        '- ' + (this.creditCardState.totalCreditBalance() | currency:'PEN ':'symbol':'1.2-2')
       "
       [subtitleCard]="
-        creditCardState.creditCards().length > 1 ? creditCardState.creditCards().length + ' tarjetas activas' :
-        creditCardState.creditCards().length == 1 ? creditCardState.creditCards().length + ' tarjeta activa' :
+        this.creditCardState.creditCards().length > 1 ? this.creditCardState.creditCards().length + ' tarjetas activas' :
+        this.creditCardState.creditCards().length == 1 ? this.creditCardState.creditCards().length + ' tarjeta activa' :
         'Ninguna tarjeta activa'
       "
       [iconCard]="'credit_card'"
@@ -104,9 +104,9 @@
 
       <!-- Credit Cards List -->
       <div class="space-y-3 overflow-y-auto pr-2 flex-1 min-h-0">
-        @if (creditCardState.isLoading()) {
+        @if (this.creditCardState.isLoadingGetList()) {
           <app-loading-ui></app-loading-ui>
-        } @else if (creditCardState.error()) {
+        } @else if (this.creditCardState.errorGetList()) {
           <div class="flex items-center justify-center py-16">
             <div class="text-center">
               <span class="material-icons text-6xl text-neutral-400">search_off</span>
@@ -119,7 +119,7 @@
             </div>
           </div>
         } @else {
-          @for (creditCard of creditCardState.creditCards(); track creditCard.resourceCode) {
+          @for (creditCard of this.creditCardState.creditCards(); track creditCard.resourceCode) {
             <app-credit-card ngSkipHydration class="block"
               [creditCardName]="creditCard.name"
               [creditCardLimit]="creditCard.creditLimit"

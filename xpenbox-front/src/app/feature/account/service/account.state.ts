@@ -16,5 +16,5 @@ export const accountState = {
     errorGetAccount: signal<string | null>(null),
 
     isLoadingSendingAccount: signal<boolean>(false),
-    errorSendingAccount: signal<string | null>(null),
+    errorSendingAccount: signal<string | null>(null)
 };

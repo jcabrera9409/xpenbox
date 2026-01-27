@@ -76,7 +76,7 @@ export class QuickExpenseModal implements OnInit {
       const accounts = this.accountState.accounts();
       const creditCards = this.creditCardState.creditCards();
 
-      if (!this.accountState.isLoadingGetList() && !this.creditCardState.isLoading()) {
+      if (!this.accountState.isLoadingGetList() && !this.creditCardState.isLoadingGetList()) {
         const accountCreditsList: AccountCreditDTO[] = this.accountCreditService.combineAccountAndCreditCardData(accounts, creditCards);
 
         const availableList = this.accountCreditService.filterAndSortAccountCredits(accountCreditsList, this.amount());
