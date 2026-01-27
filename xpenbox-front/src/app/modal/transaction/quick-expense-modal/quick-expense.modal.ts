@@ -44,8 +44,6 @@ export class QuickExpenseModal implements OnInit {
   amount = signal(0);
   description = signal('');
 
-  sendingForm = signal(false);
-
   constructor(
     private categoryService: CategoryService,
     private accountService: AccountService,
@@ -78,7 +76,7 @@ export class QuickExpenseModal implements OnInit {
       const accounts = this.accountState.accounts();
       const creditCards = this.creditCardState.creditCards();
 
-      if (!this.accountState.isLoading() && !this.creditCardState.isLoading()) {
+      if (!this.accountState.isLoadingGetList() && !this.creditCardState.isLoading()) {
         const accountCreditsList: AccountCreditDTO[] = this.accountCreditService.combineAccountAndCreditCardData(accounts, creditCards);
 
         const availableList = this.accountCreditService.filterAndSortAccountCredits(accountCreditsList, this.amount());
@@ -203,12 +201,11 @@ export class QuickExpenseModal implements OnInit {
       ? TransactionRequestDTO.generateExpenseAccountTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode)
       : TransactionRequestDTO.generateExpenseCreditCardTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode);
 
-    this.sendingForm.set(true);
+    this.transactionState.isLoading.set(true);
     
     this.transactionService.create(transactionRequest).subscribe({
       next: (response: ApiResponseDTO<TransactionResponseDTO>) => {
-        this.sendingForm.set(false);
-
+        this.transactionState.isLoading.set(false);
         if (response.success && response.data) {
           this.close.emit();
           this.transactionState.isSuccess.set(true);
@@ -219,7 +216,7 @@ export class QuickExpenseModal implements OnInit {
           this.transactionState.error.set(response.message);
         }
       }, error: (error) => {
-        this.sendingForm.set(false);
+        this.transactionState.isLoading.set(false);
         console.error('Error creating expense:', error);
         if (error.status === 500 || error.status === 0) {
           this.transactionState.error.set('Error guardando la transacción. Por favor, inténtalo de nuevo.');

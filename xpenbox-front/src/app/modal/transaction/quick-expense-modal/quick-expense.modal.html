@@ -90,9 +90,9 @@
       <div class="mb-3">
         <label class="block text-sm font-medium xpb-text-secondary mb-2">Cuenta o Tarjeta</label>
         <div class="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:[&::-webkit-scrollbar]:block md:[scrollbar-width:thin] md:scrollbar-thin md:scrollbar-thumb-gray-300 md:scrollbar-track-transparent"> 
-          @if (accountState.isLoading() || creditCardState.isLoading()) {
+          @if (accountState.isLoadingGetList() || creditCardState.isLoading()) {
             <app-loading-ui [cssClasses]="''"></app-loading-ui>
-          } @else if (accountState.error() && creditCardState.error()) {
+          } @else if (accountState.errorGetList() && creditCardState.error()) {
             <div class="w-full">
               <div class="text-center text-xs xpb-text-expense">Error al cargar tus cuentas y tarjetas
               </div>
@@ -126,7 +126,7 @@
         <button 
           (click)="onClose()"
           type="button"
-          [disabled]="sendingForm()"
+          [disabled]="this.transactionState.isLoading()"
           class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg disabled:cursor-not-allowed py-2">
           <span class="material-icons text-lg">close</span>
           <span>Cancelar</span>
@@ -134,9 +134,9 @@
         <button 
           (click)="onSubmit()"
           type="button"
-          [disabled]="sendingForm() || !isFormValid"
+          [disabled]="this.transactionState.isLoading() || !isFormValid"
           class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg disabled:cursor-not-allowed py-2">
-          @if (sendingForm()) {
+          @if (this.transactionState.isLoading()) {
             <span class="material-icons text-lg animate-spin">autorenew</span>
             <span>Guardando...</span>
           } @else {

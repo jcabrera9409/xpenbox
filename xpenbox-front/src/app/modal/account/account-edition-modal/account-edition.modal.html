@@ -46,16 +46,16 @@
 
         <!-- Content -->
         <div class="p-6">
-            @if (loading() && isEditMode) {
+            @if (this.accountState.isLoadingGetAccount() && isEditMode) {
                 <app-loading-ui></app-loading-ui>
-            } @else if(errorMessage() && isEditMode) {
+            } @else if(this.accountState.errorGetAccount() && isEditMode) {
                 <div class="flex items-center justify-center py-12">
                     <div class="text-center max-w-md">
                         <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
                             <span class="material-icons text-5xl text-[var(--xpb-expense)]">error_outline</span>
                         </div>
                         <h3 class="text-lg font-semibold xpb-text-primary mb-2">Error al cargar</h3>
-                        <p class="xpb-text-secondary mb-6">{{ errorMessage() }}</p>
+                        <p class="xpb-text-secondary mb-6">{{ this.accountState.errorGetAccount() }}</p>
                         <button
                             type="button"
                             (click)="onClose()"
@@ -144,11 +144,11 @@
                             }
                         </div>
                     }
-                    @if (this.accountState.error()) {
+                    @if (this.accountState.errorSendingAccount()) {
                         <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
                             <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
                             <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                {{ this.accountState.error() }}
+                                {{ this.accountState.errorSendingAccount() }}
                             </div>
                         </div>
                     }
@@ -165,9 +165,9 @@
                         <button 
                             type="submit"
                             class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            [disabled]="formAccount.invalid || sendingForm()"
+                            [disabled]="formAccount.invalid || this.accountState.isLoadingSendingAccount()"
                         >
-                            @if (!sendingForm()) {
+                            @if (!this.accountState.isLoadingSendingAccount()) {
                                 <span class="material-icons text-lg">
                                     @if (isEditMode) {
                                         check
@@ -182,8 +182,7 @@
                                         Registrar
                                     }
                                 </span>
-                            }
-                            @if (sendingForm()) {
+                            } @else {
                                 <span class="material-icons animate-spin">autorenew</span>
                                 <span>Guardando...</span>
                             }

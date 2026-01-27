@@ -25,9 +25,6 @@ export class AccountEditionModal implements OnInit {
   accountState = accountState;
 
   formAccount!: FormGroup;
-  loading = signal<boolean>(false);
-  sendingForm = signal<boolean>(false);
-  errorMessage = signal<string | null>(null);
 
   constructor(
     private fb: FormBuilder,
@@ -47,8 +44,8 @@ export class AccountEditionModal implements OnInit {
   onSubmit() {
     if (this.formAccount.invalid) return;
 
-    this.sendingForm.set(true);
-    this.errorMessage.set(null);
+    this.accountState.isLoadingSendingAccount.set(true);
+    this.accountState.errorSendingAccount.set(null);
 
     const accountData = this.buildAccountData();
 
@@ -58,18 +55,18 @@ export class AccountEditionModal implements OnInit {
 
     observable.subscribe({
       next: (response: ApiResponseDTO<AccountResponseDTO>) => {
-        this.sendingForm.set(false);
+        this.accountState.isLoadingSendingAccount.set(false);
 
         if (response.success && response.data) {
           this.notificationService.success(`Cuenta ${this.isEditMode ? 'actualizada' : 'creada'} con éxito.`);
           this.accountService.refresh();
           this.close.emit();
         } else {
-          this.accountState.error.set(response.message);
+          this.accountState.errorSendingAccount.set(response.message);
         }
       }, error: () => {
-        this.accountState.error.set('Error guardando la cuenta. Por favor, inténtalo de nuevo más tarde.');
-        this.sendingForm.set(false);
+        this.accountState.errorSendingAccount.set('Error guardando la cuenta. Por favor, inténtalo de nuevo más tarde.');
+        this.accountState.isLoadingSendingAccount.set(false);
       }
     });
   }
@@ -103,7 +100,7 @@ export class AccountEditionModal implements OnInit {
   private loadAccountData(): void {
     if (!this.isEditMode) return;
 
-    this.loading.set(true);
+    this.accountState.isLoadingGetAccount.set(true);
 
     this.accountService.getByResourceCode(this.resourceCodeSelected()!).subscribe({
       next: (response: ApiResponseDTO<AccountResponseDTO>) => {
@@ -114,14 +111,14 @@ export class AccountEditionModal implements OnInit {
           });
         } else {
           console.error('Error fetching account data:', response.message);
-          this.errorMessage.set('Error fetching account data: ' + response.message);
+          this.accountState.errorGetAccount.set('Error fetching account data: ' + response.message);
         }
-        this.loading.set(false);
+        this.accountState.isLoadingGetAccount.set(false);
       },
       error: (error) => {
         console.error('Error fetching account data:', error);
-        this.errorMessage.set(error.message || 'Error fetching account data');
-        this.loading.set(false);
+        this.accountState.errorGetAccount.set(error.message || 'Error fetching account data');
+        this.accountState.isLoadingGetAccount.set(false);
       }
     });
   }

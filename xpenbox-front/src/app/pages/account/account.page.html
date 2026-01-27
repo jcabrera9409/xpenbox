@@ -9,7 +9,7 @@
   <div class="grid grid-cols-2 sm:grid-cols-2 gap-3 mb-4 flex-shrink-0">
     <!-- Total Liquidity -->
     <app-summary-card
-      [isLoading]="accountState.isLoading()"
+      [isLoading]="accountState.isLoadingGetList()"
       [titleCard]="'Liquidez Total'"
       [contentCard]="accountState.totalLiquidBalance() | currency:'PEN ':'symbol':'1.2-2'"
       [subtitleCard]="
@@ -58,9 +58,9 @@
 
     <!-- Bank Accounts List -->
     <div class="space-y-3 overflow-y-auto pr-2 flex-1 min-h-0">
-      @if (accountState.isLoading()) {
+      @if (accountState.isLoadingGetList()) {
         <app-loading-ui></app-loading-ui>
-      } @else if (accountState.error()) {
+      } @else if (accountState.errorGetList()) {
         <div class="flex items-center justify-center py-16">
           <div class="text-center">
             <span class="material-icons text-6xl text-neutral-400">search_off</span>

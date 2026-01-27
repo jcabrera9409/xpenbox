@@ -33,20 +33,20 @@ export class AccountService extends GenericService<AccountRequestDTO, AccountRes
    * Handles loading and error states.
    */
   override load(): void {
-    accountState.isLoading.set(true);
-    accountState.error.set(null);
+    accountState.isLoadingGetList.set(true);
+    accountState.errorGetList.set(null);
 
     this.getAll().subscribe({
       next: (response: ApiResponseDTO<AccountResponseDTO[]>) => {
         const totalBalance = response.data?.reduce((sum, account) => sum + (account.balance || 0), 0) || 0;
         accountState.accounts.set(response.data || []);
         accountState.totalLiquidBalance.set(totalBalance);
-        accountState.isLoading.set(false);
+        accountState.isLoadingGetList.set(false);
       },
       error: (error) => {
         console.error('Error fetching accounts:', error);
-        accountState.error.set(error.message || 'Error fetching accounts');
-        accountState.isLoading.set(false);
+        accountState.errorGetList.set(error.message || 'Error fetching accounts');
+        accountState.isLoadingGetList.set(false);
       }
     })
   }

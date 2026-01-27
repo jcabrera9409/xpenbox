@@ -181,9 +181,9 @@
                         <div class="mb-3">
                             <label class="block text-sm font-medium xpb-text-secondary mb-2">Cuenta Destino</label>
                             <div class="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:[&::-webkit-scrollbar]:block md:[scrollbar-width:thin] md:scrollbar-thin md:scrollbar-thumb-gray-300 md:scrollbar-track-transparent"> 
-                                @if (accountState.isLoading()) {
+                                @if (accountState.isLoadingGetList()) {
                                 <app-loading-ui [cssClasses]="''"></app-loading-ui>
-                                } @else if (accountState.error()) {
+                                } @else if (accountState.errorGetList()) {
                                 <div class="w-full">
                                     <div class="text-center text-xs xpb-text-expense">Error al cargar cuentas</div>
                                 </div>
