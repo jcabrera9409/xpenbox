@@ -19,9 +19,11 @@ import org.xpenbox.income.entity.Income;
 import org.xpenbox.income.mapper.IncomeMapper;
 import org.xpenbox.income.repository.IncomeRepository;
 import org.xpenbox.income.service.IIncomeService;
+import org.xpenbox.transaction.dto.TransactionCreateDTO;
 import org.xpenbox.transaction.entity.Transaction;
 import org.xpenbox.transaction.entity.Transaction.TransactionType;
 import org.xpenbox.transaction.repository.TransactionRepository;
+import org.xpenbox.transaction.service.ITransactionService;
 import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
 
@@ -36,17 +38,20 @@ public class IncomeServiceImpl extends GenericServiceImpl<Income, IncomeCreateDT
 
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
+    private final ITransactionService transactionService;
     private final IncomeRepository incomeRepository;
     private final IncomeMapper incomeMapper;
 
     public IncomeServiceImpl(
         UserRepository userRepository,
         TransactionRepository transactionRepository,
+        ITransactionService transactionService,
         IncomeRepository incomeRepository,
         IncomeMapper incomeMapper
     ) {
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
+        this.transactionService = transactionService;
         this.incomeRepository = incomeRepository;
         this.incomeMapper = incomeMapper;
     }
@@ -71,6 +76,38 @@ public class IncomeServiceImpl extends GenericServiceImpl<Income, IncomeCreateDT
         return incomeMapper;
     }
     
+    /**
+     * Create a new income and an associated transaction if accountResourceCode is provided
+     * @param incomeCreateDTO the income creation data transfer object
+     * @param userEmail the email of the user creating the income
+     * @return the created income response DTO
+     */
+    @Override
+    public IncomeResponseDTO create(IncomeCreateDTO incomeCreateDTO, String userEmail) {
+        LOG.infof("Creating income for user email: %s", userEmail);
+        IncomeResponseDTO incomeResponseDTO = super.create(incomeCreateDTO, userEmail);
+
+        if (incomeCreateDTO.accountResourceCode() != null && !incomeCreateDTO.accountResourceCode().isEmpty()) {
+            TransactionCreateDTO transactionCreateDTO = new TransactionCreateDTO(
+                TransactionType.INCOME,
+                "Auto-generated allocation for income: " + incomeCreateDTO.concept(),
+                incomeCreateDTO.totalAmount(),
+                null,
+                null,
+                incomeCreateDTO.incomeDateTimestamp(),
+                null,
+                incomeResponseDTO.resourceCode(),
+                incomeCreateDTO.accountResourceCode(),
+                null,
+                null
+            );
+    
+            transactionService.create(transactionCreateDTO, userEmail);
+        }
+
+        return incomeResponseDTO;
+    }
+
     /**
      * Update an existing income
      * @param resourceCode the resource code of the income to update

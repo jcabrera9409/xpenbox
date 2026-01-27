@@ -6,10 +6,11 @@ import { FormsModule } from '@angular/forms';
 import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
 import { IncomeAssignModal } from '../../modal/income/income-assign-modal/income-assign.modal';
 import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
+import { IncomeEditionModal } from '../../modal/income/income-edition-modal/income-edition.modal';
 
 @Component({
   selector: 'app-income-page',
-  imports: [CommonModule, FormsModule, SummaryCard, IncomeAssignModal, LoadingUi],
+  imports: [CommonModule, FormsModule, SummaryCard, IncomeAssignModal, LoadingUi, IncomeEditionModal],
   templateUrl: './income.page.html',
   styleUrl: './income.page.css',
 })
@@ -20,8 +21,15 @@ export class IncomePage {
   incomeAssignModalVisible = signal<boolean>(false)
   selectedIncomeResourceCode = signal<string | null>(null);
 
+  // Income edition modal state
+  showIncomeEditionModal = signal(false);
+  resourceCodeIncomeSelected = signal<string | null>(null);
+
   // Control of the filter accordion
   filterExpanded = signal<boolean>(false);
+  
+  // Filter for pending incomes
+  showOnlyPending = signal<boolean>(false);
   
   // Temporary date inputs
   tempStartDate!: string;
@@ -34,6 +42,15 @@ export class IncomePage {
   totalAllocated = signal<number>(0);
   totalPending = signal<number>(0);
   
+  // Filtered incomes based on pending filter
+  filteredIncomes = computed(() => {
+    const incomes = this.incomeState.incomes();
+    if (this.showOnlyPending()) {
+      return incomes.filter(income => income.totalAmount - income.allocatedAmount > 0);
+    }
+    return incomes;
+  });
+  
   // Max date for date inputs (today)
   minDate = this.formatDateToInput(new Date(this.getTodayDate().setFullYear(this.getTodayDate().getFullYear() - 5)));
   maxDate = this.formatDateToInput(this.getTodayDate());
@@ -44,7 +61,7 @@ export class IncomePage {
       return;
     }
 
-    this.tempStartDate = this.formatDateToInput(this.startDate() || this.getFirstDayOfCurrentMonth());
+    this.tempStartDate = this.formatDateToInput(this.startDate() || this.getFirstDayOfPreviousMonth());
     this.tempEndDate = this.formatDateToInput(this.endDate() || this.getTodayDate());
 
     this.incomeService.load();
@@ -76,9 +93,13 @@ export class IncomePage {
     this.filterExpanded.set(!this.filterExpanded());
   }
   
-  openCreateIncomeModal(): void {
-    // TODO: Implementar modal de creación
-    console.log('Abrir modal de creación de ingreso');
+  openCreateIncomeModal(resourceCodeIncomeSelected: string | null = null): void {
+    this.resourceCodeIncomeSelected.set(resourceCodeIncomeSelected);
+    this.showIncomeEditionModal.set(true);
+  }
+
+  closeIncomeEditionModal() {
+    this.showIncomeEditionModal.set(false);
   }
   
   openEditIncomeModal(resourceCode: string): void {
@@ -122,9 +143,9 @@ export class IncomePage {
     return new Date();
   }
   
-  private getFirstDayOfCurrentMonth(): Date {
+  private getFirstDayOfPreviousMonth(): Date {
     const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth(), 1);
+    return new Date(today.getFullYear(), today.getMonth() - 1, 1);
   }
   
   private formatDateToInput(date: Date): string {

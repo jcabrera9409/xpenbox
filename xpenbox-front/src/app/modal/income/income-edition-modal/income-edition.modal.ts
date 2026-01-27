@@ -1,0 +1,224 @@
+import { Component, OnInit, output, ChangeDetectionStrategy, signal, input, effect } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { incomeState } from '../../../feature/income/service/income.state';
+import { IncomeResponseDTO } from '../../../feature/income/model/income.response.dto';
+import { IncomeService } from '../../../feature/income/service/income.service';
+import { NotificationService } from '../../../feature/common/service/notification.service';
+import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
+import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
+import { IncomeRequestDTO } from '../../../feature/income/model/income.request.dto';
+import { accountState } from '../../../feature/account/service/account.state';
+import { AccountCreditDTO } from '../../../shared/dto/account-credit.dto';
+import { AccountService } from '../../../feature/account/service/account.service';
+import { AccountCreditService } from '../../../shared/service/account-credit.service';
+import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
+
+@Component({
+  selector: 'app-income-edition-modal',
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, AccountsCarouselComponent],
+  templateUrl: './income-edition.modal.html',
+  styleUrl: './income-edition.modal.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class IncomeEditionModal implements OnInit {
+
+  resourceCodeSelected = input<string | null>();
+  close = output<void>();
+
+  accountState = accountState;
+  incomeState = incomeState;
+  incomeData = signal<IncomeResponseDTO | null>(null);
+
+  selectedAccount = signal<AccountCreditDTO | null>(null);
+  accountsList = signal<AccountCreditDTO[]>([]);
+  assignToAccount = signal<boolean>(false);
+  
+  formIncome!: FormGroup;
+  loading = signal<boolean>(false);
+  sendingForm = signal(false);
+  errorMessage = signal<string | null>(null);
+  errorMessageSending = signal<string | null>(null);
+
+  maxDate = signal('');
+
+  constructor(
+    private fb: FormBuilder,
+    private incomeService: IncomeService,
+    private accountService: AccountService,
+    private accountCreditService: AccountCreditService,
+    private notificationService: NotificationService
+  ) {
+    if (this.accountState.accounts().length === 0) {
+      this.accountService.load();
+    }
+
+    // Auto-select first account when loaded and sort accounts
+    effect(() => {
+      const accounts = this.accountCreditService.combineAccountAndCreditCardData(this.accountState.accounts(), []);
+      const filteredAccounts = this.accountCreditService.filterAndSortAccountCredits(accounts, 0);
+      if (filteredAccounts.length > 0) {
+        this.accountsList.set(filteredAccounts);
+        
+        if (!this.selectedAccount()) {
+          this.selectedAccount.set(filteredAccounts[0] || null);
+        }
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.loadIncomeData();
+    this.initForm();
+  }
+
+  get isEditMode(): boolean {
+    return this.resourceCodeSelected() !== null;
+  }
+
+  get isValidForm(): boolean {
+    return this.formIncome.valid && (!this.assignToAccount() || (this.assignToAccount() && this.selectedAccount() !== null));
+  }
+
+  onClose(): void {
+    this.close.emit();
+  }
+
+  onSubmit(): void {
+    if (!this.isValidForm) return;
+
+    this.sendingForm.set(true);
+    this.errorMessage.set(null);
+    
+    const incomeRequest = this.buildIncomeData();
+
+    const observable = this.isEditMode
+      ? this.incomeService.update(this.resourceCodeSelected()!, incomeRequest)
+      : this.incomeService.create(incomeRequest);
+
+    observable.subscribe({
+      next: (response: ApiResponseDTO<IncomeResponseDTO>) => {
+        this.sendingForm.set(false);
+
+        if (response.success && response.data) {
+          this.notificationService.success(`Ingreso ${this.isEditMode ? 'actualizado' : 'creado'} con éxito.`);
+          this.incomeService.refresh();
+          this.close.emit();
+        } else {
+          this.errorMessageSending.set(response.message);
+        }
+      }, error: (error) => {
+        if (error.status === 500 || error.status === 0) {
+          this.errorMessageSending.set('Error guardando el ingreso. Por favor, inténtalo de nuevo más tarde.');
+        } else {
+          this.errorMessageSending.set(error.error.message || 'Error guardando el ingreso');
+        }
+        this.sendingForm.set(false);
+      }
+    });
+  }
+
+  // Getters para acceso fácil a controles
+  get conceptControl() {
+    return this.formIncome.get('concept');
+  }
+
+  get amountControl() {
+    return this.formIncome.get('amount');
+  }
+
+  get incomeDateControl() {
+    return this.formIncome.get('incomeDate');
+  }
+
+  // Método helper para mostrar errores
+  getErrorMessage(controlName: string): string {
+    const control = this.formIncome.get(controlName);
+    if (!control || !control.errors || !control.touched) {
+      return '';
+    }
+
+    if (control.errors['required']) {
+      return 'Este campo es obligatorio';
+    }
+
+    if (controlName === 'concept') {
+      if (control.errors['minlength']) {
+        return 'El concepto debe tener al menos 3 caracteres';
+      }
+      if (control.errors['maxlength']) {
+        return 'El concepto no puede exceder 150 caracteres';
+      }
+    }
+
+    if (controlName === 'amount') {
+      if (control.errors['min']) {
+        return 'El monto debe ser mayor a 0';
+      }
+    }
+
+    return '';
+  }
+
+  private buildIncomeData(): IncomeRequestDTO {
+    const formValues = this.formIncome.value;
+    const concept = formValues['concept'];
+    const incomeDate = new Date(formValues['incomeDate']);
+    const incomeDateTimestamp = incomeDate.getTime();
+    const totalAmount = formValues['amount'];
+    const accountResourceCode: string | undefined = !this.isEditMode && this.assignToAccount() && this.selectedAccount()
+      ? this.selectedAccount()!.resourceCode
+      : undefined;
+
+    return new IncomeRequestDTO(concept, incomeDateTimestamp, totalAmount, accountResourceCode);
+  }
+  
+  private initForm(): void {
+    const today = new Date();
+    this.maxDate.set(today.toISOString().split('T')[0]);
+
+    this.formIncome = this.fb.group({
+      concept: ['', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(150)
+      ]],
+      amount: [null, [
+        Validators.required,
+        Validators.min(0.01)
+      ]],
+      incomeDate: [this.maxDate(), [Validators.required]]
+    });
+  }
+
+  private loadIncomeData(): void {
+    if (!this.isEditMode) return;
+
+    this.loading.set(true);
+
+    this.incomeService.getByResourceCode(this.resourceCodeSelected()!).subscribe({
+      next: (response: ApiResponseDTO<IncomeResponseDTO>) => {
+        this.loading.set(false);
+        if (response.success && response.data) {
+          this.incomeData.set(response.data);
+          const incomeDate = new Date(response.data.incomeDateTimestamp);
+          const formattedDate = incomeDate.toISOString().split('T')[0];
+          this.formIncome.patchValue({
+            concept: response.data.concept,
+            amount: response.data.totalAmount,
+            incomeDate: formattedDate
+          });
+        } else {
+          this.errorMessage.set(response.message);
+        }
+      }, error: (error) => {
+        if (error.status === 500 || error.status === 0) {
+          this.errorMessage.set('Error cargando los datos del ingreso. Por favor, inténtalo de nuevo.');
+        } else {
+          this.errorMessage.set(error.error.message || 'Error cargando los datos del ingreso');
+        }
+        this.loading.set(false);
+      }
+    });
+  }
+}

@@ -3,6 +3,7 @@ package org.xpenbox.income.dto;
 import java.math.BigDecimal;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,6 +13,7 @@ import jakarta.validation.constraints.Size;
  * @param concept      Description of the income.
  * @param incomeDateTimestamp   Timestamp when the income was recorded.
  * @param totalAmount  Total amount of the income.
+ * @param accountResourceCode  (Optional) Resource code of the account where the amount is allocated.
  */
 @RegisterForReflection
 public record IncomeCreateDTO (
@@ -25,7 +27,10 @@ public record IncomeCreateDTO (
     Long incomeDateTimestamp,
 
     @NotNull(message = "Total amount must not be null")
-    @Min(value = 1, message = "Total amount must be at least 1")
-    BigDecimal totalAmount
+    @DecimalMin(value = "0.01", message = "Total amount must be at least 0.01")
+    BigDecimal totalAmount,
+
+    @Size(min = 1, max = 100, message = "Account resource code must be between 1 and 100 characters")
+    String accountResourceCode
 
 ) { }

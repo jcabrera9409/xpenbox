@@ -4,16 +4,19 @@
  */
 export class IncomeRequestDTO {
     concept: string;
-    incomeDateTimestamp: string;
+    incomeDateTimestamp: number;
     totalAmount: number;
+    accountResourceCode?: string;
 
     constructor(
         concept: string,
-        incomeDateTimestamp: string,
-        totalAmount: number
+        incomeDateTimestamp: number,
+        totalAmount: number,
+        accountResourceCode?: string
     ) {
         this.concept = concept;
         this.incomeDateTimestamp = incomeDateTimestamp;
         this.totalAmount = totalAmount;
+        this.accountResourceCode = accountResourceCode;
     }
 }

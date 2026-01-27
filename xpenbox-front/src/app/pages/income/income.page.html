@@ -116,14 +116,23 @@
     <div class="xpb-bg-card rounded-lg border xpb-border h-full flex flex-col">
       <!-- Table Header -->
       <div class="px-4 py-3 border-b xpb-border flex-shrink-0">
-        <h2 class="text-lg font-semibold xpb-text-primary flex items-center gap-2">
-          <span class="material-icons text-xl">receipt_long</span>
-          Historial de Ingresos {{
-            startDate() && endDate() 
-              ? 'de ' + (startDate() | date:'dd/MM/yyyy') + ' a ' + (endDate() | date:'dd/MM/yyyy') 
-              : ''
-          }}
-        </h2>
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold xpb-text-primary flex items-center gap-2">
+            <span class="material-icons text-xl">receipt_long</span>
+            Historial de Ingresos {{
+              startDate() && endDate() 
+                ? 'de ' + (startDate() | date:'dd/MM/yyyy') + ' a ' + (endDate() | date:'dd/MM/yyyy') 
+                : ''
+            }}
+          </h2>
+          <label class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="showOnlyPending"
+              class="w-4 h-4 rounded border-gray-300 text-[var(--xpb-primary)] focus:ring-[var(--xpb-primary)] cursor-pointer">
+            <span class="text-sm xpb-text-secondary">Solo pendientes</span>
+          </label>
+        </div>
       </div>
 
       <!-- Scrollable Content -->
@@ -146,7 +155,7 @@
               </button>
             </div>
           </div>
-        } @else if (this.incomeState.incomes().length === 0) {
+        } @else if (this.filteredIncomes().length === 0) {
           <div class="flex items-center justify-center py-16">
             <div class="text-center">
               <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
@@ -169,15 +178,15 @@
               <thead class="xpb-bg-sidebar">
                 <tr>
                   <th class="px-4 py-3 text-left text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Concepto</th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Fecha</th>
-                  <th class="px-4 py-3 text-right text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Monto Total</th>
-                  <th class="px-4 py-3 text-right text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Monto Asignado</th>
-                  <th class="px-4 py-3 text-right text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Pendiente</th>
+                  <th class="px-4 py-3 text-center text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Fecha</th>
+                  <th class="px-4 py-3 text-center text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Monto Total</th>
+                  <th class="px-4 py-3 text-center text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Monto Asignado</th>
+                  <th class="px-4 py-3 text-center text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Pendiente</th>
                   <th class="px-4 py-3 text-center text-xs font-semibold xpb-text-secondary uppercase tracking-wider">Acciones</th>
                 </tr>
               </thead>
               <tbody class="divide-y xpb-border">
-                @for (income of this.incomeState.incomes(); track income.resourceCode) {
+                @for (income of this.filteredIncomes(); track income.resourceCode) {
                   <tr class="hover:xpb-bg-sidebar transition-colors">
                     <td class="px-4 py-3">
                       <div class="flex items-center gap-2">
@@ -185,19 +194,19 @@
                         <span class="font-medium xpb-text-primary">{{ income.concept }}</span>
                       </div>
                     </td>
-                    <td class="px-4 py-3">
+                    <td class="px-4 py-3 text-center">
                       <span class="text-sm xpb-text-secondary">{{ formatDate(income.incomeDateTimestamp) }}</span>
                     </td>
-                    <td class="px-4 py-3 text-right">
+                    <td class="px-4 py-3 text-center">
                       <span class="font-semibold xpb-text-income">{{ income.totalAmount | currency:'PEN ':'symbol':'1.2-2' }}</span>
                     </td>
-                    <td class="px-4 py-3 text-right">
+                    <td class="px-4 py-3 text-center">
                       <span class="font-medium text-[var(--xpb-transfer)]">{{ income.allocatedAmount | currency:'PEN ':'symbol':'1.2-2' }}</span>
                     </td>
-                    <td class="px-4 py-3 text-right">
+                    <td class="px-4 py-3 text-center">
                       <span class="font-medium xpb-text-secondary">{{ (income.totalAmount - income.allocatedAmount) | currency:'PEN ':'symbol':'1.2-2' }}</span>
                     </td>
-                    <td class="px-4 py-3">
+                    <td class="px-4 py-3 text-center">
                       <div class="flex items-center justify-center gap-1">
                         @if (income.totalAmount - income.allocatedAmount > 0) {
                         <button 
@@ -219,7 +228,7 @@
                         }
                         @if (income.totalAmount - income.allocatedAmount > 0) {
                         <button 
-                          (click)="openEditIncomeModal(income.resourceCode)"
+                          (click)="openCreateIncomeModal(income.resourceCode)"
                           class="p-1.5 rounded-lg hover:xpb-bg-main transition-colors"
                           type="button"
                           title="Editar ingreso">
@@ -245,7 +254,7 @@
 
           <!-- Mobile View -->
           <div class="md:hidden space-y-3 p-3">
-            @for (income of this.incomeState.incomes(); track income.resourceCode) {
+            @for (income of this.filteredIncomes(); track income.resourceCode) {
               <div class="xpb-bg-sidebar rounded-lg p-4 border xpb-border">
                 <!-- Título y fecha centrados -->
                 <div class="text-center mb-4">
@@ -294,7 +303,7 @@
                   }
                   @if (income.totalAmount - income.allocatedAmount > 0) {
                   <button 
-                    (click)="openEditIncomeModal(income.resourceCode)"
+                    (click)="openCreateIncomeModal(income.resourceCode)"
                     class="p-2 rounded-lg hover:xpb-bg-main transition-colors"
                     type="button"
                     title="Editar ingreso">
@@ -325,3 +334,10 @@
   [incomeResourceCode]="selectedIncomeResourceCode()"
   (close)="closeIncomeAssignModal()"
 ></app-income-assign-modal>
+
+@if (showIncomeEditionModal()) {
+  <app-income-edition-modal
+    [resourceCodeSelected]="resourceCodeIncomeSelected()"
+    (close)="closeIncomeEditionModal()"
+  ></app-income-edition-modal>
+}
