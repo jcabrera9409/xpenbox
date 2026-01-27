@@ -7,18 +7,20 @@ import { CategoryService } from '../../../feature/category/service/category.serv
 import { AccountService } from '../../../feature/account/service/account.service';
 import { CreditCardService } from '../../../feature/creditcard/service/creditcard.service';
 import { CategoryResponseDTO } from '../../../feature/category/model/category.response.dto';
-import { AccountCreditDTO, AccountCreditType } from '../dto/account-credit.dto';
+import { AccountCreditDTO, AccountCreditType } from '../../../shared/dto/account-credit.dto';
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
 import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtual-keyboard.ui';
+import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
+import { AccountCreditService } from '../../../shared/service/account-credit.service';
 
 @Component({
   selector: 'app-quick-expense-modal',
   standalone: true,
-  imports: [CommonModule, VirtualKeyboardUi],
+  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent],
   templateUrl: './quick-expense.modal.html',
   styleUrl: './quick-expense.modal.css',
 })
@@ -48,7 +50,8 @@ export class QuickExpenseModal implements OnInit {
     private categoryService: CategoryService,
     private accountService: AccountService,
     private creditCardService: CreditCardService,
-    private transactionService: TransactionService
+    private transactionService: TransactionService,
+    private accountCreditService: AccountCreditService
   ) {
     if (this.categoryState.categories().length === 0) {
       this.categoryService.load();
@@ -76,28 +79,9 @@ export class QuickExpenseModal implements OnInit {
       const creditCards = this.creditCardState.creditCards();
 
       if (!this.accountState.isLoading() && !this.creditCardState.isLoading()) {
-        const accountCreditsList: AccountCreditDTO[] = [
-          ...accounts.map(acc => ({
-            resourceCode: acc.resourceCode,
-            type: AccountCreditType.ACCOUNT,
-            icon: 'account_balance',
-            name: acc.name,
-            balance: acc.balance,
-            lastUsedDateTimestamp: acc.lastUsedDateTimestamp,
-            usageCount: acc.usageCount,
-          })),
-          ...creditCards.map(cc => ({
-            resourceCode: cc.resourceCode,
-            type: AccountCreditType.CREDIT_CARD,
-            icon: 'credit_card',
-            name: cc.name,
-            balance: cc.creditLimit - cc.currentBalance,
-            lastUsedDateTimestamp: cc.lastUsedDateTimestamp,
-            usageCount: cc.usageCount,
-          }))
-        ];
+        const accountCreditsList: AccountCreditDTO[] = this.accountCreditService.combineAccountAndCreditCardData(accounts, creditCards);
 
-        const availableList = this.filterAndSortAccountCredits(accountCreditsList);
+        const availableList = this.accountCreditService.filterAndSortAccountCredits(accountCreditsList, this.amount());
         this.accountCredits.set(availableList);
 
         if (availableList.length > 0 && !this.selectedAccount()) {
@@ -177,39 +161,6 @@ export class QuickExpenseModal implements OnInit {
   }
 
   /**
-   * Filter and sort account credits to have the two most recently used at the top,
-   * followed by the two most used, and then the rest sorted by type and balance.
-   * @param accountCreditsList The list of account credits to filter and sort.
-   * @returns The filtered and sorted list of account credits.
-   */
-  private filterAndSortAccountCredits(accountCreditsList: AccountCreditDTO[]): AccountCreditDTO[] {
-    const amountValue = this.amount();
-    const filtered = accountCreditsList.filter(ac => ac.balance > 0 && ac.balance >= (isNaN(amountValue) ? 0 : amountValue));
-
-    const sortedByLastUsed = [...filtered]
-      .filter(ac => ac.lastUsedDateTimestamp)
-      .sort((a, b) => (b.lastUsedDateTimestamp || 0) - (a.lastUsedDateTimestamp || 0));
-    const lastTwo = sortedByLastUsed.slice(0, 2);
-    const lastTwoIds = new Set(lastTwo.map(ac => ac.resourceCode));
-
-    const restAfterLastTwo = filtered.filter(ac => !lastTwoIds.has(ac.resourceCode));
-    const sortedByUsage = [...restAfterLastTwo]
-      .sort((a, b) => (b.usageCount || 0) - (a.usageCount || 0));
-    const mostUsedTwo = sortedByUsage.slice(0, 2);
-    const mostUsedTwoIds = new Set(mostUsedTwo.map(ac => ac.resourceCode));
-
-    const rest = restAfterLastTwo.filter(ac => !mostUsedTwoIds.has(ac.resourceCode))
-      .sort((a, b) => {
-        if (a.type === b.type) {
-          return b.balance - a.balance;
-        }
-        return a.type === AccountCreditType.ACCOUNT ? -1 : 1;
-      });
-
-    return [...lastTwo, ...mostUsedTwo, ...rest];
-  }
-
-  /**
    * Select a category
    * @param category The category to select
    * @returns void
@@ -219,30 +170,12 @@ export class QuickExpenseModal implements OnInit {
   }
 
   /**
-   * Select an account
-   * @param account The account to select
-   * @returns void
-   */
-  selectAccount(account: AccountCreditDTO): void {
-    this.selectedAccount.set(account);
-  }
-
-  /**
    * Check if a category is selected
    * @param categoryResourceCode The resource code of the category to check
    * @returns boolean
    */
   isSelectedCategory(categoryResourceCode: string): boolean {
     return this.selectedCategory()?.resourceCode === categoryResourceCode;
-  }
-
-  /**
-   * Check if an account is selected
-   * @param accountResourceCode The resource code of the account to check
-   * @returns boolean
-   */
-  isSelectedAccount(accountResourceCode: string): boolean {
-    return this.selectedAccount()?.resourceCode === accountResourceCode;
   }
 
   /**
