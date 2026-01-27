@@ -2,7 +2,6 @@ import { Component, effect, input, OnInit, output, signal } from '@angular/core'
 import { CommonModule } from '@angular/common';
 import { accountState } from '../../../feature/account/service/account.state';
 import { AccountService } from '../../../feature/account/service/account.service';
-import { AccountResponseDTO } from '../../../feature/account/model/account.response.dto';
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
@@ -82,15 +81,6 @@ export class IncomeAssignModal implements OnInit {
     const isAccountValid = selectedAccount !== null;
 
     return isAmountValid && isAccountValid;
-  }
-  
-  /**
-   * Select an account
-   * @param account The account to select
-   * @returns void
-   */
-  selectAccount(account: AccountCreditDTO): void {
-    this.selectedAccount.set(account);
   }
 
   /**
