@@ -1,4 +1,4 @@
-import { Component, effect, output, signal } from '@angular/core';
+import { Component, effect, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { categoryState } from '../../../feature/category/service/category.state';
 import { accountState } from '../../../feature/account/service/account.state';
@@ -21,7 +21,7 @@ import { transactionState } from '../../../feature/transaction/service/transacti
   templateUrl: './quick-expense.modal.html',
   styleUrl: './quick-expense.modal.css',
 })
-export class QuickExpenseModal {
+export class QuickExpenseModal implements OnInit {
 
   close = output<void>();
 
@@ -133,6 +133,10 @@ export class QuickExpenseModal {
       }
     });
   } 
+
+  ngOnInit(): void {
+    this.transactionState.error.set(null);
+  }
 
   // Getters for filtered and sorted lists
   get categories(): CategoryResponseDTO[] {

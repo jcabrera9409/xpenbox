@@ -1,4 +1,4 @@
-import { Component, effect, input, output, signal } from '@angular/core';
+import { Component, effect, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { accountState } from '../../../feature/account/service/account.state';
 import { AccountService } from '../../../feature/account/service/account.service';
@@ -8,6 +8,8 @@ import { TransactionService } from '../../../feature/transaction/service/transac
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
+import { IncomeService } from '../../../feature/income/service/income.service';
+import { IncomeResponseDTO } from '../../../feature/income/model/income.response.dto';
 
 @Component({
   selector: 'app-income-assign-modal',
@@ -16,7 +18,7 @@ import { transactionState } from '../../../feature/transaction/service/transacti
   templateUrl: './income-assign.modal.html',
   styleUrl: './income-assign.modal.css',
 })
-export class IncomeAssignModal {
+export class IncomeAssignModal implements OnInit {
 
   incomeResourceCode = input<string | null>();
   close = output<void>();
@@ -24,6 +26,9 @@ export class IncomeAssignModal {
   // Application states
   accountState = accountState;
   transactionState = transactionState;
+
+  loading = signal<boolean>(false);
+  errorLoading = signal<string | null>(null);
 
   selectedAccount = signal<AccountResponseDTO | null>(null);
   accountsList = signal<AccountResponseDTO[]>([]);
@@ -39,6 +44,7 @@ export class IncomeAssignModal {
   keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
 
   constructor(
+    private incomeService: IncomeService,
     private accountService: AccountService,
     private transactionService: TransactionService
   ) {
@@ -58,6 +64,11 @@ export class IncomeAssignModal {
         }
       }
     });
+  }
+
+  ngOnInit(): void { 
+    this.transactionState.error.set(null);
+    this.loadIncomeData();
   }
 
   // Getters for form validity
@@ -218,5 +229,30 @@ export class IncomeAssignModal {
         }
       }
     })
+  }
+
+  private loadIncomeData(): void {
+    this.loading.set(true);
+
+    console.log('Loading income data for resource code:', this.incomeResourceCode());
+
+    this.incomeService.getByResourceCode(this.incomeResourceCode()!).subscribe({
+      next: (response: ApiResponseDTO<IncomeResponseDTO>) => {
+        if (response.success && response.data) {
+          const incomeData = response.data;
+          const pendingAllocation = incomeData.totalAmount - incomeData.allocatedAmount;
+          this.amount.set(pendingAllocation.toFixed(2));
+        } else {
+          console.error('Error fetching income data:', response.message);
+          this.errorLoading.set('Error fetching income data: ' + response.message);
+        }
+        this.loading.set(false);
+      },
+      error: (error) => {
+        console.error('Error fetching income data:', error);
+        this.errorLoading.set(error.message || 'Error fetching income data');
+        this.loading.set(false);
+      }
+    });
   }
 }
