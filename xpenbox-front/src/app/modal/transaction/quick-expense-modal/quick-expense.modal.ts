@@ -13,11 +13,12 @@ import { TransactionService } from '../../../feature/transaction/service/transac
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
+import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtual-keyboard.ui';
 
 @Component({
   selector: 'app-quick-expense-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, VirtualKeyboardUi],
   templateUrl: './quick-expense.modal.html',
   styleUrl: './quick-expense.modal.css',
 })
@@ -37,15 +38,11 @@ export class QuickExpenseModal implements OnInit {
   accountCredits = signal<AccountCreditDTO[]>([]);
 
   // Numeric input state (signals)
-  amount = signal('');
-  showErrorAmount = signal(false);
+  amount = signal(0);
   description = signal('');
 
   sendingForm = signal(false);
   errorMessage = signal<string | null>(null);
-
-  // Numeric keyboard keys (1-9 and decimal point)
-  keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
 
   constructor(
     private categoryService: CategoryService,
@@ -111,7 +108,7 @@ export class QuickExpenseModal implements OnInit {
 
     // Update selected account when amount changes
     effect(() => {
-      const amountValue = parseFloat(this.amount());
+      const amountValue = this.amount();
       const accounts = this.accountCredits();
       const currentSelected = this.selectedAccount();
       
@@ -145,7 +142,7 @@ export class QuickExpenseModal implements OnInit {
 
   // Getters for form validity
   get isFormValid(): boolean {
-    const amountValue = parseFloat(this.amount());
+    const amountValue = this.amount();
     const selectedAccount = this.selectedAccount();
     const categorySelected = this.selectedCategory();
 
@@ -186,7 +183,7 @@ export class QuickExpenseModal implements OnInit {
    * @returns The filtered and sorted list of account credits.
    */
   private filterAndSortAccountCredits(accountCreditsList: AccountCreditDTO[]): AccountCreditDTO[] {
-    const amountValue = parseFloat(this.amount());
+    const amountValue = this.amount();
     const filtered = accountCreditsList.filter(ac => ac.balance > 0 && ac.balance >= (isNaN(amountValue) ? 0 : amountValue));
 
     const sortedByLastUsed = [...filtered]
@@ -210,57 +207,6 @@ export class QuickExpenseModal implements OnInit {
       });
 
     return [...lastTwo, ...mostUsedTwo, ...rest];
-  }
-
-  /**
-   * Handle key press from numeric keyboard
-   * @param key The key that was pressed
-   * @returns void
-   */
-  onKeyPress(key: string): void {
-    this.showErrorAmount.set(false);
-    const value = this.amount();
-    
-    // Validate decimal point
-    if (key === '.' && value.includes('.')) return;
-
-    // Avoid multiple leading zeros
-    if (value === '0' && key === '0') return;
-    
-    // Limit length
-    if (value.length >= 9) return;
-
-    // If decimal point is pressed without a value, add 0.
-    if (key === '.' && !value) {
-      this.amount.set('0.');
-      return;
-    }
-
-    // Avoid leading zeros
-    if (key === '0' && !value) {
-      this.amount.set(key);
-      return;
-    }
-    this.amount.set(value + key);
-  }
-
-  /**
-   * Handle backspace key press
-   * @returns void
-   */
-  onBackspace(): void {
-    this.showErrorAmount.set(false);
-    const value = this.amount();
-    this.amount.set(value.slice(0, -1));
-  }
-
-  /**
-   * Handle clear key press
-   * @returns void
-   */
-  onClear(): void {
-    this.showErrorAmount.set(false);
-    this.amount.set('');
   }
 
   /**
@@ -315,7 +261,7 @@ export class QuickExpenseModal implements OnInit {
     
     if (!this.isFormValid) return;
     
-    const amountValue = parseFloat(this.amount());
+    const amountValue = this.amount();
     const descriptionValue = this.description();
     const selectedAccount = this.selectedAccount();
     const categorySelected = this.selectedCategory();

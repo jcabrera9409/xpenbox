@@ -10,11 +10,12 @@ import { TransactionResponseDTO } from '../../../feature/transaction/model/trans
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
 import { IncomeService } from '../../../feature/income/service/income.service';
 import { IncomeResponseDTO } from '../../../feature/income/model/income.response.dto';
+import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtual-keyboard.ui';
 
 @Component({
   selector: 'app-income-assign-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, VirtualKeyboardUi],
   templateUrl: './income-assign.modal.html',
   styleUrl: './income-assign.modal.css',
 })
@@ -34,14 +35,11 @@ export class IncomeAssignModal implements OnInit {
   accountsList = signal<AccountResponseDTO[]>([]);
 
   // Numeric input state (signals)
-  amount = signal('');
-  showErrorAmount = signal(false);
+  amount = signal(0);
+  defaultAmount = signal(0);
   description = signal('');
 
   sendingForm = signal(false);
-
-  // Numeric keyboard keys (1-9 and decimal point)
-  keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
 
   constructor(
     private incomeService: IncomeService,
@@ -73,7 +71,7 @@ export class IncomeAssignModal implements OnInit {
 
   // Getters for form validity
   get isFormValid(): boolean {
-    const amountValue = parseFloat(this.amount());
+    const amountValue = this.amount();
     const selectedAccount = this.selectedAccount();
 
     const isAmountValid = !isNaN(amountValue) && amountValue > 0;
@@ -106,58 +104,7 @@ export class IncomeAssignModal implements OnInit {
 
     return [...lastTwo, ...rest];
   }
-
-  /**
-   * Handle key press from numeric keyboard
-   * @param key The key that was pressed
-   * @returns void
-   */
-  onKeyPress(key: string): void {
-    this.showErrorAmount.set(false);
-    const value = this.amount();
-    
-    // Validate decimal point
-    if (key === '.' && value.includes('.')) return;
-
-    // Avoid multiple leading zeros
-    if (value === '0' && key === '0') return;
-    
-    // Limit length
-    if (value.length >= 9) return;
-
-    // If decimal point is pressed without a value, add 0.
-    if (key === '.' && !value) {
-      this.amount.set('0.');
-      return;
-    }
-
-    // Avoid leading zeros
-    if (key === '0' && !value) {
-      this.amount.set(key);
-      return;
-    }
-    this.amount.set(value + key);
-  }
-
-  /**
-   * Handle backspace key press
-   * @returns void
-   */
-  onBackspace(): void {
-    this.showErrorAmount.set(false);
-    const value = this.amount();
-    this.amount.set(value.slice(0, -1));
-  }
-
-  /**
-   * Handle clear key press
-   * @returns void
-   */
-  onClear(): void {
-    this.showErrorAmount.set(false);
-    this.amount.set('');
-  }
-
+  
   /**
    * Select an account
    * @param account The account to select
@@ -192,7 +139,7 @@ export class IncomeAssignModal implements OnInit {
     
     if (!this.isFormValid) return;
     
-    const amountValue = parseFloat(this.amount());
+    const amountValue = this.amount();
     const descriptionValue = this.description();
     const incomeResourceCode = this.incomeResourceCode();
     const selectedAccount = this.selectedAccount();
@@ -216,6 +163,7 @@ export class IncomeAssignModal implements OnInit {
           this.transactionState.isSuccess.set(true);
 
           this.accountService.refresh();
+          this.incomeService.refresh();
         } else {
           this.transactionState.error.set(response.message);
         }
@@ -241,7 +189,7 @@ export class IncomeAssignModal implements OnInit {
         if (response.success && response.data) {
           const incomeData = response.data;
           const pendingAllocation = incomeData.totalAmount - incomeData.allocatedAmount;
-          this.amount.set(pendingAllocation.toFixed(2));
+          this.defaultAmount.set(pendingAllocation);
         } else {
           console.error('Error fetching income data:', response.message);
           this.errorLoading.set('Error fetching income data: ' + response.message);

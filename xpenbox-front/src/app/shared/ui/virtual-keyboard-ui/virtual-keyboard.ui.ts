@@ -1,4 +1,4 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, input, OnInit, output, signal } from '@angular/core';
 
 @Component({
   selector: 'app-virtual-keyboard-ui',
@@ -6,7 +6,7 @@ import { Component, input, output, signal } from '@angular/core';
   templateUrl: './virtual-keyboard.ui.html',
   styleUrl: './virtual-keyboard.ui.css',
 })
-export class VirtualKeyboardUi {
+export class VirtualKeyboardUi implements OnInit {
 
   // Input/Ouput properties
   currency = input<string>('PEN');
@@ -18,6 +18,13 @@ export class VirtualKeyboardUi {
 
   // Numeric keyboard keys (1-9 and decimal point)
   keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
+
+  ngOnInit(): void {
+    if (this.defaultAmount() > 0) {
+      this.amount.set(this.defaultAmount().toFixed(2));
+      this.emitAmount();
+    }
+  }
 
   /**
    * Handle key press from numeric keyboard

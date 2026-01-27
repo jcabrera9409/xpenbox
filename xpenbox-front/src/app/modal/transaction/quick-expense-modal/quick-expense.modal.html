@@ -25,55 +25,11 @@
 
     <!-- Body -->
     <div class="p-4 overflow-y-auto flex-1">
-      <!-- Display del monto -->
-      <div class="mb-3">
-        <label class="block text-xs font-semibold xpb-text-secondary text-center">Monto</label>
-        <div class="px-3 py-2 text-center relative">
-          <div class="flex items-center justify-center gap-2">
-            <span class="text-base font-bold text-gray-400">PEN </span>
-            <span class="text-2xl font-bold text-gray-600">
-              {{ amount() || '0' }}
-            </span>
-          </div>
-          @if (amount()) {
-            <button
-              (click)="onClear()"
-              type="button"
-              class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
-              title="Limpiar monto">
-              <span class="material-icons text-lg">clear</span>
-            </button>
-          }
-        </div>
-      </div>
-
-      <!-- Teclado numérico -->
-      <div class="mb-3">
-        <div class="grid grid-cols-3 gap-1.5">
-          @for (key of keys; track key) {
-            <button 
-              (click)="onKeyPress(key)"
-              type="button"
-              class="bg-white rounded-lg py-2.5 text-lg font-semibold text-gray-700 transition-all active:bg-[var(--xpb-primary)] active:text-white active:scale-95 active:shadow-lg">
-              {{ key }}
-            </button>
-          }
-          <!-- Botón 0 que ocupa 2 columnas -->
-          <button 
-            (click)="onKeyPress('0')"
-            type="button"
-            class="bg-white rounded-lg py-2.5 text-lg font-semibold text-gray-700 transition-all active:bg-[var(--xpb-primary)] active:text-white active:scale-95 active:shadow-lg">
-            0
-          </button>
-          <!-- Botón backspace -->
-          <button 
-            (click)="onBackspace()"
-            type="button"
-            class="bg-white rounded-lg py-2.5 text-lg font-semibold text-gray-700 transition-all active:bg-[var(--xpb-neutral)] active:text-white active:scale-95 active:shadow-lg">
-            <span class="material-icons text-lg">backspace</span>
-          </button>
-        </div>
-      </div>
+      <app-virtual-keyboard-ui 
+        [currency]="'PEN'"
+        [defaultAmount]="0"
+        (amountOutput)="amount.set($event)">
+      </app-virtual-keyboard-ui>
 
       <!-- Descripción -->
       <div class="mb-3">
@@ -177,16 +133,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Mensaje de error (si hay validación) -->
-      @if (showErrorAmount()) {
-        <div class="mb-4 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-          <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
-          <div class="text-sm text-[var(--xpb-expense)] flex-1">
-            <p>Por favor ingresa un monto mayor a cero</p>
-          </div>
-        </div>
-      }
 
       <!-- Mensaje de error al enviar -->
         @if (this.transactionState.error()) {
