@@ -7,10 +7,11 @@ import { CreditCardRequestDTO } from '../../../feature/creditcard/model/creditca
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { creditCardState } from '../../../feature/creditcard/service/creditcard.state';
 import { NotificationService } from '../../../feature/common/service/notification.service';
+import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 
 @Component({
   selector: 'app-creditcard-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi],
   templateUrl: './creditcard-edition.modal.html',
   styleUrl: './creditcard-edition.modal.css',
 })

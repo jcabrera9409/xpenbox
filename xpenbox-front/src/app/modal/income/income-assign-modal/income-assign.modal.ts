@@ -13,11 +13,12 @@ import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtua
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
 import { AccountCreditDTO } from '../../../shared/dto/account-credit.dto';
+import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 
 @Component({
   selector: 'app-income-assign-modal',
   standalone: true,
-  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent],
+  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, LoadingUi],
   templateUrl: './income-assign.modal.html',
   styleUrl: './income-assign.modal.css',
 })

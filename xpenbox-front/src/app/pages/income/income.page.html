@@ -129,12 +129,7 @@
       <!-- Scrollable Content -->
       <div class="flex-1 overflow-y-auto">
         @if (incomeState.isLoading()) {
-          <div class="flex items-center justify-center py-16">
-            <div class="text-center">
-              <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 xpb-border border-t-[var(--xpb-primary)]"></div>
-              <p class="mt-4 xpb-text-secondary">Cargando ingresos...</p>
-            </div>
-          </div>
+          <app-loading-ui></app-loading-ui>
         } @else if (incomeState.error()) {
           <div class="flex items-center justify-center py-16">
             <div class="text-center">

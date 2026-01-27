@@ -7,10 +7,11 @@ import { CategoryRequestDTO } from '../../../feature/category/model/category.req
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../feature/common/service/notification.service';
 import { categoryState } from '../../../feature/category/service/category.state';
+import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 
 @Component({
   selector: 'app-category-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi],
   templateUrl: './category-edition.modal.html',
   styleUrl: './category-edition.modal.css',
 })

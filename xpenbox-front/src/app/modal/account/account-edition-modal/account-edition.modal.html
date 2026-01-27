@@ -47,12 +47,7 @@
         <!-- Content -->
         <div class="p-6">
             @if (loading() && isEditMode) {
-                <div class="flex items-center justify-center py-16">
-                    <div class="text-center">
-                        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 xpb-border border-t-[var(--xpb-primary)] mb-4"></div>
-                        <p class="xpb-text-secondary">Cargando cuenta...</p>
-                    </div>
-                </div>
+                <app-loading-ui></app-loading-ui>
             } @else if(errorMessage() && isEditMode) {
                 <div class="flex items-center justify-center py-12">
                     <div class="text-center max-w-md">

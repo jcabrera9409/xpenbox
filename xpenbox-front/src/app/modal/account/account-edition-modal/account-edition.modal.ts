@@ -7,12 +7,12 @@ import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { AccountResponseDTO } from '../../../feature/account/model/account.response.dto';
 import { accountState } from '../../../feature/account/service/account.state';
 import { NotificationService } from '../../../feature/common/service/notification.service';
-
+import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 
 @Component({
   selector: 'app-account-edition-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi],
   templateUrl: './account-edition.modal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

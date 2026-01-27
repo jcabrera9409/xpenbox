@@ -10,10 +10,11 @@ import { creditCardState } from '../../feature/creditcard/service/creditcard.sta
 import { AccountEditionModal } from '../../modal/account/account-edition-modal/account-edition.modal';
 import { CreditcardEditionModal } from '../../modal/account/creditcard-edition-modal/creditcard-edition.modal';
 import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
+import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
 
 @Component({
   selector: 'app-account-page',
-  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard],
+  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard, LoadingUi],
   templateUrl: './account.page.html',
   styleUrl: './account.page.css',
 })

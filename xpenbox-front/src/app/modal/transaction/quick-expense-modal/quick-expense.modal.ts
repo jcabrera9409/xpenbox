@@ -16,11 +16,12 @@ import { transactionState } from '../../../feature/transaction/service/transacti
 import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtual-keyboard.ui';
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
+import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 
 @Component({
   selector: 'app-quick-expense-modal',
   standalone: true,
-  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent],
+  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, LoadingUi],
   templateUrl: './quick-expense.modal.html',
   styleUrl: './quick-expense.modal.css',
 })

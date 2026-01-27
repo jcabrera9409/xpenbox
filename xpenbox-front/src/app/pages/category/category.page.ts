@@ -5,10 +5,11 @@ import { categoryState } from '../../feature/category/service/category.state';
 import { CategoryCard } from '../../shared/cards/category-card/category.card';
 import { CategoryEditionModal } from '../../modal/category/category-edition-modal/category-edition.modal';
 import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
+import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
 
 @Component({
   selector: 'app-category-page',
-  imports: [CommonModule, CategoryCard, CategoryEditionModal, SummaryCard],
+  imports: [CommonModule, CategoryCard, CategoryEditionModal, SummaryCard, LoadingUi],
   templateUrl: './category.page.html',
   styleUrl: './category.page.css',
 })

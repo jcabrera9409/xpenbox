@@ -59,12 +59,7 @@
     <!-- Bank Accounts List -->
     <div class="space-y-3 overflow-y-auto pr-2 flex-1 min-h-0">
       @if (accountState.isLoading()) {
-        <div class="flex items-center justify-center py-16">
-          <div class="text-center">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-            <p class="mt-4 text-neutral-600">Cargando cuentas...</p>
-          </div>
-        </div>
+        <app-loading-ui></app-loading-ui>
       } @else if (accountState.error()) {
         <div class="flex items-center justify-center py-16">
           <div class="text-center">
@@ -110,12 +105,7 @@
       <!-- Credit Cards List -->
       <div class="space-y-3 overflow-y-auto pr-2 flex-1 min-h-0">
         @if (creditCardState.isLoading()) {
-          <div class="flex items-center justify-center py-16">
-            <div class="text-center">
-              <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-              <p class="mt-4 text-neutral-600">Cargando tarjetas...</p>
-            </div>
-          </div>
+          <app-loading-ui></app-loading-ui>
         } @else if (creditCardState.error()) {
           <div class="flex items-center justify-center py-16">
             <div class="text-center">

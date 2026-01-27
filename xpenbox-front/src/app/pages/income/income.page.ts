@@ -5,10 +5,11 @@ import { incomeState } from '../../feature/income/service/income.state';
 import { FormsModule } from '@angular/forms';
 import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
 import { IncomeAssignModal } from '../../modal/income/income-assign-modal/income-assign.modal';
+import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
 
 @Component({
   selector: 'app-income-page',
-  imports: [CommonModule, FormsModule, SummaryCard, IncomeAssignModal],
+  imports: [CommonModule, FormsModule, SummaryCard, IncomeAssignModal, LoadingUi],
   templateUrl: './income.page.html',
   styleUrl: './income.page.css',
 })
