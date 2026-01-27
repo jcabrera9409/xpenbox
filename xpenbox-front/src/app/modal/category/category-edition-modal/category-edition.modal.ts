@@ -24,9 +24,6 @@ export class CategoryEditionModal implements OnInit {
   categoryData = signal<CategoryResponseDTO | null>(null);
 
   formCategory!: FormGroup;
-  loading = signal<boolean>(false);
-  sendingForm = signal<boolean>(false)
-  errorMessage = signal<string | null>(null);
 
   constructor(
     private fb: FormBuilder,
@@ -46,8 +43,8 @@ export class CategoryEditionModal implements OnInit {
   onSubmit() {
     if (this.formCategory.invalid) return;
 
-    this.sendingForm.set(true);
-    this.errorMessage.set(null);
+    this.categoryState.isLoadingSendingCategory.set(true);
+    this.categoryState.errorSendingCategory.set(null);
 
     const categoryData = this.buildCategoryData();
 
@@ -57,18 +54,18 @@ export class CategoryEditionModal implements OnInit {
 
     observable.subscribe({
       next: (response: ApiResponseDTO<CategoryResponseDTO>) => {
-        this.sendingForm.set(false);
+        this.categoryState.isLoadingSendingCategory.set(false);
 
         if (response.success && response.data) {
           this.notificationService.success(`Categoria ${this.isEditMode ? 'actualizada' : 'creada'} con éxito.`);
           this.categoryService.refresh();
           this.close.emit();
         } else {
-          this.categoryState.error.set(response.message);
+          this.categoryState.errorSendingCategory.set(response.message);
         }
       }, error: () => {
-        this.categoryState.error.set('Error guardando la categoría. Por favor, inténtalo de nuevo más tarde.');
-        this.sendingForm.set(false);
+        this.categoryState.errorSendingCategory.set('Error guardando la categoría. Por favor, inténtalo de nuevo más tarde.');
+        this.categoryState.isLoadingSendingCategory.set(false);
       }
     });
   }
@@ -95,7 +92,7 @@ export class CategoryEditionModal implements OnInit {
   private loadCategoryData(): void {
     if (!this.isEditMode) return; 
 
-    this.loading.set(true);
+    this.categoryState.isLoadingGetCategory.set(true);
 
     this.categoryService.getByResourceCode(this.resourceCodeSelected()!).subscribe({
       next: (response: ApiResponseDTO<CategoryResponseDTO>) => {
@@ -106,12 +103,12 @@ export class CategoryEditionModal implements OnInit {
             color: response.data.color
           });
         } else {
-          this.errorMessage.set(response.message);
+          this.categoryState.errorGetCategory.set(response.message);
         }
-        this.loading.set(false);
+        this.categoryState.isLoadingGetCategory.set(false);
       }, error: () => {
-        this.errorMessage.set('Error cargando los datos de la categoría. Por favor, inténtalo de nuevo más tarde.');
-        this.loading.set(false);
+        this.categoryState.errorGetCategory.set('Error cargando los datos de la categoría. Por favor, inténtalo de nuevo más tarde.');
+        this.categoryState.isLoadingGetCategory.set(false);
       }
     });
   }

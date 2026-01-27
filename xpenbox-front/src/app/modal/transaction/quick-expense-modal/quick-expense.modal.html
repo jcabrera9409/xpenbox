@@ -52,9 +52,9 @@
       <div class="mb-3">
         <label class="block text-sm font-medium xpb-text-secondary mb-2">Categoría</label>
         <div class="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:[&::-webkit-scrollbar]:block md:[scrollbar-width:thin] md:scrollbar-thin md:scrollbar-thumb-gray-300 md:scrollbar-track-transparent">
-            @if (categoryState.isLoading()) {
+            @if (this.categoryState.isLoadingGetList()) {
               <app-loading-ui [cssClasses]="''"></app-loading-ui>
-            } @else if (categoryState.error()) {
+            } @else if (this.categoryState.errorGetList()) {
               <div class="w-full">
                 <div class="text-center text-xs xpb-text-expense">Error al cargar categorías
                 </div>

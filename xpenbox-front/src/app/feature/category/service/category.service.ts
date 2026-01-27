@@ -32,18 +32,18 @@ export class CategoryService extends GenericService<CategoryRequestDTO, Category
    * Handles loading and error states.
    */
   override load(): void {
-    categoryState.isLoading.set(true);
-    categoryState.error.set(null);
+    categoryState.isLoadingGetList.set(true);
+    categoryState.errorGetList.set(null);
 
     this.getAll().subscribe({
       next: (response: ApiResponseDTO<CategoryResponseDTO[]>) => {
         categoryState.categories.set(response.data || []);
-        categoryState.isLoading.set(false);
+        categoryState.isLoadingGetList.set(false);
       },
       error: (error) => {
         console.error('Error fetching categories:', error);
-        categoryState.error.set(error.message || 'Error fetching categories');
-        categoryState.isLoading.set(false);
+        categoryState.errorGetList.set(error.message || 'Error fetching categories');
+        categoryState.isLoadingGetList.set(false);
       }
     })
   }

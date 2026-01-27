@@ -20,9 +20,9 @@
   <!-- Summary Card -->
   <app-summary-card
     class="mb-4 flex-shrink-0"
-    [isLoading]="categoryState.isLoading()"
+    [isLoading]="this.categoryState.isLoadingGetList()"
     [titleCard]="'Total de Categorías'"
-    [contentCard]="categoryState.categories().length.toString()"
+    [contentCard]="this.categoryState.categories().length.toString()"
     [subtitleCard]="
       activeCategoriesCount() > 1 ? activeCategoriesCount() + ' categorías activas' :
       activeCategoriesCount() === 1 ? activeCategoriesCount() + ' categoría activa' :
@@ -35,9 +35,9 @@
   <!-- Categories List -->
   <div class="flex-1 overflow-hidden">
     <div class="h-full overflow-y-auto pr-2">
-      @if (categoryState.isLoading()) {
+      @if (this.categoryState.isLoadingGetList()) {
         <app-loading-ui></app-loading-ui>
-      } @else if (categoryState.error()) {
+      } @else if (this.categoryState.errorGetList()) {
         <div class="flex items-center justify-center py-16">
           <div class="text-center max-w-md">
             <div class="xpb-bg-main rounded-full flex items-center justify-center mx-auto mb-2">
