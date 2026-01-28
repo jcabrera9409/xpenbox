@@ -66,7 +66,9 @@ export class IncomeAssignModal implements OnInit {
   }
 
   ngOnInit(): void { 
+    this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
+    
     this.loadIncomeData();
   }
 

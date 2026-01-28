@@ -32,6 +32,9 @@ export class CreditcardEditionModal implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.creditCardState.isLoadingSendingCreditCard.set(false);
+    this.creditCardState.errorSendingCreditCard.set(null);
+
     this.loadCreditCardData()
     this.initForms();
   }

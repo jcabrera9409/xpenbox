@@ -32,6 +32,9 @@ export class CategoryEditionModal implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.categoryState.isLoadingSendingCategory.set(false);
+    this.categoryState.errorSendingCategory.set(null);
+
     this.loadCategoryData()
     this.initForms();
   }

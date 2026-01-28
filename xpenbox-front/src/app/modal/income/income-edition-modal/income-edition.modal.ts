@@ -64,6 +64,9 @@ export class IncomeEditionModal implements OnInit {
   }
 
   ngOnInit(): void {
+    this.incomeState.isLoadingSendingIncome.set(false);
+    this.incomeState.errorSendingIncome.set(null);
+
     this.loadIncomeData();
     this.initForm();
   }

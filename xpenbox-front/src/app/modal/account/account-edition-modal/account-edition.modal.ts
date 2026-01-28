@@ -33,6 +33,9 @@ export class AccountEditionModal implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.accountState.isLoadingSendingAccount.set(false);
+    this.accountState.errorSendingAccount.set(null);
+
     this.loadAccountData()
     this.initForms();
   }
