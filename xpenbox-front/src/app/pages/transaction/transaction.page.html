@@ -1,1 +1,158 @@
-<p>transaction.page works!</p>
+<div class="min-h-screen xpb-bg-main py-6 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="material-icons text-3xl text-[var(--xpb-primary)]">receipt_long</span>
+        <h1 class="text-2xl sm:text-3xl font-bold xpb-text-primary">Transacciones</h1>
+      </div>
+      <p class="xpb-text-secondary">Gestiona y filtra todas tus transacciones</p>
+    </div>
+
+    <!-- Filtros (Acordeón) -->
+    <div class="xpb-bg-card rounded-xl shadow-sm mb-6 overflow-hidden">
+      <!-- Header del acordeón -->
+      <button 
+        (click)="toggleFilters()"
+        class="w-full p-4 sm:p-6 flex items-center justify-between hover:xpb-bg-sidebar transition-colors">
+        <div class="flex items-center gap-3">
+          <span class="material-icons text-xl text-[var(--xpb-primary)]">filter_alt</span>
+          <h2 class="text-lg font-semibold xpb-text-primary">Filtros</h2>
+          <span class="text-sm xpb-text-secondary">
+            @if (!transactionState.isLoadingFilteredList() && !transactionState.errorFilteredList()) {
+              {{ transactionState.transactionsFiltered()?.totalElements || 0 }} resultados
+            }
+          </span>
+        </div>
+        <span class="material-icons text-[var(--xpb-primary)] transition-transform duration-300"
+              [class.rotate-180]="filtersExpanded()">
+          expand_more
+        </span>
+      </button>
+
+      <!-- Contenido colapsable -->
+      <div class="overflow-hidden transition-all duration-300"
+           [class.max-h-0]="!filtersExpanded()"
+           [class.max-h-[1000px]]="filtersExpanded()">
+        <div class="px-4 sm:px-6 pb-6 border-t xpb-border">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            <!-- Filtro por tipo (sin icono superpuesto) -->
+            <div>
+              <label class="block text-sm font-medium xpb-text-secondary mb-2">Tipo de transacción</label>
+              <select 
+                [ngModel]="filterType()"
+                (ngModelChange)="filterType.set($event)"
+                class="xpb-bg-main border xpb-border rounded-lg px-4 py-2.5 w-full xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%236C757D%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-10">
+                <option>Todas</option>
+                <option value="{{transactionType.EXPENSE}}">Gastos</option>
+                <option value="{{transactionType.INCOME}}">Ingresos</option>
+                <option value="{{transactionType.CREDIT_PAYMENT}}">Pagos Tarjeta</option>
+                <option value="{{transactionType.TRANSFER}}">Transferencias</option>
+              </select>
+            </div>
+
+            <!-- Filtro por descripción -->
+            <div>
+              <label class="block text-sm font-medium xpb-text-secondary mb-2">Descripción</label>
+              <div class="relative">
+                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-[var(--xpb-primary)] text-xl pointer-events-none">search</span>
+                <input 
+                  type="text"
+                  [ngModel]="filterDescription()"
+                  (ngModelChange)="filterDescription.set($event)"
+                  placeholder="Buscar por descripción..."
+                  class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full xpb-text-primary placeholder:xpb-text-disabled focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all">
+              </div>
+            </div>
+
+            <!-- Filtro por categoría (select) -->
+            <div>
+              <label class="block text-sm font-medium xpb-text-secondary mb-2">Categoría</label>
+              <select 
+                [ngModel]="filterCategory()"
+                (ngModelChange)="filterCategory.set($event)"
+                class="xpb-bg-main border xpb-border rounded-lg px-4 py-2.5 w-full xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%236C757D%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-10">
+                <option>Todas las categorías</option>
+                @for (category of categoryState.categories(); track category.resourceCode) {
+                  <option [value]="category.resourceCode">{{ category.name }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- Filtro fecha inicio -->
+            <div>
+              <label class="block text-sm font-medium xpb-text-secondary mb-2">Fecha inicio</label>
+              <div class="relative">
+                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-[var(--xpb-primary)] text-xl pointer-events-none">calendar_today</span>
+                <input 
+                  type="date"
+                  [ngModel]="filterStartDate()"
+                  (ngModelChange)="filterStartDate.set($event)"
+                  class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all">
+              </div>
+            </div>
+
+            <!-- Filtro fecha fin -->
+            <div>
+              <label class="block text-sm font-medium xpb-text-secondary mb-2">Fecha fin</label>
+              <div class="relative">
+                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-[var(--xpb-primary)] text-xl pointer-events-none">event</span>
+                <input 
+                  type="date"
+                  [ngModel]="filterEndDate()"
+                  (ngModelChange)="filterEndDate.set($event)"
+                  class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all">
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="flex items-end gap-3">
+              <button 
+                (click)="resetFilters()"
+                class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg">
+                <span class="material-icons text-lg">refresh</span>
+                <span class="hidden sm:inline">Limpiar</span>
+              </button>
+              <button 
+                (click)="toggleFilters()"
+                class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg">
+                <span class="material-icons text-lg">check</span>
+                <span>Aplicar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de transacciones -->
+    <div class="space-y-4">
+        @if (transactionState.isLoadingFilteredList()) {
+            <app-loading-ui></app-loading-ui>
+        } @else if (transactionState.errorFilteredList()) {
+            <app-retry-component
+                [message]="'Error al cargar las transacciones.'"
+                (retry)="reloadTransactions()">
+            </app-retry-component>
+        } @else if (transactionState.transactionsFiltered()?.content?.length === 0) {
+            <app-create-first-component
+                [icon]="'receipt_long'"
+                [title]="'No se encontraron transacciones'"
+                [subtitle]="'Ajusta los filtros para ver más resultados'">
+            </app-create-first-component>
+        } @else {
+            <!-- Tarjetas de transacciones (compactas) -->
+            @for (transaction of transactionState.transactionsFiltered()?.content; track transaction.resourceCode) {
+            <app-transaction-card ngSkipHydration 
+                class="block"
+                [transaction]="transaction"
+                [currency]="'PEN'"
+                (detailView)="viewDetail($event)"
+                (editView)="editTransaction($event)"
+                (deleteView)="deleteTransaction($event)">
+            </app-transaction-card>
+            }
+        }
+    </div>
+  </div>
+</div>

@@ -5,11 +5,13 @@
         </div>
         <h3 class="text-lg font-semibold xpb-text-primary">{{ title() }}</h3>
         <p class="xpb-text-secondary mb-2">{{ subtitle() }}</p>
-        <button 
-            (click)="onCreate()"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors shadow-sm">
-            <span class="material-icons">add</span>
-            <span>{{ buttonText() }}</span>
-        </button>
+        @if (buttonText()) {
+            <button 
+                (click)="onCreate()"
+                class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors shadow-sm">
+                <span class="material-icons">add</span>
+                <span>{{ buttonText() }}</span>
+            </button>
+        }
     </div>
 </div>

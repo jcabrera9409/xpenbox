@@ -11,7 +11,7 @@ export class CreateFirstComponent {
   icon = input<string>();
   title = input<string>();
   subtitle = input<string>();
-  buttonText = input<string>()
+  buttonText = input<string | undefined>();
   
   create = output<void>();
 

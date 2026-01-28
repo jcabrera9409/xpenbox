@@ -1,5 +1,7 @@
 import { signal } from "@angular/core";
 import { TransactionResponseDTO } from "../model/transaction.response.dto";
+import { TransactionFilterRequestDTO } from "../model/transaction-filter.request.dto";
+import { PageableResponseDTO } from "../../common/model/pageable.response.dto";
 
 /**
  * State management for transactions.
@@ -7,7 +9,12 @@ import { TransactionResponseDTO } from "../model/transaction.response.dto";
  */
 export const transactionState = {
     transactions: signal<TransactionResponseDTO[]>([]),
+    transactionsFiltered: signal<PageableResponseDTO<TransactionResponseDTO> | null>(null),
     
+    isLoadingFilteredList: signal<boolean>(false),
+    errorFilteredList: signal<string | null>(null),
+    filterRequest: signal<TransactionFilterRequestDTO | null>(null),
+
     isLoadingGetList: signal<boolean>(false),
     errorGetList: signal<string | null>(null),
     
