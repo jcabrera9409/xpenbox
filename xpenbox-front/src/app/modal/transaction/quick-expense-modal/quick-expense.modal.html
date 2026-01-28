@@ -49,42 +49,10 @@
       </div>
 
       <!-- Selección de categoría (Carrusel) -->
-      <div class="mb-3">
-        <label class="block text-sm font-medium xpb-text-secondary mb-2">Categoría</label>
-        <div class="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:[&::-webkit-scrollbar]:block md:[scrollbar-width:thin] md:scrollbar-thin md:scrollbar-thumb-gray-300 md:scrollbar-track-transparent">
-            @if (this.categoryState.isLoadingGetList()) {
-              <app-loading-ui [cssClasses]="''"></app-loading-ui>
-            } @else if (this.categoryState.errorGetList()) {
-              <div class="w-full">
-                <div class="text-center text-xs xpb-text-expense">Error al cargar categorías
-                </div>
-              </div>
-            } @else {
-              @if (categoriesList().length === 0) {
-                <div class="w-full">
-                  <div class="text-center text-xs xpb-text-secondary">No tienes categorías disponibles
-                  </div>
-                </div>
-              } @else {
-                <div class="flex gap-2 px-1 py-2">
-                  @for (category of categoriesList(); track category.resourceCode) {
-                    <button 
-                      type="button"
-                      (click)="selectCategory(category)"
-                      [style.border]="isSelectedCategory(category.resourceCode) ? '2px solid ' + category.color : '2px solid transparent'"
-                      [style.color]="isSelectedCategory(category.resourceCode) ? category.color : ''"
-                      [class.font-bold]="isSelectedCategory(category.resourceCode)"
-                      [style.box-shadow]="isSelectedCategory(category.resourceCode) ? '0 0 12px rgba(0, 0, 0, 0.15)' : '0 0 8px rgba(0, 0, 0, 0.1)'"
-                      class="flex-shrink-0 flex flex-col items-center justify-center gap-1 bg-white rounded-lg px-3 py-2 w-[85px] hover:border-[var(--xpb-primary)] transition-all cursor-pointer active:scale-95" 
-                      style="box-shadow: 0 0 8px rgba(0, 0, 0, 0.1)">
-                      <span class="text-xs font-medium truncate w-full text-center">{{ category.name }}</span>
-                    </button>
-                  }
-                </div>
-              }
-            }
-        </div>
-      </div>
+      <app-categories-carousel-component
+        [title]="'Categoría'"
+        (outputCategory)="selectCategory($event)">
+      </app-categories-carousel-component>
       
       <!-- Selección de cuenta/tarjeta (Carrusel) -->
       <app-accounts-carousel-component

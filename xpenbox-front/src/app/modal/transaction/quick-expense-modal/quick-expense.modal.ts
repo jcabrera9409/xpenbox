@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { categoryState } from '../../../feature/category/service/category.state';
 import { accountState } from '../../../feature/account/service/account.state';
 import { creditCardState } from '../../../feature/creditcard/service/creditcard.state';
-import { CategoryService } from '../../../feature/category/service/category.service';
 import { AccountService } from '../../../feature/account/service/account.service';
 import { CreditCardService } from '../../../feature/creditcard/service/creditcard.service';
 import { CategoryResponseDTO } from '../../../feature/category/model/category.response.dto';
@@ -16,12 +15,13 @@ import { transactionState } from '../../../feature/transaction/service/transacti
 import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtual-keyboard.ui';
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
-import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
+import { CategoriesCarouselComponent } from '../../../shared/components/categories-carousel-component/categories-carousel.component';
+import { CategoryService } from '../../../feature/category/service/category.service';
 
 @Component({
   selector: 'app-quick-expense-modal',
   standalone: true,
-  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, LoadingUi],
+  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, CategoriesCarouselComponent],
   templateUrl: './quick-expense.modal.html',
   styleUrl: './quick-expense.modal.css',
 })
@@ -37,7 +37,6 @@ export class QuickExpenseModal implements OnInit {
 
   selectedCategory = signal<CategoryResponseDTO | null>(null);
   selectedAccount = signal<AccountCreditDTO | null>(null);
-  categoriesList = signal<CategoryResponseDTO[]>([]);
   accountCredits = signal<AccountCreditDTO[]>([]);
 
   // Numeric input state (signals)
@@ -51,25 +50,12 @@ export class QuickExpenseModal implements OnInit {
     private transactionService: TransactionService,
     private accountCreditService: AccountCreditService
   ) {
-    if (this.categoryState.categories().length === 0) {
-      this.categoryService.load();
-    }
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
     }
     if (this.creditCardState.creditCards().length === 0) {
       this.creditCardService.load();
     }
-
-    // Auto-select first category when loaded
-    effect(() => {
-      const categories = this.categoryState.categories().filter(c => c.state);
-      if (categories.length > 0 && !this.selectedCategory()) {
-        const finalOrder = this.filterAndSortCategories([...categories]);
-        this.categoriesList.set(finalOrder);
-        this.selectedCategory.set(finalOrder[0] || null);
-      }
-    });
 
     // Combine accounts and credit cards into accountCredits
     effect(() => {
@@ -138,27 +124,6 @@ export class QuickExpenseModal implements OnInit {
     return isAccountValid && !!categorySelected;
   }
 
-  /**
-   * Filter and sort categories to have the two most recently used at the top,
-   * followed by the rest sorted by usage count.
-   * @param categories The list of categories to filter and sort.
-   * @returns The filtered and sorted list of categories.
-   */
-  private filterAndSortCategories(categories: CategoryResponseDTO[]): CategoryResponseDTO[] {
-    const sortedByLastUsed = [...categories]
-      .filter(c => c.lastUsedDateTimestamp)
-      .sort((a, b) => (b.lastUsedDateTimestamp || 0) - (a.lastUsedDateTimestamp || 0));
-
-    const lastTwo = sortedByLastUsed.slice(0, 2);
-    const lastTwoIds = new Set(lastTwo.map(c => c.resourceCode));
-
-    const rest = categories
-      .filter(c => !lastTwoIds.has(c.resourceCode))
-      .sort((a, b) => b.usageCount - a.usageCount);
-
-    return [...lastTwo, ...rest];
-  }
-
   retryAccountsAndCreditCards(): void {
     this.accountService.refresh();
     this.creditCardService.refresh();
@@ -172,16 +137,6 @@ export class QuickExpenseModal implements OnInit {
   selectCategory(category: CategoryResponseDTO): void {
     this.selectedCategory.set(category);
   }
-
-  /**
-   * Check if a category is selected
-   * @param categoryResourceCode The resource code of the category to check
-   * @returns boolean
-   */
-  isSelectedCategory(categoryResourceCode: string): boolean {
-    return this.selectedCategory()?.resourceCode === categoryResourceCode;
-  }
-
   /**
    * Close the modal
    * @returns void
@@ -218,6 +173,7 @@ export class QuickExpenseModal implements OnInit {
 
           this.accountService.refresh();
           this.creditCardService.refresh();
+          this.categoryService.refresh();
         } else {
           this.transactionState.errorSendingTransaction.set(response.message);
         }
