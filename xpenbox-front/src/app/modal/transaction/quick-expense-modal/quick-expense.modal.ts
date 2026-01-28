@@ -17,11 +17,12 @@ import { AccountsCarouselComponent } from '../../../shared/components/accounts-c
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
 import { CategoriesCarouselComponent } from '../../../shared/components/categories-carousel-component/categories-carousel.component';
 import { CategoryService } from '../../../feature/category/service/category.service';
+import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 
 @Component({
   selector: 'app-quick-expense-modal',
   standalone: true,
-  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, CategoriesCarouselComponent],
+  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, CategoriesCarouselComponent, ModalButtonsUi],
   templateUrl: './quick-expense.modal.html',
   styleUrl: './quick-expense.modal.css',
 })

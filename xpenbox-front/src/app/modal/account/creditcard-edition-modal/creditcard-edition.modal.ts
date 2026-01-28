@@ -9,10 +9,11 @@ import { creditCardState } from '../../../feature/creditcard/service/creditcard.
 import { NotificationService } from '../../../feature/common/service/notification.service';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
+import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 
 @Component({
   selector: 'app-creditcard-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi],
   templateUrl: './creditcard-edition.modal.html',
   styleUrl: './creditcard-edition.modal.css',
 })

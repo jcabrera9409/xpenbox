@@ -83,29 +83,20 @@
         }
 
         <!-- Botones de acción -->
-        <div class="flex gap-3">
-          <button 
-            (click)="onClose()"
-            type="button"
-            [disabled]="this.transactionState.isLoadingSendingTransaction()"
-            class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg disabled:cursor-not-allowed py-2">
-            <span class="material-icons text-lg">close</span>
-            <span>Cancelar</span>
-          </button>
-          <button 
-            (click)="onSubmit()"
-            type="button"
-            [disabled]="this.transactionState.isLoadingSendingTransaction() || !isFormValid"
-            class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg disabled:cursor-not-allowed py-2">
-            @if (this.transactionState.isLoadingSendingTransaction()) {
-              <span class="material-icons text-lg animate-spin">autorenew</span>
-              <span>Guardando...</span>
-            } @else {
-              <span class="material-icons text-lg">save</span>
-              <span>Asignar</span>
-            }
-          </button>
-        </div>
+        <app-modal-buttons-ui
+            [cancelText]="'Cancelar'"
+            [cancelIcon]="'close'"
+            [isEditMode]="false"
+            [isLoading]="this.transactionState.isLoadingSendingTransaction()"
+            [isValidForm]="isFormValid"
+            [loadingText]="'Guardando...'"
+            [loadingIcon]="'autorenew'"
+            [confirmText]="'Asignar'"
+            [confirmIcon]="'save'"
+            (cancel)="onClose()"
+            (confirm)="onSubmit()">
+        </app-modal-buttons-ui>
+
       </div>
     }
   </div>

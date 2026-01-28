@@ -9,10 +9,11 @@ import { NotificationService } from '../../../feature/common/service/notificatio
 import { categoryState } from '../../../feature/category/service/category.state';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
+import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 
 @Component({
   selector: 'app-category-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi],
   templateUrl: './category-edition.modal.html',
   styleUrl: './category-edition.modal.css',
 })

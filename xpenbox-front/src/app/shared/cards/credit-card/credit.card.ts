@@ -24,8 +24,7 @@ export class CreditCard {
   creditCardEdit = output<string>();
 
   get creditCardBalancePercentage(): number {
-    if (this.creditCardLimit() === 0 || this.creditCardBalance() === 0) return 0;
-
+    if (this.creditCardBalance() === 0) return 100;
     return ((this.creditCardLimit() || 0) - (this.creditCardBalance() || 0)) / (this.creditCardLimit() || 0) * 100;
   }
 

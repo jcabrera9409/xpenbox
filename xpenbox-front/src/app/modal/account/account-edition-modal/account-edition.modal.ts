@@ -9,11 +9,12 @@ import { accountState } from '../../../feature/account/service/account.state';
 import { NotificationService } from '../../../feature/common/service/notification.service';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
+import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 
 @Component({
   selector: 'app-account-edition-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi],
   templateUrl: './account-edition.modal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

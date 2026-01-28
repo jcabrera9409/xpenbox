@@ -16,11 +16,12 @@ import { AccountCreditDTO } from '../../../shared/dto/account-credit.dto';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { incomeState } from '../../../feature/income/service/income.state';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
+import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 
 @Component({
   selector: 'app-income-assign-modal',
   standalone: true,
-  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, LoadingUi, RetryComponent],
+  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, LoadingUi, RetryComponent, ModalButtonsUi],
   templateUrl: './income-assign.modal.html',
   styleUrl: './income-assign.modal.css',
 })
