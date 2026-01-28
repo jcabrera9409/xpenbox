@@ -1,10 +1,11 @@
 import { Component, effect, input, output, signal } from '@angular/core';
 import { AccountCreditDTO } from '../../dto/account-credit.dto';
 import { CommonModule } from '@angular/common';
+import { LoadingUi } from '../../ui/loading-ui/loading.ui';
 
 @Component({
   selector: 'app-accounts-carousel-component',
-  imports: [CommonModule],
+  imports: [CommonModule, LoadingUi],
   templateUrl: './accounts-carousel.component.html',
   styleUrl: './accounts-carousel.component.css',
   host: {
@@ -15,10 +16,17 @@ import { CommonModule } from '@angular/common';
 export class AccountsCarouselComponent {
 
   // Input/Output signals
+  isLoading = input<boolean>();
+  errorLoading = input<string | null>();
+  carouselTitle = input<string>();
+  carouselErrorMessage = input<string>();
+  currencySymbol = input<string>();
   accountsList = input<AccountCreditDTO[]>();
   currentSelectedAccount = input<AccountCreditDTO | null>();
   noAccountsMessage = input<string>();
+
   selectedAccountOutput = output<AccountCreditDTO>();
+  retry = output<void>();
 
   selectedAccount = signal<AccountCreditDTO | null>(null);
 
@@ -49,5 +57,10 @@ export class AccountsCarouselComponent {
    */
   isSelectedAccount(accountResourceCode: string): boolean {
     return this.selectedAccount()?.resourceCode === accountResourceCode;
+  }
+
+  /** Emit retry event */
+  sendRetry(): void {
+    this.retry.emit();
   }
 }

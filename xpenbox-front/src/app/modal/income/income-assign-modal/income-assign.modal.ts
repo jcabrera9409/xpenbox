@@ -142,6 +142,10 @@ export class IncomeAssignModal implements OnInit {
     this.loadIncomeData();
   }
 
+  retryLoadAccountsData(): void {
+    this.accountService.refresh();
+  }
+
   private loadIncomeData(): void {
     this.incomeState.isLoadingGetIncome.set(true);
 

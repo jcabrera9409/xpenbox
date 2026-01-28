@@ -159,6 +159,11 @@ export class QuickExpenseModal implements OnInit {
     return [...lastTwo, ...rest];
   }
 
+  retryAccountsAndCreditCards(): void {
+    this.accountService.refresh();
+    this.creditCardService.refresh();
+  }
+
   /**
    * Select a category
    * @param category The category to select

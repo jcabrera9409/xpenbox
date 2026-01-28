@@ -85,31 +85,21 @@
             }
         </div>
       </div>
-
+      
       <!-- Selección de cuenta/tarjeta (Carrusel) -->
-      <div class="mb-3">
-        <label class="block text-sm font-medium xpb-text-secondary mb-2">Cuenta o Tarjeta</label>
-        <div class="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:[&::-webkit-scrollbar]:block md:[scrollbar-width:thin] md:scrollbar-thin md:scrollbar-thumb-gray-300 md:scrollbar-track-transparent"> 
-          @if (this.accountState.isLoadingGetList() || this.creditCardState.isLoadingGetList()) {
-            <app-loading-ui [cssClasses]="''"></app-loading-ui>
-          } @else if (this.accountState.errorGetList() && this.creditCardState.errorGetList()) {
-            <div class="w-full">
-              <div class="text-center text-xs xpb-text-expense">Error al cargar tus cuentas y tarjetas
-              </div>
-            </div>
-          } @else {
-            <div class="flex gap-2 px-1 py-2">
-              <app-accounts-carousel-component
-                ngSkipHydration class="block"
-                [accountsList]="accountCredits()"
-                [currentSelectedAccount]="selectedAccount()"
-                [noAccountsMessage]="'No tienes cuentas o tarjetas disponibles'"
-                (selectedAccountOutput)="this.selectedAccount.set($event)">
-              </app-accounts-carousel-component>
-            </div>
-          }
-        </div>
-      </div>
+      <app-accounts-carousel-component
+          ngSkipHydration class="block"
+          [isLoading]="this.accountState.isLoadingGetList() || this.creditCardState.isLoadingGetList()"
+          [errorLoading]="this.accountState.errorGetList() && this.creditCardState.errorGetList()"
+          [carouselTitle]="'Cuenta o Tarjeta'"
+          [carouselErrorMessage]="'Error al cargar cuentas y tarjetas'"
+          [currencySymbol]="'PEN'"
+          [accountsList]="accountCredits()"
+          [currentSelectedAccount]="selectedAccount()"
+          [noAccountsMessage]="'No tienes cuentas o tarjetas disponibles'"
+          (selectedAccountOutput)="this.selectedAccount.set($event)"
+          (retry)="retryAccountsAndCreditCards()">
+      </app-accounts-carousel-component>
 
       <!-- Mensaje de error al enviar -->
         @if (this.transactionState.errorSendingTransaction()) {

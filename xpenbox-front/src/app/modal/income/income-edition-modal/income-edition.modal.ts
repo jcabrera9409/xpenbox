@@ -162,6 +162,10 @@ export class IncomeEditionModal implements OnInit {
     this.loadIncomeData();
   }
 
+  retryLoadAccountsData(): void {
+    this.accountService.refresh();
+  }
+
   private buildIncomeData(): IncomeRequestDTO {
     const formValues = this.formIncome.value;
     const concept = formValues['concept'];

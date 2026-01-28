@@ -165,28 +165,19 @@
 
                     @if (assignToAccount()) {
                         <!-- Selección de cuenta destino (Carrusel) -->
-                        <div class="mb-3">
-                            <label class="block text-sm font-medium xpb-text-secondary mb-2">Cuenta Destino</label>
-                            <div class="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] md:[&::-webkit-scrollbar]:block md:[scrollbar-width:thin] md:scrollbar-thin md:scrollbar-thumb-gray-300 md:scrollbar-track-transparent"> 
-                                @if (accountState.isLoadingGetList()) {
-                                <app-loading-ui [cssClasses]="''"></app-loading-ui>
-                                } @else if (accountState.errorGetList()) {
-                                <div class="w-full">
-                                    <div class="text-center text-xs xpb-text-expense">Error al cargar cuentas</div>
-                                </div>
-                                } @else {
-                                <div class="flex gap-2 px-1 py-2">
-                                    <app-accounts-carousel-component
-                                    ngSkipHydration class="block"
-                                    [accountsList]="accountsList()"
-                                    [currentSelectedAccount]="selectedAccount()"
-                                    [noAccountsMessage]="'No tienes cuentas disponibles'"
-                                    (selectedAccountOutput)="this.selectedAccount.set($event)">
-                                    </app-accounts-carousel-component>
-                                </div>
-                                }
-                            </div>
-                        </div>
+                        <app-accounts-carousel-component
+                            ngSkipHydration class="block"
+                            [isLoading]="this.accountState.isLoadingGetList()"
+                            [errorLoading]="this.accountState.errorGetList()"
+                            [carouselTitle]="'Cuenta Destino'"
+                            [carouselErrorMessage]="'Error al cargar cuentas'"
+                            [currencySymbol]="'PEN'"
+                            [accountsList]="accountsList()"
+                            [currentSelectedAccount]="selectedAccount()"
+                            [noAccountsMessage]="'No tienes cuentas disponibles'"
+                            (selectedAccountOutput)="this.selectedAccount.set($event)"
+                            (retry)="retryLoadAccountsData()">
+                        </app-accounts-carousel-component>
                     }
                 }
 
