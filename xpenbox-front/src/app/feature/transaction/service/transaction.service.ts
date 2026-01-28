@@ -32,18 +32,18 @@ export class TransactionService extends GenericService<TransactionRequestDTO, Tr
    * Handles loading and error states.
    */
   override load(): void {
-      transactionState.isLoading.set(true);
-      transactionState.error.set(null);
+      transactionState.isLoadingGetList.set(true);
+      transactionState.errorGetList.set(null);
   
       this.getAll().subscribe({
         next: (response: ApiResponseDTO<TransactionResponseDTO[]>) => {
           transactionState.transactions.set(response.data || []);
-          transactionState.isLoading.set(false);
+          transactionState.isLoadingGetList.set(false);
         },
         error: (error) => {
           console.error('Error fetching transactions:', error);
-          transactionState.error.set(error.message || 'Error fetching transactions');
-          transactionState.isLoading.set(false);
+          transactionState.errorGetList.set(error.message || 'Error fetching transactions');
+          transactionState.isLoadingGetList.set(false);
         }
       })
     }

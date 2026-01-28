@@ -16,7 +16,7 @@ export class SuccessTransactionComponent {
 
   constructor() {
     effect(() => {
-      const isVisible = this.transactionState.isSuccess();
+      const isVisible = this.transactionState.successSendingTransaction();
       if (isVisible) {
         this.showSuccess();
       }
@@ -30,7 +30,7 @@ export class SuccessTransactionComponent {
       setTimeout(() => {
         this.fading.set(false);
         this.visible.set(false)
-        this.transactionState.isSuccess.set(false);
+        this.transactionState.successSendingTransaction.set(false);
       }, 600);
     }, 1500);
   }

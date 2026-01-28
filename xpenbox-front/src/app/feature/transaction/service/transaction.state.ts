@@ -6,8 +6,15 @@ import { TransactionResponseDTO } from "../model/transaction.response.dto";
  * Includes loading status, error messages, and the list of transactions.
  */
 export const transactionState = {
-    isLoading: signal<boolean>(false),
-    error: signal<string | null>(null),
     transactions: signal<TransactionResponseDTO[]>([]),
-    isSuccess: signal<boolean>(false),
+    
+    isLoadingGetList: signal<boolean>(false),
+    errorGetList: signal<string | null>(null),
+    
+    isLoadingGetTransaction: signal<boolean>(false),
+    errorGetTransaction: signal<string | null>(null),
+    
+    isLoadingSendingTransaction: signal<boolean>(false),
+    successSendingTransaction: signal<boolean>(false),
+    errorSendingTransaction: signal<string | null>(null)
 };

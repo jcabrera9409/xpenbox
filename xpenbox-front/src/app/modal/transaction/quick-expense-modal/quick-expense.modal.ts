@@ -114,7 +114,7 @@ export class QuickExpenseModal implements OnInit {
   } 
 
   ngOnInit(): void {
-    this.transactionState.error.set(null);
+    this.transactionState.errorSendingTransaction.set(null);
   }
 
   // Getters for filtered and sorted lists
@@ -201,27 +201,27 @@ export class QuickExpenseModal implements OnInit {
       ? TransactionRequestDTO.generateExpenseAccountTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode)
       : TransactionRequestDTO.generateExpenseCreditCardTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode);
 
-    this.transactionState.isLoading.set(true);
+    this.transactionState.isLoadingSendingTransaction.set(true);
     
     this.transactionService.create(transactionRequest).subscribe({
       next: (response: ApiResponseDTO<TransactionResponseDTO>) => {
-        this.transactionState.isLoading.set(false);
+        this.transactionState.isLoadingSendingTransaction.set(false);
         if (response.success && response.data) {
           this.close.emit();
-          this.transactionState.isSuccess.set(true);
+          this.transactionState.successSendingTransaction.set(true);
 
           this.accountService.refresh();
           this.creditCardService.refresh();
         } else {
-          this.transactionState.error.set(response.message);
+          this.transactionState.errorSendingTransaction.set(response.message);
         }
       }, error: (error) => {
-        this.transactionState.isLoading.set(false);
+        this.transactionState.isLoadingSendingTransaction.set(false);
         console.error('Error creating expense:', error);
         if (error.status === 500 || error.status === 0) {
-          this.transactionState.error.set('Error guardando la transacción. Por favor, inténtalo de nuevo.');
+          this.transactionState.errorSendingTransaction.set('Error guardando la transacción. Por favor, inténtalo de nuevo.');
         } else {
-          this.transactionState.error.set(error.error.message || 'Error guardando la transacción.');
+          this.transactionState.errorSendingTransaction.set(error.error.message || 'Error guardando la transacción.');
         }
       }
     })

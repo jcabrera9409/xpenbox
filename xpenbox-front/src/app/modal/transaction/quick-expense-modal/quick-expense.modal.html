@@ -112,11 +112,11 @@
       </div>
 
       <!-- Mensaje de error al enviar -->
-        @if (this.transactionState.error()) {
+        @if (this.transactionState.errorSendingTransaction()) {
             <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
                 <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
                 <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                    {{ this.transactionState.error() }}
+                    {{ this.transactionState.errorSendingTransaction() }}
                 </div>
             </div>
         }
@@ -126,7 +126,7 @@
         <button 
           (click)="onClose()"
           type="button"
-          [disabled]="this.transactionState.isLoading()"
+          [disabled]="this.transactionState.isLoadingSendingTransaction()"
           class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg disabled:cursor-not-allowed py-2">
           <span class="material-icons text-lg">close</span>
           <span>Cancelar</span>
@@ -134,9 +134,9 @@
         <button 
           (click)="onSubmit()"
           type="button"
-          [disabled]="this.transactionState.isLoading() || !isFormValid"
+          [disabled]="this.transactionState.isLoadingSendingTransaction() || !isFormValid"
           class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 disabled:opacity-50 rounded-lg disabled:cursor-not-allowed py-2">
-          @if (this.transactionState.isLoading()) {
+          @if (this.transactionState.isLoadingSendingTransaction()) {
             <span class="material-icons text-lg animate-spin">autorenew</span>
             <span>Guardando...</span>
           } @else {

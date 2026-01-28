@@ -14,6 +14,7 @@ import { AccountsCarouselComponent } from '../../../shared/components/accounts-c
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
 import { AccountCreditDTO } from '../../../shared/dto/account-credit.dto';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
+import { incomeState } from '../../../feature/income/service/income.state';
 
 @Component({
   selector: 'app-income-assign-modal',
@@ -28,11 +29,9 @@ export class IncomeAssignModal implements OnInit {
   close = output<void>();
 
   // Application states
+  incomeState = incomeState;
   accountState = accountState;
   transactionState = transactionState;
-
-  loading = signal<boolean>(false);
-  errorLoading = signal<string | null>(null);
 
   selectedAccount = signal<AccountCreditDTO | null>(null);
   accountsList = signal<AccountCreditDTO[]>([]);
@@ -41,8 +40,6 @@ export class IncomeAssignModal implements OnInit {
   amount = signal(0);
   defaultAmount = signal(0);
   description = signal('');
-
-  sendingForm = signal(false);
 
   constructor(
     private incomeService: IncomeService,
@@ -69,7 +66,7 @@ export class IncomeAssignModal implements OnInit {
   }
 
   ngOnInit(): void { 
-    this.transactionState.error.set(null);
+    this.transactionState.errorSendingTransaction.set(null);
     this.loadIncomeData();
   }
 
@@ -112,38 +109,34 @@ export class IncomeAssignModal implements OnInit {
       selectedAccount?.resourceCode || ''
     );
 
-    this.sendingForm.set(true);
-    this.transactionState.error.set(null);
+    this.transactionState.isLoadingSendingTransaction.set(true);
+    this.transactionState.errorSendingTransaction.set(null);
     
     this.transactionService.create(transactionRequest).subscribe({
       next: (response: ApiResponseDTO<TransactionResponseDTO>) => {
-        this.sendingForm.set(false);
+        this.transactionState.isLoadingSendingTransaction.set(false);
 
         if (response.success && response.data) {
           this.close.emit();
-          this.transactionState.isSuccess.set(true);
+          this.transactionState.successSendingTransaction.set(true);
 
           this.accountService.refresh();
           this.incomeService.refresh();
-        } else {
-          this.transactionState.error.set(response.message);
         }
       }, error: (error) => {
-        this.sendingForm.set(false);
+        this.transactionState.isLoadingSendingTransaction.set(false);
         console.error('Error creating income assignment:', error);
         if (error.status === 500 || error.status === 0) {
-          this.transactionState.error.set('Error guardando la transacción. Por favor, inténtalo de nuevo.');
+          this.transactionState.errorSendingTransaction.set('Error guardando la transacción. Por favor, inténtalo de nuevo.');
         } else {
-          this.transactionState.error.set(error.error.message || 'Error guardando la transacción.');
+          this.transactionState.errorSendingTransaction.set(error.error.message || 'Error guardando la transacción.');
         }
       }
     })
   }
 
   private loadIncomeData(): void {
-    this.loading.set(true);
-
-    console.log('Loading income data for resource code:', this.incomeResourceCode());
+    this.incomeState.isLoadingGetIncome.set(true);
 
     this.incomeService.getByResourceCode(this.incomeResourceCode()!).subscribe({
       next: (response: ApiResponseDTO<IncomeResponseDTO>) => {
@@ -151,16 +144,15 @@ export class IncomeAssignModal implements OnInit {
           const incomeData = response.data;
           const pendingAllocation = incomeData.totalAmount - incomeData.allocatedAmount;
           this.defaultAmount.set(pendingAllocation);
-        } else {
-          console.error('Error fetching income data:', response.message);
-          this.errorLoading.set('Error fetching income data: ' + response.message);
         }
-        this.loading.set(false);
+        this.incomeState.isLoadingGetIncome.set(false);
       },
       error: (error) => {
-        console.error('Error fetching income data:', error);
-        this.errorLoading.set(error.message || 'Error fetching income data');
-        this.loading.set(false);
+        if (error.status === 500 || error.status === 0) {
+          this.incomeState.errorGetIncome.set('Error obteniendo los datos de ingresos. Por favor, inténtalo de nuevo.');
+        } else {
+          this.incomeState.errorGetIncome.set(error.error.message || 'Error obteniendo los datos de ingresos.');
+        }
       }
     });
   }
