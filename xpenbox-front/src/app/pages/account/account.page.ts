@@ -11,10 +11,12 @@ import { AccountEditionModal } from '../../modal/account/account-edition-modal/a
 import { CreditcardEditionModal } from '../../modal/account/creditcard-edition-modal/creditcard-edition.modal';
 import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
 import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
+import { RetryComponent } from '../../shared/components/retry-component/retry.component';
+import { CreateFirstComponent } from '../../shared/components/create-first-component/create-first.component';
 
 @Component({
   selector: 'app-account-page',
-  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard, LoadingUi],
+  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent],
   templateUrl: './account.page.html',
   styleUrl: './account.page.css',
 })

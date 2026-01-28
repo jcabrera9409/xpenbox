@@ -8,11 +8,12 @@ import { AccountResponseDTO } from '../../../feature/account/model/account.respo
 import { accountState } from '../../../feature/account/service/account.state';
 import { NotificationService } from '../../../feature/common/service/notification.service';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
+import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 
 @Component({
   selector: 'app-account-edition-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent],
   templateUrl: './account-edition.modal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -76,6 +77,10 @@ export class AccountEditionModal implements OnInit {
 
   onClose(): void {
     this.close.emit();
+  }
+
+  retryLoadAccountData(): void {
+    this.loadAccountData();
   }
 
   private buildAccountData(): AccountRequestDTO {

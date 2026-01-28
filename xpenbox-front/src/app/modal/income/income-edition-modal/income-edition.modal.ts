@@ -13,10 +13,11 @@ import { AccountCreditDTO } from '../../../shared/dto/account-credit.dto';
 import { AccountService } from '../../../feature/account/service/account.service';
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
+import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 
 @Component({
   selector: 'app-income-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, AccountsCarouselComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, AccountsCarouselComponent, RetryComponent],
   templateUrl: './income-edition.modal.html',
   styleUrl: './income-edition.modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -155,6 +156,10 @@ export class IncomeEditionModal implements OnInit {
     }
 
     return '';
+  }
+
+  retryLoadIncomeData(): void {
+    this.loadIncomeData();
   }
 
   private buildIncomeData(): IncomeRequestDTO {

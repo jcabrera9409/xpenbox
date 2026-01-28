@@ -6,10 +6,12 @@ import { CategoryCard } from '../../shared/cards/category-card/category.card';
 import { CategoryEditionModal } from '../../modal/category/category-edition-modal/category-edition.modal';
 import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
 import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
+import { RetryComponent } from '../../shared/components/retry-component/retry.component';
+import { CreateFirstComponent } from '../../shared/components/create-first-component/create-first.component';
 
 @Component({
   selector: 'app-category-page',
-  imports: [CommonModule, CategoryCard, CategoryEditionModal, SummaryCard, LoadingUi],
+  imports: [CommonModule, CategoryCard, CategoryEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent],
   templateUrl: './category.page.html',
   styleUrl: './category.page.css',
 })

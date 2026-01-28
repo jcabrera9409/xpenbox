@@ -8,10 +8,11 @@ import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { creditCardState } from '../../../feature/creditcard/service/creditcard.state';
 import { NotificationService } from '../../../feature/common/service/notification.service';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
+import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 
 @Component({
   selector: 'app-creditcard-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent],
   templateUrl: './creditcard-edition.modal.html',
   styleUrl: './creditcard-edition.modal.css',
 })
@@ -75,6 +76,10 @@ export class CreditcardEditionModal implements OnInit {
 
   onClose() {
     this.close.emit();
+  }
+
+  retryLoadCreditCardData(): void {
+    this.loadCreditCardData();
   }
 
   private buildCreditCardData(): CreditCardRequestDTO {

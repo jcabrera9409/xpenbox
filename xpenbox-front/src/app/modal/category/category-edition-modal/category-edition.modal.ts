@@ -8,10 +8,11 @@ import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../feature/common/service/notification.service';
 import { categoryState } from '../../../feature/category/service/category.state';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
+import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 
 @Component({
   selector: 'app-category-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent],
   templateUrl: './category-edition.modal.html',
   styleUrl: './category-edition.modal.css',
 })
@@ -83,6 +84,10 @@ export class CategoryEditionModal implements OnInit {
     const categoryColor = formValues['color'];
 
     return new CategoryRequestDTO(categoryName, categoryColor);
+  }
+
+  retryLoadCategoryData(): void {
+    this.loadCategoryData();
   }
 
   private initForms(): void {

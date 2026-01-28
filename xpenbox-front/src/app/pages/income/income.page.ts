@@ -7,10 +7,12 @@ import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
 import { IncomeAssignModal } from '../../modal/income/income-assign-modal/income-assign.modal';
 import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
 import { IncomeEditionModal } from '../../modal/income/income-edition-modal/income-edition.modal';
+import { RetryComponent } from '../../shared/components/retry-component/retry.component';
+import { CreateFirstComponent } from '../../shared/components/create-first-component/create-first.component';
 
 @Component({
   selector: 'app-income-page',
-  imports: [CommonModule, FormsModule, SummaryCard, IncomeAssignModal, LoadingUi, IncomeEditionModal],
+  imports: [CommonModule, FormsModule, SummaryCard, IncomeAssignModal, LoadingUi, IncomeEditionModal, RetryComponent, CreateFirstComponent],
   templateUrl: './income.page.html',
   styleUrl: './income.page.css',
 })

@@ -38,39 +38,21 @@
       @if (this.categoryState.isLoadingGetList()) {
         <app-loading-ui></app-loading-ui>
       } @else if (this.categoryState.errorGetList()) {
-        <div class="flex items-center justify-center py-16">
-          <div class="text-center max-w-md">
-            <div class="xpb-bg-main rounded-full flex items-center justify-center mx-auto mb-2">
-              <span class="material-icons text-5xl text-[var(--xpb-expense)]">error_outline</span>
-            </div>
-            <h3 class="text-lg font-semibold xpb-text-primary ">Error al cargar</h3>
-            <p class="xpb-text-secondary">No se encontraron categorías</p>
-            <button type="button"
-              (click)="reloadCategories()" 
-              class="inline-block text-[var(--xpb-primary)] rounded-lg font-medium transition-colors text-sm">
-              Reintentar
-            </button>
-          </div>
-        </div>
-      } @else if (categoryState.categories().length === 0) {
-        <div class="flex items-center justify-center py-16">
-          <div class="text-center max-w-md">
-            <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-              <span class="material-icons text-5xl xpb-text-secondary">category</span>
-            </div>
-            <h3 class="text-lg font-semibold xpb-text-primary mb-2">No hay categorías</h3>
-            <p class="xpb-text-secondary mb-6">Comienza creando tu primera categoría para organizar tus transacciones</p>
-            <button 
-              (click)="openCategoryEditionModal()"
-              class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors shadow-sm">
-              <span class="material-icons">add</span>
-              <span>Crear Primera Categoría</span>
-            </button>
-          </div>
-        </div>
+        <app-retry-component
+          [message]="'No se encontraron categorías'"
+          (retry)="reloadCategories()">
+        </app-retry-component>
+      } @else if (this.categoryState.categories().length === 0) {
+        <app-create-first-component
+          [icon]="'category'"
+          [title]="'No hay categorías'"
+          [subtitle]="'Comienza creando tu primera categoría para organizar tus transacciones'"
+          [buttonText]="'Crear Primera Categoría'"
+          (create)="openCategoryEditionModal()"
+        ></app-create-first-component>
       } @else {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 pb-4">
-          @for (category of categoryState.categories(); track category.resourceCode) {
+          @for (category of this.categoryState.categories(); track category.resourceCode) {
             <app-category-card ngSkipHydration 
               class="block"
               [categoryCardName]="category.name"

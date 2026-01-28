@@ -15,11 +15,12 @@ import { AccountCreditService } from '../../../shared/service/account-credit.ser
 import { AccountCreditDTO } from '../../../shared/dto/account-credit.dto';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { incomeState } from '../../../feature/income/service/income.state';
+import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 
 @Component({
   selector: 'app-income-assign-modal',
   standalone: true,
-  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, LoadingUi],
+  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, LoadingUi, RetryComponent],
   templateUrl: './income-assign.modal.html',
   styleUrl: './income-assign.modal.css',
 })
@@ -135,6 +136,10 @@ export class IncomeAssignModal implements OnInit {
         }
       }
     })
+  }
+
+  retryLoadIncomeData(): void {
+    this.loadIncomeData();
   }
 
   private loadIncomeData(): void {

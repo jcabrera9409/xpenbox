@@ -47,23 +47,10 @@
             @if (this.categoryState.isLoadingGetCategory() && isEditMode) {
                 <app-loading-ui></app-loading-ui>
             } @else if(this.categoryState.errorGetCategory() && isEditMode) {
-                <div class="flex items-center justify-center py-12">
-                    <div class="text-center max-w-md">
-                        <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                            <span class="material-icons text-5xl text-[var(--xpb-expense)]">error_outline</span>
-                        </div>
-                        <h3 class="text-lg font-semibold xpb-text-primary mb-2">Error al cargar</h3>
-                        <p class="xpb-text-secondary mb-6">{{ this.categoryState.errorGetCategory() }}</p>
-                        <button
-                            type="button"
-                            (click)="onClose()"
-                            class="xpb-btn-secondary inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-colors"
-                        >
-                            <span class="material-icons text-lg">close</span>
-                            <span>Cerrar</span>
-                        </button>
-                    </div>
-                </div>
+                <app-retry-component
+                    [message]="'Error al cargar la categoría'"
+                    (retry)="retryLoadCategoryData()">
+                </app-retry-component>
             } @else if(categoryData() || !isEditMode) {
                 <form [formGroup]="formCategory" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
                     <!-- Nombre de la categoría -->

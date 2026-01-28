@@ -140,37 +140,18 @@
         @if (this.incomeState.isLoadingGetList()) {
           <app-loading-ui></app-loading-ui>
         } @else if (this.incomeState.errorGetList()) {
-          <div class="flex items-center justify-center py-16">
-            <div class="text-center">
-              <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                <span class="material-icons text-5xl text-[var(--xpb-expense)]">error_outline</span>
-              </div>
-              <p class="text-lg font-semibold xpb-text-primary mb-2">Error al cargar</p>
-              <p class="xpb-text-secondary mb-4">{{ this.incomeState.errorGetList() }}</p>
-              <button type="button"
-                (click)="reloadIncomes()" 
-                class="xpb-btn-primary inline-flex items-center gap-2 px-4 py-2">
-                <span class="material-icons text-lg">refresh</span>
-                Reintentar
-              </button>
-            </div>
-          </div>
-        } @else if (this.filteredIncomes().length === 0) {
-          <div class="flex items-center justify-center py-16">
-            <div class="text-center">
-              <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                <span class="material-icons text-5xl xpb-text-secondary">inbox</span>
-              </div>
-              <p class="text-lg font-semibold xpb-text-primary mb-2">No hay ingresos</p>
-              <p class="xpb-text-secondary mb-4">No se encontraron ingresos para este mes</p>
-              <button type="button"
-                (click)="openCreateIncomeModal()" 
-                class="xpb-btn-primary inline-flex items-center gap-2 px-4 py-2">
-                <span class="material-icons text-lg">add</span>
-                Crear Ingreso
-              </button>
-            </div>
-          </div>
+          <app-retry-component
+            [message]="'Error al cargar los ingresos'"
+            (retry)="reloadIncomes()">
+          </app-retry-component>
+        } @else if (this.incomeState.incomes().length === 0) {
+          <app-create-first-component
+            [icon]="'trending_up'"
+            [title]="'No hay ingresos en este periodo'"
+            [subtitle]="'Comienza creando tu primer ingreso para organizar tus finanzas'"
+            [buttonText]="'Crear Primer Ingreso'"
+            (create)="openCreateIncomeModal()"
+          ></app-create-first-component>
         } @else {
           <!-- Desktop View -->
           <div class="hidden md:block">

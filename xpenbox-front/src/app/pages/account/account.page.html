@@ -58,22 +58,23 @@
 
     <!-- Bank Accounts List -->
     <div class="space-y-3 overflow-y-auto pr-2 flex-1 min-h-0">
-      @if (accountState.isLoadingGetList()) {
+      @if (this.accountState.isLoadingGetList()) {
         <app-loading-ui></app-loading-ui>
-      } @else if (accountState.errorGetList()) {
-        <div class="flex items-center justify-center py-16">
-          <div class="text-center">
-            <span class="material-icons text-6xl text-neutral-400">search_off</span>
-            <p class="mt-4 text-neutral-600">No se encontraron cuentas</p>
-            <button type="button"
-              (click)="reloadAccounts()" 
-              class="inline-block text-[var(--xpb-primary)] rounded-lg font-medium transition-colors text-sm">
-              Reintentar
-            </button>
-          </div>
-        </div>
+      } @else if (this.accountState.errorGetList()) {
+        <app-retry-component
+          [message]="'No se encontraron cuentas'"
+          (retry)="reloadAccounts()">
+        </app-retry-component>
+      } @else if (this.accountState.accounts().length === 0) {
+        <app-create-first-component
+          [icon]="'account_balance'"
+          [title]="'No hay cuentas'"
+          [subtitle]="'Comienza creando tu primera cuenta para organizar tus ingresos y gastos'"
+          [buttonText]="'Crear Primera Cuenta'"
+          (create)="openAccountEditionModal()"
+        ></app-create-first-component>
       } @else {
-        @for (account of accountState.accounts(); track account.resourceCode) {
+        @for (account of this.accountState.accounts(); track account.resourceCode) {
           <app-account-card ngSkipHydration class="block"
             [accountCardName]="account.name"
             [accountCardBalance]="account.balance"
@@ -107,17 +108,18 @@
         @if (this.creditCardState.isLoadingGetList()) {
           <app-loading-ui></app-loading-ui>
         } @else if (this.creditCardState.errorGetList()) {
-          <div class="flex items-center justify-center py-16">
-            <div class="text-center">
-              <span class="material-icons text-6xl text-neutral-400">search_off</span>
-              <p class="mt-4 text-neutral-600">No se encontraron tarjetas</p>
-              <button type="button"
-                (click)="reloadCreditCards()" 
-                class="inline-block text-[var(--xpb-primary)] rounded-lg font-medium transition-colors text-sm">
-                Reintentar
-              </button>
-            </div>
-          </div>
+          <app-retry-component
+            [message]="'No se encontraron tarjetas'"
+            (retry)="reloadCreditCards()">
+          </app-retry-component>
+        } @else if (this.creditCardState.creditCards().length === 0) {
+          <app-create-first-component
+            [icon]="'credit_card'"
+            [title]="'No hay tarjetas'"
+            [subtitle]="'Comienza creando tu primera tarjeta para organizar tus gastos'"
+            [buttonText]="'Crear Primera Tarjeta'"
+            (create)="openCreditCardEditionModal()"
+          ></app-create-first-component>
         } @else {
           @for (creditCard of this.creditCardState.creditCards(); track creditCard.resourceCode) {
             <app-credit-card ngSkipHydration class="block"

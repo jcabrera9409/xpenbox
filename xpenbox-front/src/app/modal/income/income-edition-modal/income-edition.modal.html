@@ -49,24 +49,11 @@
     <div class="p-6">
         @if (this.incomeState.isLoadingGetIncome() && isEditMode) {
             <app-loading-ui></app-loading-ui>
-        }  @else if(this.incomeState.errorGetIncome() && isEditMode) {
-            <div class="flex items-center justify-center py-12">
-                <div class="text-center max-w-md">
-                    <div class="xpb-bg-main rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                        <span class="material-icons text-5xl text-[var(--xpb-expense)]">error_outline</span>
-                    </div>
-                    <h3 class="text-lg font-semibold xpb-text-primary mb-2">Error al cargar</h3>
-                    <p class="xpb-text-secondary mb-6">{{ this.incomeState.errorGetIncome() }}</p>
-                    <button
-                        type="button"
-                        (click)="onClose()"
-                        class="xpb-btn-secondary inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-colors"
-                    >
-                        <span class="material-icons text-lg">close</span>
-                        <span>Cerrar</span>
-                    </button>
-                </div>
-            </div>
+        } @else if(this.incomeState.errorGetIncome() && isEditMode) {
+            <app-retry-component
+                [message]="'Error al cargar la información del ingreso'"
+                (retry)="retryLoadIncomeData()">
+            </app-retry-component>
         } @else if(incomeData() || !isEditMode) {
             <form [formGroup]="formIncome" (ngSubmit)="onSubmit()">
                 <!-- Concepto field -->
@@ -88,10 +75,10 @@
                     </div>
                     @if (conceptControl?.invalid && conceptControl?.touched) {
                         <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                        <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
-                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                            <p>{{ getErrorMessage('concept') }}</p>
-                        </div>
+                            <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                            <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                <p>{{ getErrorMessage('concept') }}</p>
+                            </div>
                         </div>
                     }
                     </div>
