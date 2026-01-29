@@ -22,6 +22,9 @@ export class TransactionFilterRequestDTO {
      * @returns {TransactionFilterRequestDTO} An instance with no fields set.
      */
     static createEmpty(): TransactionFilterRequestDTO {
-        return new TransactionFilterRequestDTO();
+        const dto = new TransactionFilterRequestDTO();
+        dto.pageNumber = 0;
+        dto.pageSize = 10;
+        return dto;
     }
 }

@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-credit-card',
@@ -22,6 +23,10 @@ export class CreditCard {
   creditCardPaymentDay = input<number>();
 
   creditCardEdit = output<string>();
+
+  constructor(
+    private router: Router
+  ) { }
 
   get creditCardBalancePercentage(): number {
     if (this.creditCardBalance() === 0) return 100;
@@ -53,7 +58,11 @@ export class CreditCard {
   }
 
   onViewTransactions() {
-    console.log('View transactions clicked for', this.creditCardResourceCode());
+    this.router.navigate(['/landing/transaction'], { 
+      queryParams: { 
+        source: 'creditcard', 
+        code: this.creditCardResourceCode() 
+      }});
   }
 
   onDisableCreditCard() {

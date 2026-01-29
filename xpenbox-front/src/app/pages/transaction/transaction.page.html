@@ -1,12 +1,9 @@
-<div class="min-h-screen xpb-bg-main py-6 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen xpb-bg-main p-3 sm:px-4">
   <div class="max-w-7xl mx-auto">
     <!-- Header -->
-    <div class="mb-6">
-      <div class="flex items-center gap-3 mb-2">
-        <span class="material-icons text-3xl text-[var(--xpb-primary)]">receipt_long</span>
-        <h1 class="text-2xl sm:text-3xl font-bold xpb-text-primary">Transacciones</h1>
-      </div>
-      <p class="xpb-text-secondary">Gestiona y filtra todas tus transacciones</p>
+    <div class="mb-4 flex-shrink-0">
+      <h1 class="text-xl sm:text-2xl font-bold xpb-text-primary mb-1">Transacciones</h1>
+      <p class="xpb-text-secondary text-sm">Gestiona y filtra todas tus transacciones</p>
     </div>
 
     <!-- Filtros (Acordeón) -->
@@ -20,7 +17,7 @@
           <h2 class="text-lg font-semibold xpb-text-primary">Filtros</h2>
           <span class="text-sm xpb-text-secondary">
             @if (!transactionState.isLoadingFilteredList() && !transactionState.errorFilteredList()) {
-              {{ transactionState.transactionsFiltered()?.totalElements || 0 }} resultados
+              {{ totalElements() || 0 }} resultados
             }
           </span>
         </div>
@@ -43,7 +40,7 @@
                 [ngModel]="filterType()"
                 (ngModelChange)="filterType.set($event)"
                 class="xpb-bg-main border xpb-border rounded-lg px-4 py-2.5 w-full xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%236C757D%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-10">
-                <option>Todas</option>
+                <option value="ALL">Todas</option>
                 <option value="{{transactionType.EXPENSE}}">Gastos</option>
                 <option value="{{transactionType.INCOME}}">Ingresos</option>
                 <option value="{{transactionType.CREDIT_PAYMENT}}">Pagos Tarjeta</option>
@@ -72,7 +69,7 @@
                 [ngModel]="filterCategory()"
                 (ngModelChange)="filterCategory.set($event)"
                 class="xpb-bg-main border xpb-border rounded-lg px-4 py-2.5 w-full xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%236C757D%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat pr-10">
-                <option>Todas las categorías</option>
+                <option value="ALL">Todas las categorías</option>
                 @for (category of categoryState.categories(); track category.resourceCode) {
                   <option [value]="category.resourceCode">{{ category.name }}</option>
                 }
@@ -88,6 +85,7 @@
                   type="date"
                   [ngModel]="filterStartDate()"
                   (ngModelChange)="filterStartDate.set($event)"
+                  [max]="maxDate()"
                   class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all">
               </div>
             </div>
@@ -101,6 +99,7 @@
                   type="date"
                   [ngModel]="filterEndDate()"
                   (ngModelChange)="filterEndDate.set($event)"
+                  [max]="maxDate()"
                   class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full xpb-text-primary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all">
               </div>
             </div>
@@ -114,7 +113,7 @@
                 <span class="hidden sm:inline">Limpiar</span>
               </button>
               <button 
-                (click)="toggleFilters()"
+                (click)="applyFilters()"
                 class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg">
                 <span class="material-icons text-lg">check</span>
                 <span>Aplicar</span>
@@ -127,14 +126,14 @@
 
     <!-- Lista de transacciones -->
     <div class="space-y-4">
-        @if (transactionState.isLoadingFilteredList()) {
+        @if (accumulatedTransactions().length === 0 && transactionState.isLoadingFilteredList()) {
             <app-loading-ui></app-loading-ui>
-        } @else if (transactionState.errorFilteredList()) {
+        } @else if (accumulatedTransactions().length === 0 && transactionState.errorFilteredList()) {
             <app-retry-component
                 [message]="'Error al cargar las transacciones.'"
                 (retry)="reloadTransactions()">
             </app-retry-component>
-        } @else if (transactionState.transactionsFiltered()?.content?.length === 0) {
+        } @else if (accumulatedTransactions().length === 0) {
             <app-create-first-component
                 [icon]="'receipt_long'"
                 [title]="'No se encontraron transacciones'"
@@ -142,7 +141,7 @@
             </app-create-first-component>
         } @else {
             <!-- Tarjetas de transacciones (compactas) -->
-            @for (transaction of transactionState.transactionsFiltered()?.content; track transaction.resourceCode) {
+            @for (transaction of accumulatedTransactions(); track transaction.resourceCode) {
             <app-transaction-card ngSkipHydration 
                 class="block"
                 [transaction]="transaction"
@@ -151,6 +150,33 @@
                 (editView)="editTransaction($event)"
                 (deleteView)="deleteTransaction($event)">
             </app-transaction-card>
+            }
+
+            <!-- Botón Cargar más -->
+            @if (hasMoreTransactions()) {
+              <div class="flex justify-center pt-6">
+                <button
+                  (click)="loadMore()"
+                  [disabled]="transactionState.isLoadingFilteredList()"
+                  class="xpb-btn-secondary inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed">
+                  @if (transactionState.isLoadingFilteredList()) {
+                    <span class="material-icons animate-spin text-xl">autorenew</span>
+                    <span>Cargando...</span>
+                  } @else {
+                    <span class="material-icons text-xl">expand_more</span>
+                    <span>Cargar más</span>
+                  }
+                </button>
+              </div>
+            }
+
+            <!-- Indicador fin de lista -->
+            @if (!hasMoreTransactions() && accumulatedTransactions().length > 0) {
+              <div class="text-center py-6">
+                <p class="text-sm xpb-text-disabled">
+                  Has visto todas las transacciones ({{ accumulatedTransactions().length }} de {{ totalElements() || 0 }})
+                </p>
+              </div>
             }
         }
     </div>

@@ -9,6 +9,7 @@ import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
 import { IncomeEditionModal } from '../../modal/income/income-edition-modal/income-edition.modal';
 import { RetryComponent } from '../../shared/components/retry-component/retry.component';
 import { CreateFirstComponent } from '../../shared/components/create-first-component/create-first.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-income-page',
@@ -57,7 +58,10 @@ export class IncomePage {
   minDate = this.formatDateToInput(new Date(this.getTodayDate().setFullYear(this.getTodayDate().getFullYear() - 5)));
   maxDate = this.formatDateToInput(this.getTodayDate());
 
-  constructor(private incomeService: IncomeService) {
+  constructor(
+    private incomeService: IncomeService,
+    private router: Router
+  ) {
     const platformId = inject(PLATFORM_ID);
     if (isPlatformServer(platformId)) {
       return;
@@ -130,8 +134,11 @@ export class IncomePage {
   }
   
   viewIncomeTransactions(resourceCode: string): void {
-    // TODO: Implementar modal/página para ver transacciones de asignación
-    console.log('Ver transacciones de asignación del ingreso:', resourceCode);
+    this.router.navigate(['/landing/transaction'], { 
+      queryParams: { 
+        source: 'income', 
+        code: resourceCode
+      }});
   }
   
   reloadIncomes(): void {

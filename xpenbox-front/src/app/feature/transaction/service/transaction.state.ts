@@ -13,7 +13,6 @@ export const transactionState = {
     
     isLoadingFilteredList: signal<boolean>(false),
     errorFilteredList: signal<string | null>(null),
-    filterRequest: signal<TransactionFilterRequestDTO | null>(null),
 
     isLoadingGetList: signal<boolean>(false),
     errorGetList: signal<string | null>(null),

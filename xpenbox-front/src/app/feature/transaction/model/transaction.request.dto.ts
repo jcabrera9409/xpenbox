@@ -48,6 +48,7 @@ export class TransactionRequestDTO {
 }
 
 export enum TransactionType {
+    ALL = 'ALL',
     INCOME = 'INCOME',
     EXPENSE = 'EXPENSE',
     TRANSFER = 'TRANSFER',

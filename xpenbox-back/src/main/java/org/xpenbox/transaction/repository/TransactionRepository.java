@@ -76,6 +76,11 @@ public class TransactionRepository extends GenericRepository<Transaction> {
     public List<Transaction> findByFilter(TransactionFilterDTO filterDTO, User user) {
         LOG.debugf("Filtering transactions with filterDTO: %s for user: %s", filterDTO, user);
         if (filterDTO != null) {
+            // Use explicit LEFT JOIN query when filtering by accountResourceCode
+            if (filterDTO.accountResourceCode() != null) {
+                return findByFilterWithAccountJoin(filterDTO, user);
+            }
+            
             String filterQuery = buildFilterQuery(filterDTO, true);
             Parameters params = buildParameters(filterDTO, user);
 
@@ -102,6 +107,11 @@ public class TransactionRepository extends GenericRepository<Transaction> {
     public Integer countByFilter(TransactionFilterDTO filterDTO, User user) {
         LOG.debugf("Counting transactions with filterDTO: %s for user: %s", filterDTO, user);
         if (filterDTO != null) {
+            // Use explicit LEFT JOIN query when filtering by accountResourceCode
+            if (filterDTO.accountResourceCode() != null) {
+                return countByFilterWithAccountJoin(filterDTO, user);
+            }
+            
             String filterQuery = buildFilterQuery(filterDTO, false);
             Parameters params = buildParameters(filterDTO, user);
 
@@ -198,7 +208,9 @@ public class TransactionRepository extends GenericRepository<Transaction> {
         }
 
         if (filterDTO.accountResourceCode() != null) {
-            queryBuilder.append(" and (account.resourceCode = :accountResourceCode or destinationAccount.resourceCode = :accountResourceCode)");
+            // This condition is handled by findByFilterWithAccountJoin/countByFilterWithAccountJoin
+            // to avoid INNER JOIN issues with nullable destinationAccount
+            queryBuilder.append(" and account.resourceCode = :accountResourceCode");
         }
 
         if (filterDTO.creditCardResourceCode() != null) {
@@ -210,5 +222,118 @@ public class TransactionRepository extends GenericRepository<Transaction> {
         }
 
         return queryBuilder.toString();
+    }
+
+    /**
+     * Find transactions by filter with explicit LEFT JOIN for destinationAccount.
+     * This method is used when filtering by accountResourceCode to avoid INNER JOIN issues.
+     * @param filterDTO the filter criteria
+     * @param user the user
+     * @return a list of transactions matching the filter criteria
+     */
+    private List<Transaction> findByFilterWithAccountJoin(TransactionFilterDTO filterDTO, User user) {
+        StringBuilder hql = new StringBuilder("SELECT t FROM Transaction t ");
+        hql.append("LEFT JOIN t.destinationAccount da ");
+        hql.append("WHERE t.user.id = :userId ");
+        hql.append("AND (t.account.resourceCode = :accountResourceCode OR da.resourceCode = :accountResourceCode) ");
+        
+        appendCommonFilters(hql, filterDTO);
+        hql.append(" ORDER BY t.transactionDate DESC");
+        
+        var query = getEntityManager().createQuery(hql.toString(), Transaction.class);
+        setCommonParameters(query, filterDTO, user);
+        
+        if (filterDTO.pageNumber() != null && filterDTO.pageSize() != null) {
+            query.setFirstResult(filterDTO.pageNumber() * filterDTO.pageSize());
+            query.setMaxResults(filterDTO.pageSize());
+        }
+        
+        return query.getResultList();
+    }
+
+    /**
+     * Count transactions by filter with explicit LEFT JOIN for destinationAccount.
+     * This method is used when filtering by accountResourceCode to avoid INNER JOIN issues.
+     * @param filterDTO the filter criteria
+     * @param user the user
+     * @return the count of transactions matching the filter criteria
+     */
+    private Integer countByFilterWithAccountJoin(TransactionFilterDTO filterDTO, User user) {
+        StringBuilder hql = new StringBuilder("SELECT COUNT(t) FROM Transaction t ");
+        hql.append("LEFT JOIN t.destinationAccount da ");
+        hql.append("WHERE t.user.id = :userId ");
+        hql.append("AND (t.account.resourceCode = :accountResourceCode OR da.resourceCode = :accountResourceCode) ");
+        
+        appendCommonFilters(hql, filterDTO);
+        
+        var query = getEntityManager().createQuery(hql.toString(), Long.class);
+        setCommonParameters(query, filterDTO, user);
+        
+        return Math.toIntExact(query.getSingleResult());
+    }
+
+    /**
+     * Append common filter conditions to HQL query.
+     * @param hql the query builder
+     * @param filterDTO the filter criteria
+     */
+    private void appendCommonFilters(StringBuilder hql, TransactionFilterDTO filterDTO) {
+        if (filterDTO.resourceCode() != null) {
+            hql.append("AND t.resourceCode = :resourceCode ");
+        }
+        if (filterDTO.transactionType() != null) {
+            hql.append("AND t.transactionType = :transactionType ");
+        }
+        if (filterDTO.description() != null) {
+            hql.append("AND LOWER(t.description) LIKE LOWER(CONCAT('%', :description, '%')) ");
+        }
+        if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
+            hql.append("AND t.transactionDate BETWEEN :transactionDateFrom AND :transactionDateTo ");
+        }
+        if (filterDTO.categoryResourceCode() != null) {
+            hql.append("AND t.category.resourceCode = :categoryResourceCode ");
+        }
+        if (filterDTO.incomeResourceCode() != null) {
+            hql.append("AND t.income.resourceCode = :incomeResourceCode ");
+        }
+        if (filterDTO.creditCardResourceCode() != null) {
+            hql.append("AND t.creditCard.resourceCode = :creditCardResourceCode ");
+        }
+    }
+
+    /**
+     * Set common parameters for HQL query.
+     * @param query the query
+     * @param filterDTO the filter criteria
+     * @param user the user
+     */
+    private void setCommonParameters(jakarta.persistence.Query query, TransactionFilterDTO filterDTO, User user) {
+        query.setParameter("userId", user.id);
+        query.setParameter("accountResourceCode", filterDTO.accountResourceCode());
+        
+        if (filterDTO.resourceCode() != null) {
+            query.setParameter("resourceCode", filterDTO.resourceCode());
+        }
+        if (filterDTO.transactionType() != null) {
+            query.setParameter("transactionType", filterDTO.transactionType());
+        }
+        if (filterDTO.description() != null) {
+            query.setParameter("description", filterDTO.description());
+        }
+        if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
+            LocalDateTime from = Instant.ofEpochMilli(filterDTO.transactionDateTimestampFrom()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime to = Instant.ofEpochMilli(filterDTO.transactionDateTimestampTo()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            query.setParameter("transactionDateFrom", from);
+            query.setParameter("transactionDateTo", to);
+        }
+        if (filterDTO.categoryResourceCode() != null) {
+            query.setParameter("categoryResourceCode", filterDTO.categoryResourceCode());
+        }
+        if (filterDTO.incomeResourceCode() != null) {
+            query.setParameter("incomeResourceCode", filterDTO.incomeResourceCode());
+        }
+        if (filterDTO.creditCardResourceCode() != null) {
+            query.setParameter("creditCardResourceCode", filterDTO.creditCardResourceCode());
+        }
     }
 }

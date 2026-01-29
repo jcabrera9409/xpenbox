@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-account-card',
@@ -20,12 +21,22 @@ export class AccountCard {
 
   accountCardEdit = output<string>();
 
+  constructor(
+    private router: Router
+  ) {
+
+  }
+
   onEditAccount() {
     this.accountCardEdit.emit(this.accountCardResourceCode() || '');
   }
 
   onViewTransactions() {
-    console.log('View transactions clicked for', this.accountCardResourceCode());
+    this.router.navigate(['/landing/transaction'], { 
+      queryParams: { 
+        source: 'account', 
+        code: this.accountCardResourceCode() 
+      }});
   }
 
   onDisableAccount() {

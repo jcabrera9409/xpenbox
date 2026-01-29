@@ -49,6 +49,21 @@ export class TransactionCard {
     } 
   }
 
+  getTransactionBgColorClass(type: TransactionType | undefined): string {
+    switch (type) {
+      case TransactionType.INCOME:
+        return 'xpb-income';
+      case TransactionType.EXPENSE:
+        return 'xpb-expense';
+      case TransactionType.TRANSFER:
+        return 'xpb-primary';
+      case TransactionType.CREDIT_PAYMENT:
+        return 'xpb-credit';
+      default:
+        return 'xpb-disabled';
+    } 
+  }
+
   getFormatDate(dateTimestamp: number | undefined): string {
     const date = new Date(dateTimestamp || 0);
     const dateStr = date.toLocaleDateString('es-ES', {
