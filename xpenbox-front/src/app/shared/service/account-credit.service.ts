@@ -50,7 +50,7 @@ export class AccountCreditService {
    */
   filterAndSortAccountCredits(accountCreditsList: AccountCreditDTO[], amountFilter: number): AccountCreditDTO[] {
     const amountValue = amountFilter;
-    const filtered = accountCreditsList.filter(ac => ac.balance > 0 && ac.balance >= (isNaN(amountValue) ? 0 : amountValue));
+    const filtered = accountCreditsList.filter(ac => ac.balance > amountValue && ac.balance >= (isNaN(amountValue) ? 0 : amountValue));
 
     const sortedByLastUsed = [...filtered]
       .filter(ac => ac.lastUsedDateTimestamp)

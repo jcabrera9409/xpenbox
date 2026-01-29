@@ -81,6 +81,7 @@
             [accountCardState]="account.state"
             [accountCardResourceCode]="account.resourceCode"
             (accountCardEdit) = "openAccountEditionModal($event)"
+            (accountCardTransfer) = "openTransferModal($event)"
           ></app-account-card>
         }
       }
@@ -145,4 +146,8 @@
 
 @if (showCreditCardEditionModal()) {
   <app-creditcard-edition-modal (close)="closeCreditCardEditionModal()" [resourceCodeSelected]="resourceCodeCreditCardSelected()"></app-creditcard-edition-modal>
+}
+
+@if (showTransferModal()) {
+  <app-transfer-modal (close)="closeTransferModal()" [accountResourceCode]="resourceCodeTransferSelected()"></app-transfer-modal>
 }

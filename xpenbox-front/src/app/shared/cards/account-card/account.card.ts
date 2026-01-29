@@ -20,19 +20,18 @@ export class AccountCard {
   accountCardState = input<boolean>();
 
   accountCardEdit = output<string>();
+  accountCardTransfer = output<string>();
 
   constructor(
     private router: Router
-  ) {
-
-  }
+  ) { }
 
   onEditAccount() {
     this.accountCardEdit.emit(this.accountCardResourceCode() || '');
   }
 
   onTransferFromAccount() {
-
+    this.accountCardTransfer.emit(this.accountCardResourceCode() || '');
   }
 
   onViewTransactions() {

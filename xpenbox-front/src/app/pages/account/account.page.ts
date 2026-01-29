@@ -13,10 +13,11 @@ import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
 import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../shared/components/retry-component/retry.component';
 import { CreateFirstComponent } from '../../shared/components/create-first-component/create-first.component';
+import { TransferModal } from '../../modal/account/transfer-modal/transfer.modal';
 
 @Component({
   selector: 'app-account-page',
-  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent],
+  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent, TransferModal],
   templateUrl: './account.page.html',
   styleUrl: './account.page.css',
 })
@@ -30,6 +31,9 @@ export class AccountPage {
 
   showCreditCardEditionModal = signal(false);
   resourceCodeCreditCardSelected = signal<string | null>(null);
+
+  showTransferModal = signal(false);
+  resourceCodeTransferSelected = signal<string | null>(null);
 
   constructor(
     private accountService: AccountService,
@@ -64,6 +68,15 @@ export class AccountPage {
 
   closeCreditCardEditionModal() {
     this.showCreditCardEditionModal.set(false);
+  }
+
+  openTransferModal(resourceCodeTransferSelected: string | null = null) {
+    this.resourceCodeTransferSelected.set(resourceCodeTransferSelected);
+    this.showTransferModal.set(true);
+  }
+
+  closeTransferModal() {
+    this.showTransferModal.set(false);
   }
 
   reloadCreditCards() {

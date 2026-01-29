@@ -1,4 +1,4 @@
-import { Component, signal, ChangeDetectionStrategy, inject, PLATFORM_ID, effect } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy, inject, PLATFORM_ID, effect, OnInit, untracked } from '@angular/core';
 import { CommonModule, isPlatformServer } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { transactionState } from '../../feature/transaction/service/transaction.state';
@@ -69,7 +69,9 @@ export class TransactionPage {
     });
 
     effect(() => {
-      this.loadInitialTransactions();
+      this.source();
+      this.code();
+      untracked(() => this.loadInitialTransactions());
     });
 
   }
@@ -156,6 +158,7 @@ export class TransactionPage {
 
   resetFilters(): void {
     const now = new Date();
+    now.setHours(now.getHours() + 24)
     const pastDate = new Date();
     pastDate.setMonth(now.getMonth() - 1);
 

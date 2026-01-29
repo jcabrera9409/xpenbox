@@ -56,7 +56,7 @@ export class IncomeAssignModal implements OnInit {
     // Auto-select first account when loaded and sort accounts
     effect(() => {
       const accounts = this.accountCreditService.combineAccountAndCreditCardData(this.accountState.accounts(), []);
-      const filteredAccounts = this.accountCreditService.filterAndSortAccountCredits(accounts, 0);
+      const filteredAccounts = this.accountCreditService.filterAndSortAccountCredits(accounts, -1);
       if (filteredAccounts.length > 0) {
         this.accountsList.set(filteredAccounts);
         
@@ -136,7 +136,7 @@ export class IncomeAssignModal implements OnInit {
           this.transactionState.errorSendingTransaction.set(error.error.message || 'Error guardando la transacción.');
         }
       }
-    })
+    });
   }
 
   retryLoadIncomeData(): void {

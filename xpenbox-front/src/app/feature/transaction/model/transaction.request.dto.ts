@@ -45,6 +45,17 @@ export class TransactionRequestDTO {
         transaction.accountResourceCode = accountResourceCode;
         return transaction;
     }
+
+    static generateTransferTransaction(amount: number, description: string, originAccountResourceCode: string, destinationAccountResourceCode: string): TransactionRequestDTO {
+        const transaction = new TransactionRequestDTO();
+        transaction.transactionType = TransactionType.TRANSFER;
+        transaction.amount = amount;
+        transaction.description = description;
+        transaction.transactionDateTimestamp = Date.now();
+        transaction.accountResourceCode = originAccountResourceCode;
+        transaction.destinationAccountResourceCode = destinationAccountResourceCode;
+        return transaction;
+    }
 }
 
 export enum TransactionType {
