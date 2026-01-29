@@ -1,4 +1,4 @@
-<article class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] p-4 hover:shadow-md transition-shadow">
+<article class="xpb-bg-card rounded-lg border border-[var(--xpb-border)] px-4 pt-4 pb-1 hover:shadow-md transition-shadow">
     <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-3 flex-1 min-w-0">
         <div class="w-10 h-10 rounded-full bg-[var(--xpb-bg-sidebar)] flex items-center justify-center flex-shrink-0">
@@ -21,7 +21,7 @@
             <span class="material-icons text-lg">receipt_long</span>
         </button>
         <button 
-            class="p-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors"
+            class="p-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary-accent rounded-lg transition-colors"
             type="button"
             (click)="onEditAccount()"
             title="Editar">
@@ -35,6 +35,17 @@
             <span class="material-icons text-lg">block</span>
         </button>
         </div>
+    </div>
+    <!-- Enlace de transferencia -->
+    <div class="mt-1 pt-1 border-t border-[var(--xpb-border)]">
+        <button 
+            type="button"
+            (click)="onTransferFromAccount()"
+            [disabled]="(accountCardBalance() || 0) <= 0"
+            class="w-full flex items-center justify-center gap-2 py-1 px-1 rounded-lg xpb-text-primary hover:bg-[var(--xpb-bg-sidebar)] transition-colors group disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent">
+            <span class="material-icons text-lg group-hover:scale-110 transition-transform">swap_horiz</span>
+            <span class="text-sm font-medium">Transferir desde esta cuenta</span>
+        </button>
     </div>
 </article>
 

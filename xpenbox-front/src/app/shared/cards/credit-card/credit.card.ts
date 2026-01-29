@@ -65,6 +65,10 @@ export class CreditCard {
       }});
   }
 
+  onPayCreditCard() {
+    console.log('Pay credit card clicked for', this.creditCardResourceCode());
+  }
+
   onDisableCreditCard() {
     console.log('Disable credit card clicked for', this.creditCardResourceCode());
   }

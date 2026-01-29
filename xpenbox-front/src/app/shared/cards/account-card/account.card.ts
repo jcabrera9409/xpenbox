@@ -31,6 +31,10 @@ export class AccountCard {
     this.accountCardEdit.emit(this.accountCardResourceCode() || '');
   }
 
+  onTransferFromAccount() {
+
+  }
+
   onViewTransactions() {
     this.router.navigate(['/landing/transaction'], { 
       queryParams: { 

@@ -52,12 +52,21 @@
             <span class="hidden lg:inline">Movimientos</span>
         </button>
         <button (click)="onEditCreditCard()"
-            class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors text-sm font-medium"
+            class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary-accent rounded-lg transition-colors text-sm font-medium"
             type="button"
             title="Editar">
             <span class="material-icons text-lg">edit</span>
             <span class="hidden lg:inline">Editar</span>
         </button>
+        @if ((creditCardBalance() || 0) > 0) {
+            <button (click)="onPayCreditCard()"
+                class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-income rounded-lg transition-colors text-sm font-medium"
+                type="button"
+                title="Pagar">
+                <span class="material-icons text-lg">payment</span>
+                <span class="hidden lg:inline">Pagar</span>
+            </button>
+        }
         <button (click)="onDisableCreditCard()"
             class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-expense rounded-lg transition-colors text-sm font-medium"
             type="button"
