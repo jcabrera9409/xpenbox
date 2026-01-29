@@ -7,12 +7,12 @@
             <div class="flex items-center gap-4">
                 <!-- Icon -->
                 <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-                    <span class="material-icons text-[var(--xpb-income)] text-2xl">swap_horiz</span>
+                    <span class="material-icons text-[var(--xpb-income)] text-2xl">payment</span>
                 </div>
                 <!-- Title and subtitle -->
                 <div class="flex-1">
-                    <h3 class="text-xl font-semibold xpb-text-primary">Transferir fondos</h3>
-                    <p class="text-sm xpb-text-secondary">Transfiere fondos entre tus cuentas</p>
+                    <h3 class="text-xl font-semibold xpb-text-primary">Pago de Tarjeta de Crédito</h3>
+                    <p class="text-sm xpb-text-secondary">Realiza el pago de tu tarjeta de crédito</p>
                 </div>
                 <!-- Close button -->
                 <button (click)="onClose()" 
@@ -22,12 +22,12 @@
             </div>
         </div>
 
-        @if (this.accountState.isLoadingGetAccount()) {
+        @if (this.creditCardState.isLoadingGetCreditCard()) {
             <app-loading-ui></app-loading-ui>
-        } @else if (this.accountState.errorGetAccount()) {
+        } @else if (this.creditCardState.errorGetCreditCard()) {
             <app-retry-component
-                [message]="'Error al cargar la información de la cuenta'"
-                (retry)="retryLoadAccountData()">
+                [message]="'Error al cargar la información de la tarjeta de crédito'"
+                (retry)="retryLoadCreditCardData()">
             </app-retry-component>
         } @else {
             <!-- Body -->
@@ -50,21 +50,21 @@
                             maxlength="250"
                             [value]="description()"
                             (input)="description.set($any($event.target).value)"
-                            placeholder="Ejm: Transferencia para ahorro"
+                            placeholder="Ejm: Pago de tarjeta de crédito"
                             class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full xpb-text-primary placeholder:xpb-text-secondary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all" />
                     </div>
                 </div>
 
-                <!-- Origin Account (No Editable) -->
+                <!-- Credit Card (No Editable) -->
                 <div class="mb-3">
                     <label class="block text-sm font-medium xpb-text-secondary mb-2">
-                        Cuenta Origen 
+                        Tarjeta de Crédito
                     </label>
                     <div class="relative">
-                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">account_balance</span>
+                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">payment</span>
                         <input 
                             type="text"
-                            [value]="accountData()?.name + ' - PEN ' + (accountData()?.balance | number:'1.2-2')"
+                            [value]="creditCardData()?.name + ' - PEN ' + (creditCardData()?.currentBalance | number:'1.2-2')"
                             readonly
                             class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
                     </div>
@@ -75,17 +75,16 @@
                     ngSkipHydration class="block"
                     [isLoading]="this.accountState.isLoadingGetList()"
                     [errorLoading]="this.accountState.errorGetList()"
-                    [carouselTitle]="'Cuenta Destino'"
+                    [carouselTitle]="'Cargar a Cuenta'"
                     [carouselErrorMessage]="'Error al cargar cuentas'"
                     [currencySymbol]="'PEN'"
                     [accountsList]="accountsList()"
-                    [currentSelectedAccount]="selectedDestinationAccount()"
+                    [currentSelectedAccount]="selectedAccount()"
                     [noAccountsMessage]="'No tienes cuentas disponibles'"
-                    (selectedAccountOutput)="this.selectedDestinationAccount.set($event)"
+                    (selectedAccountOutput)="this.selectedAccount.set($event)"
                     (retry)="retryLoadAccountsData()">
                 </app-accounts-carousel-component>
 
-                <!-- Error message to send transfer -->
                 @if (this.transactionState.errorSendingTransaction()) {
                     <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
                         <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
@@ -102,10 +101,10 @@
                     [isEditMode]="false"
                     [isLoading]="this.transactionState.isLoadingSendingTransaction()"
                     [isValidForm]="isFormValid"
-                    [loadingText]="'Transfiriendo...'"
+                    [loadingText]="'Pagando...'"
                     [loadingIcon]="'autorenew'"
-                    [confirmText]="'Transferir'"
-                    [confirmIcon]="'swap_horiz'"
+                    [confirmText]="'Pagar'"
+                    [confirmIcon]="'payment'"
                     (cancel)="onClose()"
                     (confirm)="onSubmit()">
                 </app-modal-buttons-ui>

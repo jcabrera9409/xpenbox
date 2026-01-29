@@ -23,6 +23,7 @@ export class CreditCard {
   creditCardPaymentDay = input<number>();
 
   creditCardEdit = output<string>();
+  creditCardPayment = output<string>();
 
   constructor(
     private router: Router
@@ -66,7 +67,7 @@ export class CreditCard {
   }
 
   onPayCreditCard() {
-    console.log('Pay credit card clicked for', this.creditCardResourceCode());
+    this.creditCardPayment.emit(this.creditCardResourceCode() || '');
   }
 
   onDisableCreditCard() {

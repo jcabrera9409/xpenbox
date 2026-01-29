@@ -132,6 +132,7 @@
               [creditCardPaymentDay]="creditCard.paymentDay"
               [creditCardResourceCode]="creditCard.resourceCode"
               (creditCardEdit) = "openCreditCardEditionModal($event)"
+              (creditCardPayment) = "openCreditcardPaymentModal($event)"
             ></app-credit-card>
           }
         }
@@ -150,4 +151,8 @@
 
 @if (showTransferModal()) {
   <app-transfer-modal (close)="closeTransferModal()" [accountResourceCode]="resourceCodeTransferSelected()"></app-transfer-modal>
+}
+
+@if (showCreditcardPaymentModal()) {
+  <app-creditcard-payment-modal (close)="closeCreditcardPaymentModal()" [creditCardResourceCode]="resourceCodeCreditcardPaymentSelected()"></app-creditcard-payment-modal>
 }

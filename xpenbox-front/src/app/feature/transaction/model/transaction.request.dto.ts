@@ -56,6 +56,17 @@ export class TransactionRequestDTO {
         transaction.destinationAccountResourceCode = destinationAccountResourceCode;
         return transaction;
     }
+
+    static generateCreditCardPaymentTransaction(amount: number, description: string, creditCardResourceCode: string, accountResourceCode: string): TransactionRequestDTO {
+        const transaction = new TransactionRequestDTO();
+        transaction.transactionType = TransactionType.CREDIT_PAYMENT;
+        transaction.amount = amount;
+        transaction.description = description;
+        transaction.transactionDateTimestamp = Date.now();
+        transaction.creditCardResourceCode = creditCardResourceCode;
+        transaction.accountResourceCode = accountResourceCode;
+        return transaction;
+    }
 }
 
 export enum TransactionType {
