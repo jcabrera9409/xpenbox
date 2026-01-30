@@ -22,5 +22,6 @@ export const transactionState = {
     
     isLoadingSendingTransaction: signal<boolean>(false),
     successSendingTransaction: signal<boolean>(false),
+    transactionCreatedResourceCode: signal<string | null>(null),
     errorSendingTransaction: signal<string | null>(null)
 };

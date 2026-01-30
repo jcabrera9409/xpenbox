@@ -17,6 +17,7 @@ import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { incomeState } from '../../../feature/income/service/income.state';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
+import { DateService } from '../../../shared/service/date.service';
 
 @Component({
   selector: 'app-income-assign-modal',
@@ -47,7 +48,8 @@ export class IncomeAssignModal implements OnInit {
     private incomeService: IncomeService,
     private accountService: AccountService,
     private transactionService: TransactionService,
-    private accountCreditService: AccountCreditService
+    private accountCreditService: AccountCreditService,
+    private dateService: DateService
   ) {
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
@@ -105,12 +107,14 @@ export class IncomeAssignModal implements OnInit {
     const descriptionValue = this.description();
     const incomeResourceCode = this.incomeResourceCode();
     const selectedAccount = this.selectedAccount();
+    const dateTimestamp = this.dateService.getUtcDatetime().getTime();
 
     const transactionRequest = TransactionRequestDTO.generateIncomeAssignmentTransaction(
       amountValue,
       descriptionValue,
       incomeResourceCode || '',
-      selectedAccount?.resourceCode || ''
+      selectedAccount?.resourceCode || '',
+      dateTimestamp
     );
 
     this.transactionState.isLoadingSendingTransaction.set(true);

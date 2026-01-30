@@ -10,6 +10,7 @@ import { IncomeEditionModal } from '../../modal/income/income-edition-modal/inco
 import { RetryComponent } from '../../shared/components/retry-component/retry.component';
 import { CreateFirstComponent } from '../../shared/components/create-first-component/create-first.component';
 import { Router } from '@angular/router';
+import { DateService } from '../../shared/service/date.service';
 
 @Component({
   selector: 'app-income-page',
@@ -55,17 +56,21 @@ export class IncomePage {
   });
   
   // Max date for date inputs (today)
-  minDate = this.formatDateToInput(new Date(this.getTodayDate().setFullYear(this.getTodayDate().getFullYear() - 5)));
-  maxDate = this.formatDateToInput(this.getTodayDate());
+  minDate!: string; 
+  maxDate!: string;
 
   constructor(
     private incomeService: IncomeService,
-    private router: Router
+    private router: Router,
+    private dateService: DateService
   ) {
     const platformId = inject(PLATFORM_ID);
     if (isPlatformServer(platformId)) {
       return;
     }
+
+    this.minDate = this.formatDateToInput(new Date(this.getTodayDate().setFullYear(this.getTodayDate().getFullYear() - 5)));
+    this.maxDate = this.formatDateToInput(this.getTodayDate());
 
     this.tempStartDate = this.formatDateToInput(this.startDate() || this.getFirstDayOfPreviousMonth());
     this.tempEndDate = this.formatDateToInput(this.endDate() || this.getTodayDate());
@@ -90,8 +95,8 @@ export class IncomePage {
   }
 
   applyFilter(): void {
-    const parsedStart = this.parseDateString(this.tempStartDate);
-    const parsedEnd = this.parseDateString(this.tempEndDate);
+    const parsedStart = this.dateService.parseDateIsoString(this.tempStartDate);
+    const parsedEnd = this.dateService.parseDateIsoString(this.tempEndDate);
 
     this.startDate.set(parsedStart);
     this.endDate.set(parsedEnd);
@@ -146,19 +151,16 @@ export class IncomePage {
   }
   
   formatDate(timestamp: number): string {
-    return new Date(timestamp).toLocaleDateString('es-PE', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
+    const date = this.dateService.toDate(timestamp);
+    return this.dateService.format(date.getTime(), 'short');
   }
   
   private getTodayDate(): Date {
-    return new Date();
+    return this.dateService.getLocalDatetime();
   }
   
   private getFirstDayOfPreviousMonth(): Date {
-    const today = new Date();
+    const today = this.getTodayDate();
     return new Date(today.getFullYear(), today.getMonth() - 1, 1);
   }
   
@@ -167,12 +169,6 @@ export class IncomePage {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  }
-
-  private parseDateString(dateString: string): Date {
-    // Parsear fecha en formato YYYY-MM-DD sin problemas de zona horaria
-    const [year, month, day] = dateString.split('-').map(num => parseInt(num, 10));
-    return new Date(year, month - 1, day);
   }
 
 }

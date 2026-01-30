@@ -17,6 +17,7 @@ import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtua
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { creditCardState } from '../../../feature/creditcard/service/creditcard.state';
+import { DateService } from '../../../shared/service/date.service';
 
 @Component({
   selector: 'app-creditcard-payment-modal',
@@ -44,7 +45,8 @@ export class CreditcardPaymentModal {
     private transactionService: TransactionService,
     private accountService: AccountService,
     private creditCardService: CreditCardService,
-    private accountCreditService: AccountCreditService
+    private accountCreditService: AccountCreditService,
+    private dateService: DateService
   ) { 
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
@@ -123,12 +125,14 @@ export class CreditcardPaymentModal {
     const descriptionValue = this.description();
     const creditCardResourceCode = this.creditCardResourceCode() || '';
     const accountResourceCode = this.selectedAccount()?.resourceCode || '';
+    const dateTimestamp = this.dateService.getUtcDatetime().getTime();
 
     const transactionRequest = TransactionRequestDTO.generateCreditCardPaymentTransaction(
       amountValue,
       descriptionValue,
       creditCardResourceCode,
-      accountResourceCode
+      accountResourceCode,
+      dateTimestamp
     );
 
     this.transactionState.isLoadingSendingTransaction.set(true);

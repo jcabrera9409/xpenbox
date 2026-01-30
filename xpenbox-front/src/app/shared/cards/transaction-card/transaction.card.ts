@@ -2,6 +2,7 @@ import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 import { TransactionType } from '../../../feature/transaction/model/transaction.request.dto';
+import { DateService } from '../../service/date.service';
 
 @Component({
   selector: 'app-transaction-card',
@@ -18,6 +19,10 @@ export class TransactionCard {
   deleteView = output<string>();
 
   transactionType = TransactionType;
+
+  constructor(
+    private dateService: DateService
+  ) { }
 
   getTransactionLabel(type: TransactionType | undefined): string {
     switch (type) {
@@ -65,18 +70,10 @@ export class TransactionCard {
   }
 
   getFormatDate(dateTimestamp: number | undefined): string {
-    const date = new Date(dateTimestamp || 0);
-    const dateStr = date.toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
-    const timeStr = date.toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-    return `${dateStr} ${timeStr}`;
+    const date = this.dateService.toDate(dateTimestamp || 0);
+
+    const dateStr = this.dateService.format(date.getTime(), 'datetime');
+    return dateStr;
   }
 
   getFormatAmount(amount: number | undefined): string {

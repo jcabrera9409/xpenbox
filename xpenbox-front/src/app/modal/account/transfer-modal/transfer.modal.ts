@@ -15,6 +15,7 @@ import { AccountCreditService } from '../../../shared/service/account-credit.ser
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
 import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
+import { DateService } from '../../../shared/service/date.service';
 
 @Component({
   selector: 'app-transfer-modal',
@@ -40,7 +41,8 @@ export class TransferModal implements OnInit {
   constructor(
     private transactionService: TransactionService,
     private accountService: AccountService,
-    private accountCreditService: AccountCreditService
+    private accountCreditService: AccountCreditService,
+    private dateService: DateService
   ) { 
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
@@ -101,12 +103,14 @@ export class TransferModal implements OnInit {
     const descriptionValue = this.description();
     const originAccountResourceCode = this.accountResourceCode() || '';
     const destinationAccountResourceCode = this.selectedDestinationAccount()?.resourceCode || '';
+    const dateTimestamp = this.dateService.getUtcDatetime().getTime();
 
     const transactionRequest = TransactionRequestDTO.generateTransferTransaction(
       amountValue,
       descriptionValue,
       originAccountResourceCode,
-      destinationAccountResourceCode
+      destinationAccountResourceCode,
+      dateTimestamp
     );
 
     this.transactionState.isLoadingSendingTransaction.set(true);

@@ -15,6 +15,7 @@ import { AccountCreditService } from '../../../shared/service/account-credit.ser
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
+import { DateService } from '../../../shared/service/date.service';
 
 @Component({
   selector: 'app-income-edition-modal',
@@ -45,7 +46,8 @@ export class IncomeEditionModal implements OnInit {
     private incomeService: IncomeService,
     private accountService: AccountService,
     private accountCreditService: AccountCreditService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private dateService: DateService
   ) {
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
@@ -170,8 +172,8 @@ export class IncomeEditionModal implements OnInit {
   private buildIncomeData(): IncomeRequestDTO {
     const formValues = this.formIncome.value;
     const concept = formValues['concept'];
-    const incomeDate = new Date(formValues['incomeDate']);
-    const incomeDateTimestamp = incomeDate.getTime();
+    const incomeDate = this.dateService.toUtcDate(new Date(formValues['incomeDate']));
+    const incomeDateTimestamp = this.dateService.toTimestamp(incomeDate);
     const totalAmount = formValues['amount'];
     const accountResourceCode: string | undefined = !this.isEditMode && this.assignToAccount() && this.selectedAccount()
       ? this.selectedAccount()!.resourceCode
@@ -181,8 +183,8 @@ export class IncomeEditionModal implements OnInit {
   }
   
   private initForm(): void {
-    const today = new Date();
-    this.maxDate.set(today.toISOString().split('T')[0]);
+    const today = this.dateService.getLocalDatetime();
+    this.maxDate.set(this.dateService.format(today.getTime(), 'ISO').split('T')[0]);
 
     this.formIncome = this.fb.group({
       concept: ['', [
@@ -208,8 +210,8 @@ export class IncomeEditionModal implements OnInit {
         this.incomeState.isLoadingGetIncome.set(false);
         if (response.success && response.data) {
           this.incomeData.set(response.data);
-          const incomeDate = new Date(response.data.incomeDateTimestamp);
-          const formattedDate = incomeDate.toISOString().split('T')[0];
+          const incomeDate = this.dateService.toDate(response.data.incomeDateTimestamp);
+          const formattedDate = this.dateService.format(incomeDate.getTime(), 'ISO').split('T')[0];
           this.formIncome.patchValue({
             concept: response.data.concept,
             amount: response.data.totalAmount,

@@ -15,6 +15,7 @@ import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
 import { PageableResponseDTO } from '../../feature/common/model/pageable.response.dto';
 import { CategoryService } from '../../feature/category/service/category.service';
 import { ActivatedRoute } from '@angular/router';
+import { DateService } from '../../shared/service/date.service';
 
 @Component({
   selector: 'app-transaction-page',
@@ -53,7 +54,8 @@ export class TransactionPage {
   constructor(
     private transactionService: TransactionService,
     private categoryService: CategoryService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dateService: DateService
   ) { 
     const platformId = inject(PLATFORM_ID);
     if (isPlatformServer(platformId)) {
@@ -62,6 +64,8 @@ export class TransactionPage {
     if (this.categoryState.categories().length === 0) {
       this.categoryService.load();
     }
+
+    this.maxDate.set(this.dateService.format(this.dateService.getLocalDatetime().getTime(), 'ISO').split('T')[0]);
 
     this.route.queryParamMap.subscribe(params => {
       this.source.set(params.get('source') || undefined);
@@ -72,6 +76,13 @@ export class TransactionPage {
       this.source();
       this.code();
       untracked(() => this.loadInitialTransactions());
+    });
+
+    effect(() => {
+      if (this.transactionState.transactionCreatedResourceCode()) {
+        this.loadInitialTransactions();
+        this.transactionState.transactionCreatedResourceCode.set(null);
+      }
     });
 
   }
@@ -99,7 +110,6 @@ export class TransactionPage {
           this.accumulatedTransactions.set(accumulated);
           this.totalElements.set(response.data.totalElements);
           this.totalPages.set(response.data.totalPages);
-          console.log(response.data.content);
         }
       }, error: (error) => {
         this.transactionState.isLoadingFilteredList.set(false);
@@ -117,8 +127,8 @@ export class TransactionPage {
     const filter = TransactionFilterRequestDTO.createEmpty();
     const source = this.source();
     const code = this.code();
-    filter.transactionDateTimestampFrom = new Date(this.filterStartDate()).setHours(0,0,0,0);
-    filter.transactionDateTimestampTo = new Date(this.filterEndDate()).setHours(23,59,59,999);
+    filter.transactionDateTimestampFrom = this.dateService.parseDateIsoString(this.filterStartDate()).setHours(0,0,0,0);
+    filter.transactionDateTimestampTo = this.dateService.parseDateIsoString(this.filterEndDate()).setHours(23,59,59,999);
     filter.description = this.filterDescription().trim() || undefined;
     filter.pageNumber = this.currentPage();
     filter.transactionType = this.filterType() && this.filterType() !== TransactionType.ALL ? this.filterType() : undefined;
@@ -157,13 +167,12 @@ export class TransactionPage {
   }
 
   resetFilters(): void {
-    const now = new Date();
-    now.setHours(now.getHours() + 24)
-    const pastDate = new Date();
+    const now = this.dateService.getLocalDatetime();
+    const pastDate = this.dateService.getLocalDatetime();
     pastDate.setMonth(now.getMonth() - 1);
 
-    this.filterEndDate.set(now.toISOString().split('T')[0]);
-    this.filterStartDate.set(new Date(pastDate).toISOString().split('T')[0]);
+    this.filterEndDate.set(this.dateService.format(now.getTime(), 'ISO').split('T')[0]);
+    this.filterStartDate.set(this.dateService.format(pastDate.getTime(), 'ISO').split('T')[0]);
     this.filterType.set(TransactionType.ALL);
     this.filterDescription.set('');
     this.filterCategory.set('ALL');

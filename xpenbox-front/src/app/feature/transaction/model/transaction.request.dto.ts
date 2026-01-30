@@ -19,7 +19,6 @@ export class TransactionRequestDTO {
         transaction.transactionDateTimestamp = transactionDateTimestamp || Date.now();
         transaction.accountResourceCode = accountResourceCode;
         transaction.categoryResourceCode = categoryResourceCode;
-
         return transaction;
     }
 
@@ -31,7 +30,6 @@ export class TransactionRequestDTO {
         transaction.transactionDateTimestamp = transactionDateTimestamp || Date.now();
         transaction.creditCardResourceCode = creditCardResourceCode;
         transaction.categoryResourceCode = categoryResourceCode;
-
         return transaction;
     }
 
@@ -46,23 +44,23 @@ export class TransactionRequestDTO {
         return transaction;
     }
 
-    static generateTransferTransaction(amount: number, description: string, originAccountResourceCode: string, destinationAccountResourceCode: string): TransactionRequestDTO {
+    static generateTransferTransaction(amount: number, description: string, originAccountResourceCode: string, destinationAccountResourceCode: string, transactionDateTimestamp?: number): TransactionRequestDTO {
         const transaction = new TransactionRequestDTO();
         transaction.transactionType = TransactionType.TRANSFER;
         transaction.amount = amount;
         transaction.description = description;
-        transaction.transactionDateTimestamp = Date.now();
+        transaction.transactionDateTimestamp = transactionDateTimestamp || Date.now();
         transaction.accountResourceCode = originAccountResourceCode;
         transaction.destinationAccountResourceCode = destinationAccountResourceCode;
         return transaction;
     }
 
-    static generateCreditCardPaymentTransaction(amount: number, description: string, creditCardResourceCode: string, accountResourceCode: string): TransactionRequestDTO {
+    static generateCreditCardPaymentTransaction(amount: number, description: string, creditCardResourceCode: string, accountResourceCode: string, transactionDateTimestamp?: number): TransactionRequestDTO {
         const transaction = new TransactionRequestDTO();
         transaction.transactionType = TransactionType.CREDIT_PAYMENT;
         transaction.amount = amount;
         transaction.description = description;
-        transaction.transactionDateTimestamp = Date.now();
+        transaction.transactionDateTimestamp = transactionDateTimestamp || Date.now();
         transaction.creditCardResourceCode = creditCardResourceCode;
         transaction.accountResourceCode = accountResourceCode;
         return transaction;

@@ -18,6 +18,7 @@ import { AccountCreditService } from '../../../shared/service/account-credit.ser
 import { CategoriesCarouselComponent } from '../../../shared/components/categories-carousel-component/categories-carousel.component';
 import { CategoryService } from '../../../feature/category/service/category.service';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
+import { DateService } from '../../../shared/service/date.service';
 
 @Component({
   selector: 'app-quick-expense-modal',
@@ -49,7 +50,8 @@ export class QuickExpenseModal implements OnInit {
     private accountService: AccountService,
     private creditCardService: CreditCardService,
     private transactionService: TransactionService,
-    private accountCreditService: AccountCreditService
+    private accountCreditService: AccountCreditService,
+    private dateService: DateService
   ) {
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
@@ -158,11 +160,11 @@ export class QuickExpenseModal implements OnInit {
     const descriptionValue = this.description();
     const selectedAccount = this.selectedAccount();
     const categorySelected = this.selectedCategory();
+    const dateTimestamp = this.dateService.getUtcDatetime().getTime();
 
     const transactionRequest = selectedAccount?.type === AccountCreditType.ACCOUNT
-      ? TransactionRequestDTO.generateExpenseAccountTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode)
-      : TransactionRequestDTO.generateExpenseCreditCardTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode);
-
+      ? TransactionRequestDTO.generateExpenseAccountTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode, dateTimestamp)
+      : TransactionRequestDTO.generateExpenseCreditCardTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode, dateTimestamp);
     this.transactionState.isLoadingSendingTransaction.set(true);
     
     this.transactionService.create(transactionRequest).subscribe({
@@ -175,6 +177,7 @@ export class QuickExpenseModal implements OnInit {
           this.accountService.refresh();
           this.creditCardService.refresh();
           this.categoryService.refresh();
+          this.transactionState.transactionCreatedResourceCode.set(response.data.resourceCode);
         } else {
           this.transactionState.errorSendingTransaction.set(response.message);
         }
