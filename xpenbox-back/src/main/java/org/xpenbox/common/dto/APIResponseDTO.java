@@ -1,5 +1,7 @@
 package org.xpenbox.common.dto;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 /**
  * APIResponseDTO is a generic data transfer object for API responses.
  * @param success Indicates if the API call was successful
@@ -8,6 +10,7 @@ package org.xpenbox.common.dto;
  * @param statusCode HTTP status code of the response
  * @param timestamp Timestamp indicating when the response was created
  */
+@RegisterForReflection
 public record APIResponseDTO<T>(
     boolean success,
 	String message,

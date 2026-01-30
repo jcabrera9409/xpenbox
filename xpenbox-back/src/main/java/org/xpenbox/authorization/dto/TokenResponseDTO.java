@@ -2,6 +2,8 @@ package org.xpenbox.authorization.dto;
 
 import java.time.LocalDateTime;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 /**
  * Data Transfer Object for Token responses.
  * @param resourceCode the resource code associated with the token
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
  * @param accessTokenExpiresIn the expiration time of the access token in seconds
  * @param refreshTokenExpiresIn the expiration time of the refresh token in seconds
  */
+@RegisterForReflection
 public record TokenResponseDTO (
     String resourceCode,
     String accessToken,

@@ -7,7 +7,7 @@ services:
     cpus: 0.40
     environment:
       MYSQL_DATABASE:             xpenbox_db
-      MYSQL_ROOT_PASSWORD:        ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD:        ${DATASOURCE_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
@@ -28,3 +28,39 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  backend:
+    image: jcabrera9409/xpenbox-back:latest
+    platform: linux/amd64
+    restart: always
+    container_name: backend
+    mem_limit: 640m
+    cpus: 0.35
+    environment:
+      DATASOURCE_URL:             ${DATASOURCE_URL}
+      DATASOURCE_USERNAME:        ${DATASOURCE_USERNAME}
+      DATASOURCE_PASSWORD:        ${DATASOURCE_PASSWORD}
+      CORS_ALLOWED_ORIGINS:       ${CORS_ALLOWED_ORIGINS}
+      JWT_PUBLIC_KEY_PATH:        ${JWT_PUBLIC_KEY_PATH}
+      JWT_PRIVATE_KEY_PATH:       ${JWT_PRIVATE_KEY_PATH}
+      APP_PATH:                   ${APP_PATH}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - bd
+    volumes:
+      - ./keys/privateKey.pem:/work/keys/privateKey.pem:ro
+      - ./keys/publicKey.pem:/work/keys/publicKey.pem:ro
+      - ./logs:/work/logs  
+
+  frontend:
+    image: jcabrera9409/xpenbox-front:latest
+    platform: linux/amd64
+    restart: always
+    container_name: frontend
+    mem_limit: 384m
+    cpus: 0.30
+    environment:
+      NODE_OPTIONS:   "--max-old-space-size=256"
+    ports:
+      - "4200:4000"
