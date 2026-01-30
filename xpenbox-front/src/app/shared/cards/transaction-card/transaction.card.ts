@@ -61,7 +61,7 @@ export class TransactionCard {
       case TransactionType.EXPENSE:
         return 'xpb-expense';
       case TransactionType.TRANSFER:
-        return 'xpb-primary';
+        return 'xpb-transfer';
       case TransactionType.CREDIT_PAYMENT:
         return 'xpb-credit';
       default:
