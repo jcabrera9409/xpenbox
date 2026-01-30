@@ -13,25 +13,7 @@ export class DateService {
     return date.getTime(); 
   }
   
-  toLocalDate(timestampUtc: number): Date {
-    const dateUtc = new Date(timestampUtc);
-    const timezoneOffset = dateUtc.getTimezoneOffset();
-    const localDate = new Date(dateUtc.getTime() - timezoneOffset * 60000);
-    return new Date(localDate.getFullYear(), localDate.getMonth(), localDate.getDate());
-  }
-
-  toLocalDateTime(timestampUtc: number): Date {
-    const dateUtc = new Date(timestampUtc);
-    const timezoneOffset = dateUtc.getTimezoneOffset();
-    return new Date(dateUtc.getTime() - timezoneOffset * 60000);
-  }
-
   toUtcDate(date: Date): Date {
-    const timezoneOffset = date.getTimezoneOffset();
-    return new Date(date.getTime() + timezoneOffset * 60000);
-  }
-
-  toUtcDatetime(date: Date): Date {
     const timezoneOffset = date.getTimezoneOffset();
     return new Date(date.getTime() + timezoneOffset * 60000);
   }
