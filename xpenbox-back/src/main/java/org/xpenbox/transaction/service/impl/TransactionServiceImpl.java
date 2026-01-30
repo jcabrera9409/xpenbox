@@ -324,6 +324,10 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
 
         creditCardService.processAddAmount(transaction.getCreditCard().id, transaction.getAmount());
         accountService.processAddAmount(transaction.getAccount().id, transaction.getAmount());
+
+        Account account = transaction.getAccount();
+        account.setUsageCount(account.getUsageCount() - 1);
+        accountRepository.persist(account);
         
         LOG.debugf("Reversed credit payment between Account ID: %d and CreditCard ID: %d", transaction.getAccount().id, transaction.getCreditCard().id);
     }
@@ -452,6 +456,11 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         
         accountService.processSubtractAmount(account.id, entityCreateDTO.amount());
         creditCardService.processAddPayment(creditCard.id, entityCreateDTO.amount());
+
+        account.setUsageCount(account.getUsageCount() + 1);
+        account.setLastUsedDate(transaction.getTransactionDate());
+
+        accountRepository.persist(account);
         
         transaction.setAccount(account);
         transaction.setCreditCard(creditCard);
