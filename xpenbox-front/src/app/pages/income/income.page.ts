@@ -156,6 +156,10 @@ export class IncomePage {
     return this.dateService.format(date.getTime(), 'short');
   }
   
+  formatDateRange(date: Date): string {
+    return this.dateService.format(date.getTime(), 'short');
+  }
+  
   private getTodayDate(): Date {
     return this.dateService.getLocalDatetime();
   }

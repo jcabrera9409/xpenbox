@@ -121,7 +121,7 @@
             <span class="material-icons text-xl">receipt_long</span>
             Historial de Ingresos {{
               startDate() && endDate() 
-                ? 'de ' + (startDate() | date:'dd/MM/yyyy') + ' a ' + (endDate() | date:'dd/MM/yyyy') 
+                ? 'de ' + formatDateRange(startDate()!) + ' a ' + formatDateRange(endDate()!) 
                 : ''
             }}
           </h2>
