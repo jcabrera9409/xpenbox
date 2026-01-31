@@ -648,3 +648,4 @@ FodyWeavers.xsd
 db-data/
 *.pem
 logs/
+ssh/
