@@ -69,11 +69,12 @@ export class IncomePage {
       return;
     }
 
-    this.minDate = this.formatDateToInput(new Date(this.getTodayDate().setFullYear(this.getTodayDate().getFullYear() - 5)));
-    this.maxDate = this.formatDateToInput(this.getTodayDate());
+    const fiveYearsAgo = new Date(this.getTodayDate().setFullYear(this.getTodayDate().getFullYear() - 5));
+    this.minDate = this.dateService.format(fiveYearsAgo.getTime(), 'ISO').split('T')[0];
+    this.maxDate = this.dateService.format(this.getTodayDate().getTime(), 'ISO').split('T')[0];
 
-    this.tempStartDate = this.formatDateToInput(this.startDate() || this.getFirstDayOfPreviousMonth());
-    this.tempEndDate = this.formatDateToInput(this.endDate() || this.getTodayDate());
+    this.tempStartDate = this.dateService.format((this.startDate() || this.getFirstDayOfPreviousMonth()).getTime(), 'ISO').split('T')[0];
+    this.tempEndDate = this.dateService.format((this.endDate() || this.getTodayDate()).getTime(), 'ISO').split('T')[0];
 
     if (!this.startDate() || !this.endDate()) {
       this.startDate.set(this.getFirstDayOfPreviousMonth());
@@ -162,13 +163,6 @@ export class IncomePage {
   private getFirstDayOfPreviousMonth(): Date {
     const today = this.getTodayDate();
     return new Date(today.getFullYear(), today.getMonth() - 1, 1);
-  }
-  
-  private formatDateToInput(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
   }
 
 }

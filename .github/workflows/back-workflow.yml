@@ -74,3 +74,23 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
+  
+  deploy-to-vm:
+    if: github.ref == 'refs/heads/main'
+    needs: [build-and-dockerize]
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Deploy to VM via SSH
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd /home/deployment
+            docker compose down
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
