@@ -120,8 +120,8 @@
           <h2 class="text-lg font-semibold xpb-text-primary flex items-center gap-2">
             <span class="material-icons text-xl">receipt_long</span>
             Historial de Ingresos {{
-              startDate() && endDate() 
-                ? 'de ' + formatDateRange(startDate()!) + ' a ' + formatDateRange(endDate()!) 
+              formattedStartDate() && formattedEndDate() 
+                ? 'de ' + formattedStartDate() + ' a ' + formattedEndDate() 
                 : ''
             }}
           </h2>

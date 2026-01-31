@@ -42,6 +42,17 @@ export class IncomePage {
   // Date range signals
   startDate = this.incomeState.startDate;
   endDate = this.incomeState.endDate;
+  
+  // Formatted dates for display
+  formattedStartDate = computed(() => {
+    if (!this.startDate()) return '';
+    return this.dateService.format(this.startDate()!.getTime(), 'short');
+  });
+  
+  formattedEndDate = computed(() => {
+    if (!this.endDate()) return '';
+    return this.dateService.format(this.endDate()!.getTime(), 'short');
+  });
   totalIncome = signal<number>(0);
   totalAllocated = signal<number>(0);
   totalPending = signal<number>(0);
