@@ -85,6 +85,32 @@
                     (retry)="retryLoadAccountsData()">
                 </app-accounts-carousel-component>
 
+                <!-- Checkbox para asignar a categoría -->
+                <div class="mb-4">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative">
+                            <input
+                                type="checkbox"
+                                [checked]="assignToCategory()"
+                                (change)="assignToCategory.set(!assignToCategory())"
+                                class="peer sr-only" />
+                            <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
+                                <span class="material-icons text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+                            </div>
+                        </div>
+                        <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
+                            Agregar a una categoría
+                        </span>
+                    </label>
+                </div>
+
+                @if (assignToCategory()) {
+                    <app-categories-carousel-component
+                        [title]="'Categoría'"
+                        (outputCategory)="selectCategory($event)">
+                    </app-categories-carousel-component>
+                }
+
                 @if (this.transactionState.errorSendingTransaction()) {
                     <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
                         <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>

@@ -1,0 +1,44 @@
+services:
+  bd:
+    image: mariadb:11.2-jammy
+    restart: always
+    container_name: bd
+    mem_limit: 256m
+    mem_reservation: 192m
+    cpus: 0.25
+    environment:
+      MYSQL_DATABASE:                  xpenbox_db
+      MYSQL_ROOT_PASSWORD:             ${DATASOURCE_PASSWORD}
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+      - ./db-data:/var/lib/mysql
+    command: >
+      --max-connections=15
+      --innodb-buffer-pool-size=64M
+      --innodb-log-file-size=8M
+      --innodb-flush-method=O_DIRECT
+      --innodb-flush-log-at-trx-commit=2
+      --innodb-log-buffer-size=2M
+      --innodb-page-cleaners=1
+      --innodb-read-io-threads=1
+      --innodb-write-io-threads=1
+      --table-open-cache=32
+      --table-definition-cache=32
+      --thread-cache-size=4
+      --query-cache-size=0
+      --query-cache-type=0
+      --performance-schema=OFF
+      --skip-name-resolve
+      --tmp-table-size=4M
+      --max-heap-table-size=4M
+      --key-buffer-size=4M
+      --sort-buffer-size=256K
+      --read-buffer-size=128K
+      --read-rnd-buffer-size=128K
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

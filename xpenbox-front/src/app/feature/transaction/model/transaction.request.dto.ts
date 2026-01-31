@@ -55,7 +55,7 @@ export class TransactionRequestDTO {
         return transaction;
     }
 
-    static generateCreditCardPaymentTransaction(amount: number, description: string, creditCardResourceCode: string, accountResourceCode: string, transactionDateTimestamp?: number): TransactionRequestDTO {
+    static generateCreditCardPaymentTransaction(amount: number, description: string, creditCardResourceCode: string, accountResourceCode: string, categoryResourceCode?: string, transactionDateTimestamp?: number): TransactionRequestDTO {
         const transaction = new TransactionRequestDTO();
         transaction.transactionType = TransactionType.CREDIT_PAYMENT;
         transaction.amount = amount;
@@ -63,6 +63,7 @@ export class TransactionRequestDTO {
         transaction.transactionDateTimestamp = transactionDateTimestamp || Date.now();
         transaction.creditCardResourceCode = creditCardResourceCode;
         transaction.accountResourceCode = accountResourceCode;
+        transaction.categoryResourceCode = categoryResourceCode;
         return transaction;
     }
 }
