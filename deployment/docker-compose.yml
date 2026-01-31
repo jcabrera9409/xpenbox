@@ -8,8 +8,7 @@ services:
     cpus: 0.25
     environment:
       MYSQL_DATABASE:             xpenbox_db
-      MYSQL_USER:                 ${DATASOURCE_USERNAME}
-      MYSQL_PASSWORD:             ${DATASOURCE_PASSWORD}
+      MYSQL_ROOT_PASSWORD:        ${DATASOURCE_PASSWORD}
     volumes:
       - ./init:/docker-entrypoint-initdb.d
       - ./db-data:/var/lib/mysql

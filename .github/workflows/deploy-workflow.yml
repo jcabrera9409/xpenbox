@@ -1,0 +1,46 @@
+name: Deploy to Production VM
+
+on: 
+  push:
+    paths: ['deployment/**', '.github/workflows/deploy-workflow.yml']
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy-to-vm:
+    name: Deploy to VM
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy deployment files to VM
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: -avz --rsync-path="mkdir -p /home/deployment && rsync"
+          path: deployment/
+          remote_path: /home/deployment/
+          remote_host: ${{ secrets.VM_HOST }}
+          remote_user: ${{ secrets.VM_USER }}
+          remote_key: ${{ secrets.VM_SSH_KEY }}
+
+  init-compose:
+    name: Initialize Docker Compose
+    needs: deploy-to-vm
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Connect to VM and start Docker Compose
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd /home/deployment
+            docker compose down
+            docker compose pull
+            docker compose up -d
