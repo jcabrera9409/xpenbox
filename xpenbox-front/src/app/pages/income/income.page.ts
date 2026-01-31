@@ -166,7 +166,11 @@ export class IncomePage {
   
   private getFirstDayOfPreviousMonth(): Date {
     const today = this.getTodayDate();
-    return new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const firstDayPrevMonth = this.dateService.getLocalDatetime();
+    firstDayPrevMonth.setMonth(today.getMonth() - 1);
+    firstDayPrevMonth.setDate(1);
+    firstDayPrevMonth.setHours(0, 0, 0, 0);
+    return firstDayPrevMonth;
   }
 
 }
