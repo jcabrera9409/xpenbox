@@ -36,22 +36,26 @@ export class IncomePage {
   showOnlyPending = signal<boolean>(false);
   
   // Temporary date inputs
-  tempStartDate!: string;
-  tempEndDate!: string;
+  tempStartDate = signal<string>('');
+  tempEndDate = signal<string>('');
   
   // Date range signals
   startDate = this.incomeState.startDate;
   endDate = this.incomeState.endDate;
   
-  // Formatted dates for display
-  formattedStartDate = computed(() => {
-    if (!this.startDate()) return '';
-    return this.dateService.format(this.startDate()!.getTime(), 'short');
+  // Formatted dates for display from input values
+  formattedStartDateDisplay = computed(() => {
+    const dateStr = this.tempStartDate();
+    if (!dateStr) return '';
+    const date = this.dateService.parseDateIsoString(dateStr);
+    return this.dateService.format(date.getTime(), 'short');
   });
   
-  formattedEndDate = computed(() => {
-    if (!this.endDate()) return '';
-    return this.dateService.format(this.endDate()!.getTime(), 'short');
+  formattedEndDateDisplay = computed(() => {
+    const dateStr = this.tempEndDate();
+    if (!dateStr) return '';
+    const date = this.dateService.parseDateIsoString(dateStr);
+    return this.dateService.format(date.getTime(), 'short');
   });
   totalIncome = signal<number>(0);
   totalAllocated = signal<number>(0);
@@ -84,8 +88,8 @@ export class IncomePage {
     this.minDate = this.dateService.format(fiveYearsAgo.getTime(), 'ISO').split('T')[0];
     this.maxDate = this.dateService.format(this.getTodayDate().getTime(), 'ISO').split('T')[0];
 
-    this.tempStartDate = this.dateService.format((this.startDate() || this.getFirstDayOfPreviousMonth()).getTime(), 'ISO').split('T')[0];
-    this.tempEndDate = this.dateService.format((this.endDate() || this.getTodayDate()).getTime(), 'ISO').split('T')[0];
+    this.tempStartDate.set(this.dateService.format((this.startDate() || this.getFirstDayOfPreviousMonth()).getTime(), 'ISO').split('T')[0]);
+    this.tempEndDate.set(this.dateService.format((this.endDate() || this.getTodayDate()).getTime(), 'ISO').split('T')[0]);
 
     if (!this.startDate() || !this.endDate()) {
       this.startDate.set(this.getFirstDayOfPreviousMonth());
@@ -107,8 +111,8 @@ export class IncomePage {
   }
 
   applyFilter(): void {
-    const parsedStart = this.dateService.parseDateIsoString(this.tempStartDate);
-    const parsedEnd = this.dateService.parseDateIsoString(this.tempEndDate);
+    const parsedStart = this.dateService.parseDateIsoString(this.tempStartDate());
+    const parsedEnd = this.dateService.parseDateIsoString(this.tempEndDate());
 
     this.startDate.set(parsedStart);
     this.endDate.set(parsedEnd);
