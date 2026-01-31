@@ -1,0 +1,265 @@
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
+    <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto my-auto max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden">
+        <!-- Header -->
+        <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+                        <span class="material-icons text-[var(--xpb-primary)] text-2xl">edit</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold xpb-text-primary">Modificar Transacción</h2>
+                        <p class="text-sm xpb-text-secondary">Actualiza la información de tu transacción</p>
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    (click)="onClose()"
+                    class="xpb-text-secondary hover:xpb-text-primary hover:bg-[var(--xpb-main)] rounded-lg p-2 transition-colors"
+                    aria-label="Cerrar modal">
+                    <span class="material-icons text-2xl">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Body content -->
+        <div class="p-4 overflow-y-auto flex-1">
+            @if (this.transactionState.isLoadingGetTransaction()) {
+                <app-loading-ui></app-loading-ui>
+            } @else if(this.transactionState.errorGetTransaction()) {
+                <app-retry-component
+                    [message]="'Error al cargar la información de la transacción'"
+                    (retry)="retryLoadTransactionData()">
+                </app-retry-component>
+            } @else if(transactionData()) {
+                <!-- Detalles no editables de la transacción -->
+                <div class="mb-6 xpb-bg-main rounded-lg p-4 border xpb-border">
+                    <h3 class="text-sm font-semibold xpb-text-primary mb-3 flex items-center gap-2">
+                        <span class="material-icons text-lg">info</span>
+                        Información de la transacción
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        <!-- Tipo de transacción -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                                <span class="material-icons text-base">swap_horiz</span>
+                                Tipo
+                            </span>
+                            <span class="text-sm font-medium xpb-text-primary">
+                                @switch (transactionData()!.transactionType) {
+                                    @case ('INCOME') {
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 rounded-lg">
+                                            <span class="material-icons text-sm">trending_up</span>
+                                            Ingreso
+                                        </span>
+                                    }
+                                    @case ('EXPENSE') {
+                                        @if (transactionData()!.creditCard) {
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-lg">
+                                                <span class="material-icons text-sm">credit_card</span>
+                                                Gasto (Tarjeta)
+                                            </span>
+                                        } @else {
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg">
+                                                <span class="material-icons text-sm">trending_down</span>
+                                                Gasto (Cuenta)
+                                            </span>
+                                        }
+                                    }
+                                    @case ('TRANSFER') {
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg">
+                                            <span class="material-icons text-sm">sync_alt</span>
+                                            Transferencia
+                                        </span>
+                                    }
+                                    @case ('CREDIT_PAYMENT') {
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-lg">
+                                            <span class="material-icons text-sm">payment</span>
+                                            Pago Tarjeta
+                                        </span>
+                                    }
+                                }
+                            </span>
+                        </div>
+
+                        <!-- Monto -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                                <span class="material-icons text-base">attach_money</span>
+                                Monto
+                            </span>
+                            <span class="text-lg font-bold xpb-text-primary">
+                                PEN {{ transactionData()!.amount | number:'1.2-2' }}
+                            </span>
+                        </div>
+
+                        <!-- Cuenta origen (si existe) -->
+                        @if (transactionData()!.account) {
+                            <div class="flex items-center justify-between gap-5">
+                                <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                                    <span class="material-icons text-base">account_balance_wallet</span>
+                                    Cuenta
+                                </span>
+                                <span class="text-sm font-medium xpb-text-primary truncate">
+                                    {{ transactionData()!.account!.name }}
+                                </span>
+                            </div>
+                        }
+
+                        <!-- Tarjeta de crédito (si existe) -->
+                        @if (transactionData()!.creditCard) {
+                            <div class="flex items-center justify-between gap-5">
+                                <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                                    <span class="material-icons text-base">credit_card</span>
+                                    Tarjeta
+                                </span>
+                                <span class="text-sm font-medium xpb-text-primary truncate">
+                                    {{ transactionData()!.creditCard!.name }}
+                                </span>
+                            </div>
+                        }
+
+                        <!-- Cuenta destino (para transferencias) -->
+                        @if (transactionData()!.destinationAccount) {
+                            <div class="flex items-center justify-between gap-5">
+                                <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                                    <span class="material-icons text-base">account_balance</span>
+                                    Cuenta destino
+                                </span>
+                                <span class="text-sm font-medium xpb-text-primary truncate">
+                                    {{ transactionData()!.destinationAccount!.name }}
+                                </span>
+                            </div>
+                        }
+
+                        <!-- Ingreso origen (si existe) -->
+                        @if (transactionData()!.income) {
+                            <div class="flex items-center justify-between gap-5">
+                                <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                                    <span class="material-icons text-base">savings</span>
+                                    Fuente de ingreso
+                                </span>
+                                <span class="text-sm font-medium xpb-text-primary truncate">
+                                    {{ transactionData()!.income!.concept }}
+                                </span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Formulario de edición -->
+                <form [formGroup]="formTransaction" (ngSubmit)="onSubmit()">
+                    <div class="space-y-4 mb-5">
+                        <!-- Descripción -->
+                        <div>
+                            <label for="description" class="block text-sm font-medium xpb-text-primary mb-2">
+                                Descripción (opcional)
+                            </label>
+                            <div class="relative">
+                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                                    description
+                                </span>
+                                <input
+                                    id="description"
+                                    type="text"
+                                    formControlName="description"
+                                    placeholder="Ejm: Compra en supermercado"
+                                    class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                                />
+                            </div>
+                            @if (descriptionControl?.invalid && descriptionControl?.touched) {
+                                <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                    <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                        <p>{{ getErrorMessage('description') }}</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Fecha de transacción -->
+                        <div>
+                            <label for="transactionDate" class="block text-sm font-medium xpb-text-primary mb-2">
+                                Fecha de la transacción
+                            </label>
+                            <div class="relative">
+                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                                    event
+                                </span>
+                                <input
+                                    id="transactionDate"
+                                    type="datetime-local"
+                                    formControlName="transactionDate"
+                                    [max]="maxDate()"
+                                    class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                                />
+                            </div>
+                            @if (transactionDateControl?.invalid && transactionDateControl?.touched) {
+                                <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                    <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                        <p>{{ getErrorMessage('transactionDate') }}</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Checkbox para asignar a categoría -->
+                        <div class="relative">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative">
+                                    <input
+                                        type="checkbox"
+                                        [checked]="assignToCategory()"
+                                        (change)="assignToCategory.set(!assignToCategory())"
+                                        class="peer sr-only" />
+                                    <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
+                                        <span class="material-icons text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+                                    </div>
+                                </div>
+                                <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
+                                    Agregar a una categoría
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Carrusel de categorías -->
+                        @if (assignToCategory()) {
+                            <app-categories-carousel-component
+                                [title]="'Categoría'"
+                                [categoryResourceCodeSelected]="selectedCategory() ? selectedCategory()!.resourceCode : null"
+                                (outputCategory)="selectCategory($event)">
+                            </app-categories-carousel-component>
+                        }
+                    </div>
+
+                    <!-- Mensaje de error al enviar -->
+                    @if (this.transactionState.errorSendingTransaction()) {
+                        <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                            <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                            <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                {{ this.transactionState.errorSendingTransaction() }}
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Action buttons -->
+                    <app-modal-buttons-ui
+                        [cancelText]="'Cancelar'"
+                        [cancelIcon]="'close'"
+                        [isEditMode]="false"
+                        [isLoading]="this.transactionState.isLoadingSendingTransaction()"
+                        [isValidForm]="formTransaction.valid"
+                        [loadingText]="'Guardando...'"
+                        [loadingIcon]="'autorenew'"
+                        [confirmText]="'Actualizar'"
+                        [confirmIcon]="'check'"
+                        (cancel)="onClose()">
+                    </app-modal-buttons-ui>
+                </form>
+            }
+        </div>
+    </div>
+</div>

@@ -150,6 +150,12 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
                 transaction.setCategory(category);
                 updated = true;
             }
+        } else if (entityUpdateDTO.categoryResourceCode() == null && transaction.getCategory() != null) {
+            transaction.getCategory().setUsageCount(transaction.getCategory().getUsageCount() - 1);
+            categoryRepository.persist(transaction.getCategory());
+
+            transaction.setCategory(null);
+            updated = true;
         }
 
         if (updated) {
@@ -328,6 +334,12 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         Account account = transaction.getAccount();
         account.setUsageCount(account.getUsageCount() - 1);
         accountRepository.persist(account);
+
+        Category category = transaction.getCategory();
+        if (category != null) {
+            category.setUsageCount(category.getUsageCount() - 1);
+            categoryRepository.persist(category);
+        }
         
         LOG.debugf("Reversed credit payment between Account ID: %d and CreditCard ID: %d", transaction.getAccount().id, transaction.getCreditCard().id);
     }
@@ -461,6 +473,13 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         account.setLastUsedDate(transaction.getTransactionDate());
 
         accountRepository.persist(account);
+
+        Category category = transaction.getCategory();
+        if (category != null) {
+            category.setLastUsedDate(transaction.getTransactionDate());
+            category.setUsageCount(category.getUsageCount() + 1);
+            categoryRepository.persist(category);
+        }
         
         transaction.setAccount(account);
         transaction.setCreditCard(creditCard);

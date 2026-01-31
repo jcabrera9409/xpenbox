@@ -1,6 +1,6 @@
 <!-- Modal Overlay -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
-    <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto overflow-hidden">
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
+    <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto my-auto max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden">
         <!-- Header -->
         <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
             <div class="flex items-center justify-between gap-3">
@@ -43,7 +43,7 @@
         </div>
 
         <!-- Content -->
-        <div class="p-6">
+        <div class="p-4 overflow-y-auto flex-1">
             @if (this.categoryState.isLoadingGetCategory() && isEditMode) {
                 <app-loading-ui></app-loading-ui>
             } @else if(this.categoryState.errorGetCategory() && isEditMode) {

@@ -147,7 +147,7 @@
                 [transaction]="transaction"
                 [currency]="'PEN'"
                 (detailView)="viewDetail($event)"
-                (editView)="editTransaction($event)"
+                (editView)="openTransactionEditionModal($event)"
                 (deleteView)="deleteTransaction($event)">
             </app-transaction-card>
             }
@@ -182,3 +182,10 @@
     </div>
   </div>
 </div>
+
+@if (showTransactionEditionModal()) {
+    <app-transaction-edition-modal
+        [resourceCodeSelected]="resourceCodeTransactionSelected()"
+        (close)="closeTransactionEditionModal()"
+    ></app-transaction-edition-modal>
+}

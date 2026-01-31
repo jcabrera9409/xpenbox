@@ -16,11 +16,12 @@ import { PageableResponseDTO } from '../../feature/common/model/pageable.respons
 import { CategoryService } from '../../feature/category/service/category.service';
 import { ActivatedRoute } from '@angular/router';
 import { DateService } from '../../shared/service/date.service';
+import { TransactionEditionModal } from '../../modal/transaction/transaction-edition-modal/transaction-edition.modal';
 
 @Component({
   selector: 'app-transaction-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent],
+  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent, TransactionEditionModal],
   templateUrl: './transaction.page.html',
   styleUrl: './transaction.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -50,6 +51,9 @@ export class TransactionPage {
   totalElements = signal<number>(0);
   totalPages = signal<number>(0);
   accumulatedTransactions = signal<TransactionResponseDTO[]>([]);
+
+  showTransactionEditionModal = signal(false);
+  resourceCodeTransactionSelected = signal<string | null>(null);
 
   constructor(
     private transactionService: TransactionService,
@@ -195,9 +199,13 @@ export class TransactionPage {
     // Aquí iría la lógica para mostrar el detalle
   }
 
-  editTransaction(resourceCode: string): void {
-    console.log('Editar transacción:', resourceCode);
-    // Aquí iría la lógica para editar
+  openTransactionEditionModal(resourceCode: string): void {
+    this.resourceCodeTransactionSelected.set(resourceCode);
+    this.showTransactionEditionModal.set(true);
+  }
+
+  closeTransactionEditionModal(): void {
+    this.showTransactionEditionModal.set(false);
   }
 
   deleteTransaction(resourceCode: string): void {

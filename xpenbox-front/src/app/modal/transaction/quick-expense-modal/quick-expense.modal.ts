@@ -162,10 +162,11 @@ export class QuickExpenseModal implements OnInit {
     const categorySelected = this.selectedCategory();
     const dateTimestamp = this.dateService.getUtcDatetime().getTime();
 
+    this.transactionState.isLoadingSendingTransaction.set(true);
+    
     const transactionRequest = selectedAccount?.type === AccountCreditType.ACCOUNT
       ? TransactionRequestDTO.generateExpenseAccountTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode, dateTimestamp)
       : TransactionRequestDTO.generateExpenseCreditCardTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode, dateTimestamp);
-    this.transactionState.isLoadingSendingTransaction.set(true);
     
     this.transactionService.create(transactionRequest).subscribe({
       next: (response: ApiResponseDTO<TransactionResponseDTO>) => {

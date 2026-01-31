@@ -12,6 +12,12 @@ export class DateService {
   toTimestamp(date: Date): number {
     return date.getTime(); 
   }
+
+  toLocalDate(timestampUtc: number): Date {
+    const date = new Date(timestampUtc);
+    const timezoneOffset = date.getTimezoneOffset();
+    return new Date(date.getTime() - timezoneOffset * 60000);
+  }
   
   toUtcDate(date: Date): Date {
     const timezoneOffset = date.getTimezoneOffset();
@@ -32,10 +38,16 @@ export class DateService {
     const [year, month, day] = datetimeString.split('-').map(num => parseInt(num, 10));
     return new Date(year, month - 1, day);
   }
+  parseDatetimeIsoString(datetimeString: string): Date {
+    const [datePart, timePart] = datetimeString.split('T');
+    const [year, month, day] = datePart.split('-').map(num => parseInt(num, 10));
+    const [hours, minutes] = timePart.split(':').map(num => parseInt(num, 10));
+    return new Date(year, month - 1, day, hours, minutes);
+  }
 
   format(
     timestampUtc: number,
-    format: 'short' | 'long' | 'date' | 'datetime' | 'ISO' = 'datetime'
+    format: 'short' | 'long' | 'date' | 'datetime' | 'ISO' | 'ISO-LOCAL' = 'datetime'
   ): string {
     const date = this.toDate(timestampUtc);
 
@@ -67,6 +79,8 @@ export class DateService {
         break;
       case 'ISO':
         return date.toISOString();
+      case 'ISO-LOCAL':
+        return date.toISOString().slice(0, 16);
     }
 
     return date.toLocaleDateString('es-PE', options);

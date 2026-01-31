@@ -14,6 +14,7 @@ import { CategoryService } from '../../../feature/category/service/category.serv
 export class CategoriesCarouselComponent {
 
   title = input<string>('Categoría');
+  categoryResourceCodeSelected = input<string | null>(null);
   outputCategory = output<CategoryResponseDTO>();
 
   categoryState = categoryState;
@@ -34,6 +35,13 @@ export class CategoriesCarouselComponent {
       if (categories.length > 0 && !this.selectedCategory()) {
         const finalOrder = this.filterAndSortCategories([...categories]);
         this.categoriesList.set(finalOrder);
+        if (this.categoryResourceCodeSelected()) {
+          const selected = finalOrder.find(c => c.resourceCode === this.categoryResourceCodeSelected());
+          if (selected) {
+            this.selectCategory(selected);
+            return;
+          }
+        }
         this.selectCategory(finalOrder[0] || null);
       }
     });
