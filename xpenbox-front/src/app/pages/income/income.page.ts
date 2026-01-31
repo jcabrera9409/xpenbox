@@ -39,20 +39,24 @@ export class IncomePage {
   tempStartDate = signal<string>('');
   tempEndDate = signal<string>('');
   
+  // Applied date filters (only updated on filter button click)
+  appliedStartDate = signal<string>('');
+  appliedEndDate = signal<string>('');
+  
   // Date range signals
   startDate = this.incomeState.startDate;
   endDate = this.incomeState.endDate;
   
-  // Formatted dates for display from input values
+  // Formatted dates for display from applied values
   formattedStartDateDisplay = computed(() => {
-    const dateStr = this.tempStartDate();
+    const dateStr = this.appliedStartDate();
     if (!dateStr) return '';
     const date = this.dateService.parseDateIsoString(dateStr);
     return this.dateService.format(date.getTime(), 'short');
   });
   
   formattedEndDateDisplay = computed(() => {
-    const dateStr = this.tempEndDate();
+    const dateStr = this.appliedEndDate();
     if (!dateStr) return '';
     const date = this.dateService.parseDateIsoString(dateStr);
     return this.dateService.format(date.getTime(), 'short');
@@ -88,8 +92,13 @@ export class IncomePage {
     this.minDate = this.dateService.format(fiveYearsAgo.getTime(), 'ISO').split('T')[0];
     this.maxDate = this.dateService.format(this.getTodayDate().getTime(), 'ISO').split('T')[0];
 
-    this.tempStartDate.set(this.dateService.format((this.startDate() || this.getFirstDayOfPreviousMonth()).getTime(), 'ISO').split('T')[0]);
-    this.tempEndDate.set(this.dateService.format((this.endDate() || this.getTodayDate()).getTime(), 'ISO').split('T')[0]);
+    const startDateStr = this.dateService.format((this.startDate() || this.getFirstDayOfPreviousMonth()).getTime(), 'ISO').split('T')[0];
+    const endDateStr = this.dateService.format((this.endDate() || this.getTodayDate()).getTime(), 'ISO').split('T')[0];
+    
+    this.tempStartDate.set(startDateStr);
+    this.tempEndDate.set(endDateStr);
+    this.appliedStartDate.set(startDateStr);
+    this.appliedEndDate.set(endDateStr);
 
     if (!this.startDate() || !this.endDate()) {
       this.startDate.set(this.getFirstDayOfPreviousMonth());
@@ -116,6 +125,8 @@ export class IncomePage {
 
     this.startDate.set(parsedStart);
     this.endDate.set(parsedEnd);
+    this.appliedStartDate.set(this.tempStartDate());
+    this.appliedEndDate.set(this.tempEndDate());
     this.filterExpanded.set(false); 
 
     this.reloadIncomes();
