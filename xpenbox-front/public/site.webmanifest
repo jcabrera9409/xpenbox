@@ -1,6 +1,6 @@
 {
   "name": "XpenBox",
-  "short_name": "XB",
+  "short_name": "XpenBox",
   "description": "XpenBox is an open-source platform for managing income and expenses efficiently.",
   "start_url": "/",
   "display": "standalone",
