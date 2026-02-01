@@ -63,7 +63,7 @@
                         <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">account_balance</span>
                         <input 
                             type="text"
-                            [value]="accountData()?.name + ' - PEN ' + (accountData()?.balance | number:'1.2-2')"
+                            [value]="accountData()?.name + ' - ' + userLogged()?.currency + ' ' + (accountData()?.balance | number:'1.2-2')"
                             readonly
                             class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
                     </div>

@@ -37,6 +37,8 @@ export class LoginPage {
 
   protected onSubmit(): void {
     if (this.loginForm.valid) {
+      this.isSubmitting.set(true);
+
       const credentials: LoginRequestDTO = new LoginRequestDTO(
         this.loginForm.value.email,
         this.loginForm.value.password,

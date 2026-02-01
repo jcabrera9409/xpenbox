@@ -7,9 +7,9 @@
             <h3 class="font-semibold xpb-text-primary text-sm sm:text-base truncate">{{creditCardName()}}</h3>
             </div>
             <div class="flex items-center gap-3 flex-wrap text-xs xpb-text-secondary">
-            <span>Límite: <strong class="xpb-text-primary">{{creditCardLimit() | currency:'PEN ':'symbol':'1.2-2'}}</strong></span>
+            <span>Límite: <strong class="xpb-text-primary">{{creditCardLimit() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'}}</strong></span>
             <span>•</span>
-            <span>Balance: <strong class="xpb-text-expense">{{creditCardBalance() | currency:'PEN ':'symbol':'1.2-2'}}</strong></span>
+            <span>Balance: <strong class="xpb-text-expense">{{creditCardBalance() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'}}</strong></span>
             </div>
         </div>
         <span class="px-2 py-1 text-xs rounded-full xpb-bg-income text-white font-medium flex-shrink-0">Activa</span>
@@ -18,7 +18,7 @@
         <!-- Progress Bar -->
         <div class="mb-3">
             <div class="flex justify-between text-xs xpb-text-secondary mb-1">
-                <span>Disponible: {{(creditCardLimit() || 0) - (creditCardBalance() || 0) | currency:'PEN ':'symbol':'1.2-2'}}</span>
+                <span>Disponible: {{(creditCardLimit() || 0) - (creditCardBalance() || 0) | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'}}</span>
                 <span>{{creditCardBalancePercentage | number:'1.0-0'}} %</span>
             </div>
             <div class="w-full bg-[var(--xpb-bg-sidebar)] rounded-full h-2">

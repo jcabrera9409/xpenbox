@@ -11,7 +11,7 @@
     <app-summary-card
       [isLoading]="accountState.isLoadingGetList()"
       [titleCard]="'Liquidez Total'"
-      [contentCard]="accountState.totalLiquidBalance() | currency:'PEN ':'symbol':'1.2-2'"
+      [contentCard]="accountState.totalLiquidBalance() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'"
       [subtitleCard]="
         accountState.accounts().length > 1 ? accountState.accounts().length + ' cuentas activas' :
         accountState.accounts().length == 1 ? accountState.accounts().length + ' cuenta activa' :
@@ -26,7 +26,7 @@
       [isLoading]="this.creditCardState.isLoadingGetList()"
       [titleCard]="'Balance Total Tarjetas'"
       [contentCard]="
-        '- ' + (this.creditCardState.totalCreditBalance() | currency:'PEN ':'symbol':'1.2-2')
+        '- ' + (this.creditCardState.totalCreditBalance() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2')
       "
       [subtitleCard]="
         this.creditCardState.creditCards().length > 1 ? this.creditCardState.creditCards().length + ' tarjetas activas' :

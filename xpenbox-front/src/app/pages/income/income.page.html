@@ -84,7 +84,7 @@
     <app-summary-card
       [isLoading]="this.incomeState.isLoadingGetList()"
       [titleCard]="'Total Ingresos'"
-      [contentCard]="totalIncome() | currency:'PEN ':'symbol':'1.2-2'"
+      [contentCard]="totalIncome() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'"
       [subtitleCard]="this.incomeState.incomes().length + ' ingreso(s)'"
       [iconCard]="'trending_up'"
       [contentClassCard]="'xpb-text-income'"
@@ -94,7 +94,7 @@
     <app-summary-card
       [isLoading]="this.incomeState.isLoadingGetList()"
       [titleCard]="'Asignado'"
-      [contentCard]="totalAllocated() | currency:'PEN ':'symbol':'1.2-2'"
+      [contentCard]="totalAllocated() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'"
       [subtitleCard]="'A cuentas'"
       [iconCard]="'account_balance_wallet'"
       [contentClassCard]="'text-[var(--xpb-transfer)]'"
@@ -104,7 +104,7 @@
     <app-summary-card
       [isLoading]="this.incomeState.isLoadingGetList()"
       [titleCard]="'Pendiente'"
-      [contentCard]="totalPending() | currency:'PEN ':'symbol':'1.2-2'"
+      [contentCard]="totalPending() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'"
       [subtitleCard]="'Sin asignar'"
       [iconCard]="'hourglass_empty'"
       [contentClassCard]="'xpb-text-secondary'"
@@ -179,13 +179,13 @@
                       <span class="text-sm xpb-text-secondary">{{ formatDate(income.incomeDateTimestamp) }}</span>
                     </td>
                     <td class="px-4 py-3 text-center">
-                      <span class="font-semibold xpb-text-income">{{ income.totalAmount | currency:'PEN ':'symbol':'1.2-2' }}</span>
+                      <span class="font-semibold xpb-text-income">{{ income.totalAmount | currency:userLogged()?.currency + ' ':'symbol':'1.2-2' }}</span>
                     </td>
                     <td class="px-4 py-3 text-center">
-                      <span class="font-medium text-[var(--xpb-transfer)]">{{ income.allocatedAmount | currency:'PEN ':'symbol':'1.2-2' }}</span>
+                      <span class="font-medium text-[var(--xpb-transfer)]">{{ income.allocatedAmount | currency:userLogged()?.currency + ' ':'symbol':'1.2-2' }}</span>
                     </td>
                     <td class="px-4 py-3 text-center">
-                      <span class="font-medium xpb-text-secondary">{{ (income.totalAmount - income.allocatedAmount) | currency:'PEN ':'symbol':'1.2-2' }}</span>
+                      <span class="font-medium xpb-text-secondary">{{ (income.totalAmount - income.allocatedAmount) | currency:userLogged()?.currency + ' ':'symbol':'1.2-2' }}</span>
                     </td>
                     <td class="px-4 py-3 text-center">
                       <div class="flex items-center justify-center gap-1">
@@ -250,15 +250,15 @@
                 <div class="grid grid-cols-3 gap-2 text-center mb-4">
                   <div>
                     <p class="text-xs xpb-text-secondary mb-1">Total</p>
-                    <p class="text-sm font-semibold xpb-text-income">{{ income.totalAmount | currency:'PEN ':'symbol':'1.2-2' }}</p>
+                    <p class="text-sm font-semibold xpb-text-income">{{ income.totalAmount | currency:userLogged()?.currency + ' ':'symbol':'1.2-2' }}</p>
                   </div>
                   <div>
                     <p class="text-xs xpb-text-secondary mb-1">Asignado</p>
-                    <p class="text-sm font-semibold text-[var(--xpb-transfer)]">{{ income.allocatedAmount | currency:'PEN ':'symbol':'1.2-2' }}</p>
+                    <p class="text-sm font-semibold text-[var(--xpb-transfer)]">{{ income.allocatedAmount | currency:userLogged()?.currency + ' ':'symbol':'1.2-2' }}</p>
                   </div>
                   <div>
                     <p class="text-xs xpb-text-secondary mb-1">Pendiente</p>
-                    <p class="text-sm font-semibold xpb-text-secondary">{{ (income.totalAmount - income.allocatedAmount) | currency:'PEN ':'symbol':'1.2-2' }}</p>
+                    <p class="text-sm font-semibold xpb-text-secondary">{{ (income.totalAmount - income.allocatedAmount) | currency:userLogged()?.currency + ' ':'symbol':'1.2-2' }}</p>
                   </div>
                 </div>
                 

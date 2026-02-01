@@ -16,6 +16,7 @@ import { TransactionRequestDTO } from '../../../feature/transaction/model/transa
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
 import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 import { DateService } from '../../../shared/service/date.service';
+import { userState } from '../../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-transfer-modal',
@@ -24,6 +25,8 @@ import { DateService } from '../../../shared/service/date.service';
   styleUrl: './transfer.modal.css',
 })
 export class TransferModal implements OnInit {
+
+  userLogged = userState.userLogged;
 
   accountResourceCode = input<string | null>();
   close = output<void>();

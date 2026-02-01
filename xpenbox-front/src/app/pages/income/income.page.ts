@@ -11,6 +11,7 @@ import { RetryComponent } from '../../shared/components/retry-component/retry.co
 import { CreateFirstComponent } from '../../shared/components/create-first-component/create-first.component';
 import { Router } from '@angular/router';
 import { DateService } from '../../shared/service/date.service';
+import { userState } from '../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-income-page',
@@ -19,6 +20,9 @@ import { DateService } from '../../shared/service/date.service';
   styleUrl: './income.page.css',
 })
 export class IncomePage {
+
+  userLogged = userState.userLogged;
+
   incomeState = incomeState;
   
   // Income assignment modal state

@@ -63,7 +63,7 @@
                         <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">payment</span>
                         <input 
                             type="text"
-                            [value]="creditCardData()?.name + ' - PEN ' + (creditCardData()?.currentBalance | number:'1.2-2')"
+                            [value]="creditCardData()?.name + ' - ' + userLogged()?.currency + ' ' + (creditCardData()?.currentBalance | number:'1.2-2')"
                             readonly
                             class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
                     </div>

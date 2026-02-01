@@ -25,8 +25,12 @@
         class="w-10 h-10 rounded-full object-cover border-2 xpb-border"
       />
       <div class="flex flex-col">
-        <span class="text-xs xpb-text-secondary">Hola</span>
-        <span class="font-medium xpb-text-primary text-sm">{{ this.userName }}</span>
+        @if (this.userState.isLoading()) {
+          <span class="text-xs xpb-text-secondary">Cargando...</span>
+        } @else {
+          <span class="text-xs xpb-text-secondary">Hola</span>
+          <span class="font-medium xpb-text-primary text-sm">{{ this.userName }}</span>
+        }
       </div>
     </div>
 
@@ -43,8 +47,12 @@
           class="w-10 h-10 rounded-full object-cover border-2 xpb-border"
         />
         <div class="flex flex-col">
-          <span class="text-xs xpb-text-secondary">Hola</span>
-          <span class="font-medium xpb-text-primary text-sm">{{ this.userName }}</span>
+          @if (this.userState.isLoading()) {
+            <span class="text-xs xpb-text-secondary">Cargando...</span>
+          } @else {
+            <span class="text-xs xpb-text-secondary">Hola</span>
+            <span class="font-medium xpb-text-primary text-sm">{{ this.userName }}</span>
+          }
         </div>
       </div>
 

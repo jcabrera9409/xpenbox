@@ -20,6 +20,7 @@ import { creditCardState } from '../../../feature/creditcard/service/creditcard.
 import { DateService } from '../../../shared/service/date.service';
 import { CategoriesCarouselComponent } from '../../../shared/components/categories-carousel-component/categories-carousel.component';
 import { CategoryResponseDTO } from '../../../feature/category/model/category.response.dto';
+import { userState } from '../../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-creditcard-payment-modal',
@@ -28,6 +29,8 @@ import { CategoryResponseDTO } from '../../../feature/category/model/category.re
   styleUrl: './creditcard-payment.modal.css',
 })
 export class CreditcardPaymentModal {
+
+  userLogged = userState.userLogged;
 
   creditCardResourceCode = input<string | null>();
   close = output<void>();

@@ -50,32 +50,32 @@
                             <span class="text-sm font-medium xpb-text-primary">
                                 @switch (transactionData()!.transactionType) {
                                     @case ('INCOME') {
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 rounded-lg">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-income)]/10 text-[var(--xpb-income)] dark:text-[var(--xpb-income)] rounded-lg">
                                             <span class="material-icons text-sm">trending_up</span>
                                             Ingreso
                                         </span>
                                     }
                                     @case ('EXPENSE') {
                                         @if (transactionData()!.creditCard) {
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-lg">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-expense)]/10 text-[var(--xpb-expense)] dark:text-[var(--xpb-expense)] rounded-lg">
                                                 <span class="material-icons text-sm">credit_card</span>
                                                 Gasto (Tarjeta)
                                             </span>
                                         } @else {
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-expense)]/10 text-[var(--xpb-expense)] dark:text-[var(--xpb-expense)] rounded-lg">
                                                 <span class="material-icons text-sm">trending_down</span>
                                                 Gasto (Cuenta)
                                             </span>
                                         }
                                     }
                                     @case ('TRANSFER') {
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-transfer)]/10 text-[var(--xpb-transfer)] dark:text-[var(--xpb-transfer)] rounded-lg">
                                             <span class="material-icons text-sm">sync_alt</span>
                                             Transferencia
                                         </span>
                                     }
                                     @case ('CREDIT_PAYMENT') {
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-lg">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-credit)]/10 text-[var(--xpb-credit)] dark:text-[var(--xpb-credit)] rounded-lg">
                                             <span class="material-icons text-sm">payment</span>
                                             Pago Tarjeta
                                         </span>
@@ -91,7 +91,7 @@
                                 Monto
                             </span>
                             <span class="text-lg font-bold xpb-text-primary">
-                                PEN {{ transactionData()!.amount | number:'1.2-2' }}
+                                {{userLogged()?.currency}} {{ transactionData()!.amount | number:'1.2-2' }}
                             </span>
                         </div>
 

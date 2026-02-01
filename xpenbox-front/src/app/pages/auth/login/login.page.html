@@ -111,12 +111,11 @@
         <button
           type="submit"
           [disabled]="isSubmitting() || loginForm.invalid"
-          class="w-full xpb-btn-primary font-medium py-3 rounded-lg flex items-center justify-center gap-2"
+          class="w-full xpb-btn-primary font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           @if (!isSubmitting()) {
             <span>Iniciar Sesión</span>
-          }
-          @if (isSubmitting()) {
+          } @else {
             <span class="flex items-center gap-2">
               <span class="material-icons animate-spin">refresh</span>
               Iniciando...

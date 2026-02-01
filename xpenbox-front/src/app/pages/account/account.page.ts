@@ -15,6 +15,7 @@ import { RetryComponent } from '../../shared/components/retry-component/retry.co
 import { CreateFirstComponent } from '../../shared/components/create-first-component/create-first.component';
 import { TransferModal } from '../../modal/account/transfer-modal/transfer.modal';
 import { CreditcardPaymentModal } from '../../modal/account/creditcard-payment-modal/creditcard-payment.modal';
+import { userState } from '../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-account-page',
@@ -23,6 +24,8 @@ import { CreditcardPaymentModal } from '../../modal/account/creditcard-payment-m
   styleUrl: './account.page.css',
 })
 export class AccountPage {
+
+  userLogged = userState.userLogged;
 
   accountState = accountState;
   creditCardState = creditCardState;

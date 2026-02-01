@@ -1,6 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { userState } from '../../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-account-card',
@@ -13,6 +14,8 @@ import { Router } from '@angular/router';
   }
 })
 export class AccountCard {
+
+  userLogged = userState.userLogged;
 
   accountCardResourceCode = input<string>();
   accountCardName = input<string>();

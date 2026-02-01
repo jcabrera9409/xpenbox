@@ -1,6 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { userState } from '../../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-credit-card',
@@ -14,6 +15,8 @@ import { Router } from '@angular/router';
 })
 export class CreditCard {
   
+  userLogged = userState.userLogged;
+
   creditCardResourceCode = input<string>();
   creditCardName = input<string>();
   creditCardLimit = input<number>();

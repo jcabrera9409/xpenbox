@@ -14,6 +14,7 @@ import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { CategoryResponseDTO } from '../../../feature/category/model/category.response.dto';
 import { CategoriesCarouselComponent } from '../../../shared/components/categories-carousel-component/categories-carousel.component';
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
+import { userState } from '../../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-transaction-edition-modal',
@@ -23,6 +24,8 @@ import { TransactionRequestDTO } from '../../../feature/transaction/model/transa
 })
 export class TransactionEditionModal implements OnInit {
   
+  userLogged = userState.userLogged;
+
   resourceCodeSelected = input<string | null>();
   close = output<void>();
 
