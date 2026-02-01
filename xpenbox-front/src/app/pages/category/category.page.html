@@ -59,7 +59,8 @@
               [categoryCardState]="category.state"
               [categoryCardResourceCode]="category.resourceCode"
               [categoryTotalUses]="category.usageCount"
-              (categoryCardEdit)="openCategoryEditionModal($event)">
+              (categoryCardEdit)="openCategoryEditionModal($event)"
+              (categoryCardChangeState)="openConfirmNewStateModal($event)">
             </app-category-card>
           }
         </div>
@@ -73,4 +74,20 @@
         (close)="closeCategoryEditionModal()" 
         [resourceCodeSelected]="resourceCodeCategorySelected()">
     </app-category-edition-modal>
+}
+
+@if (showConfirmModal()) {
+  <app-confirm-modal
+    [resourceCode]="resourceCodeCategorySelected()"
+    [isLoading]="categoryState.isLoadingGetCategory()"
+    [isErrorLoading]="categoryState.errorGetCategory()"
+    [isLoadingConfirm]="categoryState.isLoadingSendingCategory()"
+    [isErrorSending]="categoryState.errorSendingCategory()"
+    [title]="titleConfirmModal()!"
+    [message]="messageConfirmModal()!"
+    [confirmText]="confirmTextConfirmModal()!"
+    [confirmIcon]="'warning'"
+    (cancelled)="closeConfirmNewStateModal()!"
+    (confirmed)="confirmNewStateCategory($event)"
+  ></app-confirm-modal>
 }

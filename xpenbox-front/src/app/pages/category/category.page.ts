@@ -8,10 +8,13 @@ import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
 import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../shared/components/retry-component/retry.component';
 import { CreateFirstComponent } from '../../shared/components/create-first-component/create-first.component';
+import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
+import { CategoryResponseDTO } from '../../feature/category/model/category.response.dto';
+import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
 
 @Component({
   selector: 'app-category-page',
-  imports: [CommonModule, CategoryCard, CategoryEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent],
+  imports: [CommonModule, CategoryCard, CategoryEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent, ConfirmModal],
   templateUrl: './category.page.html',
   styleUrl: './category.page.css',
 })
@@ -22,6 +25,13 @@ export class CategoryPage {
   showCategoryEditionModal = signal(false);
   resourceCodeCategorySelected = signal<string | null>(null);
 
+  showConfirmModal = signal(false);
+  titleConfirmModal = signal<string | null>(null);
+  messageConfirmModal = signal<string | null>(null);
+  confirmTextConfirmModal = signal<string | null>(null);
+
+  categoryDataSelected = signal<CategoryResponseDTO | null>(null);
+  
   // Computed signal for active categories count
   activeCategoriesCount = computed(() => 
     this.categoryState.categories().filter(c => c.state).length
@@ -43,11 +53,69 @@ export class CategoryPage {
     this.showCategoryEditionModal.set(true);
   }
 
+  openConfirmNewStateModal(resourceCodeCategorySelected: string | null = null) {
+    this.resourceCodeCategorySelected.set(resourceCodeCategorySelected);
+    this.loadCategoryData();
+    this.showConfirmModal.set(true);
+  }
+
+  confirmNewStateCategory(resourceCode: string) { 
+    console.log('Confirmed state change for category with resource code:', resourceCode);
+  }
+
+  closeConfirmNewStateModal() {
+    this.showConfirmModal.set(false);
+  }
+
   closeCategoryEditionModal() {
     this.showCategoryEditionModal.set(false);
   }
 
   reloadCategories() {
     this.categoryService.refresh();
+  }
+
+  private updateNewStateDataModal() {
+    if (!this.categoryDataSelected()) {
+      this.titleConfirmModal.set(null);
+      this.messageConfirmModal.set(null);
+      this.confirmTextConfirmModal.set(null);
+      return;
+    }
+
+    const isActive = this.categoryDataSelected()!.state;
+    
+    if (isActive) {
+      this.titleConfirmModal.set('Inhabilitar Categoría');
+      this.messageConfirmModal.set(`¿Estás seguro de que deseas inhabilitar la categoría "${this.categoryDataSelected()!.name}"?`);
+      this.confirmTextConfirmModal.set('Inhabilitar');
+    } else {
+      this.titleConfirmModal.set('Habilitar Categoría');
+      this.messageConfirmModal.set(`¿Estás seguro de que deseas habilitar la categoría "${this.categoryDataSelected()!.name}"?`);
+      this.confirmTextConfirmModal.set('Habilitar');
+    }
+  }
+
+  private loadCategoryData() {
+    if (!this.resourceCodeCategorySelected()) return;
+
+    this.categoryState.isLoadingGetCategory.set(true);
+
+    this.categoryService.getByResourceCode(this.resourceCodeCategorySelected()!).subscribe({
+      next: (data: ApiResponseDTO<CategoryResponseDTO>) => {
+        this.categoryDataSelected.set(data.data);
+        this.updateNewStateDataModal();
+        this.categoryState.isLoadingGetCategory.set(false);
+        console.log('Category data loaded:', data.data);
+      },
+      error: (error) => {
+        if (error.status === 500 || error.status === 0) {
+          this.categoryState.errorGetCategory.set('Ocurrió un error al validar la categoría. Por favor, intenta nuevamente.');
+        } else {
+          this.categoryState.errorGetCategory.set(error.error.message || 'Ocurrió un error al validar la categoría. Por favor, intenta nuevamente.');
+        }
+        this.categoryState.isLoadingGetCategory.set(false);
+      }
+    });
   }
 }

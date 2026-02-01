@@ -1,0 +1,65 @@
+<!-- Overlay with backdrop -->
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
+    <!-- Modal container -->
+     <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto overflow-hidden">
+        <!-- Header with icon, title, and close button -->
+        <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
+            <div class="flex items-start justify-between">
+                <div class="flex items-start gap-4 flex-1">
+                    <!-- Title and subtitle -->
+                    <div class="flex-1">
+                        <h2 class="text-xl font-semibold xpb-text-primary">{{ title() }}</h2>
+                        <p class="text-sm xpb-text-secondary mt-1">Esta acción requiere tu confirmación</p>
+                    </div>
+                </div>
+                <!-- Close button -->
+                <button
+                    type="button"
+                    (click)="onCancel()"
+                    class="xpb-text-secondary hover:xpb-text-primary transition-colors rounded-lg p-1 hover:xpb-bg-main"
+                    aria-label="Cerrar modal">
+                <span class="material-icons text-2xl">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Body content -->
+        <div class="p-4 overflow-y-auto flex-1">
+            @if (isLoading()) {
+                <app-loading-ui></app-loading-ui>
+            } @else if(isErrorLoading()) {
+                <app-retry-component
+                    [message]="isErrorLoading() ? 'Ocurrió un error al procesar la solicitud' : ''">
+                </app-retry-component>
+            } @else {
+                <!-- Message -->
+                <div class="xpb-bg-main w-full rounded-lg p-4 mb-4">
+                    <div class="flex items-start gap-3">
+                        <p class="xpb-text-primary text-sm leading-relaxed flex-1">{{ message() }}</p>
+                    </div>
+                </div>
+
+                <!-- Mensaje de error al enviar -->
+                @if (isErrorSending()) {
+                    <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                        <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                            {{ isErrorSending() }}
+                        </div>
+                    </div>
+                }
+
+                <!-- Action buttons -->
+                <app-modal-buttons-ui
+                    [isLoading]="isLoadingConfirm()"
+                    [isValidForm]="true"
+                    [loadingText]="loadingText()"
+                    [confirmText]="confirmText()"
+                    [confirmIcon]="confirmIcon()"
+                    (cancel)="onCancel()"
+                    (confirm)="onConfirm()">
+                </app-modal-buttons-ui>
+            }
+        </div>
+    </div>
+</div>

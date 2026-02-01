@@ -20,12 +20,13 @@ export class CategoryCard {
   categoryTotalUses = input<number>();
 
   categoryCardEdit = output<string>();
+  categoryCardChangeState = output<string>();
 
   onEditCategory() {
     this.categoryCardEdit.emit(this.categoryCardResourceCode() || '');
   }
 
   onDisableCategory() {
-    console.log('Disable category clicked for', this.categoryCardResourceCode());
+    this.categoryCardChangeState.emit(this.categoryCardResourceCode() || '');
   }
 }
