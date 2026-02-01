@@ -86,6 +86,12 @@
                 }
 
                 @if (transaction()?.transactionType === transactionType.TRANSFER) {
+                    @if (transaction()?.category) {
+                        <div class="flex items-center gap-1">
+                            <span class="material-icons text-xs">label</span>
+                            <span>{{ transaction()?.category?.name }}</span>
+                        </div>
+                    }
                     @if (transaction()?.account && transaction()?.destinationAccount) {
                         <div class="flex items-center gap-1">
                             <span>{{ transaction()?.account?.name }} → {{ transaction()?.destinationAccount?.name }}</span>

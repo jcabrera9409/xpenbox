@@ -139,7 +139,8 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
                     throw new ResourceNotFoundException("Category not found with resource code: " + entityUpdateDTO.categoryResourceCode() + " for user email: " + userEmail);
                 });
             
-            if (!entityUpdateDTO.categoryResourceCode().equals(category.getResourceCode())) {
+            if (!category.getResourceCode().equals(transaction.getResourceCode()) && transaction.getCategory() != null) {
+                LOG.infof("Updating category for %s with resource code: %s to category resource code: %s", getEntityName(), resourceCode, entityUpdateDTO.categoryResourceCode());
                 category.setLastUsedDate(transaction.getTransactionDate());
                 category.setUsageCount(category.getUsageCount() + 1);
                 categoryRepository.persist(category);
@@ -149,8 +150,17 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
 
                 transaction.setCategory(category);
                 updated = true;
+            } else if (transaction.getCategory() == null) {
+                LOG.infof("Assigning new category to %s with resource code: %s", getEntityName(), resourceCode);
+                category.setLastUsedDate(transaction.getTransactionDate());
+                category.setUsageCount(category.getUsageCount() + 1);
+                categoryRepository.persist(category);
+
+                transaction.setCategory(category);
+                updated = true;
             }
         } else if (entityUpdateDTO.categoryResourceCode() == null && transaction.getCategory() != null) {
+            LOG.infof("Removing category from %s with resource code: %s", getEntityName(), resourceCode);
             transaction.getCategory().setUsageCount(transaction.getCategory().getUsageCount() - 1);
             categoryRepository.persist(transaction.getCategory());
 
