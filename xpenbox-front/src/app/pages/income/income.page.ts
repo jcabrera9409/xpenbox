@@ -149,11 +149,6 @@ export class IncomePage {
     this.showIncomeEditionModal.set(false);
   }
   
-  openEditIncomeModal(resourceCode: string): void {
-    // TODO: Implementar modal de edición
-    console.log('Editar ingreso:', resourceCode);
-  }
-  
   deleteIncome(resourceCode: string): void {
     // TODO: Implementar eliminación
     console.log('Eliminar ingreso:', resourceCode);

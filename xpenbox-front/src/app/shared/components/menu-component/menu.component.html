@@ -137,7 +137,7 @@
       [style.animation-delay]="isSpeedDialClosing() ? '150ms' : '0ms'"
     >
       <div class="w-10 h-10 rounded-full bg-[var(--xpb-expense)] flex items-center justify-center">
-        <span class="material-icons text-white text-xl">shopping_cart</span>
+        <span class="material-icons text-white text-xl">receipt_long</span>
       </div>
       <span class="font-medium xpb-text-primary whitespace-nowrap">Registrar Gasto</span>
     </button>
@@ -158,6 +158,7 @@
 
     <!-- Transferencia -->
     <button
+      style="display: none;"
       (click)="onQuickTransfer()"
       class="flex items-center gap-3 xpb-bg-card rounded-full shadow-xl pl-4 pr-5 py-3 hover:scale-105 transition-transform"
       [class.animate-speed-dial-in-3]="!isSpeedDialClosing()"
@@ -172,14 +173,15 @@
 
     <!-- Pago de Tarjeta -->
     <button
+      style="display: none;"
       (click)="onQuickCreditCardPayment()"
       class="flex items-center gap-3 xpb-bg-card rounded-full shadow-xl pl-4 pr-5 py-3 hover:scale-105 transition-transform"
       [class.animate-speed-dial-in-4]="!isSpeedDialClosing()"
       [class.animate-speed-dial-out-4]="isSpeedDialClosing()"
       [style.animation-delay]="isSpeedDialClosing() ? '0ms' : '150ms'"
     >
-      <div class="w-10 h-10 rounded-full bg-[var(--xpb-primary)] flex items-center justify-center">
-        <span class="material-icons text-white text-xl">credit_card</span>
+      <div class="w-10 h-10 rounded-full bg-[var(--xpb-credit)] flex items-center justify-center">
+        <span class="material-icons text-white text-xl">payment</span>
       </div>
       <span class="font-medium xpb-text-primary whitespace-nowrap">Pago de Tarjeta</span>
     </button>

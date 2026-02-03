@@ -16,6 +16,7 @@ import { AccountsCarouselComponent } from '../../../shared/components/accounts-c
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { DateService } from '../../../shared/service/date.service';
+import { transactionState } from '../../../feature/transaction/service/transaction.state';
 
 @Component({
   selector: 'app-income-edition-modal',
@@ -31,6 +32,7 @@ export class IncomeEditionModal implements OnInit {
 
   accountState = accountState;
   incomeState = incomeState;
+  transactionState = transactionState;
   incomeData = signal<IncomeResponseDTO | null>(null);
 
   selectedAccount = signal<AccountCreditDTO | null>(null);
@@ -102,10 +104,17 @@ export class IncomeEditionModal implements OnInit {
     observable.subscribe({
       next: (response: ApiResponseDTO<IncomeResponseDTO>) => {
         this.incomeState.isLoadingSendingIncome.set(false);
-
         if (response.success && response.data) {
-          this.notificationService.success(`Ingreso ${this.isEditMode ? 'actualizado' : 'creado'} con éxito.`);
           this.incomeService.refresh();
+          
+          if (incomeRequest.accountResourceCode) {
+            this.transactionState.transactionCreatedResourceCode.set(response.data.resourceCode);
+            this.transactionState.successSendingTransaction.set(true);
+            this.accountService.refresh();
+          } else {
+            this.notificationService.success(this.isEditMode ? 'Ingreso actualizado correctamente' : 'Ingreso creado correctamente');
+          }
+          
           this.close.emit();
         }
       }, error: (error) => {

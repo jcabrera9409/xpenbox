@@ -7,10 +7,11 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../feature/user/service/user.service';
 import { userState } from '../../feature/user/service/user.state';
 import { SuccessTransactionComponent } from '../../shared/components/success-transaction-component/success-transaction.component';
+import { IncomeEditionModal } from '../../modal/income/income-edition-modal/income-edition.modal';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule, SuccessTransactionComponent],
+  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule, SuccessTransactionComponent, IncomeEditionModal],
   templateUrl: './landing.page.html',
   styleUrl: './landing.page.css',
 })
@@ -42,8 +43,6 @@ export class LandingPage {
 
   openQuickIncomeModal() {
     this.showQuickIncomeModal.set(true);
-    // TODO: Implementar modal de ingreso rápido
-    console.log('Abrir modal de ingreso rápido');
   }
 
   closeQuickIncomeModal() {
@@ -52,8 +51,6 @@ export class LandingPage {
 
   openQuickTransferModal() {
     this.showQuickTransferModal.set(true);
-    // TODO: Implementar modal de transferencia rápida
-    console.log('Abrir modal de transferencia rápida');
   }
 
   closeQuickTransferModal() {
@@ -62,8 +59,6 @@ export class LandingPage {
 
   openQuickCreditCardPaymentModal() {
     this.showQuickCreditCardPaymentModal.set(true);
-    // TODO: Implementar modal de pago de tarjeta
-    console.log('Abrir modal de pago de tarjeta');
   }
 
   closeQuickCreditCardPaymentModal() {
