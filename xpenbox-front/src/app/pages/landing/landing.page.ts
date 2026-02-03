@@ -7,16 +7,20 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../feature/user/service/user.service';
 import { userState } from '../../feature/user/service/user.state';
 import { SuccessTransactionComponent } from '../../shared/components/success-transaction-component/success-transaction.component';
+import { IncomeEditionModal } from '../../modal/income/income-edition-modal/income-edition.modal';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule, SuccessTransactionComponent],
+  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule, SuccessTransactionComponent, IncomeEditionModal],
   templateUrl: './landing.page.html',
   styleUrl: './landing.page.css',
 })
 export class LandingPage {
   
   showQuickExpenseModal = signal(false);
+  showQuickIncomeModal = signal(false);
+  showQuickTransferModal = signal(false);
+  showQuickCreditCardPaymentModal = signal(false);
 
   private userState = userState;
   private platformId = inject(PLATFORM_ID);
@@ -35,5 +39,29 @@ export class LandingPage {
 
   closeQuickExpenseModal() {
     this.showQuickExpenseModal.set(false);
+  }
+
+  openQuickIncomeModal() {
+    this.showQuickIncomeModal.set(true);
+  }
+
+  closeQuickIncomeModal() {
+    this.showQuickIncomeModal.set(false);
+  }
+
+  openQuickTransferModal() {
+    this.showQuickTransferModal.set(true);
+  }
+
+  closeQuickTransferModal() {
+    this.showQuickTransferModal.set(false);
+  }
+
+  openQuickCreditCardPaymentModal() {
+    this.showQuickCreditCardPaymentModal.set(true);
+  }
+
+  closeQuickCreditCardPaymentModal() {
+    this.showQuickCreditCardPaymentModal.set(false);
   }
 }

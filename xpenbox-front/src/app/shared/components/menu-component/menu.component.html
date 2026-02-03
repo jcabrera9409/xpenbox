@@ -1,5 +1,5 @@
 <!-- Top Header (Desktop & Mobile) -->
-<header class="fixed top-0 left-0 right-0 h-16 xpb-bg-card border-b xpb-border shadow-sm z-50">
+<header class="fixed top-0 left-0 right-0 h-16 xpb-bg-card border-b xpb-border shadow-sm z-48">
   <div class="flex items-center h-full">
     <!-- Logo Section (Desktop only - aligned with sidebar) -->
     <div class="hidden lg:flex lg:items-center lg:justify-start lg:w-64 lg:px-6 lg:xpb-border">
@@ -79,14 +79,14 @@
 @if (isMobileMenuOpen()) {
   <div
     (click)="closeMobileMenu()"
-    class="lg:hidden fixed inset-0 bg-black/50 z-40 top-16"
+    class="lg:hidden fixed inset-0 bg-black/50 z-52 top-16"
   ></div>
 }
 
 <!-- Desktop Sidebar Menu / Mobile Drawer -->
 <aside
   [class]="isMobileMenuOpen() ? 'translate-x-0' : '-translate-x-full'"
-  class="lg:translate-x-0 flex flex-col fixed left-0 top-16 bottom-0 w-64 xpb-bg-sidebar border-r xpb-border shadow-sm z-50 transition-transform duration-300 ease-in-out lg:shadow-none"
+  class="lg:translate-x-0 flex flex-col fixed left-0 top-16 bottom-0 w-64 xpb-bg-sidebar border-r xpb-border shadow-sm z-52 transition-transform duration-300 ease-in-out lg:shadow-none"
 >
   <!-- Navigation Links -->
   <nav class="flex-1 p-4 space-y-2">
@@ -116,21 +116,82 @@
   </div>
 </aside>
 
+<!-- Speed Dial Backdrop -->
+@if (isSpeedDialOpen() || isSpeedDialClosing()) {
+  <div
+    (click)="closeSpeedDial()"
+    [class.opacity-0]="isSpeedDialClosing()"
+    class="lg:hidden fixed inset-0 bg-black/50 z-[49] transition-opacity duration-300"
+  ></div>
+}
+
+<!-- Speed Dial Actions -->
+@if (isSpeedDialOpen() || isSpeedDialClosing()) {
+  <div class="lg:hidden fixed left-1/2 -translate-x-1/2 bottom-30 z-[50] flex flex-col-reverse gap-3">
+    <!-- Gasto Rápido -->
+    <button
+      (click)="onQuickExpense()"
+      class="flex items-center gap-3 xpb-bg-card rounded-full shadow-xl pl-4 pr-5 py-3 hover:scale-105 transition-transform"
+      [class.animate-speed-dial-in-1]="!isSpeedDialClosing()"
+      [class.animate-speed-dial-out-1]="isSpeedDialClosing()"
+      [style.animation-delay]="isSpeedDialClosing() ? '150ms' : '0ms'"
+    >
+      <div class="w-10 h-10 rounded-full bg-[var(--xpb-expense)] flex items-center justify-center">
+        <span class="material-icons text-white text-xl">receipt_long</span>
+      </div>
+      <span class="font-medium xpb-text-primary whitespace-nowrap">Registrar Gasto</span>
+    </button>
+
+    <!-- Nuevo Ingreso -->
+    <button
+      (click)="onQuickIncome()"
+      class="flex items-center gap-3 xpb-bg-card rounded-full shadow-xl pl-4 pr-5 py-3 hover:scale-105 transition-transform"
+      [class.animate-speed-dial-in-2]="!isSpeedDialClosing()"
+      [class.animate-speed-dial-out-2]="isSpeedDialClosing()"
+      [style.animation-delay]="isSpeedDialClosing() ? '100ms' : '50ms'"
+    >
+      <div class="w-10 h-10 rounded-full bg-[var(--xpb-income)] flex items-center justify-center">
+        <span class="material-icons text-white text-xl">trending_up</span>
+      </div>
+      <span class="font-medium xpb-text-primary whitespace-nowrap">Nuevo Ingreso</span>
+    </button>
+
+    <!-- Transferencia -->
+    <button
+      style="display: none;"
+      (click)="onQuickTransfer()"
+      class="flex items-center gap-3 xpb-bg-card rounded-full shadow-xl pl-4 pr-5 py-3 hover:scale-105 transition-transform"
+      [class.animate-speed-dial-in-3]="!isSpeedDialClosing()"
+      [class.animate-speed-dial-out-3]="isSpeedDialClosing()"
+      [style.animation-delay]="isSpeedDialClosing() ? '50ms' : '100ms'"
+    >
+      <div class="w-10 h-10 rounded-full bg-[var(--xpb-transfer)] flex items-center justify-center">
+        <span class="material-icons text-white text-xl">swap_horiz</span>
+      </div>
+      <span class="font-medium xpb-text-primary whitespace-nowrap">Transferencia</span>
+    </button>
+
+    <!-- Pago de Tarjeta -->
+    <button
+      style="display: none;"
+      (click)="onQuickCreditCardPayment()"
+      class="flex items-center gap-3 xpb-bg-card rounded-full shadow-xl pl-4 pr-5 py-3 hover:scale-105 transition-transform"
+      [class.animate-speed-dial-in-4]="!isSpeedDialClosing()"
+      [class.animate-speed-dial-out-4]="isSpeedDialClosing()"
+      [style.animation-delay]="isSpeedDialClosing() ? '0ms' : '150ms'"
+    >
+      <div class="w-10 h-10 rounded-full bg-[var(--xpb-credit)] flex items-center justify-center">
+        <span class="material-icons text-white text-xl">payment</span>
+      </div>
+      <span class="font-medium xpb-text-primary whitespace-nowrap">Pago de Tarjeta</span>
+    </button>
+  </div>
+}
+
 <!-- Mobile Bottom Navigation -->
 <nav class="lg:hidden fixed bottom-0 left-0 right-0 xpb-bg-card border-t xpb-border shadow-lg z-40">
   <div class="flex items-center justify-around h-16 relative">
     @for (item of menuItemsMobile; track item.route; let i = $index) {
-      @if (i === 2) {
-        <!-- Central Quick Expense Button (before 3rd item) -->
-        <button
-          (click)="onQuickExpense()"
-          class="absolute left-1/2 -translate-x-1/2 -top-6 w-14 h-14 rounded-full bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] shadow-xl flex items-center justify-center text-white transition-colors"
-          aria-label="Registrar gasto rápido"
-        >
-          <span class="material-icons text-3xl">add</span>
-        </button>
-      }
-      
       <a
         [routerLink]="item.route"
           routerLinkActive="text-[var(--xpb-primary)]"
@@ -143,3 +204,13 @@
     }
   </div>
 </nav>
+
+<!-- Central Quick Action Button -->
+<button
+  (click)="toggleSpeedDial()"
+  [class]="isSpeedDialOpen() ? 'rotate-45' : 'rotate-0'"
+  class="lg:hidden fixed left-1/2 -translate-x-1/2 bottom-10 w-14 h-14 rounded-full bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] shadow-xl flex items-center justify-center text-white transition-all duration-300 z-[51]"
+  aria-label="Acciones rápidas"
+>
+  <span class="material-icons text-3xl">add</span>
+</button>

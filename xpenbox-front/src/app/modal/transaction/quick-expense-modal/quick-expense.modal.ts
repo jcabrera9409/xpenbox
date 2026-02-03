@@ -40,6 +40,7 @@ export class QuickExpenseModal implements OnInit {
   selectedCategory = signal<CategoryResponseDTO | null>(null);
   selectedAccount = signal<AccountCreditDTO | null>(null);
   accountCredits = signal<AccountCreditDTO[]>([]);
+  assignToCategory = signal<boolean>(false);
 
   // Numeric input state (signals)
   amount = signal(0);
@@ -123,8 +124,14 @@ export class QuickExpenseModal implements OnInit {
       !isNaN(amountValue) &&
       amountValue > 0 &&
       selectedAccount.balance >= amountValue;
+    
+    // If assigning to category, ensure one is selected
+    const assignToCat = this.assignToCategory();
+    if (assignToCat && !categorySelected) {
+      return false;
+    }
 
-    return isAccountValid && !!categorySelected;
+    return isAccountValid && (!!categorySelected || !assignToCat);
   }
 
   retryAccountsAndCreditCards(): void {
@@ -159,7 +166,7 @@ export class QuickExpenseModal implements OnInit {
     const amountValue = this.amount();
     const descriptionValue = this.description();
     const selectedAccount = this.selectedAccount();
-    const categorySelected = this.selectedCategory();
+    const categorySelected = this.assignToCategory() ? this.selectedCategory() : null;
     const dateTimestamp = this.dateService.getUtcDatetime().getTime();
 
     this.transactionState.isLoadingSendingTransaction.set(true);

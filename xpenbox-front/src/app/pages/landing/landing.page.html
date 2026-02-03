@@ -1,5 +1,8 @@
 <app-menu-component
   (openQuickExpense)="openQuickExpenseModal()"
+  (openQuickIncome)="openQuickIncomeModal()"
+  (openQuickTransfer)="openQuickTransferModal()"
+  (openQuickCreditCardPayment)="openQuickCreditCardPaymentModal()"
   >
 </app-menu-component>
 <!-- Main Content Container -->
@@ -14,6 +17,14 @@
     (close)="closeQuickExpenseModal()"
     >
   </app-quick-expense-modal>
+}
+
+@if (showQuickIncomeModal()) {
+  <app-income-edition-modal
+    [resourceCodeSelected]="null"
+    (close)="closeQuickIncomeModal()"
+    >
+  </app-income-edition-modal>
 }
 
 <app-success-transaction-component> </app-success-transaction-component>
