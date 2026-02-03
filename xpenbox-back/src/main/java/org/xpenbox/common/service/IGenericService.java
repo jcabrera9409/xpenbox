@@ -42,4 +42,11 @@ public interface IGenericService<T, C, U, R> {
      * @return a list of entity response data transfer objects
      */
     List<R> getAll(String userEmail);
+
+    /**
+     * Delete an entity by its resource code
+     * @param resourceCode the resource code of the entity to be deleted
+     * @param userEmail the email of the user deleting the entity
+     */
+    void deleteByResourceCode(String resourceCode, String userEmail);
 }

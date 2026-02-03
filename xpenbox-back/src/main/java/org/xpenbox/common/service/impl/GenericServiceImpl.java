@@ -80,6 +80,19 @@ public abstract class GenericServiceImpl<T, C, U, R> implements IGenericService<
         LOG.infof("Found %d entities %s for user email: %s", entities.size(), getEntityName(), userEmail);
         return getGenericMapper().toDTOList(entities);
     }
+
+    @Override
+    public void deleteByResourceCode(String resourceCode, String userEmail) {
+        LOG.infof("Deleting entity %s with resource code %s for user email: %s", getEntityName(), resourceCode, userEmail);
+        User user = validateAndGetUser(userEmail);
+        T existingEntity = getGenericRepository().findByResourceCodeAndUserId(resourceCode, user.id)
+            .orElseThrow(() -> {
+                LOG.errorf("%s not found with resource code: %s for user email: %s", getEntityName(), resourceCode, userEmail);
+                throw new ResourceNotFoundException(getEntityName() + " not found with resource code: " + resourceCode + " for user email: " + userEmail); 
+            });
+        getGenericRepository().delete(existingEntity);
+        LOG.infof("%s deleted with resource code: %s", getEntityName(), resourceCode);
+    }
     
     protected User validateAndGetUser(String userEmail) {
         return getUserRepository().findByEmail(userEmail)

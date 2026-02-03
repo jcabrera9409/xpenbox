@@ -13,8 +13,8 @@
       [titleCard]="'Liquidez Total'"
       [contentCard]="accountState.totalLiquidBalance() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'"
       [subtitleCard]="
-        accountState.accounts().length > 1 ? accountState.accounts().length + ' cuentas activas' :
-        accountState.accounts().length == 1 ? accountState.accounts().length + ' cuenta activa' :
+        orderedAccounts().length > 1 ? orderedAccounts().length + ' cuentas activas' :
+        orderedAccounts().length == 1 ? orderedAccounts().length + ' cuenta activa' :
         'Ninguna cuenta activa'
       "
       [iconCard]="'account_balance'"
@@ -29,8 +29,8 @@
         '- ' + (this.creditCardState.totalCreditBalance() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2')
       "
       [subtitleCard]="
-        this.creditCardState.creditCards().length > 1 ? this.creditCardState.creditCards().length + ' tarjetas activas' :
-        this.creditCardState.creditCards().length == 1 ? this.creditCardState.creditCards().length + ' tarjeta activa' :
+        orderedCreditCards().length > 1 ? orderedCreditCards().length + ' tarjetas activas' :
+        orderedCreditCards().length == 1 ? orderedCreditCards().length + ' tarjeta activa' :
         'Ninguna tarjeta activa'
       "
       [iconCard]="'credit_card'"
@@ -65,7 +65,7 @@
           [message]="'No se encontraron cuentas'"
           (retry)="reloadAccounts()">
         </app-retry-component>
-      } @else if (this.accountState.accounts().length === 0) {
+      } @else if (orderedAccounts().length === 0) {
         <app-create-first-component
           [icon]="'account_balance'"
           [title]="'No hay cuentas'"
@@ -74,7 +74,7 @@
           (create)="openAccountEditionModal()"
         ></app-create-first-component>
       } @else {
-        @for (account of this.accountState.accounts(); track account.resourceCode) {
+        @for (account of orderedAccounts(); track account.resourceCode) {
           <app-account-card ngSkipHydration class="block"
             [accountCardName]="account.name"
             [accountCardBalance]="account.balance"
@@ -113,7 +113,7 @@
             [message]="'No se encontraron tarjetas'"
             (retry)="reloadCreditCards()">
           </app-retry-component>
-        } @else if (this.creditCardState.creditCards().length === 0) {
+        } @else if (orderedCreditCards().length === 0) {
           <app-create-first-component
             [icon]="'credit_card'"
             [title]="'No hay tarjetas'"
@@ -122,7 +122,7 @@
             (create)="openCreditCardEditionModal()"
           ></app-create-first-component>
         } @else {
-          @for (creditCard of this.creditCardState.creditCards(); track creditCard.resourceCode) {
+          @for (creditCard of orderedCreditCards(); track creditCard.resourceCode) {
             <app-credit-card ngSkipHydration class="block"
               [creditCardName]="creditCard.name"
               [creditCardLimit]="creditCard.creditLimit"

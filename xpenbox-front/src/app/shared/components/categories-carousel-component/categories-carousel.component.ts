@@ -31,7 +31,7 @@ export class CategoriesCarouselComponent {
 
     // Auto-select first category when loaded
     effect(() => {
-      const categories = this.categoryState.categories().filter(c => c.state);
+      const categories = this.categoryState.categories();
       if (categories.length > 0 && !this.selectedCategory()) {
         const finalOrder = this.filterAndSortCategories([...categories]);
         this.categoriesList.set(finalOrder);
@@ -45,11 +45,6 @@ export class CategoriesCarouselComponent {
         this.selectCategory(finalOrder[0] || null);
       }
     });
-  }
-
-  // Getters for filtered and sorted lists
-  get categories(): CategoryResponseDTO[] {
-    return this.categoryState.categories().filter(c => c.state);
   }
 
   retryLoadCategories(): void {
@@ -76,8 +71,9 @@ export class CategoriesCarouselComponent {
   }
 
   /**
-   * Filter and sort categories to have the two most recently used at the top,
-   * followed by the rest sorted by usage count.
+   * Filter and sort categories based on last used date and usage count.
+   * Obtains the two most recently used categories and sorts the rest by usage count.
+   * Only active categories are included, except for the one currently selected.
    * @param categories The list of categories to filter and sort.
    * @returns The filtered and sorted list of categories.
    */
@@ -93,6 +89,13 @@ export class CategoriesCarouselComponent {
       .filter(c => !lastTwoIds.has(c.resourceCode))
       .sort((a, b) => b.usageCount - a.usageCount);
 
-    return [...lastTwo, ...rest];
+    const unifiedCategories = [...lastTwo, ...rest];
+
+    // Filter active categories only but include categoryResourceCodeSelected if inactive
+    const finalCategories = unifiedCategories.filter(c => 
+      c.state || c.resourceCode === this.categoryResourceCodeSelected()
+    );
+
+    return finalCategories;
   }
 }

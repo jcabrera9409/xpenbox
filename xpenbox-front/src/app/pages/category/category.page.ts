@@ -11,6 +11,7 @@ import { CreateFirstComponent } from '../../shared/components/create-first-compo
 import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
 import { CategoryResponseDTO } from '../../feature/category/model/category.response.dto';
 import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
+import { CategoryRequestDTO } from '../../feature/category/model/category.request.dto';
 
 @Component({
   selector: 'app-category-page',
@@ -37,6 +38,16 @@ export class CategoryPage {
     this.categoryState.categories().filter(c => c.state).length
   );
 
+  // Computed signal for ordered categories by name and active state
+  orderedCategories = computed(() => 
+    [...this.categoryState.categories()].sort((a, b) => {
+      if (a.state === b.state) {
+        return a.name.localeCompare(b.name);
+      }
+      return a.state ? -1 : 1;
+    })
+  );
+
   constructor(
     private categoryService: CategoryService
   ) {
@@ -60,11 +71,36 @@ export class CategoryPage {
   }
 
   confirmNewStateCategory(resourceCode: string) { 
-    console.log('Confirmed state change for category with resource code:', resourceCode);
+    if (!this.categoryDataSelected()) return;
+
+    this.categoryState.isLoadingSendingCategory.set(true);
+
+    const categoryData = new CategoryRequestDTO(
+      undefined!,
+      undefined!,
+      this.categoryDataSelected()!.state ? false : true
+    );
+
+    this.categoryService.update(resourceCode, categoryData).subscribe({
+      next: () => {
+        this.categoryState.isLoadingSendingCategory.set(false);
+        this.showConfirmModal.set(false);
+        this.categoryService.refresh();
+      },
+      error: (error) => {
+        if (error.status === 500 || error.status === 0) {
+          this.categoryState.errorSendingCategory.set('Ocurrió un error al actualizar la categoría. Por favor, intenta nuevamente.');
+        } else {
+          this.categoryState.errorSendingCategory.set(error.error.message || 'Ocurrió un error al actualizar la categoría. Por favor, intenta nuevamente.');
+        }
+        this.categoryState.isLoadingSendingCategory.set(false);
+      }
+    });
   }
 
   closeConfirmNewStateModal() {
     this.showConfirmModal.set(false);
+    this.categoryState.errorSendingCategory.set(null);
   }
 
   closeCategoryEditionModal() {

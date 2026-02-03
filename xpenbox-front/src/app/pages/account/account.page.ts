@@ -1,4 +1,4 @@
-import { Component, inject, PLATFORM_ID, signal } from '@angular/core';
+import { Component, computed, inject, PLATFORM_ID, signal } from '@angular/core';
 import { AccountCard } from '../../shared/cards/account-card/account.card';
 import { CreditCard } from '../../shared/cards/credit-card/credit.card';
 import { AccountService } from '../../feature/account/service/account.service';
@@ -41,6 +41,18 @@ export class AccountPage {
 
   showCreditcardPaymentModal = signal(false);
   resourceCodeCreditcardPaymentSelected = signal<string | null>(null);
+
+  // Computed signal for ordered accounts by name
+  orderedAccounts = computed(() => {
+    const accounts = accountState.accounts();
+    return accounts.slice().sort((a, b) => a.name.localeCompare(b.name));
+  })
+
+  // Computed signal for ordered credit cards by name
+  orderedCreditCards = computed(() => {
+    const creditCards = creditCardState.creditCards();
+    return creditCards.slice().sort((a, b) => a.name.localeCompare(b.name));
+  })
 
   constructor(
     private accountService: AccountService,

@@ -38,4 +38,14 @@ public abstract class GenericRepository<T> implements PanacheRepository<T> {
         LOG.infof("Finding all entities for user id: %d", userId);
         return list("user.id", userId);
     }
+
+    /**
+     * Delete an entity by its ID and user ID.
+     * @param id the ID of the entity
+     * @param userId the ID of the user
+     */
+    public void deleteByIdAndUserId(Long id, Long userId) {
+        LOG.infof("Deleting entity by id: %d and user id: %d", id, userId);
+        delete("id = ?1 and user.id = ?2", id, userId);
+    }
 }

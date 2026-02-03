@@ -21,7 +21,7 @@
     class="mb-4 flex-shrink-0"
     [isLoading]="this.categoryState.isLoadingGetList()"
     [titleCard]="'Total de Categorías'"
-    [contentCard]="this.categoryState.categories().length.toString()"
+    [contentCard]="orderedCategories().length.toString()"
     [subtitleCard]="
       activeCategoriesCount() > 1 ? activeCategoriesCount() + ' categorías activas' :
       activeCategoriesCount() === 1 ? activeCategoriesCount() + ' categoría activa' :
@@ -41,7 +41,7 @@
           [message]="'No se encontraron categorías'"
           (retry)="reloadCategories()">
         </app-retry-component>
-      } @else if (this.categoryState.categories().length === 0) {
+      } @else if (orderedCategories().length === 0) {
         <app-create-first-component
           [icon]="'category'"
           [title]="'No hay categorías'"
@@ -51,7 +51,7 @@
         ></app-create-first-component>
       } @else {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 pb-4">
-          @for (category of this.categoryState.categories(); track category.resourceCode) {
+          @for (category of orderedCategories(); track category.resourceCode) {
             <app-category-card ngSkipHydration 
               class="block"
               [categoryCardName]="category.name"
