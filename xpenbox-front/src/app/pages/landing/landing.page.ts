@@ -9,10 +9,11 @@ import { userState } from '../../feature/user/service/user.state';
 import { SuccessTransactionComponent } from '../../shared/components/success-transaction-component/success-transaction.component';
 import { IncomeEditionModal } from '../../modal/income/income-edition-modal/income-edition.modal';
 import { CreditcardPaymentModal } from '../../modal/account/creditcard-payment-modal/creditcard-payment.modal';
+import { TransferModal } from '../../modal/account/transfer-modal/transfer.modal';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule, SuccessTransactionComponent, IncomeEditionModal, CreditcardPaymentModal],
+  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule, SuccessTransactionComponent, IncomeEditionModal, CreditcardPaymentModal, TransferModal],
   templateUrl: './landing.page.html',
   styleUrl: './landing.page.css',
 })
