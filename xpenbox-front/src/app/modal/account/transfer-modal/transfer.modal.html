@@ -21,9 +21,9 @@
             </div>
         </div>
 
-        @if (this.accountState.isLoadingGetAccount()) {
+        @if (this.accountState.isLoadingGetAccount() && this.accountResourceCode()) {
             <app-loading-ui></app-loading-ui>
-        } @else if (this.accountState.errorGetAccount()) {
+        } @else if (this.accountState.errorGetAccount() && this.accountResourceCode()) {
             <app-retry-component
                 [message]="'Error al cargar la información de la cuenta'"
                 (retry)="retryLoadAccountData()">
@@ -54,20 +54,38 @@
                     </div>
                 </div>
 
-                <!-- Origin Account (No Editable) -->
-                <div class="mb-3">
-                    <label class="block text-sm font-medium xpb-text-secondary mb-2">
-                        Cuenta Origen 
-                    </label>
-                    <div class="relative">
-                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">account_balance</span>
-                        <input 
-                            type="text"
-                            [value]="accountData()?.name + ' - ' + userLogged()?.currency + ' ' + (accountData()?.balance | number:'1.2-2')"
-                            readonly
-                            class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
+                @if (this.accountResourceCode()) {
+                    <!-- Origin Account (No Editable) -->
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium xpb-text-secondary mb-2">
+                            Cuenta Origen 
+                        </label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">account_balance</span>
+                            <input 
+                                type="text"
+                                [value]="selectedOriginAccount()?.name + ' - ' + userLogged()?.currency + ' ' + (selectedOriginAccount()?.balance | number:'1.2-2')"
+                                readonly
+                                class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
+                        </div>
                     </div>
-                </div>
+                } @else {
+                    <!-- Origin Account (Carousel) -->
+                    <app-accounts-carousel-component
+                        ngSkipHydration class="block"
+                        [isLoading]="this.accountState.isLoadingGetList()"
+                        [errorLoading]="this.accountState.errorGetList()"
+                        [carouselTitle]="'Cuenta Origen'"
+                        [carouselErrorMessage]="'Error al cargar cuentas'"
+                        [currencySymbol]="'PEN'"
+                        [accountsList]="accountsOriginList()"
+                        [currentSelectedAccount]="selectedOriginAccount()"
+                        [noAccountsMessage]="'No tienes cuentas disponibles'"
+                        (selectedAccountOutput)="this.selectedOriginAccount.set($event)"
+                        (retry)="retryLoadAccountsData()">
+                    </app-accounts-carousel-component>
+                }
+
 
                 <!-- Destination Account (Carousel) -->
                 <app-accounts-carousel-component
@@ -77,7 +95,7 @@
                     [carouselTitle]="'Cuenta Destino'"
                     [carouselErrorMessage]="'Error al cargar cuentas'"
                     [currencySymbol]="'PEN'"
-                    [accountsList]="accountsList()"
+                    [accountsList]="accountsDestinationList()"
                     [currentSelectedAccount]="selectedDestinationAccount()"
                     [noAccountsMessage]="'No tienes cuentas disponibles'"
                     (selectedAccountOutput)="this.selectedDestinationAccount.set($event)"

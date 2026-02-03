@@ -27,4 +27,18 @@
   </app-income-edition-modal>
 }
 
+@if (showQuickCreditCardPaymentModal()) {
+  <app-creditcard-payment-modal
+    (close)="closeQuickCreditCardPaymentModal()"
+    >
+  </app-creditcard-payment-modal>
+}
+
+@if (showQuickTransferModal()) {
+  <app-transfer-modal
+    (close)="closeQuickTransferModal()"
+    >
+  </app-transfer-modal>
+}
+
 <app-success-transaction-component> </app-success-transaction-component>

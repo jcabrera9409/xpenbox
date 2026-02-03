@@ -1,6 +1,6 @@
 import { Component, effect, input, output, signal } from '@angular/core';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
-import { AccountCreditDTO } from '../../../shared/dto/account-credit.dto';
+import { AccountCreditDTO, AccountCreditType } from '../../../shared/dto/account-credit.dto';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
 import { AccountService } from '../../../feature/account/service/account.service';
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
@@ -44,7 +44,10 @@ export class CreditcardPaymentModal {
   selectedCategory = signal<CategoryResponseDTO | null>(null);
   assignToCategory = signal<boolean>(false);
 
-  creditCardData = signal<CreditCardResponseDTO | null>(null);
+  creditCardList = signal<AccountCreditDTO[]>([]);
+  creditCardData = signal<AccountCreditDTO | null>(null);
+  onlyOneCreditCard = signal<boolean>(false);
+
   amount = signal(0);
   description = signal('');
 
@@ -58,6 +61,47 @@ export class CreditcardPaymentModal {
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
     }
+
+    if (this.creditCardState.creditCards().length === 0) {
+      this.creditCardService.load();
+    }
+
+    // Auto-select first credit-card when loaded and with balance > 0
+    effect(() => {
+      if (this.creditCardResourceCode()) {
+        return;
+      }
+
+      // Generate credit card list updating its balances
+      const list: CreditCardResponseDTO[] = this.creditCardState.creditCards().map(cc => {
+        return {
+          resourceCode: cc.resourceCode,
+          name: cc.name,
+          creditLimit: cc.currentBalance,
+          currentBalance: 0,
+          lastUsedDateTimestamp: cc.lastUsedDateTimestamp,
+          usageCount: cc.usageCount,
+          state: cc.state,
+          billingDay: cc.billingDay,
+          paymentDay: cc.paymentDay,
+          closingDateTimestamp: cc.closingDateTimestamp
+        };
+      });
+      const crediCards = this.accountCreditService.combineAccountAndCreditCardData([], list);
+      const filteredCreditCards = crediCards.filter(cc => cc.balance > 0);
+
+      if (filteredCreditCards.length == 1) {
+        this.onlyOneCreditCard.set(true);
+        this.creditCardData.set(filteredCreditCards[0]);
+      } else if (filteredCreditCards.length > 0) {
+        this.creditCardList.set(filteredCreditCards);
+        this.onlyOneCreditCard.set(false);
+
+        if (!this.creditCardData()) {
+          this.creditCardData.set(filteredCreditCards[0]);
+        }
+      }
+    });
 
     // Auto-select first account when loaded and sort accounts
     effect(() => {
@@ -100,7 +144,9 @@ export class CreditcardPaymentModal {
     this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
     
-    this.loadCreditCardData();
+    if (this.creditCardResourceCode()) {
+      this.loadCreditCardData();
+    }
   }
 
   get isFormValid(): boolean {
@@ -113,8 +159,20 @@ export class CreditcardPaymentModal {
     return isAmountValid && isAccountValid;
   }
 
+  get isOnlyOneCreditCard(): boolean {
+    if (this.creditCardResourceCode()) {
+      return true;
+    } else {
+      return this.onlyOneCreditCard();
+    }
+  }
+
   retryLoadCreditCardData() {
     this.loadCreditCardData();
+  }
+
+  retryLoadCreditCardsData(): void {
+    this.creditCardService.refresh();
   }
 
   retryLoadAccountsData(): void {
@@ -139,7 +197,7 @@ export class CreditcardPaymentModal {
 
     const amountValue = this.amount();
     const descriptionValue = this.description();
-    const creditCardResourceCode = this.creditCardResourceCode() || '';
+    const creditCardResourceCode = this.creditCardData()?.resourceCode || '';
     const accountResourceCode = this.selectedAccount()?.resourceCode || '';
     const categoryResourceCode = this.selectedCategory()?.resourceCode || undefined;
     const dateTimestamp = this.dateService.getUtcDatetime().getTime();
@@ -159,13 +217,16 @@ export class CreditcardPaymentModal {
     this.transactionService.create(transactionRequest).subscribe({
       next: (response: ApiResponseDTO<TransactionResponseDTO>) => {
         this.transactionState.isLoadingSendingTransaction.set(false);
-
         if (response.success && response.data) {
           this.close.emit();
           this.transactionState.successSendingTransaction.set(true);
 
           this.accountService.refresh();
           this.creditCardService.refresh();
+
+          if (!this.creditCardResourceCode()) {
+            this.transactionState.transactionCreatedResourceCode.set(response.data.resourceCode);
+          }
         }
       }, error: (error) => {
         this.transactionState.isLoadingSendingTransaction.set(false);
@@ -186,11 +247,23 @@ export class CreditcardPaymentModal {
       next: (response: ApiResponseDTO<CreditCardResponseDTO>) => {
         if (response.success && response.data) {
           const creditCardData = response.data;
-          this.creditCardData.set(creditCardData);
+          const creditCardDTO: AccountCreditDTO = {
+            resourceCode: creditCardData.resourceCode,
+            type: AccountCreditType.CREDIT_CARD,
+            icon: 'credit_card',
+            name: creditCardData.name,
+            balance: creditCardData.currentBalance,
+            lastUsedDateTimestamp: creditCardData.lastUsedDateTimestamp,
+            usageCount: creditCardData.usageCount
+          };
+          
+          this.creditCardData.set(creditCardDTO);
         }
         this.creditCardState.isLoadingGetCreditCard.set(false);
+        this.creditCardState.errorGetCreditCard.set(null);
       },
       error: (error) => {
+        this.creditCardState.isLoadingGetCreditCard.set(false);
         if (error.status === 500 || error.status === 0) {
           this.creditCardState.errorGetCreditCard.set('Error obteniendo los datos de la tarjeta de crédito. Por favor, inténtalo de nuevo.');
         } else {

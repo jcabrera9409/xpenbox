@@ -21,9 +21,9 @@
             </div>
         </div>
 
-        @if (this.creditCardState.isLoadingGetCreditCard()) {
+        @if (this.creditCardState.isLoadingGetCreditCard() && this.creditCardResourceCode()) {
             <app-loading-ui></app-loading-ui>
-        } @else if (this.creditCardState.errorGetCreditCard()) {
+        } @else if (this.creditCardState.errorGetCreditCard() && this.creditCardResourceCode()) {
             <app-retry-component
                 [message]="'Error al cargar la información de la tarjeta de crédito'"
                 (retry)="retryLoadCreditCardData()">
@@ -54,20 +54,37 @@
                     </div>
                 </div>
 
-                <!-- Credit Card (No Editable) -->
-                <div class="mb-3">
-                    <label class="block text-sm font-medium xpb-text-secondary mb-2">
-                        Tarjeta de Crédito
-                    </label>
-                    <div class="relative">
-                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">payment</span>
-                        <input 
-                            type="text"
-                            [value]="creditCardData()?.name + ' - ' + userLogged()?.currency + ' ' + (creditCardData()?.currentBalance | number:'1.2-2')"
-                            readonly
-                            class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
+                @if (isOnlyOneCreditCard) {
+                    <!-- Credit Card (No Editable) -->
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium xpb-text-secondary mb-2">
+                            Tarjeta de Crédito
+                        </label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">payment</span>
+                            <input 
+                                type="text"
+                                [value]="creditCardData()?.name + ' - ' + userLogged()?.currency + ' ' + (creditCardData()?.balance | number:'1.2-2')"
+                                readonly
+                                class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
+                        </div>
                     </div>
-                </div>
+                } @else {
+                    <!-- Credit Card (Carousel) -->
+                    <app-accounts-carousel-component
+                        ngSkipHydration class="block"
+                        [isLoading]="this.creditCardState.isLoadingGetList()"
+                        [errorLoading]="this.creditCardState.errorGetList()"
+                        [carouselTitle]="'Tarjeta de Crédito a Pagar'"
+                        [carouselErrorMessage]="'Error al cargar tarjetas de crédito'"
+                        [currencySymbol]="'PEN'"
+                        [accountsList]="creditCardList()"
+                        [currentSelectedAccount]="creditCardData()"
+                        [noAccountsMessage]="'No tienes tarjetas de crédito disponibles'"
+                        (selectedAccountOutput)="this.creditCardData.set($event)"
+                        (retry)="retryLoadCreditCardsData()">
+                    </app-accounts-carousel-component>
+                }
 
                 <!-- Destination Account (Carousel) -->
                 <app-accounts-carousel-component

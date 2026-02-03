@@ -1,6 +1,6 @@
 services:
   backend:
-    image: jcabrera9409/xpenbox-back:latest
+    image: jcabrera9409/xpenbox-back:dev
     platform: linux/amd64
     restart: always
     container_name: backend
@@ -18,12 +18,12 @@ services:
     depends_on:
       - bd
     volumes:
-      - ./ssh/privateKey.pem:/work/keys/privateKey.pem:ro
-      - ./ssh/publicKey.pem:/work/keys/publicKey.pem:ro
+      - ./keys/privateKey.pem:/work/keys/privateKey.pem:ro
+      - ./keys/publicKey.pem:/work/keys/publicKey.pem:ro
       - ./logs:/work/logs  
 
   frontend:
-    image: jcabrera9409/xpenbox-front:latest
+    image: jcabrera9409/xpenbox-front:dev
     platform: linux/amd64
     restart: always
     container_name: frontend

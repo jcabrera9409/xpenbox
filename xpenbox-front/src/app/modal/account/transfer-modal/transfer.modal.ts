@@ -10,7 +10,7 @@ import { transactionState } from '../../../feature/transaction/service/transacti
 import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtual-keyboard.ui';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
-import { AccountCreditDTO } from '../../../shared/dto/account-credit.dto';
+import { AccountCreditDTO, AccountCreditType } from '../../../shared/dto/account-credit.dto';
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
@@ -34,10 +34,11 @@ export class TransferModal implements OnInit {
   accountState = accountState;
   transactionState = transactionState;
 
-  accountsList = signal<AccountCreditDTO[]>([]);
+  accountsOriginList = signal<AccountCreditDTO[]>([]);
+  accountsDestinationList = signal<AccountCreditDTO[]>([]);
   selectedDestinationAccount = signal<AccountCreditDTO | null>(null);
+  selectedOriginAccount = signal<AccountCreditDTO | null>(null);
 
-  accountData = signal<AccountResponseDTO | null>(null);
   amount = signal(0);
   description = signal('');
 
@@ -53,25 +54,35 @@ export class TransferModal implements OnInit {
 
     // Auto-select first account when loaded and sort accounts
     effect(() => {
-      const selectedAccount = this.accountResourceCode();
+      if (this.accountResourceCode()) return;
+
+      const accounts = this.accountCreditService.combineAccountAndCreditCardData(this.accountState.accounts(), []);
+      const filteredOriginAccounts = this.accountCreditService.filterAndSortAccountCredits(accounts, 0);
+      this.accountsOriginList.set(filteredOriginAccounts);
+      if (this.accountsOriginList().length > 0) {
+        this.selectedOriginAccount.set(this.accountsOriginList()[0] || null);
+      }
+    });
+
+    // Update destination accounts list when origin account changes
+    effect(() => {
+      const originAccount = this.selectedOriginAccount();
       const accounts = this.accountCreditService.combineAccountAndCreditCardData(this.accountState.accounts(), []);
       const filteredAccounts = this.accountCreditService.filterAndSortAccountCredits(accounts, -1);
-      // remove selected account from the list
-      const newAccountsList = filteredAccounts.filter(acc => acc.resourceCode != selectedAccount);
-      
-      if (newAccountsList.length > 0) {
-        this.accountsList.set(newAccountsList);
-        
-        if (!this.selectedDestinationAccount()) {
-          this.selectedDestinationAccount.set(newAccountsList[0] || null);
-        }
+      // remove selected origin account from the list
+      const newAccountsList = filteredAccounts.filter(acc => acc.resourceCode != originAccount?.resourceCode);
+      this.accountsDestinationList.set(newAccountsList);
+
+      // if the selected destination account is the same as the origin, reset it
+      if (this.accountsDestinationList().length > 0) {
+        this.selectedDestinationAccount.set(this.accountsDestinationList()[0] || null);
       }
     });
   }
 
   get isFormValid(): boolean {
     const amountValue = this.amount();
-    const amountOriginAccount = this.accountData()?.balance || 0;
+    const amountOriginAccount = this.selectedOriginAccount()?.balance || 0;
     const selectedAccount = this.selectedDestinationAccount();
 
     const isAmountValid = !isNaN(amountValue) && amountValue > 0;
@@ -84,7 +95,9 @@ export class TransferModal implements OnInit {
     this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
     
-    this.loadAccountData();
+    if (this.accountResourceCode()) {
+      this.loadAccountData();
+    }
   }
 
   retryLoadAccountData() {
@@ -104,7 +117,7 @@ export class TransferModal implements OnInit {
 
     const amountValue = this.amount();
     const descriptionValue = this.description();
-    const originAccountResourceCode = this.accountResourceCode() || '';
+    const originAccountResourceCode = this.selectedOriginAccount()?.resourceCode || '';
     const destinationAccountResourceCode = this.selectedDestinationAccount()?.resourceCode || '';
     const dateTimestamp = this.dateService.getUtcDatetime().getTime();
 
@@ -125,9 +138,14 @@ export class TransferModal implements OnInit {
 
         if (response.success && response.data) {
           this.close.emit();
-          this.transactionState.successSendingTransaction.set(true);
 
           this.accountService.refresh();
+          this.transactionState.successSendingTransaction.set(true);
+
+          if (!this.accountResourceCode()) {
+            this.transactionState.transactionCreatedResourceCode.set(response.data.resourceCode);
+          }
+
         }
       }, error: (error) => {
         this.transactionState.isLoadingSendingTransaction.set(false);
@@ -148,11 +166,21 @@ export class TransferModal implements OnInit {
       next: (response: ApiResponseDTO<AccountResponseDTO>) => {
         if (response.success && response.data) {
           const accountData = response.data;
-          this.accountData.set(accountData);
+          const accountDTO: AccountCreditDTO = {
+            resourceCode: accountData.resourceCode,
+            type: AccountCreditType.ACCOUNT,
+            icon: 'account_balance',
+            name: accountData.name,
+            balance: accountData.balance,
+            lastUsedDateTimestamp: accountData.lastUsedDateTimestamp,
+            usageCount: accountData.usageCount
+          }
+          this.selectedOriginAccount.set(accountDTO);
         }
         this.accountState.isLoadingGetAccount.set(false);
       },
       error: (error) => {
+        this.accountState.isLoadingGetAccount.set(false);
         if (error.status === 500 || error.status === 0) {
           this.accountState.errorGetAccount.set('Error obteniendo los datos de la cuenta. Por favor, inténtalo de nuevo.');
         } else {
