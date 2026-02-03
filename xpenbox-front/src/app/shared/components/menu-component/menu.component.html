@@ -158,7 +158,6 @@
 
     <!-- Transferencia -->
     <button
-      style="display: none;"
       (click)="onQuickTransfer()"
       class="flex items-center gap-3 xpb-bg-card rounded-full shadow-xl pl-4 pr-5 py-3 hover:scale-105 transition-transform"
       [class.animate-speed-dial-in-3]="!isSpeedDialClosing()"
@@ -173,7 +172,6 @@
 
     <!-- Pago de Tarjeta -->
     <button
-      style="display: none;"
       (click)="onQuickCreditCardPayment()"
       class="flex items-center gap-3 xpb-bg-card rounded-full shadow-xl pl-4 pr-5 py-3 hover:scale-105 transition-transform"
       [class.animate-speed-dial-in-4]="!isSpeedDialClosing()"
