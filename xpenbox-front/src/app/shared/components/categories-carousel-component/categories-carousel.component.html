@@ -6,7 +6,7 @@
         @if (this.categoryState.isLoadingGetList()) {
             <app-loading-ui [cssClasses]="''"></app-loading-ui>
         } @else if (this.categoryState.errorGetList()) {
-            <div class="w-full">
+            <div class="w-full text-center">
                 <div class="text-center text-xs xpb-text-expense">Error al cargar categorías</div>
                 <button type="button" 
                     (click)="retryLoadCategories()"
