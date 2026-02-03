@@ -9,7 +9,7 @@ import { Component, input, OnInit, output, signal } from '@angular/core';
 export class VirtualKeyboardUi implements OnInit {
 
   // Input/Ouput properties
-  currency = input<string>('PEN');
+  currency = input<string>('');
   defaultAmount = input<number>(0);
   amountOutput = output<number>();
 

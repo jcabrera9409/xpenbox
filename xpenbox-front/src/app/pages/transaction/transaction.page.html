@@ -145,7 +145,7 @@
             <app-transaction-card ngSkipHydration 
                 class="block"
                 [transaction]="transaction"
-                [currency]="'PEN'"
+                [currency]="userLogged()?.currency!"
                 (detailView)="viewDetail($event)"
                 (editView)="openTransactionEditionModal($event)"
                 (deleteView)="deleteTransaction($event)">

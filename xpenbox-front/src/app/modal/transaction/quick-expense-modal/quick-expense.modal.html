@@ -26,7 +26,7 @@
     <!-- Body -->
     <div class="p-4 overflow-y-auto flex-1">
       <app-virtual-keyboard-ui 
-        [currency]="'PEN'"
+        [currency]="userLogged()?.currency!"
         [defaultAmount]="0"
         (amountOutput)="amount.set($event)">
       </app-virtual-keyboard-ui>
@@ -55,7 +55,7 @@
           [errorLoading]="this.accountState.errorGetList() && this.creditCardState.errorGetList()"
           [carouselTitle]="'Cuenta o Tarjeta'"
           [carouselErrorMessage]="'Error al cargar cuentas y tarjetas'"
-          [currencySymbol]="'PEN'"
+          [currencySymbol]="userLogged()?.currency!"
           [accountsList]="accountCredits()"
           [currentSelectedAccount]="selectedAccount()"
           [noAccountsMessage]="'No tienes cuentas o tarjetas disponibles'"

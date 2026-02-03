@@ -170,7 +170,7 @@
                             [errorLoading]="this.accountState.errorGetList()"
                             [carouselTitle]="'Cuenta Destino'"
                             [carouselErrorMessage]="'Error al cargar cuentas'"
-                            [currencySymbol]="'PEN'"
+                            [currencySymbol]="userLogged()?.currency!"
                             [accountsList]="accountsList()"
                             [currentSelectedAccount]="selectedAccount()"
                             [noAccountsMessage]="'No tienes cuentas disponibles'"
