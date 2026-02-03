@@ -17,6 +17,9 @@ import { SuccessTransactionComponent } from '../../shared/components/success-tra
 export class LandingPage {
   
   showQuickExpenseModal = signal(false);
+  showQuickIncomeModal = signal(false);
+  showQuickTransferModal = signal(false);
+  showQuickCreditCardPaymentModal = signal(false);
 
   private userState = userState;
   private platformId = inject(PLATFORM_ID);
@@ -35,5 +38,35 @@ export class LandingPage {
 
   closeQuickExpenseModal() {
     this.showQuickExpenseModal.set(false);
+  }
+
+  openQuickIncomeModal() {
+    this.showQuickIncomeModal.set(true);
+    // TODO: Implementar modal de ingreso rápido
+    console.log('Abrir modal de ingreso rápido');
+  }
+
+  closeQuickIncomeModal() {
+    this.showQuickIncomeModal.set(false);
+  }
+
+  openQuickTransferModal() {
+    this.showQuickTransferModal.set(true);
+    // TODO: Implementar modal de transferencia rápida
+    console.log('Abrir modal de transferencia rápida');
+  }
+
+  closeQuickTransferModal() {
+    this.showQuickTransferModal.set(false);
+  }
+
+  openQuickCreditCardPaymentModal() {
+    this.showQuickCreditCardPaymentModal.set(true);
+    // TODO: Implementar modal de pago de tarjeta
+    console.log('Abrir modal de pago de tarjeta');
+  }
+
+  closeQuickCreditCardPaymentModal() {
+    this.showQuickCreditCardPaymentModal.set(false);
   }
 }

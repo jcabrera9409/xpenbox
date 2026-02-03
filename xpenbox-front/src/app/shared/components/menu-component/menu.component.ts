@@ -21,10 +21,15 @@ export class MenuComponent {
   userState = userState;
 
   openQuickExpense = output<void>();
+  openQuickIncome = output<void>();
+  openQuickTransfer = output<void>();
+  openQuickCreditCardPayment = output<void>();
 
   notificationCount = signal<number>(3);
   
   isMobileMenuOpen = signal<boolean>(false);
+  isSpeedDialOpen = signal<boolean>(false);
+  isSpeedDialClosing = signal<boolean>(false);
 
   private menuItems: MenuItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/landing', onlyMobile: true },
@@ -49,7 +54,40 @@ export class MenuComponent {
   }
 
   onQuickExpense(): void {
+    this.closeSpeedDial();
     this.openQuickExpense.emit();
+  }
+
+  onQuickIncome(): void {
+    this.closeSpeedDial();
+    this.openQuickIncome.emit();
+  }
+
+  onQuickTransfer(): void {
+    this.closeSpeedDial();
+    this.openQuickTransfer.emit();
+  }
+
+  onQuickCreditCardPayment(): void {
+    this.closeSpeedDial();
+    this.openQuickCreditCardPayment.emit();
+  }
+
+  toggleSpeedDial(): void {
+    if (this.isSpeedDialOpen()) {
+      this.closeSpeedDial();
+    } else {
+      this.isSpeedDialOpen.set(true);
+      this.isSpeedDialClosing.set(false);
+    }
+  }
+
+  closeSpeedDial(): void {
+    this.isSpeedDialClosing.set(true);
+    setTimeout(() => {
+      this.isSpeedDialOpen.set(false);
+      this.isSpeedDialClosing.set(false);
+    }, 300);
   }
 
   toggleMobileMenu(): void {
