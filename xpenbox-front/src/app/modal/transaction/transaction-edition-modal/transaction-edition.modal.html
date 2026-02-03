@@ -228,7 +228,6 @@
                         <!-- Carrusel de categorías -->
                         @if (assignToCategory()) {
                             <app-categories-carousel-component
-                                [title]="'Categoría'"
                                 [categoryResourceCodeSelected]="selectedCategory() ? selectedCategory()!.resourceCode : null"
                                 (outputCategory)="selectCategory($event)">
                             </app-categories-carousel-component>

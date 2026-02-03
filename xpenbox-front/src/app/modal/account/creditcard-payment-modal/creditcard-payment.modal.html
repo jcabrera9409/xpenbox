@@ -1,6 +1,6 @@
 <!-- Overlay con backdrop -->
 <div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
-    <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto my-auto max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden">
+    <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-5rem)] flex flex-col overflow-hidden">
         <!-- Header -->
         <div class="xpb-bg-sidebar px-4 py-3 border-b xpb-border relative flex-shrink-0">
             <div class="flex items-center gap-4">
@@ -105,7 +105,6 @@
 
                 @if (assignToCategory()) {
                     <app-categories-carousel-component
-                        [title]="'Categoría'"
                         (outputCategory)="selectCategory($event)">
                     </app-categories-carousel-component>
                 }

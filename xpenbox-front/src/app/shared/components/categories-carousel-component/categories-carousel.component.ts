@@ -13,7 +13,7 @@ import { CategoryService } from '../../../feature/category/service/category.serv
 })
 export class CategoriesCarouselComponent {
 
-  title = input<string>('Categoría');
+  title = input<string | undefined>();
   categoryResourceCodeSelected = input<string | null>(null);
   outputCategory = output<CategoryResponseDTO>();
 
