@@ -17,6 +17,7 @@ import { CategoryService } from '../../feature/category/service/category.service
 import { ActivatedRoute } from '@angular/router';
 import { DateService } from '../../shared/service/date.service';
 import { TransactionEditionModal } from '../../modal/transaction/transaction-edition-modal/transaction-edition.modal';
+import { userState } from '../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-transaction-page',
@@ -27,6 +28,8 @@ import { TransactionEditionModal } from '../../modal/transaction/transaction-edi
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TransactionPage {
+
+  userLogged = userState.userLogged;
 
   transactionState = transactionState;
   categoryState = categoryState;
@@ -88,7 +91,6 @@ export class TransactionPage {
         this.transactionState.transactionCreatedResourceCode.set(null);
       }
     });
-
   }
 
   loadInitialTransactions(): void {

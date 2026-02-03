@@ -17,6 +17,7 @@ import { RetryComponent } from '../../../shared/components/retry-component/retry
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { DateService } from '../../../shared/service/date.service';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
+import { userState } from '../../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-income-edition-modal',
@@ -26,6 +27,8 @@ import { transactionState } from '../../../feature/transaction/service/transacti
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IncomeEditionModal implements OnInit {
+
+  userLogged = userState.userLogged;
 
   resourceCodeSelected = input<string | null>();
   close = output<void>();

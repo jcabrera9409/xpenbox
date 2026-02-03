@@ -18,6 +18,7 @@ import { incomeState } from '../../../feature/income/service/income.state';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { DateService } from '../../../shared/service/date.service';
+import { userState } from '../../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-income-assign-modal',
@@ -27,6 +28,8 @@ import { DateService } from '../../../shared/service/date.service';
   styleUrl: './income-assign.modal.css',
 })
 export class IncomeAssignModal implements OnInit {
+
+  userLogged = userState.userLogged;
 
   incomeResourceCode = input<string | null>();
   close = output<void>();

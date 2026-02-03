@@ -19,6 +19,7 @@ import { CategoriesCarouselComponent } from '../../../shared/components/categori
 import { CategoryService } from '../../../feature/category/service/category.service';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { DateService } from '../../../shared/service/date.service';
+import { userState } from '../../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-quick-expense-modal',
@@ -28,6 +29,8 @@ import { DateService } from '../../../shared/service/date.service';
   styleUrl: './quick-expense.modal.css',
 })
 export class QuickExpenseModal implements OnInit {
+
+  userLogged = userState.userLogged;
 
   close = output<void>();
 
