@@ -6,6 +6,12 @@
         <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
             <div class="flex items-start justify-between">
                 <div class="flex items-start gap-4 flex-1">
+                    @if (iconTitle()) {
+                        <!-- Icon container -->
+                        <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+                            <span class="material-icons text-[var(--xpb-expense)] text-2xl">{{ iconTitle() }}</span>
+                        </div>
+                    }
                     <!-- Title and subtitle -->
                     <div class="flex-1">
                         <h2 class="text-xl font-semibold xpb-text-primary">{{ title() }}</h2>
@@ -33,9 +39,17 @@
                 </app-retry-component>
             } @else {
                 <!-- Message -->
-                <div class="xpb-bg-main w-full rounded-lg p-4 mb-4">
-                    <div class="flex items-start gap-3">
-                        <p class="xpb-text-primary text-sm leading-relaxed flex-1">{{ message() }}</p>
+                <div 
+                    [class]="'border-[' + onColorTypeMessage + ']'"
+                    class="mb-5 flex items-start gap-3 xpb-bg-main rounded-lg p-4 border-l-4">
+                    <span 
+                    [class]="'text-[' + onColorTypeMessage + ']'"
+                    class="material-icons text-2xl mt-0.5">{{ typeMessage() }}</span>
+                    <div class="flex-1">
+                        <p class="text-sm xpb-text-secondary">
+                            <!-- Insert message as inner html -->
+                            <span [innerHTML]="message()"></span>
+                        </p>
                     </div>
                 </div>
 
@@ -54,6 +68,7 @@
                     [isLoading]="isLoadingConfirm()"
                     [isValidForm]="true"
                     [loadingText]="loadingText()"
+                    [confirmColor]="onColorTypeMessage"
                     [confirmText]="confirmText()"
                     [confirmIcon]="confirmIcon()"
                     (cancel)="onCancel()"

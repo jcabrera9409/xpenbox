@@ -17,6 +17,7 @@ export class ModalButtonsUi {
   loadingText = input<string>('Guardando...');
   loadingIcon = input<string>('autorenew');
   
+  confirmColor = input<string>('var(--xpb-primary)');
   confirmText = input<string>('Registrar');
   confirmIcon = input<string>('add');
 

@@ -148,7 +148,7 @@
                 [currency]="userLogged()?.currency!"
                 (detailView)="viewDetail($event)"
                 (editView)="openTransactionEditionModal($event)"
-                (deleteView)="deleteTransaction($event)">
+                (deleteView)="openTransactionDeletionModal($event)">
             </app-transaction-card>
             }
 
@@ -188,4 +188,22 @@
         [resourceCodeSelected]="resourceCodeTransactionSelected()"
         (close)="closeTransactionEditionModal()"
     ></app-transaction-edition-modal>
+}
+
+@if (showConfirmModal()) {
+  <app-confirm-modal
+    [resourceCode]="resourceCodeTransactionSelected()"
+    [isLoading]="transactionState.isLoadingGetTransaction()"
+    [isErrorLoading]="transactionState.errorGetTransaction()"
+    [isLoadingConfirm]="transactionState.isLoadingSendingTransaction()"
+    [isErrorSending]="transactionState.errorSendingTransaction()"
+    [iconTitle]="'delete'"
+    [title]="titleConfirmModal()!"
+    [typeMessage]="'warning'"
+    [message]="messageConfirmModal()!"
+    [confirmText]="confirmTextConfirmModal()!"
+    [confirmIcon]="'warning'"
+    (cancelled)="closeConfirmDeletionModal()!"
+    (confirmed)="confirmDeleteTransaction($event)"
+  ></app-confirm-modal>
 }

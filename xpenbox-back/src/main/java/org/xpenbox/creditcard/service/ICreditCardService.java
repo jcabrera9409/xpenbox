@@ -23,10 +23,11 @@ public interface ICreditCardService extends IGenericService<CreditCard, CreditCa
 
     /**
      * Process adding payment to the credit card.
-     * @param id the credit card id
+     * @param resourceCode the credit card resource code
+     * @param userId the user id
      * @param amount the payment amount
      */
-    public void processAddPayment(Long id, BigDecimal amount);
+    public void processAddPayment(String resourceCode, Long userId, BigDecimal amount);
 
     /**
      * Deactivate a credit card and pay off its balance using a specified account.

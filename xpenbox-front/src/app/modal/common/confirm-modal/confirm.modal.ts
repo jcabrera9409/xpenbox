@@ -11,7 +11,9 @@ import { RetryComponent } from '../../../shared/components/retry-component/retry
 })
 export class ConfirmModal {
   // Inputs
+  iconTitle = input<string | null>(null);
   title = input<string>('Confirmar acción');
+  typeMessage = input<'info' | 'warning'>('info');
   message = input<string>('¿Estás seguro de que deseas continuar?');
   confirmText = input<string>('Confirmar');
   confirmIcon = input<string>('warning');
@@ -26,6 +28,17 @@ export class ConfirmModal {
   // Outputs
   confirmed = output<string>();
   cancelled = output<void>();
+
+  get onColorTypeMessage(): string {
+    switch (this.typeMessage()) {
+      case 'info':
+        return 'var(--xpb-primary)';
+      case 'warning':
+        return 'var(--xpb-expense)';
+      default:
+        return 'var(--xpb-primary)';
+    }
+  }
 
   onConfirm(): void {
     this.confirmed.emit(this.resourceCode()!);

@@ -77,36 +77,29 @@ public class AccountServiceImpl extends GenericServiceImpl<Account, AccountCreat
     }
 
     @Override
-    public void processSubtractAmount(Long id, BigDecimal amount) {
-        LOG.infof("Processing subtract amount for Account ID: %d with amount: %s", id, amount);
+    public void processSubtractAmount(String resourceCode, Long userId, BigDecimal amount) {
+        LOG.infof("Processing subtract amount for Account with resource code: %s with amount: %s", resourceCode, amount);
 
-        Account account = accountRepository.findByIdOptional(id)
-            .orElseThrow(() -> {
-                LOG.debugf("Account with ID %d not found", id);
-                return new BadRequestException("Account not found");
-            });
+        Account account = validateAndGetAccount(resourceCode, userId);
 
         if (account.getBalance().compareTo(amount) < 0) {
-            LOG.debugf("Insufficient funds for Account ID %d: Current balance %s, Requested amount %s", id, account.getBalance(), amount);
+            LOG.debugf("Insufficient funds for Account with resource code: %s. Current balance: %s, Requested amount: %s", resourceCode, account.getBalance(), amount);
             throw new InsufficientFoundsException("Insufficient funds for the transaction");
         }
         account.setBalance(account.getBalance().subtract(amount));
 
         accountRepository.persist(account);
-        LOG.infof("Transaction processed successfully for Account ID: %d. New balance: %s", id, account.getBalance());
+        LOG.infof("Transaction processed successfully for Account with resource code: %s. New balance: %s", resourceCode, account.getBalance());
     }
 
     @Override
-    public void processAddAmount(Long id, BigDecimal amount) {
-        LOG.infof("Processing add amount for Account ID: %d with amount: %s", id, amount);
-        Account account = accountRepository.findByIdOptional(id)
-            .orElseThrow(() -> {
-                LOG.debugf("Account with ID %d not found", id);
-                return new BadRequestException("Account not found");
-            });
+    public void processAddAmount(String resourceCode, Long userId, BigDecimal amount) {
+        LOG.infof("Processing add amount for Account with resource code: %s with amount: %s", resourceCode, amount);
+        Account account = validateAndGetAccount(resourceCode, userId);  
+
         account.setBalance(account.getBalance().add(amount));
         accountRepository.persist(account);
-        LOG.infof("Amount added successfully for Account ID: %d. New balance: %s", id, account.getBalance());
+        LOG.infof("Amount added successfully for Account with resource code: %s. New balance: %s", resourceCode, account.getBalance());
     }
 
     @Override

@@ -285,14 +285,14 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         LOG.debugf("Rolling back EXPENSE transaction ID: %d", transaction.id);
         
         if (transaction.getAccount() != null) {
-            accountService.processAddAmount(transaction.getAccount().id, transaction.getAmount());
+            accountService.processAddAmount(transaction.getAccount().getResourceCode(), transaction.getAccount().getUser().id, transaction.getAmount());
 
             transaction.getAccount().setUsageCount(transaction.getAccount().getUsageCount() - 1);
             accountRepository.persist(transaction.getAccount());
 
             LOG.debugf("Reverted amount to Account ID: %d", transaction.getAccount().id);
         } else if (transaction.getCreditCard() != null) {
-            creditCardService.processAddPayment(transaction.getCreditCard().id, transaction.getAmount());
+            creditCardService.processAddPayment(transaction.getCreditCard().getResourceCode(), transaction.getCreditCard().getUser().id, transaction.getAmount());
 
             transaction.getCreditCard().setUsageCount(transaction.getCreditCard().getUsageCount() - 1);
             creditCardRepository.persist(transaction.getCreditCard());
@@ -312,8 +312,8 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
     private void rollbackIncome(Transaction transaction, User user) {
         LOG.debugf("Rolling back INCOME transaction ID: %d", transaction.id);
         
-        accountService.processSubtractAmount(transaction.getAccount().id, transaction.getAmount());
-        LOG.debugf("Deducted amount from Account ID: %d", transaction.getAccount().id);
+        accountService.processSubtractAmount(transaction.getAccount().getResourceCode(), transaction.getAccount().getUser().id, transaction.getAmount());
+        LOG.debugf("Deducted amount from Account with resource code: %s", transaction.getAccount().getResourceCode());
     }
 
     /**
@@ -324,10 +324,10 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
     private void rollbackTransfer(Transaction transaction, User user) {
         LOG.debugf("Rolling back TRANSFER transaction ID: %d", transaction.id);
 
-        accountService.processSubtractAmount(transaction.getDestinationAccount().id, transaction.getAmount());
-        accountService.processAddAmount(transaction.getAccount().id, transaction.getAmount());
+        accountService.processSubtractAmount(transaction.getDestinationAccount().getResourceCode(), transaction.getDestinationAccount().getUser().id, transaction.getAmount());
+        accountService.processAddAmount(transaction.getAccount().getResourceCode(), transaction.getAccount().getUser().id, transaction.getAmount());
         
-        LOG.debugf("Reversed transfer between Account ID: %d and Account ID: %d", transaction.getAccount().id, transaction.getDestinationAccount().id);
+        LOG.debugf("Reversed transfer between Account with resource code: %s and Account with resource code: %s", transaction.getAccount().getResourceCode(), transaction.getDestinationAccount().getResourceCode());
     }
 
     /**
@@ -339,7 +339,7 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         LOG.debugf("Rolling back CREDIT_PAYMENT transaction ID: %d", transaction.id);
 
         creditCardService.processAddAmount(transaction.getCreditCard().id, transaction.getAmount());
-        accountService.processAddAmount(transaction.getAccount().id, transaction.getAmount());
+        accountService.processAddAmount(transaction.getAccount().getResourceCode(), transaction.getAccount().getUser().id, transaction.getAmount());
 
         Account account = transaction.getAccount();
         account.setUsageCount(account.getUsageCount() - 1);
@@ -371,7 +371,7 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
 
         if (isValid(entityCreateDTO.accountResourceCode())) {
             Account account = validateAndGetAccountEntity(entityCreateDTO.accountResourceCode(), user);
-            accountService.processSubtractAmount(account.id, entityCreateDTO.amount());
+            accountService.processSubtractAmount(account.getResourceCode(), account.getUser().id, entityCreateDTO.amount());
 
             account.setLastUsedDate(transaction.getTransactionDate());
             account.setUsageCount(account.getUsageCount() + 1);
@@ -419,7 +419,7 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         Account account = validateAndGetAccountEntity(entityCreateDTO.accountResourceCode(), user);
         
         validateTotalIncomeDoesNotExceedTransactions(income, user, transaction.getAmount());
-        accountService.processAddAmount(account.id, entityCreateDTO.amount());
+        accountService.processAddAmount(account.getResourceCode(), account.getUser().id, entityCreateDTO.amount());
 
         transaction.setIncome(income);
         transaction.setAccount(account);
@@ -447,8 +447,8 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         Account sourceAccount = validateAndGetAccountEntity(entityCreateDTO.accountResourceCode(), user);
         Account destinationAccount = validateAndGetAccountEntity(entityCreateDTO.destinationAccountResourceCode(), user);
         
-        accountService.processSubtractAmount(sourceAccount.id, entityCreateDTO.amount());
-        accountService.processAddAmount(destinationAccount.id, entityCreateDTO.amount());
+        accountService.processSubtractAmount(sourceAccount.getResourceCode(), sourceAccount.getUser().id, entityCreateDTO.amount());
+        accountService.processAddAmount(destinationAccount.getResourceCode(), destinationAccount.getUser().id, entityCreateDTO.amount());
 
         transaction.setAccount(sourceAccount);
         transaction.setDestinationAccount(destinationAccount);
@@ -476,8 +476,8 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         Account account = validateAndGetAccountEntity(entityCreateDTO.accountResourceCode(), user);
         CreditCard creditCard = validateAndGetCreditCardEntity(entityCreateDTO.creditCardResourceCode(), user);
         
-        accountService.processSubtractAmount(account.id, entityCreateDTO.amount());
-        creditCardService.processAddPayment(creditCard.id, entityCreateDTO.amount());
+        accountService.processSubtractAmount(account.getResourceCode(), account.getUser().id, entityCreateDTO.amount());
+        creditCardService.processAddPayment(creditCard.getResourceCode(), creditCard.getUser().id, entityCreateDTO.amount());
 
         account.setUsageCount(account.getUsageCount() + 1);
         account.setLastUsedDate(transaction.getTransactionDate());

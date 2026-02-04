@@ -158,9 +158,6 @@ export class DisableAccountCreditModal implements OnInit {
       this.hasBalance ? this.selectedAccount()!.resourceCode : undefined
     );
 
-    console.log(accountDeactivateRequestDTO);
-    console.log(this.resourceCode());
-
     this.creditCardService.deactivateCreditCard(this.resourceCode()!, accountDeactivateRequestDTO).subscribe({
       next: () => {
         this.creditCardService.refresh();

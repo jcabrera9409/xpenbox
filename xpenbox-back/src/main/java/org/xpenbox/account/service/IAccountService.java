@@ -16,17 +16,19 @@ public interface IAccountService extends IGenericService<Account, AccountCreateD
  
     /**
      * Process to subtract amount from account balance
-     * @param id the account id
+     * @param resourceCode the account resource code
+     * @param userId the user id
      * @param amount the amount to subtract
      */
-    public void processSubtractAmount(Long id, BigDecimal amount);
+    public void processSubtractAmount(String resourceCode, Long userId, BigDecimal amount);
 
     /**
      * Process to add amount to account balance
-     * @param id the account id
+     * @param resourceCode the account resource code
+     * @param userId the user id
      * @param amount the amount to add
      */
-    public void processAddAmount(Long id, BigDecimal amount);
+    public void processAddAmount(String resourceCode, Long userId, BigDecimal amount);
 
     /**
      * Deactivate an account and transfer remaining balance to another account

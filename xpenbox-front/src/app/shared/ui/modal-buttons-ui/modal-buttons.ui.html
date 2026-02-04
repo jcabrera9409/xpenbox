@@ -7,7 +7,8 @@
     </button>
     <button type="submit"
         (click)="onConfirm()"
-        class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        [class]="'bg-[' + confirmColor() + ']'"
+        class="flex-1 text-white inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         [disabled]="!isValidForm() || isLoading()">
         @if (!isLoading()) {
             <span class="material-icons text-lg">
