@@ -24,6 +24,7 @@ export class AccountCard {
 
   accountCardEdit = output<string>();
   accountCardTransfer = output<string>();
+  accountCardDisable = output<string>();
 
   constructor(
     private router: Router
@@ -46,6 +47,6 @@ export class AccountCard {
   }
 
   onDisableAccount() {
-    console.log('Disable account clicked for', this.accountCardResourceCode());
+    this.accountCardDisable.emit(this.accountCardResourceCode() || '');
   }
 }

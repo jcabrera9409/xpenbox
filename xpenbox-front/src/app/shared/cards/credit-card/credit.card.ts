@@ -27,6 +27,7 @@ export class CreditCard {
 
   creditCardEdit = output<string>();
   creditCardPayment = output<string>();
+  creditCardDisable = output<string>();
 
   constructor(
     private router: Router
@@ -74,6 +75,6 @@ export class CreditCard {
   }
 
   onDisableCreditCard() {
-    console.log('Disable credit card clicked for', this.creditCardResourceCode());
+    this.creditCardDisable.emit(this.creditCardResourceCode() || '');
   }
 }

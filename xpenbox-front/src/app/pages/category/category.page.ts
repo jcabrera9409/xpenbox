@@ -122,13 +122,13 @@ export class CategoryPage {
     const isActive = this.categoryDataSelected()!.state;
     
     if (isActive) {
-      this.titleConfirmModal.set('Inhabilitar Categoría');
-      this.messageConfirmModal.set(`¿Estás seguro de que deseas inhabilitar la categoría "${this.categoryDataSelected()!.name}"?`);
-      this.confirmTextConfirmModal.set('Inhabilitar');
+      this.titleConfirmModal.set('Desactivar Categoría');
+      this.messageConfirmModal.set(`¿Estás seguro de que deseas desactivar la categoría "${this.categoryDataSelected()!.name}"?`);
+      this.confirmTextConfirmModal.set('Desactivar');
     } else {
-      this.titleConfirmModal.set('Habilitar Categoría');
-      this.messageConfirmModal.set(`¿Estás seguro de que deseas habilitar la categoría "${this.categoryDataSelected()!.name}"?`);
-      this.confirmTextConfirmModal.set('Habilitar');
+      this.titleConfirmModal.set('Activar Categoría');
+      this.messageConfirmModal.set(`¿Estás seguro de que deseas activar la categoría "${this.categoryDataSelected()!.name}"?`);
+      this.confirmTextConfirmModal.set('Activar');
     }
   }
 

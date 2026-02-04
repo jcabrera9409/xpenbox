@@ -16,10 +16,12 @@ import { CreateFirstComponent } from '../../shared/components/create-first-compo
 import { TransferModal } from '../../modal/account/transfer-modal/transfer.modal';
 import { CreditcardPaymentModal } from '../../modal/account/creditcard-payment-modal/creditcard-payment.modal';
 import { userState } from '../../feature/user/service/user.state';
+import { DisableAccountCreditModal } from '../../modal/account/disable-account-credit-modal/disable-account-credit.modal';
+import { AccountCreditType } from '../../shared/dto/account-credit.dto';
 
 @Component({
   selector: 'app-account-page',
-  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent, TransferModal, CreditcardPaymentModal],
+  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent, TransferModal, CreditcardPaymentModal, DisableAccountCreditModal],
   templateUrl: './account.page.html',
   styleUrl: './account.page.css',
 })
@@ -38,6 +40,10 @@ export class AccountPage {
 
   showTransferModal = signal(false);
   resourceCodeTransferSelected = signal<string | null>(null);
+
+  showDisableAccountCreditModal = signal(false);
+  resourceCodeAccountCreditSelected = signal<string | null>(null);
+  accountCreditTypeSelected = signal<AccountCreditType | null>(null);
 
   showCreditcardPaymentModal = signal(false);
   resourceCodeCreditcardPaymentSelected = signal<string | null>(null);
@@ -96,6 +102,22 @@ export class AccountPage {
 
   closeTransferModal() {
     this.showTransferModal.set(false);
+  }
+
+  openDisableAccountModal(resourceCodeAccountSelected: string) {
+    this.resourceCodeAccountCreditSelected.set(resourceCodeAccountSelected);
+    this.accountCreditTypeSelected.set(AccountCreditType.ACCOUNT);
+    this.showDisableAccountCreditModal.set(true);
+  }
+
+  openDisableCreditCardModal(resourceCodeCreditCardSelected: string) {
+    this.resourceCodeAccountCreditSelected.set(resourceCodeCreditCardSelected);
+    this.accountCreditTypeSelected.set(AccountCreditType.CREDIT_CARD);
+    this.showDisableAccountCreditModal.set(true);
+  }
+
+  closeDisableAccountCreditModal() {
+    this.showDisableAccountCreditModal.set(false);
   }
 
   reloadCreditCards() {

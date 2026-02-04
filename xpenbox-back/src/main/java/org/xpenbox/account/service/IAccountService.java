@@ -3,6 +3,7 @@ package org.xpenbox.account.service;
 import java.math.BigDecimal;
 
 import org.xpenbox.account.dto.AccountCreateDTO;
+import org.xpenbox.account.dto.AccountDeactivateRequestDTO;
 import org.xpenbox.account.dto.AccountResponseDTO;
 import org.xpenbox.account.dto.AccountUpdateDTO;
 import org.xpenbox.account.entity.Account;
@@ -26,4 +27,12 @@ public interface IAccountService extends IGenericService<Account, AccountCreateD
      * @param amount the amount to add
      */
     public void processAddAmount(Long id, BigDecimal amount);
+
+    /**
+     * Deactivate an account and transfer remaining balance to another account
+     * @param resourceCode the resource code of the account to deactivate
+     * @param accountDeactivateRequestDTO the DTO containing the target account resource code
+     * @param userEmail the email of the user performing the operation
+     */
+    public void deactivateAccount(String resourceCode, AccountDeactivateRequestDTO accountDeactivateRequestDTO, String userEmail);
 }

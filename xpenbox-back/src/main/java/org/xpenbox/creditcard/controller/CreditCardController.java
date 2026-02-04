@@ -3,6 +3,7 @@ package org.xpenbox.creditcard.controller;
 import org.jboss.logging.Logger;
 import org.xpenbox.common.dto.APIResponseDTO;
 import org.xpenbox.creditcard.dto.CreditCardCreateDTO;
+import org.xpenbox.creditcard.dto.CreditCardDeactivateRequestDTO;
 import org.xpenbox.creditcard.dto.CreditCardResponseDTO;
 import org.xpenbox.creditcard.dto.CreditCardUpdateDTO;
 import org.xpenbox.creditcard.service.ICreditCardService;
@@ -12,6 +13,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -82,6 +84,26 @@ public class CreditCardController {
         return Response.ok(
             APIResponseDTO.success("Credit card updated successfully", creditCardResponse, Response.Status.OK.getStatusCode())
         ).build();
+    }
+
+    /**
+     * Deactivate a credit card and pay off remaining balance from another account
+     * @param securityContext Security context of the authenticated user
+     * @param resourceCode Unique resource code of the credit card to be deactivated
+     * @param creditCardDeactivateRequestDTO Data transfer object containing deactivation details
+     * @return Response indicating the result of the deactivation operation
+     */
+    @PATCH
+    @Path("/{resourceCode}/deactivate")
+    @Transactional
+    public Response deactivateCreditCard(@Context SecurityContext securityContext, @PathParam("resourceCode") String resourceCode, @Valid CreditCardDeactivateRequestDTO creditCardDeactivateRequestDTO) {
+        String userEmail = securityContext.getUserPrincipal().getName();
+        LOG.infof("Deactivate credit card request received for user: %s, resourceCode: %s", userEmail, resourceCode);
+        
+        creditCardService.deactivateCreditCard(resourceCode, creditCardDeactivateRequestDTO, userEmail);
+        LOG.infof("Credit card deactivated successfully for user: %s, resourceCode: %s", userEmail, resourceCode);
+        
+        return Response.ok().build();
     }
 
     /**

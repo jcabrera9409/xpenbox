@@ -1,0 +1,155 @@
+<!-- Overlay con backdrop -->
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
+  <!-- Modal container -->
+  <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-xl mx-auto my-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-5rem)] flex flex-col overflow-hidden">
+    
+    <!-- Header -->
+    <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
+      <div class="flex items-start justify-between">
+        <div class="flex items-start gap-4 flex-1">
+          <!-- Icon container -->
+          <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+            <span class="material-icons text-[var(--xpb-expense)] text-2xl">block</span>
+          </div>
+          
+          <!-- Title y subtitle -->
+          <div class="flex-1">
+            <h2 class="text-xl font-semibold xpb-text-primary">Desactivar {{ resourceTypeLabel }}</h2>
+            <p class="text-sm xpb-text-secondary mt-1">
+              @if (resourceName !== '') {
+                Está a punto de desactivar la {{ resourceTypeLabel }} <strong>"{{ resourceName }}"</strong>.
+              } @else {
+                Está a punto de desactivar esta {{ resourceTypeLabel }}.
+              }
+            </p>
+          </div>
+        </div>
+        
+        <!-- Close button -->
+        <button
+          type="button"
+          (click)="onClose()"
+          class="xpb-text-secondary hover:xpb-text-primary transition-colors ml-2"
+          [disabled]="this.accountState.isLoadingSendingAccount() || this.creditCardState.isLoadingSendingCreditCard()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+    </div>
+
+    @if (this.accountState.isLoadingGetAccount() || this.creditCardState.isLoadingGetCreditCard()) {
+        <app-loading-ui></app-loading-ui>
+    } @else if (this.accountState.errorGetAccount() || this.creditCardState.errorGetCreditCard()) {
+        <app-retry-component
+            [message]="'Error al cargar la información de la ' + resourceTypeLabel"
+            (retry)="retryLoadResourceData()">
+        </app-retry-component>
+    } @else {
+        <!-- Body content -->
+        <div class="p-4 overflow-y-auto flex-1">
+        
+            <!-- Advertencia de saldo si existe -->
+            @if (hasBalance) {
+                <div class="mb-5 flex items-start gap-3 xpb-bg-main rounded-lg p-4 border-l-4 border-[var(--xpb-expense)]">
+                    <span class="material-icons text-[var(--xpb-expense)] text-2xl mt-0.5">warning</span>
+                    <div class="flex-1">
+                        <p class="font-semibold xpb-text-primary mb-1">
+                            @if (isCreditCard) {
+                                Saldo pendiente de pago.
+                            } @else {
+                                Saldo disponible.
+                            }
+                        </p>
+                        <p class="text-sm xpb-text-secondary">{{ balanceMessage }}</p>
+                    </div>
+                </div>
+
+                <app-accounts-carousel-component
+                    ngSkipHydration class="block"
+                    [isLoading]="this.accountState.isLoadingGetList()"
+                    [errorLoading]="this.accountState.errorGetList()"
+                    [carouselTitle]="'Selecciona una cuenta'"
+                    [carouselErrorMessage]="'Error al cargar cuentas disponibles'"
+                    [currencySymbol]="userLogged()?.currency!"
+                    [accountsList]="accountList()"
+                    [currentSelectedAccount]="selectedAccount()"
+                    [noAccountsMessage]="isCreditCard ? 'No tienes cuentas con saldo suficiente disponibles' : 'No tienes cuentas disponibles'"
+                    (selectedAccountOutput)="this.selectedAccount.set($event)"
+                    (retry)="retryLoadAccountData()">
+                </app-accounts-carousel-component>
+            } @else {
+                <div class="mb-5 flex items-start gap-3 xpb-bg-main rounded-lg p-4 border-l-4 border-[var(--xpb-primary)]">
+                    <span class="material-icons text-[var(--xpb-primary)] text-2xl mt-0.5">info</span>
+                    <div class="flex-1">
+                        <p class="font-semibold xpb-text-primary mb-1">¿Está seguro?</p>
+                        <p class="text-sm xpb-text-secondary">
+                            Al desactivar esta {{ resourceTypeLabel }}, dejará de estar disponible para registrar nuevos movimientos.
+                        </p>
+                    </div>
+                </div>
+            }
+
+            <!-- Checkbox de confirmación -->
+            <div class="mt-5">
+                <label 
+                    class="flex items-start gap-3 cursor-pointer group"
+                    [class.opacity-50]="hasBalance && !selectedAccount()"
+                    [class.cursor-not-allowed]="hasBalance && !selectedAccount()">
+                    
+                    <input
+                        type="checkbox"
+                        [checked]="userConfirmed()"
+                        (change)="toggleConfirmation()"
+                        [disabled]="hasBalance && !selectedAccount()"
+                        class="mt-1 w-5 h-5 rounded border-2 xpb-border text-[var(--xpb-primary)] 
+                            focus:ring-2 focus:ring-[var(--xpb-primary)] focus:ring-offset-2 
+                            disabled:cursor-not-allowed disabled:opacity-50 transition-all cursor-pointer" />
+                    
+                    <span class="flex-1 text-sm xpb-text-secondary group-hover:xpb-text-primary transition-colors">
+                        Entiendo que una vez desactivada la {{ resourceTypeLabel }}, esta dejará de estar disponible para nuevos movimientos y transacciones.
+                    </span>
+                </label>
+            </div>
+
+            @if (this.accountState.errorSendingAccount() || this.creditCardState.errorSendingCreditCard()) {
+                <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)] mt-2">
+                    <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                        {{ this.accountState.errorSendingAccount() || this.creditCardState.errorSendingCreditCard() }}
+                    </div>
+                </div>
+            }
+
+            <!-- Buttons -->
+            <div class="flex gap-3 pt-6 mt-6 border-t xpb-border">
+                <!-- Cancelar -->
+                <button
+                    type="button"
+                    (click)="onClose()"
+                    [disabled]="this.accountState.isLoadingSendingAccount() || this.creditCardState.isLoadingSendingCreditCard()"
+                    class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span class="material-icons text-xl">close</span>
+                    <span>Cancelar</span>
+                </button>
+
+                <!-- Confirmar -->
+                <button
+                    type="button"
+                    (click)="onConfirm()"
+                    [disabled]="!isFormValid || this.accountState.isLoadingSendingAccount() || this.creditCardState.isLoadingSendingCreditCard()"
+                    class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-medium 
+                            transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    [class]="!isFormValid ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-[var(--xpb-expense)] text-white hover:bg-[var(--xpb-expense)]/90'">
+                    @if (this.accountState.isLoadingSendingAccount() || this.creditCardState.isLoadingSendingCreditCard()) {
+                        <span class="material-icons text-xl animate-spin">autorenew</span>
+                        <span>Desactivando...</span>
+                    } @else {
+                        <span class="material-icons text-xl">block</span>
+                        <span>Desactivar</span>
+                    }
+                </button>
+            </div>
+        </div>
+    }
+
+  </div>
+</div>

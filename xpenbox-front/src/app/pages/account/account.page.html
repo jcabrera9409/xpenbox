@@ -82,6 +82,7 @@
             [accountCardResourceCode]="account.resourceCode"
             (accountCardEdit) = "openAccountEditionModal($event)"
             (accountCardTransfer) = "openTransferModal($event)"
+            (accountCardDisable) = "openDisableAccountModal($event)"
           ></app-account-card>
         }
       }
@@ -133,6 +134,7 @@
               [creditCardResourceCode]="creditCard.resourceCode"
               (creditCardEdit) = "openCreditCardEditionModal($event)"
               (creditCardPayment) = "openCreditcardPaymentModal($event)"
+              (creditCardDisable) = "openDisableCreditCardModal($event)"
             ></app-credit-card>
           }
         }
@@ -142,17 +144,37 @@
 </div>
 
 @if (showAccountEditionModal()) {
-  <app-account-edition-modal (close)="closeAccountEditionModal()" [resourceCodeSelected]="resourceCodeAccountSelected()"></app-account-edition-modal>
+  <app-account-edition-modal 
+    [resourceCodeSelected]="resourceCodeAccountSelected()"
+    (close)="closeAccountEditionModal()" 
+  ></app-account-edition-modal>
 }
 
 @if (showCreditCardEditionModal()) {
-  <app-creditcard-edition-modal (close)="closeCreditCardEditionModal()" [resourceCodeSelected]="resourceCodeCreditCardSelected()"></app-creditcard-edition-modal>
+  <app-creditcard-edition-modal 
+    [resourceCodeSelected]="resourceCodeCreditCardSelected()"
+    (close)="closeCreditCardEditionModal()" 
+  ></app-creditcard-edition-modal>
 }
 
 @if (showTransferModal()) {
-  <app-transfer-modal (close)="closeTransferModal()" [accountResourceCode]="resourceCodeTransferSelected()"></app-transfer-modal>
+  <app-transfer-modal 
+    [accountResourceCode]="resourceCodeTransferSelected()"
+    (close)="closeTransferModal()" 
+  ></app-transfer-modal>
 }
 
 @if (showCreditcardPaymentModal()) {
-  <app-creditcard-payment-modal (close)="closeCreditcardPaymentModal()" [creditCardResourceCode]="resourceCodeCreditcardPaymentSelected()"></app-creditcard-payment-modal>
+  <app-creditcard-payment-modal 
+    [creditCardResourceCode]="resourceCodeCreditcardPaymentSelected()"
+    (close)="closeCreditcardPaymentModal()" 
+  ></app-creditcard-payment-modal>
+}
+
+@if (showDisableAccountCreditModal()) {
+  <app-disable-account-credit-modal
+    [resourceCode]="this.resourceCodeAccountCreditSelected()"
+    [resourceType]="this.accountCreditTypeSelected()"
+    (close)="closeDisableAccountCreditModal()"
+  ></app-disable-account-credit-modal>
 }
