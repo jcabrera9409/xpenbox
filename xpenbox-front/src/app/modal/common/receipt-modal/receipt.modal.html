@@ -1,0 +1,42 @@
+@if (showModal) {
+    <!-- Overlay with backdrop -->
+    <div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
+        <!-- Modal container -->
+        <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto overflow-hidden">
+            <!-- Body content -->
+            <div class="p-8 text-center">
+                <!-- Success check icon -->
+                <div class="flex justify-center mb-6">
+                    <div class="xpb-bg-card rounded-full shadow-lg flex items-center justify-center aspect-square w-44" style="background:rgba(88,129,87,0.18);">
+                        <svg class="w-40 h-40 p-1" viewBox="0 0 52 52">
+                            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                            <path class="checkmark-check" fill="none" d="M14 27l7 7 16-16" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <h2 class="text-2xl font-semibold xpb-text-primary mb-3">
+                    {{ title || '¡Operación Exitosa!' }}
+                </h2>
+
+                <!-- Description message -->
+                <p class="xpb-text-secondary text-base leading-relaxed mb-8">
+                    {{ content || '' }}
+                </p>
+
+                <!-- Close button -->
+                <button 
+                    type="button"
+                    class="w-full xpb-btn-primary inline-flex items-center justify-center gap-2 py-3 rounded-lg"
+                    (click)="closeModal()">
+                    @if (buttonIcon) {
+                        <span class="material-icons text-xl">{{ buttonIcon || '' }}</span>
+                    }
+                    <span>{{ buttonText || 'Entendido' }}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+}

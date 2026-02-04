@@ -10,10 +10,11 @@ import { SuccessTransactionComponent } from '../../shared/components/success-tra
 import { IncomeEditionModal } from '../../modal/income/income-edition-modal/income-edition.modal';
 import { CreditcardPaymentModal } from '../../modal/account/creditcard-payment-modal/creditcard-payment.modal';
 import { TransferModal } from '../../modal/account/transfer-modal/transfer.modal';
+import { ReceiptModal } from '../../modal/common/receipt-modal/receipt.modal';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule, SuccessTransactionComponent, IncomeEditionModal, CreditcardPaymentModal, TransferModal],
+  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule, SuccessTransactionComponent, IncomeEditionModal, CreditcardPaymentModal, TransferModal, ReceiptModal],
   templateUrl: './landing.page.html',
   styleUrl: './landing.page.css',
 })

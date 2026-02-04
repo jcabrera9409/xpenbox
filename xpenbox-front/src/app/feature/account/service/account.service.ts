@@ -6,6 +6,8 @@ import { accountState } from './account.state';
 import { ApiResponseDTO } from '../../common/model/api.response.dto';
 import { AccountRequestDTO } from '../model/account.request.dto';
 import { GenericService } from '../../common/service/generic.service';
+import { AccountDeactivateRequestDTO } from '../model/account.deactivate.request.dto';
+import { Observable } from 'rxjs';
 
 /**
  * Service for managing accounts, including creating, updating, and fetching account data.
@@ -25,6 +27,20 @@ export class AccountService extends GenericService<AccountRequestDTO, AccountRes
       http,
       `${envService.getApiUrl()}/account`
     )
+  }
+
+  /**
+   * Deactivate an account and transfer remaining balance to another account
+   * @param resourceCode The resource code of the account to deactivate
+   * @param accountDeactivateRequestDTO Data transfer object containing the target account resource code for balance transfer
+   * @returns An observable of the API response indicating the result of the deactivation operation
+   */
+  deactivateAccount(resourceCode: string, accountDeactivateRequestDTO: AccountDeactivateRequestDTO): Observable<ApiResponseDTO<void>> {
+    return this.http.patch<ApiResponseDTO<void>>(
+      `${this.apiUrl}/${resourceCode}/deactivate`,
+      accountDeactivateRequestDTO,
+      { withCredentials: true }
+    );
   }
 
   /**

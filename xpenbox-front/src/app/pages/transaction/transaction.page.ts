@@ -18,11 +18,13 @@ import { ActivatedRoute } from '@angular/router';
 import { DateService } from '../../shared/service/date.service';
 import { TransactionEditionModal } from '../../modal/transaction/transaction-edition-modal/transaction-edition.modal';
 import { userState } from '../../feature/user/service/user.state';
+import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
+import { genericState } from '../../feature/common/service/generic.state';
 
 @Component({
   selector: 'app-transaction-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent, TransactionEditionModal],
+  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent, TransactionEditionModal, ConfirmModal],
   templateUrl: './transaction.page.html',
   styleUrl: './transaction.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -33,6 +35,7 @@ export class TransactionPage {
 
   transactionState = transactionState;
   categoryState = categoryState;
+  genericState = genericState;
   transactionType = TransactionType;
 
   // Filtros
@@ -54,9 +57,16 @@ export class TransactionPage {
   totalElements = signal<number>(0);
   totalPages = signal<number>(0);
   accumulatedTransactions = signal<TransactionResponseDTO[]>([]);
+  
+  resourceCodeTransactionSelected = signal<string | null>(null);
+  transactionDataSelected = signal<TransactionResponseDTO | null>(null);
 
   showTransactionEditionModal = signal(false);
-  resourceCodeTransactionSelected = signal<string | null>(null);
+
+  showConfirmModal = signal(false);
+  titleConfirmModal = signal<string | null>(null);
+  messageConfirmModal = signal<string | null>(null);
+  confirmTextConfirmModal = signal<string | null>(null);
 
   constructor(
     private transactionService: TransactionService,
@@ -210,8 +220,102 @@ export class TransactionPage {
     this.showTransactionEditionModal.set(false);
   }
 
-  deleteTransaction(resourceCode: string): void {
-    console.log('Eliminar transacción:', resourceCode);
-    // Aquí iría la lógica para eliminar
+  openTransactionDeletionModal(resourceCode: string): void {
+    this.transactionDataSelected.set(null);
+    this.transactionState.errorGetTransaction.set(null);
+    this.transactionState.errorSendingTransaction.set(null);
+    this.resourceCodeTransactionSelected.set(resourceCode);
+    this.loadTransactionData();
+    this.showConfirmModal.set(true);
+  }
+
+  confirmDeleteTransaction(resourceCode: string): void {
+    this.transactionState.isLoadingSendingTransaction.set(true);
+
+    this.transactionService.delete(resourceCode).subscribe({
+      next: () => {
+        this.transactionState.isLoadingSendingTransaction.set(false);
+        this.showConfirmModal.set(false);
+        this.loadInitialTransactions();
+
+        const transactionTypeLabel = this.getTransactionTypeLabel(this.transactionDataSelected()?.transactionType);
+        const amount = this.transactionDataSelected()?.amount || 0;
+        const formattedAmount = `${this.userLogged()?.currency} ${amount.toFixed(2)}`;
+        const date = this.dateService.format(this.transactionDataSelected()?.transactionDateTimestamp || 0, 'datetime');
+        const message = `La transacción de tipo "${transactionTypeLabel}" por un monto de ${formattedAmount} realizada el ${date} ha sido eliminada correctamente.`;
+
+        this.genericState.showReceiptModal.set(true);
+        this.genericState.titleReceiptModal.set('Transacción Eliminada');
+        this.genericState.contentReceiptModal.set(message);
+      },
+      error: (error) => {
+        if (error.status === 500 || error.status === 0) {
+          this.transactionState.errorSendingTransaction.set('Ocurrió un error al eliminar la transacción. Por favor, intenta nuevamente.');
+        } else {
+          this.transactionState.errorSendingTransaction.set(error.error.message || 'Ocurrió un error al eliminar la transacción. Por favor, intenta nuevamente.');
+        }
+        this.transactionState.isLoadingSendingTransaction.set(false);
+      }
+    });
+  }
+
+  closeConfirmDeletionModal(): void {
+    this.showConfirmModal.set(false);
+  }
+
+  private getTransactionTypeLabel(type: TransactionType | undefined): string {
+    switch (type) {
+      case TransactionType.INCOME:
+        return 'Ingreso';
+      case TransactionType.EXPENSE:
+        return 'Gasto';
+      case TransactionType.TRANSFER:
+        return 'Transferencia';
+      case TransactionType.CREDIT_PAYMENT:
+        return 'Pago de Crédito';
+      default:
+        return 'Desconocido';
+    }
+  }
+
+  private updateDeleteTransactionModal(): void {
+    if (!this.transactionDataSelected()) {
+      this.titleConfirmModal.set(null);
+      this.messageConfirmModal.set(null);
+      this.confirmTextConfirmModal.set(null);
+      return;
+    }
+
+    const typeTransaction = this.transactionDataSelected()!.transactionType;
+    const amountTransaction = this.transactionDataSelected()!.amount;
+    const formattedAmount = `${this.userLogged()?.currency} ${amountTransaction.toFixed(2)}`;
+    const dateTransaction = this.dateService.format(this.transactionDataSelected()!.transactionDateTimestamp, 'datetime');
+
+    this.titleConfirmModal.set('Eliminar Transacción');
+    this.messageConfirmModal.set(`¿Estás seguro de que deseas eliminar esta transacción de tipo "${this.getTransactionTypeLabel(typeTransaction)}" por un monto de ${formattedAmount} realizada el ${dateTransaction}?<br><br>Esta acción es permanente y no se puede deshacer.`);
+    this.confirmTextConfirmModal.set('Eliminar');
+  }
+
+  private loadTransactionData(): void {
+    if (!this.resourceCodeTransactionSelected()) return;
+
+    this.transactionState.isLoadingGetTransaction.set(true);
+    this.transactionState.errorGetTransaction.set(null);
+
+    this.transactionService.getByResourceCode(this.resourceCodeTransactionSelected()!).subscribe({
+      next: (data: ApiResponseDTO<TransactionResponseDTO>) => {
+        this.transactionDataSelected.set(data.data);
+        this.updateDeleteTransactionModal();
+        this.transactionState.isLoadingGetTransaction.set(false);
+      },
+      error: (error) => {
+        if (error.status === 500 || error.status === 0) {
+          this.transactionState.errorGetTransaction.set('Ocurrió un error al cargar la transacción. Por favor, intenta nuevamente.');
+        } else {
+          this.transactionState.errorGetTransaction.set(error.error.message || 'Ocurrió un error al cargar la transacción. Por favor, intenta nuevamente.');
+        }
+        this.transactionState.isLoadingGetTransaction.set(false);
+      }
+    });
   }
 }

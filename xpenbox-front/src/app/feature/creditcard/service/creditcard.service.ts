@@ -6,6 +6,8 @@ import { CreditCardResponseDTO } from '../model/creditcard.response.dto';
 import { creditCardState } from './creditcard.state';
 import { CreditCardRequestDTO } from '../model/creditcard.request.dto';
 import { GenericService } from '../../common/service/generic.service';
+import { Observable } from 'rxjs/internal/Observable';
+import { CreditCardDeactivateRequestDTO } from '../model/creditcard.deactivate.request.dto';
 
 /**
  * Service for managing credit cards, including creating, updating, and fetching credit card data.
@@ -25,6 +27,20 @@ export class CreditCardService extends GenericService<CreditCardRequestDTO, Cred
       http,
       `${envService.getApiUrl()}/creditcard`
     )
+  }
+
+  /**
+   * Deactivate a credit card and pay off remaining balance from another account
+   * @param resourceCode The resource code of the credit card to deactivate
+   * @param creditCardDeactivateRequestDTO Data transfer object containing the target account resource code for balance transfer
+   * @returns An observable of the API response indicating the result of the deactivation operation
+   */
+  deactivateCreditCard(resourceCode: string, creditCardDeactivateRequestDTO: CreditCardDeactivateRequestDTO): Observable<ApiResponseDTO<void>> {
+    return this.http.patch<ApiResponseDTO<void>>(
+      `${this.apiUrl}/${resourceCode}/deactivate`,
+      creditCardDeactivateRequestDTO,
+      { withCredentials: true }
+    );
   }
 
   /**

@@ -51,7 +51,7 @@
         ? 'bg-[var(--xpb-expense)]/10 hover:bg-[var(--xpb-expense)]/20 text-[var(--xpb-expense)]' 
         : 'bg-[var(--xpb-income)]/10 hover:bg-[var(--xpb-income)]/20 text-[var(--xpb-income)]'"
         type="button"
-        [attr.aria-label]="(categoryCardState() ? 'Inhabilitar' : 'Habilitar') + ' categoría ' + categoryCardName()">
+        [attr.aria-label]="(categoryCardState() ? 'Desactivar' : 'Activar') + ' categoría ' + categoryCardName()">
         <span class="material-icons text-lg">
         @if (categoryCardState()) {
             block
@@ -61,9 +61,9 @@
         </span>
         <span>
         @if (categoryCardState()) {
-            Inhabilitar
+            Desactivar
         } @else {
-            Habilitar
+            Activar
         }
         </span>
     </button>

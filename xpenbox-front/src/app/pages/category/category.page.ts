@@ -12,6 +12,7 @@ import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
 import { CategoryResponseDTO } from '../../feature/category/model/category.response.dto';
 import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
 import { CategoryRequestDTO } from '../../feature/category/model/category.request.dto';
+import { NotificationService } from '../../feature/common/service/notification.service';
 
 @Component({
   selector: 'app-category-page',
@@ -49,7 +50,8 @@ export class CategoryPage {
   );
 
   constructor(
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private notificationService: NotificationService
   ) {
     const platformId = inject(PLATFORM_ID);
     if (isPlatformServer(platformId)) {
@@ -86,6 +88,7 @@ export class CategoryPage {
         this.categoryState.isLoadingSendingCategory.set(false);
         this.showConfirmModal.set(false);
         this.categoryService.refresh();
+        this.notificationService.success('Categoría actualizada correctamente.');
       },
       error: (error) => {
         if (error.status === 500 || error.status === 0) {
@@ -122,13 +125,13 @@ export class CategoryPage {
     const isActive = this.categoryDataSelected()!.state;
     
     if (isActive) {
-      this.titleConfirmModal.set('Inhabilitar Categoría');
-      this.messageConfirmModal.set(`¿Estás seguro de que deseas inhabilitar la categoría "${this.categoryDataSelected()!.name}"?`);
-      this.confirmTextConfirmModal.set('Inhabilitar');
+      this.titleConfirmModal.set('Desactivar Categoría');
+      this.messageConfirmModal.set(`¿Estás seguro de que deseas desactivar la categoría "${this.categoryDataSelected()!.name}"?`);
+      this.confirmTextConfirmModal.set('Desactivar');
     } else {
-      this.titleConfirmModal.set('Habilitar Categoría');
-      this.messageConfirmModal.set(`¿Estás seguro de que deseas habilitar la categoría "${this.categoryDataSelected()!.name}"?`);
-      this.confirmTextConfirmModal.set('Habilitar');
+      this.titleConfirmModal.set('Activar Categoría');
+      this.messageConfirmModal.set(`¿Estás seguro de que deseas activar la categoría "${this.categoryDataSelected()!.name}"?`);
+      this.confirmTextConfirmModal.set('Activar');
     }
   }
 
@@ -142,7 +145,6 @@ export class CategoryPage {
         this.categoryDataSelected.set(data.data);
         this.updateNewStateDataModal();
         this.categoryState.isLoadingGetCategory.set(false);
-        console.log('Category data loaded:', data.data);
       },
       error: (error) => {
         if (error.status === 500 || error.status === 0) {

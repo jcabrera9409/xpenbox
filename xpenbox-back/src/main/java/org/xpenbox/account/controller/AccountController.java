@@ -2,6 +2,7 @@ package org.xpenbox.account.controller;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.account.dto.AccountCreateDTO;
+import org.xpenbox.account.dto.AccountDeactivateRequestDTO;
 import org.xpenbox.account.dto.AccountResponseDTO;
 import org.xpenbox.account.dto.AccountUpdateDTO;
 import org.xpenbox.account.service.IAccountService;
@@ -12,6 +13,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -82,6 +84,26 @@ public class AccountController {
         return Response.status(Response.Status.OK).entity(
             APIResponseDTO.success("Account updated successfully", accountResponse, Response.Status.OK.getStatusCode())
         ).build();
+    }
+
+    /**
+     * Deactivate an account and transfer remaining balance to another account
+     * @param securityContext Security context of the authenticated user
+     * @param resourceCode Unique resource code of the account to be deactivated
+     * @param accountDeactivateRequestDTO Data transfer object containing the target account resource code for balance transfer
+     * @return
+     */
+    @PATCH
+    @Path("/{resourceCode}/deactivate")
+    @Transactional
+    public Response deactivateAccount(@Context SecurityContext securityContext, @PathParam("resourceCode") String resourceCode, @Valid AccountDeactivateRequestDTO accountDeactivateRequestDTO) {
+        String userEmail = securityContext.getUserPrincipal().getName();
+        LOG.infof("Deactivate account request received for user: %s, resourceCode: %s", userEmail, resourceCode);
+
+        accountService.deactivateAccount(resourceCode, accountDeactivateRequestDTO, userEmail);
+        LOG.infof("Account deactivated successfully for user: %s, resourceCode: %s", userEmail, resourceCode);
+
+        return Response.ok().build();
     }
 
     /**
