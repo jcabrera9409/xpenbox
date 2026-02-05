@@ -55,61 +55,60 @@
             </app-retry-component>
         } @else if(incomeData() || !isEditMode) {
             <form [formGroup]="formIncome" (ngSubmit)="onSubmit()">
-                <!-- Concepto field -->
+                <!-- Monto field -->
                 <div class="mb-5">
-                    <label for="concept" class="block text-sm font-medium xpb-text-primary mb-2">
-                        Concepto
+                    <label for="amount" class="block text-sm font-medium xpb-text-primary mb-2">
+                    Monto
                     </label>
                     <div class="relative">
-                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-                        description
-                        </span>
-                        <input
-                        id="concept"
-                        type="text"
-                        formControlName="concept"
-                        placeholder="Ej: Salario mensual, Freelance, etc."
+                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                        payments
+                    </span>
+                    <input
+                        id="amount"
+                        type="number"
+                        formControlName="amount"
+                        placeholder="0.00"
+                        step="0.01"
+                        min="0.01"
                         class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
-                        />
+                    />
                     </div>
-                    @if (conceptControl?.invalid && conceptControl?.touched) {
-                        <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                            <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
-                            <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                <p>{{ getErrorMessage('concept') }}</p>
-                            </div>
+                    @if (amountControl?.invalid && amountControl?.touched) {
+                    <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                        <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                        <p>{{ getErrorMessage('amount') }}</p>
                         </div>
-                    }
                     </div>
-
-                    <!-- Monto and Fecha in grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
-                    <!-- Monto field -->
+                    }
+                </div>
+                <!-- Monto and Fecha in grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+                    <!-- Concepto field -->
                     <div>
-                        <label for="amount" class="block text-sm font-medium xpb-text-primary mb-2">
-                        Monto
+                        <label for="concept" class="block text-sm font-medium xpb-text-primary mb-2">
+                            Concepto
                         </label>
                         <div class="relative">
-                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-                            payments
-                        </span>
-                        <input
-                            id="amount"
-                            type="number"
-                            formControlName="amount"
-                            placeholder="0.00"
-                            step="0.01"
-                            min="0.01"
+                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                            description
+                            </span>
+                            <input
+                            id="concept"
+                            type="text"
+                            formControlName="concept"
+                            placeholder="Ej: Salario mensual, Freelance, etc."
                             class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
-                        />
+                            />
                         </div>
-                        @if (amountControl?.invalid && amountControl?.touched) {
-                        <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                            <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
-                            <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                            <p>{{ getErrorMessage('amount') }}</p>
+                        @if (conceptControl?.invalid && conceptControl?.touched) {
+                            <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                    <p>{{ getErrorMessage('concept') }}</p>
+                                </div>
                             </div>
-                        </div>
                         }
                     </div>
 

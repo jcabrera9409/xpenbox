@@ -138,9 +138,7 @@ public class TransactionController {
         transactionService.rollback(resourceCode, userEmail);
         LOG.infof("Transaction rolled back successfully for user: %s, resourceCode: %s", userEmail, resourceCode);
 
-        return Response.status(Response.Status.NO_CONTENT).entity(
-            APIResponseDTO.success("Transaction rolled back successfully", null, Response.Status.NO_CONTENT.getStatusCode())
-        ).build();
+        return Response.noContent().build();
     }
 
 }

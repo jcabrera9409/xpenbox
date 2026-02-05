@@ -12,10 +12,15 @@ import { CreateFirstComponent } from '../../shared/components/create-first-compo
 import { Router } from '@angular/router';
 import { DateService } from '../../shared/service/date.service';
 import { userState } from '../../feature/user/service/user.state';
+import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
+import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
+import { IncomeRequestDTO } from '../../feature/income/model/income.request.dto';
+import { IncomeResponseDTO } from '../../feature/income/model/income.response.dto';
+import { NotificationService } from '../../feature/common/service/notification.service';
 
 @Component({
   selector: 'app-income-page',
-  imports: [CommonModule, FormsModule, SummaryCard, IncomeAssignModal, LoadingUi, IncomeEditionModal, RetryComponent, CreateFirstComponent],
+  imports: [CommonModule, FormsModule, SummaryCard, IncomeAssignModal, LoadingUi, IncomeEditionModal, RetryComponent, CreateFirstComponent, ConfirmModal],
   templateUrl: './income.page.html',
   styleUrl: './income.page.css',
 })
@@ -31,7 +36,11 @@ export class IncomePage {
 
   // Income edition modal state
   showIncomeEditionModal = signal(false);
+  showIncomeDeletionConfirmModal = signal(false);
   resourceCodeIncomeSelected = signal<string | null>(null);
+
+  messageConfirmDeleteIncome = signal<string | null>(null);
+  incomeDataSelected = signal<IncomeResponseDTO | null>(null);
 
   // Control of the filter accordion
   filterExpanded = signal<boolean>(false);
@@ -69,13 +78,23 @@ export class IncomePage {
   totalAllocated = signal<number>(0);
   totalPending = signal<number>(0);
   
-  // Filtered incomes based on pending filter
+  // Filtered and sorted incomes based on pending allocation and date range
+  // Incomes with pending allocations appear first, sorted by most recent date
   filteredIncomes = computed(() => {
     const incomes = this.incomeState.incomes();
+    const incomesSorted = incomes.slice().sort((a, b) => {
+      const pendingA = a.totalAmount - a.allocatedAmount;
+      const pendingB = b.totalAmount - b.allocatedAmount;
+
+      if (pendingA > 0 && pendingB === 0) return -1;
+      if (pendingA === 0 && pendingB > 0) return 1;
+
+      return b.incomeDateTimestamp - a.incomeDateTimestamp;
+    });
     if (this.showOnlyPending()) {
-      return incomes.filter(income => income.totalAmount - income.allocatedAmount > 0);
+      return incomesSorted.filter(income => income.totalAmount - income.allocatedAmount > 0);
     }
-    return incomes;
+    return incomesSorted;
   });
   
   // Max date for date inputs (today)
@@ -85,7 +104,8 @@ export class IncomePage {
   constructor(
     private incomeService: IncomeService,
     private router: Router,
-    private dateService: DateService
+    private dateService: DateService,
+    private notificationService: NotificationService  
   ) {
     const platformId = inject(PLATFORM_ID);
     if (isPlatformServer(platformId)) {
@@ -149,9 +169,39 @@ export class IncomePage {
     this.showIncomeEditionModal.set(false);
   }
   
-  deleteIncome(resourceCode: string): void {
-    // TODO: Implementar eliminación
+  openDeleteIncomeModal(resourceCode: string): void {
+    this.resourceCodeIncomeSelected.set(resourceCode);
+    this.loadIncomeData();
+    this.showIncomeDeletionConfirmModal.set(true);
     console.log('Eliminar ingreso:', resourceCode);
+  }
+
+  confirmDeleteIncome(resourceCode: string) {
+    this.incomeState.isLoadingSendingIncome.set(true);
+
+    this.incomeService.delete(resourceCode).subscribe({
+      next: () => {
+        this.incomeState.isLoadingSendingIncome.set(false);
+        this.showIncomeDeletionConfirmModal.set(false);
+        this.reloadIncomes();
+
+        this.notificationService.success('Ingreso eliminado correctamente.');
+      }, 
+      error: (error) => {
+        if (error.status === 500 || error.status === 0) {
+          this.incomeState.errorSendingIncome.set('Ocurrió un error al eliminar el ingreso. Por favor, intenta nuevamente.');
+        } else {
+          this.incomeState.errorSendingIncome.set(error.error.message || 'Ocurrió un error al eliminar el ingreso. Por favor, intenta nuevamente.');
+        }
+        this.incomeState.isLoadingSendingIncome.set(false);
+      }
+    });
+
+  }
+
+  closeDeleteIncomeModal() {
+    this.showIncomeDeletionConfirmModal.set(false);
+    this.resourceCodeIncomeSelected.set(null);
   }
   
   openIncomeAssignModal(resourceCode: string): void {
@@ -198,4 +248,34 @@ export class IncomePage {
     return firstDayPrevMonth;
   }
 
+  private loadIncomeData(): void {
+    if (!this.resourceCodeIncomeSelected()) return;
+
+    this.incomeState.isLoadingGetIncome.set(true);
+
+    this.incomeService.getByResourceCode(this.resourceCodeIncomeSelected()!).subscribe({
+      next: (data: ApiResponseDTO<IncomeResponseDTO>) => {
+        this.incomeState.isLoadingGetIncome.set(false);
+        this.incomeDataSelected.set(data.data);
+        this.updateDeleteIncomeConfirmMessage(); 
+      },
+      error: (error) => {
+        if (error.status === 500 || error.status === 0) {
+          this.incomeState.errorGetIncome.set('Ocurrió un error al cargar el ingreso. Por favor, intenta nuevamente.');
+        } else {
+          this.incomeState.errorGetIncome.set(error.error.message || 'Ocurrió un error al cargar el ingreso. Por favor, intenta nuevamente.');
+        }
+        this.incomeState.isLoadingGetIncome.set(false);
+      }
+    });
+  }
+
+  private updateDeleteIncomeConfirmMessage(): void {
+    if (!this.incomeDataSelected()) return;
+
+    const incomeConcept = this.incomeDataSelected()!.concept;
+    const amount = this.incomeDataSelected()!.totalAmount;
+
+    this.messageConfirmDeleteIncome.set(`¿Estás seguro de que deseas eliminar el ingreso "${incomeConcept}" por un monto de ${this.userLogged()?.currency} ${amount.toFixed(2)}? Esta acción no se puede deshacer.`);
+  }
 }

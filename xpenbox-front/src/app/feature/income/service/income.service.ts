@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { EnvService } from '../../common/service/env.service';
 import { incomeState } from './income.state';
 import { ApiResponseDTO } from '../../common/model/api.response.dto';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,13 @@ export class IncomeService extends GenericService<IncomeRequestDTO, IncomeRespon
 
     return this.http.get<ApiResponseDTO<IncomeResponseDTO[]>>(
       `${this.apiUrl}/filter?from=${startTimestamp}&to=${endTimestamp}`, 
+      { withCredentials: true }
+    );
+  }
+
+  delete(resourceCode: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/${resourceCode}`, 
       { withCredentials: true }
     );
   }

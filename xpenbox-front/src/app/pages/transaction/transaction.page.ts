@@ -20,11 +20,12 @@ import { TransactionEditionModal } from '../../modal/transaction/transaction-edi
 import { userState } from '../../feature/user/service/user.state';
 import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
 import { genericState } from '../../feature/common/service/generic.state';
+import { TransactionDetailModal } from '../../modal/transaction/transaction-detail-modal/transaction-detail.modal';
 
 @Component({
   selector: 'app-transaction-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent, TransactionEditionModal, ConfirmModal],
+  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent, TransactionEditionModal, ConfirmModal, TransactionDetailModal],
   templateUrl: './transaction.page.html',
   styleUrl: './transaction.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -62,6 +63,7 @@ export class TransactionPage {
   transactionDataSelected = signal<TransactionResponseDTO | null>(null);
 
   showTransactionEditionModal = signal(false);
+  showTransactionDetailModal = signal(false);
 
   showConfirmModal = signal(false);
   titleConfirmModal = signal<string | null>(null);
@@ -205,10 +207,13 @@ export class TransactionPage {
     this.filtersExpanded.set(!this.filtersExpanded());
   }
 
-  // Métodos de acción
-  viewDetail(resourceCode: string): void {
-    console.log('Ver detalle de transacción:', resourceCode);
-    // Aquí iría la lógica para mostrar el detalle
+  openTransactionDetailModal(resourceCode: string): void {
+    this.resourceCodeTransactionSelected.set(resourceCode);
+    this.showTransactionDetailModal.set(true);
+  }
+
+  closeTransactionDetailModal(): void {
+    this.showTransactionDetailModal.set(false);
   }
 
   openTransactionEditionModal(resourceCode: string): void {
