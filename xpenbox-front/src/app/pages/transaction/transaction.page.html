@@ -146,7 +146,7 @@
                 class="block"
                 [transaction]="transaction"
                 [currency]="userLogged()?.currency!"
-                (detailView)="viewDetail($event)"
+                (detailView)="openTransactionDetailModal($event)"
                 (editView)="openTransactionEditionModal($event)"
                 (deleteView)="openTransactionDeletionModal($event)">
             </app-transaction-card>
@@ -206,4 +206,11 @@
     (cancelled)="closeConfirmDeletionModal()!"
     (confirmed)="confirmDeleteTransaction($event)"
   ></app-confirm-modal>
+}
+
+@if (showTransactionDetailModal()) {
+    <app-transaction-detail-modal
+        [resourceCodeSelected]="resourceCodeTransactionSelected()!"
+        (close)="closeTransactionDetailModal()"
+    ></app-transaction-detail-modal>
 }

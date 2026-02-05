@@ -33,7 +33,7 @@
                         style="box-shadow: 0 0 8px rgba(0, 0, 0, 0.1)">
                         <div class="flex items-center gap-2 w-full">
                             <span class="material-icons text-base">{{account.icon}}</span>
-                            <span class="text-xs font-medium truncate flex-1">{{ account.name }}</span>
+                            <span class="text-xs font-medium truncate flex-1 text-left">{{ account.name }}</span>
                         </div>
                         <span class="text-xs font-semibold w-full truncate" [class.xpb-text-secondary]="!isSelectedAccount(account.resourceCode)">
                              {{ currencySymbol() }} {{ account.balance | number:'1.2-2' }}

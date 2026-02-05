@@ -218,7 +218,7 @@
                         }
                         @if (income.allocatedAmount === 0) {
                         <button 
-                          (click)="deleteIncome(income.resourceCode)"
+                          (click)="openDeleteIncomeModal(income.resourceCode)"
                           class="p-1.5 rounded-lg hover:xpb-bg-main transition-colors"
                           type="button"
                           title="Eliminar ingreso">
@@ -293,7 +293,7 @@
                   }
                   @if (income.allocatedAmount === 0) {
                   <button 
-                    (click)="deleteIncome(income.resourceCode)"
+                    (click)="openDeleteIncomeModal(income.resourceCode)"
                     class="p-2 rounded-lg hover:xpb-bg-main transition-colors"
                     type="button"
                     title="Eliminar ingreso">
@@ -321,4 +321,22 @@
     [resourceCodeSelected]="resourceCodeIncomeSelected()"
     (close)="closeIncomeEditionModal()"
   ></app-income-edition-modal>
+}
+
+@if (showIncomeDeletionConfirmModal()) {
+  <app-confirm-modal
+    [resourceCode]="this.resourceCodeIncomeSelected()"
+    [isLoading]="this.incomeState.isLoadingGetIncome()"
+    [isErrorLoading]="this.incomeState.errorGetIncome()"
+    [isLoadingConfirm]="this.incomeState.isLoadingSendingIncome()"
+    [isErrorSending]="this.incomeState.errorSendingIncome()"
+    [iconTitle]="'delete'"
+    [title]="'Eliminar Ingreso'"
+    [typeMessage]="'warning'"
+    [message]="this.messageConfirmDeleteIncome()!"
+    [confirmText]="'Eliminar'"
+    [confirmIcon]="'warning'"
+    (cancelled)="closeDeleteIncomeModal()!"
+    (confirmed)="confirmDeleteIncome($event)"
+  ></app-confirm-modal>
 }

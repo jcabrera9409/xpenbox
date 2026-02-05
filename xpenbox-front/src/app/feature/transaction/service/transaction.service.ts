@@ -46,8 +46,8 @@ export class TransactionService extends GenericService<TransactionRequestDTO, Tr
    * @param resourceCode The unique identifier of the transaction to be deleted.
    * @returns An Observable emitting an ApiResponseDTO indicating the result of the delete operation.
    */
-  delete(resourceCode: string): Observable<ApiResponseDTO<void>> {
-    return this.http.delete<ApiResponseDTO<void>>(
+  delete(resourceCode: string): Observable<void> {
+    return this.http.delete<void>(
       `${this.apiUrl}/${resourceCode}`, { withCredentials: true }
     );
   }

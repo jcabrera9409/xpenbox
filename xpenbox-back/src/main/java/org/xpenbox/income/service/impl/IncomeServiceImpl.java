@@ -222,6 +222,32 @@ public class IncomeServiceImpl extends GenericServiceImpl<Income, IncomeCreateDT
     }
 
     /**
+     * Delete an income by resource code and user email.
+     * @param resourceCode the resource code of the income
+     * @param userEmail the email of the user
+     */
+    @Override
+    public void delete(String resourceCode, String userEmail) {
+        LOG.infof("Deleting income with resource code %s for user email: %s", resourceCode, userEmail);
+        User user = validateAndGetUser(userEmail);
+
+        Income existingIncome = incomeRepository.findByResourceCodeAndUserId(resourceCode, user.id)
+            .orElseThrow(() -> {
+                LOG.errorf("Income not found with resource code: %s for user email: %s", resourceCode, userEmail);
+                throw new ResourceNotFoundException("Income not found with resource code: " + resourceCode + " for user email: " + userEmail); 
+            });
+
+        BigDecimal totalAssignedToTransactions = calculateTotalIncomeAsignedToTransactions(existingIncome.id, user.id);
+        if (totalAssignedToTransactions.compareTo(BigDecimal.ZERO) > 0) {
+            LOG.errorf("Cannot delete income with resource code: %s as it has assigned transactions totaling: %s", resourceCode, totalAssignedToTransactions);
+            throw new BadRequestException("Cannot delete income as it has assigned transactions totaling: " + totalAssignedToTransactions);
+        }
+
+        incomeRepository.delete(existingIncome);
+        LOG.infof("Income deleted with resource code: %s", resourceCode);
+    }
+
+    /**
      * Calculate the total income assigned to transactions for a given income and user.
      * @param incomeId the ID of the income
      * @param userId the ID of the user

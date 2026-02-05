@@ -13,6 +13,7 @@ import io.quarkus.security.Authenticated;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
@@ -145,4 +146,24 @@ public class IncomeController {
             APIResponseDTO.success("Incomes filtered successfully", incomeResponses, Response.Status.OK.getStatusCode())
         ).build();
     }
+
+    /**
+     * Delete an income by resource code
+     * @param securityContext Security context of the authenticated user
+     * @param resourceCode Unique resource code of the income to be deleted
+     * @return Response indicating the outcome of the delete operation
+     */
+    @DELETE
+    @Path("/{resourceCode}")
+    @Transactional
+    public Response deleteIncome(@Context SecurityContext securityContext, @PathParam("resourceCode") String resourceCode) {
+        String userEmail = securityContext.getUserPrincipal().getName();
+        LOG.infof("Delete income request received for user: %s, resourceCode: %s", userEmail, resourceCode);
+
+        incomeService.delete(resourceCode, userEmail);
+        LOG.infof("Income deleted successfully for user: %s, resourceCode: %s", userEmail, resourceCode);
+
+        return Response.noContent().build();
+    }
+
 }

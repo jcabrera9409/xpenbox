@@ -77,7 +77,7 @@
                                     @case ('CREDIT_PAYMENT') {
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-credit)]/10 text-[var(--xpb-credit)] dark:text-[var(--xpb-credit)] rounded-lg">
                                             <span class="material-icons text-sm">payment</span>
-                                            Pago Tarjeta
+                                            Pago de Crédito
                                         </span>
                                     }
                                 }
@@ -94,6 +94,19 @@
                                 {{userLogged()?.currency}} {{ transactionData()!.amount | number:'1.2-2' }}
                             </span>
                         </div>
+
+                        <!-- Ingreso origen (si existe) -->
+                        @if (transactionData()!.income) {
+                            <div class="flex items-center justify-between gap-5">
+                                <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                                    <span class="material-icons text-base">savings</span>
+                                    Fuente de ingreso
+                                </span>
+                                <span class="text-sm font-medium xpb-text-primary truncate">
+                                    {{ transactionData()!.income!.concept }}
+                                </span>
+                            </div>
+                        }
 
                         <!-- Cuenta origen (si existe) -->
                         @if (transactionData()!.account) {
@@ -130,19 +143,6 @@
                                 </span>
                                 <span class="text-sm font-medium xpb-text-primary truncate">
                                     {{ transactionData()!.destinationAccount!.name }}
-                                </span>
-                            </div>
-                        }
-
-                        <!-- Ingreso origen (si existe) -->
-                        @if (transactionData()!.income) {
-                            <div class="flex items-center justify-between gap-5">
-                                <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <span class="material-icons text-base">savings</span>
-                                    Fuente de ingreso
-                                </span>
-                                <span class="text-sm font-medium xpb-text-primary truncate">
-                                    {{ transactionData()!.income!.concept }}
                                 </span>
                             </div>
                         }

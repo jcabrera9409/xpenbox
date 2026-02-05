@@ -21,4 +21,11 @@ public interface IIncomeService extends IGenericService<Income, IncomeCreateDTO,
      * @return a list of income response DTOs matching the criteria
      */
     List<IncomeResponseDTO> filterIncomesByDateRange(String userEmail, Long startDateTimestamp, Long endDateTimestamp);
+
+    /**
+     * Delete an income by resource code and user email.
+     * @param resourceCode the resource code of the income
+     * @param userEmail the email of the user
+     */
+    void delete(String resourceCode, String userEmail);
 }
