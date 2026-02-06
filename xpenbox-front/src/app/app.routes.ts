@@ -5,7 +5,6 @@ import { landingRoutes } from './pages/landing.routes';
 import { LandingPage } from './pages/landing/landing.page';
 import { guestGuard } from './feature/common/auth/guest.guard';
 import { authGuard } from './feature/common/auth/auth.guard';
-import { AccountEditionModal } from './modal/account/account-edition-modal/account-edition.modal';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },

@@ -49,11 +49,11 @@
   <div class="max-w-7xl mx-auto space-y-6">
     
     <!-- Primera fila: 4 tarjetas de métricas principales -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-9 gap-4">
+    <div class="grid grid-cols-3 lg:grid-cols-9 gap-4">
       
       <!-- Balance General (destacado - 25% más ancho) -->
-      <div class="lg:col-span-3 xpb-bg-card rounded-xl p-6 shadow-md border xpb-border">
-        <div class="flex items-center justify-between mb-4">
+      <div class="col-span-3 xpb-bg-card rounded-xl p-3 lg:p-6 shadow-md border xpb-border">
+        <div class="flex items-center justify-between mb-2 lg:mb-4">
           <div class="flex items-center gap-2">
             <div class="xpb-bg-main rounded-lg p-2.5">
               <span class="material-icons text-[var(--xpb-primary)] text-2xl">account_balance</span>
@@ -65,82 +65,53 @@
             <span class="text-[var(--xpb-income)] font-medium">+12.4%</span>
           </div>
         </div>
-        <p class="text-2xl font-bold xpb-text-primary mb-2 break-words">PEN 45.230,00</p>
+        <p class="text-3xl lg:text-2xl font-bold xpb-text-primary mb-2 break-words">PEN 45.230,00</p>
       </div>
 
       <!-- Resultado del mes -->
-      <div class="lg:col-span-2 xpb-bg-card rounded-xl p-5 shadow-sm border xpb-border">
-        <div class="flex items-center gap-2 mb-3">
-          <div class="xpb-bg-main rounded-lg p-2">
+      <div class="lg:col-span-2 xpb-bg-card rounded-xl p-3 lg:p-5 shadow-sm border xpb-border">
+        <div class="flex items-center gap-2 mb-3 lg:mb-3">
+          <div class="xpb-bg-main rounded-lg p-2 hidden lg:block">
             <span class="material-icons text-[var(--xpb-primary)] text-xl">swap_horiz</span>
           </div>
-          <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap">Resultado del Mes</p>
+          <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap hidden lg:block">Resultado del Mes</p>
+          <p class="text-[10px] xpb-text-secondary uppercase tracking-wide font-semibold w-full text-center lg:hidden">RESULTADOS</p>
         </div>
-        <p class="text-xl font-semibold text-[var(--xpb-income)] mb-1 break-words">+ PEN 3150,00</p>
+        <p class="text-xs lg:text-xl font-semibold text-[var(--xpb-income)] mb-1 whitespace-nowrap text-center lg:text-left">+ PEN 3150,00</p>
       </div>
 
       <!-- Ingresos del mes -->
-      <div class="lg:col-span-2 xpb-bg-card rounded-xl p-5 shadow-sm border xpb-border">
-        <div class="flex items-center gap-2 mb-3">
-          <div class="xpb-bg-main rounded-lg p-2">
+      <div class="lg:col-span-2 xpb-bg-card rounded-xl p-3 lg:p-5 shadow-sm border xpb-border">
+        <div class="flex items-center gap-2 mb-3 lg:mb-3">
+          <div class="xpb-bg-main rounded-lg p-2 hidden lg:block">
             <span class="material-icons text-xl">trending_up</span>
           </div>
-          <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap">Ingresos del Mes</p>
+          <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap hidden lg:block">Ingresos del Mes</p>
+          <p class="text-[10px] xpb-text-secondary uppercase tracking-wide font-semibold w-full text-center lg:hidden">INGRESOS</p>
         </div>
-        <p class="text-xl font-semibold  mb-1 break-words">PEN 8400,00</p>
+        <p class="text-xs lg:text-xl font-semibold mb-1 whitespace-nowrap text-center lg:text-left">PEN 8400,00</p>
       </div>
 
       <!-- Gastos del mes -->
-      <div class="lg:col-span-2 xpb-bg-card rounded-xl p-5 shadow-sm border xpb-border">
-        <div class="flex items-center gap-2 mb-3">
-          <div class="xpb-bg-main rounded-lg p-2">
+      <div class="lg:col-span-2 xpb-bg-card rounded-xl p-3 lg:p-5 shadow-sm border xpb-border">
+        <div class="flex items-center gap-2 mb-3 lg:mb-3">
+          <div class="xpb-bg-main rounded-lg p-2 hidden lg:block">
             <span class="material-icons text-[var(--xpb-expense)] text-xl">trending_down</span>
           </div>
-          <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap">Gastos del Mes</p>
+          <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap hidden lg:block">Gastos del Mes</p>
+          <p class="text-[10px] xpb-text-secondary uppercase tracking-wide font-semibold w-full text-center lg:hidden">GASTOS</p>
         </div>
-        <p class="text-xl font-semibold text-[var(--xpb-expense)] mb-1 break-words">- PEN 5250,00</p>
+        <p class="text-xs lg:text-xl font-semibold text-[var(--xpb-expense)] mb-1 whitespace-nowrap text-center lg:text-left">- PEN 5250,00</p>
       </div>
     </div>
 
     <!-- Segunda fila: Gastos por categoría y Deuda en tarjetas -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
-      <!-- Gastos por categoría -->
-      <div class="lg:col-span-2 xpb-bg-card rounded-xl p-6 shadow-sm border xpb-border">
-        <h2 class="text-lg font-semibold xpb-text-primary mb-2">Gastos por categoría</h2>
-        <p class="text-sm xpb-text-secondary mb-6">Distribución mensual de tus consumos</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <!-- Gráfico de dona -->
-          <div class="flex justify-center items-center">
-            <div class="relative" style="width: 200px; height: 200px;">
-              <canvas id="expenseChart" width="250" height="200"></canvas>
-            </div>
-          </div>
-
-          <!-- Lista de categorías -->
-          <div class="space-y-4">
-            @for (category of expenseCategories(); track category.name) {
-              <div class="flex items-center justify-between gap-4">
-                <div class="flex items-center gap-3 flex-1 min-w-0">
-                  <div class="w-3 h-3 rounded-full flex-shrink-0" [style.background-color]="category.color"></div>
-                  <span class="text-sm xpb-text-primary truncate">{{ category.name }}</span>
-                </div>
-                <div class="text-right flex-shrink-0">
-                  <p class="text-sm font-semibold xpb-text-primary whitespace-nowrap">
-                    PEN {{ category.amount.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
-                    <span class="text-xs xpb-text-secondary ml-1">({{ category.percentage }}%)</span>
-                  </p>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-
       <!-- Deuda total en tarjetas -->
-      <div class="xpb-bg-card rounded-xl p-6 shadow-sm border xpb-border flex flex-col justify-between h-full">
-        <div>
+      <div class="order-1 lg:order-2 xpb-bg-card rounded-xl p-6 shadow-sm border xpb-border flex flex-col justify-between h-full">
+        <!-- Vista Desktop -->
+        <div class="hidden lg:block">
           <h2 class="text-lg font-semibold xpb-text-primary mb-2">Deuda total en tarjetas</h2>
           <p class="text-sm xpb-text-secondary mb-6">Crédito utilizado</p>
 
@@ -158,13 +129,68 @@
               </div>
             }
           </div>
+
+          <!-- Total adeudado -->
+          <div class="mt-6 pt-6 border-t xpb-border">
+            <div class="flex items-center justify-between mb-4">
+              <p class="text-sm xpb-text-secondary">Total adeudado</p>
+              <p class="text-2xl font-bold xpb-text-primary">2840,50 US$</p>
+            </div>
+          </div>
         </div>
 
-        <!-- Total adeudado -->
-        <div class="mt-6 pt-6 border-t xpb-border">
-          <div class="flex items-center justify-between mb-4">
-            <p class="text-sm xpb-text-secondary">Total adeudado</p>
-            <p class="text-2xl font-bold xpb-text-primary">2840,50 US$</p>
+        <!-- Vista Responsive -->
+        <div class="lg:hidden">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-base font-semibold xpb-text-primary">Deuda en Tarjetas</h2>
+            <p class="text-sm font-semibold text-[var(--xpb-expense)]">65%</p>
+          </div>
+          
+          <div class="h-3 xpb-bg-main rounded-full overflow-hidden mb-3">
+            <div class="h-full bg-[var(--xpb-expense)]" style="width: 65%"></div>
+          </div>
+          
+          <div class="flex items-center justify-between">
+            <p class="text-xs xpb-text-secondary">Saldo: <span class="font-semibold xpb-text-primary">2840,50 US$</span></p>
+            <p class="text-xs xpb-text-secondary">Límite: <span class="font-semibold xpb-text-primary">4370,00 US$</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gastos por categoría -->
+      <div class="order-2 lg:order-1 lg:col-span-2 xpb-bg-card rounded-xl p-6 shadow-sm border xpb-border">
+        <h2 class="text-base lg:text-lg font-semibold xpb-text-primary mb-2">Gastos por categoría</h2>
+        <p class="text-sm xpb-text-secondary mb-6">Distribución mensual de tus consumos</p>
+
+        <div class="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 items-center">
+          <!-- Gráfico de dona -->
+          <div class="flex justify-center items-center">
+            <div class="relative" style="width: 150px; height: 150px;">
+              <canvas id="expenseChart" class="lg:!w-[200px] lg:!h-[200px]" width="150" height="150"></canvas>
+            </div>
+          </div>
+
+          <!-- Lista de categorías -->
+          <div class="space-y-2 md:space-y-4">
+            @for (category of expenseCategories(); track category.name) {
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 flex-1 min-w-0">
+                  <div class="w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0" [style.background-color]="category.color"></div>
+                  <span class="text-xs md:text-sm xpb-text-primary truncate">{{ category.name }}</span>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <!-- Vista responsive: solo porcentaje -->
+                  <p class="text-xs md:hidden font-semibold xpb-text-primary whitespace-nowrap">
+                    {{ category.percentage }}%
+                  </p>
+                  <!-- Vista desktop: monto completo -->
+                  <p class="hidden md:block text-sm font-semibold xpb-text-primary whitespace-nowrap">
+                    PEN {{ category.amount.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
+                    <span class="text-xs xpb-text-secondary ml-1">({{ category.percentage }}%)</span>
+                  </p>
+                </div>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -173,15 +199,15 @@
     <!-- Tercera fila: Últimas transacciones -->
     <div class="xpb-bg-card rounded-xl p-6 shadow-sm border xpb-border">
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-lg font-semibold xpb-text-primary">Últimas transacciones</h2>
+        <h2 class="text-base lg:text-lg font-semibold xpb-text-primary">Últimas transacciones</h2>
         <a href="#" class="text-sm text-[var(--xpb-primary)] hover:text-[var(--xpb-primary-hover)] font-medium inline-flex items-center gap-1">
           Ver todas
           <span class="material-icons text-sm">arrow_forward</span>
         </a>
       </div>
 
-      <!-- Tabla de transacciones -->
-      <div class="overflow-x-auto">
+      <!-- Tabla de transacciones (Desktop) -->
+      <div class="overflow-x-auto hidden md:block">
         <table class="w-full">
           <thead>
             <tr class="border-b xpb-border">
@@ -206,6 +232,49 @@
             }
           </tbody>
         </table>
+      </div>
+
+      <!-- Cards de transacciones (Responsive) -->
+      <div class="md:hidden space-y-3">
+        @for (transaction of recentTransactions(); track transaction.detail) {
+          <div class="xpb-bg-main rounded-lg p-4 border xpb-border hover:shadow-sm transition-shadow">
+            <div class="flex items-start gap-3">
+              <!-- Icono del tipo de transacción -->
+              <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                   [class.bg-red-100]="transaction.amount < 0"
+                   [class.bg-green-100]="transaction.amount > 0">
+                <span class="material-icons text-xl"
+                      [class.text-[var(--xpb-expense)]]="transaction.amount < 0"
+                      [class.text-[var(--xpb-income)]]="transaction.amount > 0">
+                  @if (transaction.amount < 0) {
+                    trending_down
+                  } @else {
+                    trending_up
+                  }
+                </span>
+              </div>
+
+              <!-- Detalles de la transacción -->
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium xpb-text-primary truncate">{{ transaction.detail }}</p>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-xs xpb-text-secondary">{{ transaction.category }}</span>
+                  <span class="text-xs xpb-text-secondary">•</span>
+                  <span class="text-xs xpb-text-secondary">{{ formatDate(transaction.date) }}</span>
+                </div>
+              </div>
+
+              <!-- Monto -->
+              <div class="flex-shrink-0 text-right">
+                <p class="text-sm font-semibold whitespace-nowrap"
+                   [class.text-[var(--xpb-expense)]]="transaction.amount < 0"
+                   [class.text-[var(--xpb-income)]]="transaction.amount > 0">
+                  {{ formatCurrency(transaction.amount) }}
+                </p>
+              </div>
+            </div>
+          </div>
+        }
       </div>
     </div>
   </div>
