@@ -117,8 +117,8 @@
       <!-- Table Header -->
       <div class="px-4 py-3 border-b xpb-border flex-shrink-0">
         <div class="flex items-center justify-between">
-          <h2 class="text-lg font-semibold xpb-text-primary flex items-center gap-2">
-            <span class="material-icons text-xl">receipt_long</span>
+          <h2 class="text-xs lg:text-xl font-semibold xpb-text-primary flex items-center gap-2">
+            <span class="material-icons">receipt_long</span>
             Historial de Ingresos {{
               formattedStartDateDisplay() && formattedEndDateDisplay() 
                 ? 'de ' + formattedStartDateDisplay() + ' a ' + formattedEndDateDisplay() 
@@ -129,8 +129,8 @@
             <input 
               type="checkbox" 
               [(ngModel)]="showOnlyPending"
-              class="w-4 h-4 rounded border-gray-300 text-[var(--xpb-primary)] focus:ring-[var(--xpb-primary)] cursor-pointer">
-            <span class="text-sm xpb-text-secondary">Solo pendientes</span>
+              class="w-3 h-3 rounded border-gray-300 text-[var(--xpb-primary)] focus:ring-[var(--xpb-primary)] cursor-pointer">
+            <span class="text-xs lg:text-base xpb-text-secondary">Pendientes</span>
           </label>
         </div>
       </div>

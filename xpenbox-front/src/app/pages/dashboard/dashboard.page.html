@@ -1,5 +1,5 @@
 <!-- Dashboard Principal -->
-<div class="xpb-bg-main min-h-screen p-4 md:p-6 lg:p-8">
+<div class="xpb-bg-main min-h-screen p-3 md:p-6 lg:p-8">
   <!-- Header con título y panel de control inteligente -->
   <div class="max-w-7xl mx-auto mb-2 lg:mb-6">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -91,11 +91,10 @@
           </app-retry-component>
         </div>
       } @else {
-        <div [class]="!isCurrentMonthSelected ? '' : percentageChangeBalance() >= 0 ? 'bg-[var(--xpb-income)]/10' : 'bg-[var(--xpb-expense)]/10'"  
-              class="col-span-3 rounded-xl p-3 lg:p-6 shadow-md border xpb-border">
+        <div class="col-span-3 rounded-xl px-3 py-3 lg:px-3 lg:py-6 shadow-md border xpb-border bg-[var(--xpb-neutral)]/20">
           <div class="flex items-center justify-between mb-2 lg:mb-4">
             <div class="flex items-center gap-2">
-              <div class="rounded-lg p-2.5">
+              <div class="rounded-lg p-1 lg:p-2">
                 <span class="material-icons text-black/60 text-2xl">account_balance</span>
               </div>
               <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap">Balance General</p>
@@ -103,24 +102,35 @@
             @if (isCurrentMonthSelected) {
               <div
                 [class]="percentageChangeBalance() >= 0 ? 'text-[var(--xpb-income)]' : 'text-[var(--xpb-expense)]'"  
-                class="flex items-center gap-1 text-sm">
-                  <span class="material-icons text-base">
+                class="flex items-center gap-1 text-[0.85rem] lg:text-sm font-medium relative">
+                  <span class="material-icons">
                     {{ percentageChangeBalance() >= 0 ? 'arrow_upward' : 'arrow_downward' }}
                   </span>
                   <span
                     class="font-medium">
                     {{ percentageChangeBalance() >= 0 ? '+' : '-' }}{{ percentageChangeBalanceAbs() | number:'1.2-2' }}%
                   </span>
+                  <span 
+                    (click)="this.showBalanceTooltip.set(!this.showBalanceTooltip())" 
+                    class="material-icons opacity-60 cursor-pointer hover:opacity-100 transition-opacity">
+                    info_outline
+                  </span>
+                  <!-- Tooltip personalizado -->
+                  <app-tooltip-ui
+                    [showTooltip]="showBalanceTooltip()"
+                    [message]="'Este porcentaje indica la variación de tu balance actual respecto al mes anterior.<br><strong>Balance Anterior: PEN ' + (openingBalance() | number:'1.2-2') + '</strong>'"
+                    (showTooltipOutput)="showBalanceTooltip.set($event)"
+                    ></app-tooltip-ui>
               </div>
             }
           </div>
-          <p class="text-3xl lg:text-2xl font-bold text-black/70 mb-2 break-words">PEN {{ currentBalance() | number:'1.2-2' }}</p>
+          <p class="text-2xl lg:text-3xl font-bold text-black/70 mb-2 break-words">PEN {{ currentBalance() | number:'1.2-2' }}</p>
         </div>
         
         <!-- Resultado del mes -->
-        <div class="lg:col-span-2 xpb-bg-card rounded-xl p-3 lg:p-5 shadow-sm border xpb-border">
+        <div class="lg:col-span-2 xpb-bg-card rounded-xl px-1 py-3 lg:px-3 lg:py-6 shadow-sm border xpb-border">
           <div class="flex items-center gap-2 mb-2 lg:mb-3">
-            <div class="xpb-bg-main rounded-lg p-2 hidden lg:block">
+            <div class="hidden lg:block">
               <span 
                 [class]="netCashFlow() > 0 ? 'text-[var(--xpb-income)]' : netCashFlow() === 0 ? 'text-[var(--xpb-primary)]' : 'text-[var(--xpb-expense)]'"
                 class="material-icons text-xl">swap_horiz</span>
@@ -136,9 +146,9 @@
         </div>
 
         <!-- Ingresos del mes -->
-        <div class="lg:col-span-2 xpb-bg-card rounded-xl p-3 lg:p-5 shadow-sm border xpb-border">
+        <div class="lg:col-span-2 xpb-bg-card rounded-xl px-1 py-3 lg:px-3 lg:py-6 shadow-sm border xpb-border">
           <div class="flex items-center gap-2 mb-2 lg:mb-3">
-            <div class="xpb-bg-main rounded-lg p-2 hidden lg:block">
+            <div class="hidden lg:block">
               <span class="material-icons text-[var(--xpb-income)] text-xl">trending_up</span>
             </div>
             <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap hidden lg:block">Ingresos del Mes</p>
@@ -148,9 +158,9 @@
         </div>
 
         <!-- Gastos del mes -->
-        <div class="lg:col-span-2 xpb-bg-card rounded-xl p-3 lg:p-5 shadow-sm border xpb-border">
+        <div class="lg:col-span-2 xpb-bg-card rounded-xl px-1 py-3 lg:px-3 lg:py-6 shadow-sm border xpb-border">
           <div class="flex items-center gap-2 mb-2 lg:mb-3">
-            <div class="xpb-bg-main rounded-lg p-2 hidden lg:block">
+            <div class="hidden lg:block">
               <span class="material-icons text-[var(--xpb-expense)] text-xl">trending_down</span>
             </div>
             <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap hidden lg:block">Gastos del Mes</p>
@@ -177,15 +187,11 @@
                 <div>
                   <div class="flex items-center justify-between mb-2">
                     <p class="text-sm font-medium xpb-text-primary">{{ creditCard.name }}</p>
-                    <p 
-                      [class]="getPercentajeCreditUsed(creditCard) > 50 ? 'text-[var(--xpb-expense)]' : 'text-[var(--xpb-income)]'"
-                      class="text-sm font-semibold">{{ getPercentajeCreditUsed(creditCard) | number:'1.0-0' }}%</p>
+                    <p class="text-sm font-semibold text-[var(--xpb-expense)]">{{ getPercentajeCreditUsed(creditCard) | number:'1.0-0' }}%</p>
                   </div>
                   <div class="h-2 xpb-bg-main rounded-full overflow-hidden">
-                    <div 
-                        [class]="getPercentajeCreditUsed(creditCard) > 50 ? 'bg-[var(--xpb-expense)]' : 'bg-[var(--xpb-income)]'"
-                        [style.width.%]="getPercentajeCreditUsed(creditCard)"
-                        class="h-full">
+                    <div [style.width.%]="getPercentajeCreditUsed(creditCard)"
+                        class="h-full bg-[var(--xpb-expense)]">
                     </div>
                   </div>
                 </div>
@@ -205,19 +211,15 @@
           <div class="lg:hidden">
             <div class="flex items-center justify-between mb-3">
               <h2 class="text-[0.875rem] font-semibold xpb-text-primary">Deuda en Tarjetas</h2>
-              <p
-                [class]="percentajeCreditUsed() > 50 ? 'text-[var(--xpb-expense)]' : 'text-[var(--xpb-income)]'"  
-                class="text-sm font-semibold">{{ percentajeCreditUsed() | number:'1.0-0' }}%</p>
+              <p class="text-sm font-semibold text-[var(--xpb-expense)]">{{ percentajeCreditUsed() | number:'1.0-0' }}%</p>
             </div>
             
             <div class="h-3 xpb-bg-main rounded-full overflow-hidden mb-3">
-              <div
-                  [class]="percentajeCreditUsed() > 50 ? 'bg-[var(--xpb-expense)]' : 'bg-[var(--xpb-income)]'"
-                  class="h-full" [style.width.%]="percentajeCreditUsed()"></div>
+              <div class="h-full bg-[var(--xpb-expense)]" [style.width.%]="percentajeCreditUsed()"></div>
             </div>
             
             <div class="flex items-center justify-between">
-              <p class="text-xs xpb-text-secondary">Saldo: <span class="font-semibold xpb-text-primary">PEN {{ totalCreditLimit() - totalCreditUsed() | number:'1.2-2' }}</span></p>
+              <p class="text-xs xpb-text-secondary">Disponible: <span class="font-semibold xpb-text-primary">PEN {{ totalCreditLimit() - totalCreditUsed() | number:'1.2-2' }}</span></p>
               <p class="text-xs xpb-text-secondary">Límite: <span class="font-semibold xpb-text-primary">PEN {{ totalCreditLimit() | number:'1.2-2' }}</span></p>
             </div>
           </div>
@@ -302,9 +304,9 @@
                   </td>
                   <td class="text-center py-4 px-2 text-sm xpb-text-secondary">
                     @if (transaction.category) {
-                      <span class="inline-block px-4 py-1 rounded-full text-[11px] sm:text-xs font-medium text-black/50 truncate" 
+                      <span class="inline-block px-4 py-1 rounded-full text-[11px] sm:text-xs font-bold truncate" 
                             [ngStyle]="{
-                                'background-color': 'color-mix(in srgb, ' + transaction.category.color + ' 30%, transparent)'
+                                'color': 'color-mix(in srgb, ' + transaction.category.color + ' 100%, transparent)'
                               }"> 
                             {{ transaction.category.name }}
                       </span>

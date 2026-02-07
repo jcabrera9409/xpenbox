@@ -9,7 +9,7 @@
             <div class="flex items-center gap-3 flex-wrap text-xs xpb-text-secondary">
             <span>Límite: <strong class="xpb-text-primary">{{creditCardLimit() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'}}</strong></span>
             <span>•</span>
-            <span>Balance: <strong class="xpb-text-expense">{{creditCardBalance() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'}}</strong></span>
+            <span>Disponible: <strong class="xpb-text-income">{{(creditCardLimit() || 0) - (creditCardBalance() || 0) | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'}}</strong></span>
             </div>
         </div>
         <span class="px-2 py-1 text-xs rounded-full xpb-bg-income text-white font-medium flex-shrink-0">Activa</span>
@@ -18,23 +18,27 @@
         <!-- Progress Bar -->
         <div class="mb-3">
             <div class="flex justify-between text-xs xpb-text-secondary mb-1">
-                <span>Disponible: {{(creditCardLimit() || 0) - (creditCardBalance() || 0) | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'}}</span>
-                <span>{{creditCardBalancePercentage | number:'1.0-0'}} %</span>
+                <span>Utilizado: {{creditCardBalance() || 0 | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'}}</span>
+                <span class="xpb-text-expense font-bold">{{creditCardBalancePercentage | number:'1.0-0'}} %</span>
             </div>
             <div class="w-full bg-[var(--xpb-bg-sidebar)] rounded-full h-2">
-                <div class="{{creditCardBalancePercentage < 20 ? 'bg-[var(--xpb-expense)]' : 'bg-[var(--xpb-income)]'}} h-2 rounded-full transition-all" [style.width.%]="creditCardBalancePercentage"></div>
+                <div class="bg-[var(--xpb-expense)] h-2 rounded-full transition-all" [style.width.%]="creditCardBalancePercentage"></div>
             </div>
         </div>
 
         <!-- Payment Dates -->
-        <div class="flex items-center gap-4 mb-3 text-xs">
+        <div class="flex items-center justify-between mb-3 text-xs">
         <div class="flex items-center gap-1.5">
             <span class="material-icons xpb-text-secondary" style="font-size: 16px;">event</span>
-            <span class="xpb-text-secondary">Facturación: <strong class="xpb-text-primary">{{creditCardBillingDate | date:'dd MMM'}}</strong></span>
+            <span class="xpb-text-secondary text-[0.70rem]">Facturación: 
+                <strong class="xpb-text-primary">
+                    {{creditCardBillingDate | date:'dd MMM'}}
+                </strong>
+            </span>
         </div>
         <div class="flex items-center gap-1.5">
             <span class="material-icons xpb-text-secondary" style="font-size: 16px;">alarm</span>
-            <span class="xpb-text-secondary">Límite pago: 
+            <span class="xpb-text-secondary text-[0.70rem]">Límite pago: 
                 <strong class="{{creditCardBalancePercentage < 20 ? 'xpb-text-expense' : 'xpb-text-primary'}}">
                 {{creditCardPaymentDate | date:'dd MMM'}}
             </strong>
