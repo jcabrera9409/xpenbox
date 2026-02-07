@@ -350,13 +350,14 @@
                     @if (transaction.category) {
                       <span class="xpb-text-secondary w-2.5 h-2.5 rounded-full"
                         [ngStyle]="{
-                                  'background-color': 'color-mix(in srgb, ' + transaction.category.color + ' 30%, transparent)'
+                                  'background-color': 'color-mix(in srgb, ' + transaction.category.color + ' 100%, transparent)'
                                 }">
                       </span>
                     } @else {
                       <span class="xpb-text-secondary w-2.5 h-2.5 rounded-full"
                         [ngStyle]="{
-                                  'background-color': 'color-mix(in srgb, black 50%, transparent)'
+                                  'background-color': 'transparent',
+                                  'border': '0.1px solid black'
                                 }">
                       </span>
                     }

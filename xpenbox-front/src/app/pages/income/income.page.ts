@@ -14,7 +14,6 @@ import { DateService } from '../../shared/service/date.service';
 import { userState } from '../../feature/user/service/user.state';
 import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
 import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
-import { IncomeRequestDTO } from '../../feature/income/model/income.request.dto';
 import { IncomeResponseDTO } from '../../feature/income/model/income.response.dto';
 import { NotificationService } from '../../feature/common/service/notification.service';
 
