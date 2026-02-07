@@ -19,7 +19,8 @@
         <div class="mb-3">
             <div class="flex justify-between text-xs xpb-text-secondary mb-1">
                 <span>Utilizado: {{creditCardBalance() || 0 | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'}}</span>
-                <span class="xpb-text-expense font-bold">{{creditCardBalancePercentage | number:'1.0-0'}} %</span>
+                <span   [class]="creditCardBalancePercentage > 20 ? 'xpb-text-expense' : ''"
+                        class="font-bold">{{creditCardBalancePercentage | number:'1.0-0'}} %</span>
             </div>
             <div class="w-full bg-[var(--xpb-bg-sidebar)] rounded-full h-2">
                 <div class="bg-[var(--xpb-expense)] h-2 rounded-full transition-all" [style.width.%]="creditCardBalancePercentage"></div>
@@ -39,7 +40,7 @@
         <div class="flex items-center gap-1.5">
             <span class="material-icons xpb-text-secondary" style="font-size: 16px;">alarm</span>
             <span class="xpb-text-secondary text-[0.70rem]">Límite pago: 
-                <strong class="{{creditCardBalancePercentage < 20 ? 'xpb-text-expense' : 'xpb-text-primary'}}">
+                <strong class="{{creditCardBalancePercentage > 20 ? 'xpb-text-expense' : 'xpb-text-primary'}}">
                 {{creditCardPaymentDate | date:'dd MMM'}}
             </strong>
             </span>
