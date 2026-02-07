@@ -161,8 +161,11 @@ export class DashboardPage implements OnInit, AfterViewInit {
     this.creditCards.set(data.current.creditCards);
     this.transactions.set(data.period.lastTransactions);
 
+    // Esperar a que el DOM se actualice antes de intentar renderizar el gráfico
     if (this.categories().length > 0 && isPlatformBrowser(this.platformId)) {
-      this.updateExpenseChart();
+      setTimeout(() => {
+        this.updateExpenseChart();
+      }, 100);
     }
   }
 
@@ -199,10 +202,20 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
     const canvas = document.getElementById('expenseChart') as HTMLCanvasElement;
     if (!canvas) {
-      console.warn('Canvas element not found');
+      // Si el canvas aún no está disponible, reintentar después de un tiempo
+      setTimeout(() => {
+        const retryCanvas = document.getElementById('expenseChart') as HTMLCanvasElement;
+        if (retryCanvas) {
+          this.renderChart(retryCanvas);
+        }
+      }, 200);
       return;
     }
 
+    this.renderChart(canvas);
+  }
+
+  private renderChart(canvas: HTMLCanvasElement): void {
     const ctx = canvas.getContext('2d');
     if (!ctx) {
       console.warn('Canvas context not available');
