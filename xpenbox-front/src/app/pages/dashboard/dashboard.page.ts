@@ -30,6 +30,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
   private platformId = inject(PLATFORM_ID);
   private expenseChart: Chart | null = null;
+  private chartRegistered = false;
 
   // Datos del dashboard
   selectedPeriod = signal<PeriodFilterRequestDTO>(PeriodFilterRequestDTO.CURRENT_MONTH);
@@ -53,6 +54,11 @@ export class DashboardPage implements OnInit, AfterViewInit {
     private dashboardService: DashboardService,
     private dateService: DateService
   ) {
+    // Registrar Chart.js en el constructor si estamos en el navegador
+    if (isPlatformBrowser(this.platformId)) {
+      Chart.register(...registerables);
+      this.chartRegistered = true;
+    }
   }
 
   get isCurrentMonthSelected(): boolean {
@@ -81,8 +87,12 @@ export class DashboardPage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      Chart.register(...registerables);
+    // Si hay categorías pendientes de renderizar, actualizar el gráfico
+    if (isPlatformBrowser(this.platformId) && this.categories().length > 0) {
+      // Usar setTimeout para asegurar que el canvas esté completamente renderizado
+      setTimeout(() => {
+        this.updateExpenseChart();
+      }, 0);
     }
   }
 
@@ -165,7 +175,6 @@ export class DashboardPage implements OnInit, AfterViewInit {
         this.dashboardState.isLoadingDashboardData.set(false);
         if (data.success && data.data) {
           this.dashboardData.set(data.data);
-          console.log('Datos del dashboard cargados:', data.data);
           this.updateDashboardData();
         } else {
           this.dashboardState.errorDashboardData.set('No se pudo cargar los datos del dashboard.');
@@ -183,11 +192,22 @@ export class DashboardPage implements OnInit, AfterViewInit {
   }
 
   private updateExpenseChart(): void {
+    // Verificar que estemos en el navegador y que Chart.js esté registrado
+    if (!isPlatformBrowser(this.platformId) || !this.chartRegistered) {
+      return;
+    }
+
     const canvas = document.getElementById('expenseChart') as HTMLCanvasElement;
-    if (!canvas) return;
+    if (!canvas) {
+      console.warn('Canvas element not found');
+      return;
+    }
 
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      console.warn('Canvas context not available');
+      return;
+    }
 
     const categories = this.categories();
     
