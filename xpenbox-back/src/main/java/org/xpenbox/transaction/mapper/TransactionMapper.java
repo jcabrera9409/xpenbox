@@ -82,7 +82,7 @@ public class TransactionMapper implements GenericMapper<Transaction, Transaction
             entity.getLatitude(),
             entity.getLongitude(),
             entity.getTransactionDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-            null, 
+            entity.getCategory() != null ? categoryMapper.toSimpleDTO(entity.getCategory()) : null, 
             null, 
             null, 
             null, 

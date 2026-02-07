@@ -38,6 +38,7 @@ export class DateService {
     const [year, month, day] = datetimeString.split('-').map(num => parseInt(num, 10));
     return new Date(year, month - 1, day);
   }
+
   parseDatetimeIsoString(datetimeString: string): Date {
     const [datePart, timePart] = datetimeString.split('T');
     const [year, month, day] = datePart.split('-').map(num => parseInt(num, 10));
@@ -45,15 +46,25 @@ export class DateService {
     return new Date(year, month - 1, day, hours, minutes);
   }
 
+  addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+
   format(
     timestampUtc: number,
-    format: 'short' | 'long' | 'date' | 'datetime' | 'ISO' | 'ISO-LOCAL' = 'datetime'
+    format:  'day-month' | 'short' | 'long' | 'date' | 'datetime' | 'ISO' | 'ISO-LOCAL' = 'datetime'
   ): string {
     const date = this.toDate(timestampUtc);
 
     const options: Intl.DateTimeFormatOptions = {};
 
     switch (format) {
+      case 'day-month':
+        options.day = '2-digit';
+        options.month = 'short';
+        break;
       case 'short':
         options.day = '2-digit';
         options.month = 'short';

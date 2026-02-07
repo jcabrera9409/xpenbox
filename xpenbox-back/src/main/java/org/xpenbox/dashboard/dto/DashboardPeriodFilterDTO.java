@@ -22,18 +22,18 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @RegisterForReflection
 public record DashboardPeriodFilterDTO(
 
-    @JsonProperty("income_total")
+    @JsonProperty("incomeTotal")
     BigDecimal incomeTotal,
 
-    @JsonProperty("expense_total")
+    @JsonProperty("expenseTotal")
     BigDecimal expenseTotal,
 
-    @JsonProperty("net_cashflow")
-    BigDecimal netCashflow,
+    @JsonProperty("netCashFlow")
+    BigDecimal netCashFlow,
 
     @JsonProperty("categories")
     List<CategoryResponseDTO> categories,
 
-    @JsonProperty("last_transactions")
+    @JsonProperty("lastTransactions")
     List<TransactionResponseDTO> lastTransactions
 ) { }

@@ -21,21 +21,21 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
  */
 @RegisterForReflection
 public record DashboardCurrentPeriodDTO (
-    @JsonProperty("current_balance") 
+    @JsonProperty("currentBalance") 
     BigDecimal currentBalance,
     
-    @JsonProperty("opening_balance")
+    @JsonProperty("openingBalance")
     BigDecimal openingBalance,
 
-    @JsonProperty("delta")
-    BigDecimal delta,
+    @JsonProperty("deltaBalance")
+    BigDecimal deltaBalance,
 
-    @JsonProperty("credit_used")
+    @JsonProperty("creditUsed")
     BigDecimal creditUsed,
 
-    @JsonProperty("credit_limit")
+    @JsonProperty("creditLimit")
     BigDecimal creditLimit,
 
-    @JsonProperty("credit_cards")
+    @JsonProperty("creditCards")
     List<CreditCardResponseDTO> creditCards
 ) { }

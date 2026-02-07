@@ -1,70 +1,84 @@
 import { Component, OnInit, AfterViewInit, signal, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import { DashboardState } from '../../feature/dashboard/service/dashboard.state';
+import { DashboardService } from '../../feature/dashboard/service/dashboard.service';
+import { DashboardResponseModelDTO } from '../../feature/dashboard/model/dashboard.response.model.dto';
+import { PeriodFilterRequestDTO } from '../../feature/dashboard/model/period-filter.request.dto';
+import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
+import { CategoryResponseDTO } from '../../feature/category/model/category.response.dto';
+import { CreditCardResponseDTO } from '../../feature/creditcard/model/creditcard.response.dto';
+import { TransactionResponseDTO } from '../../feature/transaction/model/transaction.response.dto';
+import { DateService } from '../../shared/service/date.service';
+import { TransactionType } from '../../feature/transaction/model/transaction.request.dto';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.css',
 })
 export class DashboardPage implements OnInit, AfterViewInit {
+
+  periodFilter = PeriodFilterRequestDTO;
+  transactionType = TransactionType;
+  dashboardState = DashboardState;
+  dashboardData = signal<DashboardResponseModelDTO | null>(null);
+
   private platformId = inject(PLATFORM_ID);
   private expenseChart: Chart | null = null;
 
-  // Datos mock del dashboard
-  selectedPeriod = signal('Mes Actual');
-  generalBalance = signal(45230.00);
-  balanceChange = signal(12.4);
-  balanceChangeAmount = signal(3150.00);
-  totalResults = signal(8400.00);
-  totalIncome = signal(8400.00);
-  totalExpenses = signal(5250.00);
+  // Datos del dashboard
+  selectedPeriod = signal<PeriodFilterRequestDTO>(PeriodFilterRequestDTO.CURRENT_MONTH);
+  currentBalance = signal<number>(0);
+  percentageChangeBalance = signal<number>(0);
+  percentageChangeBalanceAbs = signal<number>(0);
+  incomeTotal = signal<number>(0);
+  expenseTotal = signal<number>(0);
+  netCashFlow = signal<number>(0);
+  netCashFlowAbs = signal<number>(0);
+  totalCategoryAmount = signal<number>(0);
+  totalCreditLimit = signal<number>(0);
+  totalCreditUsed = signal<number>(0);
+  percentajeCreditUsed = signal<number>(0);
 
-  // Tarjetas de crédito
-  creditCards = signal([
-    {
-      name: 'Mastercard Platinum',
-      totalDebt: 2840.50,
-      progress: 75
-    },
-    {
-      name: 'Visa Infinite',
-      totalDebt: 0,
-      progress: 12
-    },
-    {
-      name: 'Otros',
-      totalDebt: 0,
-      progress: 12
-    }
-  ]);
+  categories = signal<CategoryResponseDTO[]>([]);
+  creditCards = signal<CreditCardResponseDTO[]>([]);
+  transactions = signal<TransactionResponseDTO[]>([]);
 
-  // Datos para el gráfico de gastos por categoría
-  expenseCategories = signal([
-    { name: 'Alimentación', amount: 1837, percentage: 35, color: '#4361EE' },
-    { name: 'Vivienda', amount: 1312, percentage: 25, color: '#BC4749' },
-    { name: 'Transporte', amount: 1050, percentage: 20, color: '#588157' },
-    { name: 'Educación', amount: 1050, percentage: 20, color: '#FFD700' },
-    { name: 'Otros', amount: 1051, percentage: 20, color: '#6C757D' }
-  ]);
+  constructor(
+    private dashboardService: DashboardService,
+    private dateService: DateService
+  ) {
+  }
 
-  // Transacciones recientes
-  recentTransactions = signal([
-    { detail: 'Supermercado El Ahorro', category: 'Alimentación', date: '2026-02-04', amount: -45.50 },
-    { detail: 'Salario Enero', category: 'Ingreso', date: '2026-02-01', amount: 3500.00 },
-    { detail: 'Netflix Suscripción', category: 'Entretenimiento', date: '2026-01-30', amount: -12.99 },
-    { detail: 'Gasolina Shell', category: 'Transporte', date: '2026-01-28', amount: -60.00 }
-  ]);
+  get isCurrentMonthSelected(): boolean {
+    return this.isPeriodSelected(PeriodFilterRequestDTO.CURRENT_MONTH);
+  }
+
+  getPercentageCategoryAmount(amount: number): number {
+    const total = this.totalCategoryAmount();
+    return total > 0 ? ((amount / total) * 100) : 0;
+  }
+
+  getPercentajeCreditUsed(creditCard: CreditCardResponseDTO): number {
+    const totalLimit = creditCard.creditLimit;
+    const used = creditCard.currentBalance;
+    return totalLimit > 0 ? ((used / totalLimit) * 100) : 0;
+  }
+
+  isPeriodSelected(period: PeriodFilterRequestDTO): boolean {
+    return this.selectedPeriod() === period;
+  }
 
   ngOnInit(): void {
-    // Inicialización si es necesaria
+    this.loadDashboardData();
   }
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       Chart.register(...registerables);
-      this.createExpenseChart();
     }
   }
 
@@ -74,71 +88,154 @@ export class DashboardPage implements OnInit, AfterViewInit {
     }
   }
 
-  private createExpenseChart(): void {
+  changePeriod(period: PeriodFilterRequestDTO): void {
+    this.selectedPeriod.set(period);
+    this.loadDashboardData();
+  }
+
+  retryLoadDashboardData(): void {
+    this.loadDashboardData();
+  }
+
+  getTransactionTypeLabel(type: TransactionType | undefined): string {
+    return TransactionType.getLabel(type);
+  }
+
+  getTransactionBgColorClass(type: TransactionType | undefined): string {
+    return TransactionType.getTransactionBgColorClass(type);
+  }
+
+  formatDate(timestamp: number): string {
+    const today = this.dateService.getUtcDatetime().getTime();
+    const dateToday = new Date(today);
+    const dateTransaction = this.dateService.toDate(timestamp || 0);
+
+    if (dateTransaction.toDateString() === dateToday.toDateString()) {
+      return 'Hoy';
+    } else if (dateTransaction.toDateString() === this.dateService.addDays(dateToday, -1).toDateString()) {
+      return 'Ayer';
+    } else if (dateTransaction.getFullYear() !== dateToday.getFullYear()) {
+      return this.dateService.format(timestamp, 'short');
+    }
+
+    const dateStr = this.dateService.format(dateTransaction.getTime(), 'day-month');
+
+    return dateStr
+  }
+
+  private updateDashboardData(): void {
+    const data = this.dashboardData();
+    if (!data) return;
+
+    const currentBalance = data.current.currentBalance;
+    const openingBalance = data.current.openingBalance;
+    const percentageChange = openingBalance === 0 ? 100 : ((currentBalance - openingBalance) / Math.abs(openingBalance)) * 100;
+
+    this.currentBalance.set(data.current.currentBalance);
+    this.percentageChangeBalance.set(percentageChange);
+    this.percentageChangeBalanceAbs.set(Math.abs(percentageChange));
+    this.incomeTotal.set(data.period.incomeTotal);
+    this.expenseTotal.set(data.period.expenseTotal);
+    this.netCashFlow.set(data.period.netCashFlow);
+    this.netCashFlowAbs.set(Math.abs(data.period.netCashFlow));
+    this.totalCategoryAmount.set(data.period.categories.reduce((sum, category) => sum + category.amount, 0));
+    this.totalCreditLimit.set(data.current.creditLimit);
+    this.totalCreditUsed.set(data.current.creditUsed);
+    this.percentajeCreditUsed.set(data.current.creditLimit > 0 ? (data.current.creditUsed / data.current.creditLimit) * 100 : 0);
+    
+    this.categories.set(data.period.categories);
+    this.creditCards.set(data.current.creditCards);
+    this.transactions.set(data.period.lastTransactions);
+
+    if (this.categories().length > 0 && isPlatformBrowser(this.platformId)) {
+      this.updateExpenseChart();
+    }
+  }
+
+  private loadDashboardData(): void {
+    this.dashboardState.isLoadingDashboardData.set(true);
+    this.dashboardState.errorDashboardData.set(null);
+
+    this.dashboardService.generateDashboardData(this.selectedPeriod()).subscribe({
+      next: (data: ApiResponseDTO<DashboardResponseModelDTO>) => {
+        this.dashboardState.isLoadingDashboardData.set(false);
+        if (data.success && data.data) {
+          this.dashboardData.set(data.data);
+          console.log('Datos del dashboard cargados:', data.data);
+          this.updateDashboardData();
+        } else {
+          this.dashboardState.errorDashboardData.set('No se pudo cargar los datos del dashboard.');
+        }
+      },
+      error: (error) => {
+        this.dashboardState.isLoadingDashboardData.set(false);
+        if (error.status === 500 || error.status === 0) {
+          this.dashboardState.errorDashboardData.set('Error del servidor. Por favor, inténtalo de nuevo más tarde.');
+        } else {
+          this.dashboardState.errorDashboardData.set(error.error.message || 'Ocurrió un error al cargar los datos del dashboard.');
+        }
+      }
+    });
+  }
+
+  private updateExpenseChart(): void {
     const canvas = document.getElementById('expenseChart') as HTMLCanvasElement;
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const categories = this.expenseCategories();
+    const categories = this.categories();
     
-    const config: ChartConfiguration<'doughnut'> = {
-      type: 'doughnut',
-      data: {
-        labels: categories.map(c => c.name),
-        datasets: [{
-          data: categories.map(c => c.amount),
-          backgroundColor: categories.map(c => c.color),
-          borderWidth: 0,
-          borderRadius: 4,
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        cutout: '70%',
-        animation: false,
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            backgroundColor: '#FFFFFF',
-            titleColor: '#212529',
-            bodyColor: '#6C757D',
-            borderColor: '#DEE2E6',
-            borderWidth: 1,
-            padding: 12,
-            boxPadding: 6,
-            usePointStyle: true,
-            callbacks: {
-              label: (context) => {
-                const value = context.parsed;
-                return ` PEN ${value.toLocaleString('es-ES', { minimumFractionDigits: 2 })}`;
+    // Si el gráfico ya existe, actualizamos los datos
+    if (this.expenseChart) {
+      this.expenseChart.data.labels = categories.map(c => c.name);
+      this.expenseChart.data.datasets[0].data = categories.map(c => c.amount);
+      this.expenseChart.data.datasets[0].backgroundColor = categories.map(c => c.color);
+      this.expenseChart.update();
+    } else {
+      // Si no existe, lo creamos
+      const config: ChartConfiguration<'doughnut'> = {
+        type: 'doughnut',
+        data: {
+          labels: categories.map(c => c.name),
+          datasets: [{
+            data: categories.map(c => c.amount),
+            backgroundColor: categories.map(c => c.color),
+            borderWidth: 0,
+            borderRadius: 4,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          cutout: '70%',
+          animation: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#FFFFFF',
+              titleColor: '#212529',
+              bodyColor: '#6C757D',
+              borderColor: '#DEE2E6',
+              borderWidth: 1,
+              padding: 12,
+              boxPadding: 6,
+              usePointStyle: true,
+              callbacks: {
+                label: (context) => {
+                  const value = context.parsed;
+                  return ` PEN ${value.toLocaleString('es-ES', { minimumFractionDigits: 2 })}`;
+                }
               }
             }
           }
         }
-      }
-    };
+      };
 
-    this.expenseChart = new Chart(ctx, config);
-  }
-
-  formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'PEN',
-      minimumFractionDigits: 2
-    }).format(amount);
-  }
-
-  formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+      this.expenseChart = new Chart(ctx, config);
+    }
   }
 }

@@ -269,18 +269,7 @@ export class TransactionPage {
   }
 
   private getTransactionTypeLabel(type: TransactionType | undefined): string {
-    switch (type) {
-      case TransactionType.INCOME:
-        return 'Ingreso';
-      case TransactionType.EXPENSE:
-        return 'Gasto';
-      case TransactionType.TRANSFER:
-        return 'Transferencia';
-      case TransactionType.CREDIT_PAYMENT:
-        return 'Pago de Crédito';
-      default:
-        return 'Desconocido';
-    }
+    return TransactionType.getLabel(type);
   }
 
   private updateDeleteTransactionModal(): void {
