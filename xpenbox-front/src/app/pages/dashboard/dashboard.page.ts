@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, signal, PLATFORM_ID, inject, HostListener } from '@angular/core';
+import { Component, OnInit, AfterViewInit, signal, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { DashboardState } from '../../feature/dashboard/service/dashboard.state';
@@ -14,10 +14,11 @@ import { TransactionType } from '../../feature/transaction/model/transaction.req
 import { RouterLink } from '@angular/router';
 import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../shared/components/retry-component/retry.component';
+import { TooltipUi } from '../../shared/ui/tooltip-ui/tooltip.ui';
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [CommonModule, RouterLink, LoadingUi, RetryComponent],
+  imports: [CommonModule, RouterLink, LoadingUi, RetryComponent, TooltipUi],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.css',
 })
@@ -32,10 +33,12 @@ export class DashboardPage implements OnInit, AfterViewInit {
   private expenseChart: Chart | null = null;
   private chartRegistered = false;
 
+  showBalanceTooltip = signal<boolean>(false);
+
   // Datos del dashboard
   selectedPeriod = signal<PeriodFilterRequestDTO>(PeriodFilterRequestDTO.CURRENT_MONTH);
-  showBalanceTooltip = signal<boolean>(false);
   currentBalance = signal<number>(0);
+  openingBalance = signal<number>(0);
   percentageChangeBalance = signal<number>(0);
   percentageChangeBalanceAbs = signal<number>(0);
   incomeTotal = signal<number>(0);
@@ -79,20 +82,6 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
   isPeriodSelected(period: PeriodFilterRequestDTO): boolean {
     return this.selectedPeriod() === period;
-  }
-
-  toggleBalanceTooltip(event?: Event): void {
-    if (event) {
-      event.stopPropagation();
-    }
-    this.showBalanceTooltip.set(!this.showBalanceTooltip());
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event): void {
-    if (this.showBalanceTooltip()) {
-      this.showBalanceTooltip.set(false);
-    }
   }
 
   ngOnInit(): void {
@@ -161,6 +150,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
     const percentageChange = openingBalance === 0 ? 100 : ((currentBalance - openingBalance) / Math.abs(openingBalance)) * 100;
 
     this.currentBalance.set(data.current.currentBalance);
+    this.openingBalance.set(data.current.openingBalance);
     this.percentageChangeBalance.set(percentageChange);
     this.percentageChangeBalanceAbs.set(Math.abs(percentageChange));
     this.incomeTotal.set(data.period.incomeTotal);

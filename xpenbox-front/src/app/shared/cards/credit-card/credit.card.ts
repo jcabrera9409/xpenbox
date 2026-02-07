@@ -35,7 +35,7 @@ export class CreditCard {
 
   get creditCardBalancePercentage(): number {
     if (this.creditCardBalance() === 0) return 100;
-    return ((this.creditCardLimit() || 0) - (this.creditCardBalance() || 0)) / (this.creditCardLimit() || 0) * 100;
+    return (this.creditCardBalance() || 0) / (this.creditCardLimit() || 0) * 100;
   }
 
   get creditCardBillingDate(): Date | null {
