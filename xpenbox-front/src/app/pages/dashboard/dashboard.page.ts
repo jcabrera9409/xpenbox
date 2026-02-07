@@ -157,12 +157,40 @@ export class DashboardPage implements OnInit, AfterViewInit {
     this.totalCreditUsed.set(data.current.creditUsed);
     this.percentajeCreditUsed.set(data.current.creditLimit > 0 ? (data.current.creditUsed / data.current.creditLimit) * 100 : 0);
     
-    this.categories.set(data.period.categories);
-    this.creditCards.set(data.current.creditCards);
+    // First 4 categories for the chart, the rest will be shown in the list
+    const topCategories = data.period.categories.slice(0, 4);
+    const otherCategoriesAmount = data.period.categories.slice(4).reduce((sum, category) => sum + category.amount, 0);
+    if (otherCategoriesAmount > 0) {
+      topCategories.push({
+        resourceCode: 'others',
+        name: 'Otros',
+        amount: otherCategoriesAmount,
+        color: '#3f3f3f' // Color gris claro para la categoría "Otros"
+      } as CategoryResponseDTO);
+    }
+
+    // First 2 credit cards for the dashboard, the rest will be shown in the list
+    const topCreditCards = data.current.creditCards.slice(0, 2);
+    const otherCreditCardsAmount = data.current.creditCards.slice(2).reduce((sum, card) => sum + card.currentBalance, 0);
+    const otherCreditLimitAmount = data.current.creditCards.slice(2).reduce((sum, card) => sum + card.creditLimit, 0);
+    if (otherCreditLimitAmount > 0) {
+      topCreditCards.push({
+        resourceCode: 'others',
+        name: 'Otros',
+        creditLimit: otherCreditLimitAmount,
+        currentBalance: otherCreditCardsAmount,
+      } as CreditCardResponseDTO);
+    }
+
+    this.categories.set(data.period.categories.length <= 5 ? data.period.categories : topCategories);
+    this.creditCards.set(data.current.creditCards.length <= 3 ? data.current.creditCards : topCreditCards);
     this.transactions.set(data.period.lastTransactions);
 
+    // Esperar a que el DOM se actualice antes de intentar renderizar el gráfico
     if (this.categories().length > 0 && isPlatformBrowser(this.platformId)) {
-      this.updateExpenseChart();
+      setTimeout(() => {
+        this.updateExpenseChart();
+      }, 100);
     }
   }
 
@@ -199,10 +227,20 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
     const canvas = document.getElementById('expenseChart') as HTMLCanvasElement;
     if (!canvas) {
-      console.warn('Canvas element not found');
+      // Si el canvas aún no está disponible, reintentar después de un tiempo
+      setTimeout(() => {
+        const retryCanvas = document.getElementById('expenseChart') as HTMLCanvasElement;
+        if (retryCanvas) {
+          this.renderChart(retryCanvas);
+        }
+      }, 200);
       return;
     }
 
+    this.renderChart(canvas);
+  }
+
+  private renderChart(canvas: HTMLCanvasElement): void {
     const ctx = canvas.getContext('2d');
     if (!ctx) {
       console.warn('Canvas context not available');
@@ -211,15 +249,23 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
     const categories = this.categories();
     
-    // Si el gráfico ya existe, actualizamos los datos
+    // Verificar que haya categorías para mostrar
+    if (categories.length === 0) {
+      if (this.expenseChart) {
+        this.expenseChart.destroy();
+        this.expenseChart = null;
+      }
+      return;
+    }
+    
+    // Destruir el gráfico existente antes de crear uno nuevo
     if (this.expenseChart) {
-      this.expenseChart.data.labels = categories.map(c => c.name);
-      this.expenseChart.data.datasets[0].data = categories.map(c => c.amount);
-      this.expenseChart.data.datasets[0].backgroundColor = categories.map(c => c.color);
-      this.expenseChart.update();
-    } else {
-      // Si no existe, lo creamos
-      const config: ChartConfiguration<'doughnut'> = {
+      this.expenseChart.destroy();
+      this.expenseChart = null;
+    }
+
+    // Crear el nuevo gráfico
+    const config: ChartConfiguration<'doughnut'> = {
         type: 'doughnut',
         data: {
           labels: categories.map(c => c.name),
@@ -234,7 +280,10 @@ export class DashboardPage implements OnInit, AfterViewInit {
           responsive: true,
           maintainAspectRatio: true,
           cutout: '70%',
-          animation: false,
+          animation: {
+            duration: 500,
+            easing: 'easeInOutQuart'
+          },
           plugins: {
             legend: {
               display: false
@@ -259,7 +308,6 @@ export class DashboardPage implements OnInit, AfterViewInit {
         }
       };
 
-      this.expenseChart = new Chart(ctx, config);
-    }
+    this.expenseChart = new Chart(ctx, config);
   }
 }
