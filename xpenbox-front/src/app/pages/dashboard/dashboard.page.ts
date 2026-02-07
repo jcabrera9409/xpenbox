@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, signal, PLATFORM_ID, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, signal, PLATFORM_ID, inject, HostListener } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { DashboardState } from '../../feature/dashboard/service/dashboard.state';
@@ -34,6 +34,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
   // Datos del dashboard
   selectedPeriod = signal<PeriodFilterRequestDTO>(PeriodFilterRequestDTO.CURRENT_MONTH);
+  showBalanceTooltip = signal<boolean>(false);
   currentBalance = signal<number>(0);
   percentageChangeBalance = signal<number>(0);
   percentageChangeBalanceAbs = signal<number>(0);
@@ -78,6 +79,20 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
   isPeriodSelected(period: PeriodFilterRequestDTO): boolean {
     return this.selectedPeriod() === period;
+  }
+
+  toggleBalanceTooltip(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.showBalanceTooltip.set(!this.showBalanceTooltip());
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (this.showBalanceTooltip()) {
+      this.showBalanceTooltip.set(false);
+    }
   }
 
   ngOnInit(): void {

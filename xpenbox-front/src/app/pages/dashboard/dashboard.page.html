@@ -92,10 +92,10 @@
         </div>
       } @else {
         <div [class]="!isCurrentMonthSelected ? '' : percentageChangeBalance() >= 0 ? 'bg-[var(--xpb-income)]/10' : 'bg-[var(--xpb-expense)]/10'"  
-              class="col-span-3 rounded-xl p-3 lg:p-6 shadow-md border xpb-border">
+              class="col-span-3 rounded-xl px-3 py-3 lg:px-3 lg:py-6 shadow-md border xpb-border">
           <div class="flex items-center justify-between mb-2 lg:mb-4">
             <div class="flex items-center gap-2">
-              <div class="rounded-lg p-2.5">
+              <div class="rounded-lg p-1 lg:p-2">
                 <span class="material-icons text-black/60 text-2xl">account_balance</span>
               </div>
               <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap">Balance General</p>
@@ -103,24 +103,40 @@
             @if (isCurrentMonthSelected) {
               <div
                 [class]="percentageChangeBalance() >= 0 ? 'text-[var(--xpb-income)]' : 'text-[var(--xpb-expense)]'"  
-                class="flex items-center gap-1 text-sm">
-                  <span class="material-icons text-base">
+                class="flex items-center gap-1 text-[0.85rem] lg:text-sm font-medium relative">
+                  <span class="material-icons">
                     {{ percentageChangeBalance() >= 0 ? 'arrow_upward' : 'arrow_downward' }}
                   </span>
                   <span
                     class="font-medium">
                     {{ percentageChangeBalance() >= 0 ? '+' : '-' }}{{ percentageChangeBalanceAbs() | number:'1.2-2' }}%
                   </span>
+                  <span 
+                    (click)="toggleBalanceTooltip($event)" 
+                    class="material-icons opacity-60 cursor-pointer hover:opacity-100 transition-opacity">
+                    info_outline
+                  </span>
+                  <!-- Tooltip personalizado -->
+                  @if (showBalanceTooltip()) {
+                    <div 
+                      (click)="$event.stopPropagation()"
+                      class="absolute top-full right-0 mt-2 w-64 xpb-bg-card rounded-lg shadow-lg border xpb-border p-3 z-10 text-xs xpb-text-secondary font-normal">
+                      <p class="leading-relaxed">
+                        Este porcentaje indica la variación de tu balance actual respecto al mes anterior.
+                      </p>
+                      <div class="absolute -top-2 right-8 w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-[var(--xpb-border)]"></div>
+                    </div>
+                  }
               </div>
             }
           </div>
-          <p class="text-3xl lg:text-2xl font-bold text-black/70 mb-2 break-words">PEN {{ currentBalance() | number:'1.2-2' }}</p>
+          <p class="text-2xl lg:text-3xl font-bold text-black/70 mb-2 break-words">PEN {{ currentBalance() | number:'1.2-2' }}</p>
         </div>
         
         <!-- Resultado del mes -->
-        <div class="lg:col-span-2 xpb-bg-card rounded-xl p-3 lg:p-5 shadow-sm border xpb-border">
+        <div class="lg:col-span-2 xpb-bg-card rounded-xl px-1 py-3 lg:px-3 lg:py-6 shadow-sm border xpb-border">
           <div class="flex items-center gap-2 mb-2 lg:mb-3">
-            <div class="xpb-bg-main rounded-lg p-2 hidden lg:block">
+            <div class="hidden lg:block">
               <span 
                 [class]="netCashFlow() > 0 ? 'text-[var(--xpb-income)]' : netCashFlow() === 0 ? 'text-[var(--xpb-primary)]' : 'text-[var(--xpb-expense)]'"
                 class="material-icons text-xl">swap_horiz</span>
@@ -136,9 +152,9 @@
         </div>
 
         <!-- Ingresos del mes -->
-        <div class="lg:col-span-2 xpb-bg-card rounded-xl p-3 lg:p-5 shadow-sm border xpb-border">
+        <div class="lg:col-span-2 xpb-bg-card rounded-xl px-1 py-3 lg:px-3 lg:py-6 shadow-sm border xpb-border">
           <div class="flex items-center gap-2 mb-2 lg:mb-3">
-            <div class="xpb-bg-main rounded-lg p-2 hidden lg:block">
+            <div class="hidden lg:block">
               <span class="material-icons text-[var(--xpb-income)] text-xl">trending_up</span>
             </div>
             <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap hidden lg:block">Ingresos del Mes</p>
@@ -148,9 +164,9 @@
         </div>
 
         <!-- Gastos del mes -->
-        <div class="lg:col-span-2 xpb-bg-card rounded-xl p-3 lg:p-5 shadow-sm border xpb-border">
+        <div class="lg:col-span-2 xpb-bg-card rounded-xl px-1 py-3 lg:px-3 lg:py-6 shadow-sm border xpb-border">
           <div class="flex items-center gap-2 mb-2 lg:mb-3">
-            <div class="xpb-bg-main rounded-lg p-2 hidden lg:block">
+            <div class="hidden lg:block">
               <span class="material-icons text-[var(--xpb-expense)] text-xl">trending_down</span>
             </div>
             <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap hidden lg:block">Gastos del Mes</p>
@@ -205,19 +221,15 @@
           <div class="lg:hidden">
             <div class="flex items-center justify-between mb-3">
               <h2 class="text-[0.875rem] font-semibold xpb-text-primary">Deuda en Tarjetas</h2>
-              <p
-                [class]="percentajeCreditUsed() > 50 ? 'text-[var(--xpb-expense)]' : 'text-[var(--xpb-income)]'"  
-                class="text-sm font-semibold">{{ percentajeCreditUsed() | number:'1.0-0' }}%</p>
+              <p class="text-sm font-semibold text-[var(--xpb-expense)]">{{ percentajeCreditUsed() | number:'1.0-0' }}%</p>
             </div>
             
             <div class="h-3 xpb-bg-main rounded-full overflow-hidden mb-3">
-              <div
-                  [class]="percentajeCreditUsed() > 50 ? 'bg-[var(--xpb-expense)]' : 'bg-[var(--xpb-income)]'"
-                  class="h-full" [style.width.%]="percentajeCreditUsed()"></div>
+              <div class="h-full bg-[var(--xpb-expense)]" [style.width.%]="percentajeCreditUsed()"></div>
             </div>
             
             <div class="flex items-center justify-between">
-              <p class="text-xs xpb-text-secondary">Saldo: <span class="font-semibold xpb-text-primary">PEN {{ totalCreditLimit() - totalCreditUsed() | number:'1.2-2' }}</span></p>
+              <p class="text-xs xpb-text-secondary">Disponible: <span class="font-semibold xpb-text-primary">PEN {{ totalCreditLimit() - totalCreditUsed() | number:'1.2-2' }}</span></p>
               <p class="text-xs xpb-text-secondary">Límite: <span class="font-semibold xpb-text-primary">PEN {{ totalCreditLimit() | number:'1.2-2' }}</span></p>
             </div>
           </div>
