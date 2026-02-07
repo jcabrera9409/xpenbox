@@ -75,7 +75,9 @@ export class DashboardPage implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.loadDashboardData();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadDashboardData();
+    }
   }
 
   ngAfterViewInit(): void {

@@ -1,4 +1,4 @@
-import { Component, signal, inject, PLATFORM_ID } from '@angular/core';
+import { Component, signal, inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MenuComponent } from '../../shared/components/menu-component/menu.component';
 import { RouterOutlet } from '@angular/router';
@@ -18,7 +18,7 @@ import { ReceiptModal } from '../../modal/common/receipt-modal/receipt.modal';
   templateUrl: './landing.page.html',
   styleUrl: './landing.page.css',
 })
-export class LandingPage {
+export class LandingPage implements OnInit {
   
   showQuickExpenseModal = signal(false);
   showQuickIncomeModal = signal(false);
@@ -30,7 +30,9 @@ export class LandingPage {
 
   constructor(
     private userService: UserService
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     if (isPlatformBrowser(this.platformId) && !this.userState.userLogged()) {
       this.userService.loadUserLoggedIn();
     }
