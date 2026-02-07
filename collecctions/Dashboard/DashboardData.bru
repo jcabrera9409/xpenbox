@@ -1,0 +1,15 @@
+meta {
+  name: DashboardData
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}/api/rest/v1/dashboard?period=CURRENT_MONTH
+  body: none
+  auth: none
+}
+
+params:query {
+  period: CURRENT_MONTH
+}

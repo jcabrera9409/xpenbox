@@ -73,5 +73,54 @@ export enum TransactionType {
     INCOME = 'INCOME',
     EXPENSE = 'EXPENSE',
     TRANSFER = 'TRANSFER',
-    CREDIT_PAYMENT = 'CREDIT_PAYMENT'
+    CREDIT_PAYMENT = 'CREDIT_PAYMENT',
+}
+
+export namespace TransactionType {
+    export function getLabel(type: TransactionType | undefined): string {
+        switch (type) {
+            case TransactionType.INCOME:
+                return 'Ingreso';
+            case TransactionType.EXPENSE:
+                return 'Gasto';
+            case TransactionType.TRANSFER:
+                return 'Transferencia';
+            case TransactionType.CREDIT_PAYMENT:
+                return 'Pago de Crédito';
+            case TransactionType.ALL:
+                return 'Todos';
+            default:
+                return 'Desconocido';
+        }
+    }
+
+    export function getTransactionBgColorClass(type: TransactionType | undefined): string {
+        switch (type) {
+        case TransactionType.INCOME:
+            return 'xpb-income';
+        case TransactionType.EXPENSE:
+            return 'xpb-expense';
+        case TransactionType.TRANSFER:
+            return 'xpb-transfer';
+        case TransactionType.CREDIT_PAYMENT:
+            return 'xpb-credit';
+        default:
+            return 'xpb-disabled';
+        } 
+    }
+
+    export function getTransactionIcon(type: TransactionType | undefined): string {
+        switch (type) {
+        case TransactionType.INCOME:
+            return 'trending_up';
+        case TransactionType.EXPENSE:
+            return 'receipt_long';
+        case TransactionType.TRANSFER:
+            return 'swap_horiz';
+        case TransactionType.CREDIT_PAYMENT:
+            return 'payment';
+        default:
+            return 'help_outline';
+        } 
+    }
 }

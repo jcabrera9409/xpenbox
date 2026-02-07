@@ -1,5 +1,7 @@
 package org.xpenbox.category.dto;
 
+import java.math.BigDecimal;
+
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 /**
@@ -7,6 +9,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
  * @param resourceCode              the unique resource code of the category
  * @param name                      the name of the category
  * @param color                     the color associated with the category
+ * @param amount                    the amount associated with the category
  * @param lastUsedDateTimestamp     the timestamp of the last used date
  * @param usageCount                the usage count of the category
  * @param state                     the state of the category
@@ -16,6 +19,7 @@ public record CategoryResponseDTO (
     String resourceCode,
     String name,
     String color,
+    BigDecimal amount,
     Long lastUsedDateTimestamp,
     Long usageCount,
     Boolean state

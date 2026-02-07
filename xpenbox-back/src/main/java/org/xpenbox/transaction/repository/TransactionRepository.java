@@ -68,6 +68,19 @@ public class TransactionRepository extends GenericRepository<Transaction> {
     }
     
     /**
+     * Find transactions by user ID and period range.
+     * @param userId the ID of the user
+     * @param from the start of the period
+     * @param to the end of the period
+     * @return a list of transactions matching the criteria
+     */
+    public List<Transaction> findByUserIdAndPeriodRange(Long userId, LocalDateTime from, LocalDateTime to) {
+        LOG.debugf("Fetching transactions for User ID: %d between %s and %s", userId, from, to);
+        return list("user.id = :userId and transactionDate between :from and :to", 
+                Parameters.with("userId", userId).and("from", from).and("to", to));
+    }
+
+    /**
      * Find transactions based on filter criteria and user.
      * @param filterDTO the filter criteria
      * @param user the user

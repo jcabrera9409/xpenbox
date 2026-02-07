@@ -6,6 +6,7 @@ export interface CategoryResponseDTO {
     resourceCode: string;
     name: string;
     color: string;
+    amount: number;
     lastUsedDateTimestamp: number;
     usageCount: number;
     state: boolean;

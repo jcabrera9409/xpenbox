@@ -73,7 +73,22 @@ public class TransactionMapper implements GenericMapper<Transaction, Transaction
      */
     @Override
     public TransactionResponseDTO toSimpleDTO(Transaction entity) {
-        return toDTO(entity);
+        LOG.infof("Mapping Transaction entity to simple TransactionResponseDTO: %s", entity);
+        TransactionResponseDTO dto = new TransactionResponseDTO(
+            entity.getResourceCode(),
+            entity.getDescription(),
+            entity.getTransactionType(),
+            entity.getAmount(),
+            entity.getLatitude(),
+            entity.getLongitude(),
+            entity.getTransactionDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+            entity.getCategory() != null ? categoryMapper.toSimpleDTO(entity.getCategory()) : null, 
+            null, 
+            null, 
+            null, 
+            null  
+        );
+        return dto;
     }
 
     /**

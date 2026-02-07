@@ -1,5 +1,6 @@
 package org.xpenbox.category.mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.jboss.logging.Logger;
@@ -33,6 +34,7 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
             entity.getResourceCode(),
             entity.getName(),
             entity.getColor(),
+            BigDecimal.ZERO,
             entity.getLastUsedDate() != null ? entity.getLastUsedDate().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
             entity.getUsageCount(),
             entity.getState()
@@ -53,6 +55,7 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
             entity.getResourceCode(),
             entity.getName(),
             entity.getColor(),
+            BigDecimal.ZERO,
             null,
             null,
             null
@@ -77,6 +80,21 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
         return entities.stream()
             .map(this::toDTO)
             .toList();
+    }
+
+
+    public CategoryResponseDTO toDTOReport(Category entity, BigDecimal totalAmount) {
+        LOG.infof("Mapping Category entity to report DTO: %s with total amount: %s", entity, totalAmount);
+        CategoryResponseDTO dto = new CategoryResponseDTO(
+            entity.getResourceCode(),
+            entity.getName(),
+            entity.getColor(),
+            totalAmount,
+            null,
+            null,
+            null
+        );
+        return dto;
     }
 
     /**
