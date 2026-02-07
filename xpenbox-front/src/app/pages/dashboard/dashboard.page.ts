@@ -12,10 +12,12 @@ import { TransactionResponseDTO } from '../../feature/transaction/model/transact
 import { DateService } from '../../shared/service/date.service';
 import { TransactionType } from '../../feature/transaction/model/transaction.request.dto';
 import { RouterLink } from '@angular/router';
+import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
+import { RetryComponent } from '../../shared/components/retry-component/retry.component';
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, LoadingUi, RetryComponent],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.css',
 })
