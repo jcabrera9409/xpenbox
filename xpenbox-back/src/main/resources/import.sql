@@ -29,6 +29,16 @@ CREATE TABLE IF NOT EXISTS tbl_token (
     CONSTRAINT fk_token_user FOREIGN KEY (user_id) REFERENCES tbl_user(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS tbl_user_token (
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT NOT NULL,
+    `token` VARCHAR(250) NOT NULL,
+    `token_type` ENUM('EMAIL_VERIFICATION', 'PASSWORD_RESET') NOT NULL,
+    `expires_at` DATETIME NOT NULL,
+    `used` TINYINT(1) NOT NULL DEFAULT 0,
+    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user_token_user FOREIGN KEY (user_id) REFERENCES tbl_user(id) ON DELETE CASCADE
+);
 
 -- 2. Income
 CREATE TABLE IF NOT EXISTS tbl_income (
