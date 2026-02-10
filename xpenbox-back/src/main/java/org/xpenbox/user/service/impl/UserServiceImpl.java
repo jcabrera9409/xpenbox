@@ -10,6 +10,7 @@ import org.xpenbox.user.entity.User;
 import org.xpenbox.user.mapper.UserMapper;
 import org.xpenbox.user.repository.UserRepository;
 import org.xpenbox.user.service.IUserService;
+import org.xpenbox.user.service.IUserTokenService;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -21,11 +22,14 @@ public class UserServiceImpl implements IUserService {
     private static final Logger LOG = Logger.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
+    private final IUserTokenService userTokenService;
 
     public UserServiceImpl(
-        UserRepository userRepository
+        UserRepository userRepository,
+        IUserTokenService userTokenService
     ) {
         this.userRepository = userRepository;
+        this.userTokenService = userTokenService;
     }
 
     @Override
@@ -42,6 +46,8 @@ public class UserServiceImpl implements IUserService {
         newUser.setPassword(BCrypt.hashpw(userRequest.password(), BCrypt.gensalt()));
 
         userRepository.persist(newUser);
+        
+        userTokenService.generateEmailVerificationToken(newUser.getEmail());
         
         LOG.infof("User with email %s registered successfully", userRequest.email());
 

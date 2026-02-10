@@ -47,6 +47,30 @@ public class UserToken extends PanacheEntityBase {
         PASSWORD_RESET
     }
 
+    private UserToken() {
+        // Default constructor for JPA
+    }
+
+    public static UserToken generateEmailVerificationToken(User user, String token, LocalDateTime expiresAt) {
+        UserToken userToken = new UserToken();
+        userToken.setUser(user);
+        userToken.setToken(token);
+        userToken.setTokenType(UserTokenType.EMAIL_VERIFICATION);
+        userToken.setExpiresAt(expiresAt);
+        userToken.setUsed(false);
+        return userToken;
+    }
+
+    public static UserToken generatePasswordResetToken(User user, String token, LocalDateTime expiresAt) {
+        UserToken userToken = new UserToken();
+        userToken.setUser(user);
+        userToken.setToken(token);
+        userToken.setTokenType(UserTokenType.PASSWORD_RESET);
+        userToken.setExpiresAt(expiresAt);
+        userToken.setUsed(false);
+        return userToken;
+    }
+
     // Getters and Setters
     public void setToken(String token) {
         this.token = token;

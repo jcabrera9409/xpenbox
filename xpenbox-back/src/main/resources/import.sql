@@ -146,5 +146,7 @@ ON tbl_transaction(user_id, account_id);
 CREATE INDEX idx_transaction_card 
 ON tbl_transaction(user_id, credit_card_id);
 
+CREATE UNIQUE INDEX idx_user_token_token 
+ON tbl_user_token(token);
 
 
