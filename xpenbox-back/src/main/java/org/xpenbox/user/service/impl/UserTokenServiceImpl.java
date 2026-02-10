@@ -29,6 +29,9 @@ public class UserTokenServiceImpl implements IUserTokenService {
     @ConfigProperty(name = "email.token.verification.url")
     private String emailTokenVerificationUrl;
 
+    @ConfigProperty(name = "email.token.login.url")
+    private String emailTokenLoginUrl;
+
     private final UserRepository userRepository;
     private final UserTokenRepository userTokenRepository;
     private final IEmailService emailService;
@@ -72,6 +75,8 @@ public class UserTokenServiceImpl implements IUserTokenService {
         userRepository.persist(user);
 
         userTokenRepository.delete(userToken);
+
+        this.emailService.sendWelcomeEmail(user, emailTokenLoginUrl);
         LOG.infof("Email verified successfully for user: %s", user.getEmail());
     }
 

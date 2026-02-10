@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificación de Email</title>
+    <title>Bienvenido a XpenBox</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,6 +36,15 @@
             border-radius: 5px;
             margin: 20px 0;
         }
+        .feature-list {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .feature-list li {
+            margin: 10px 0;
+        }
         .footer {
             text-align: center;
             margin-top: 20px;
@@ -51,18 +60,31 @@
         </div>
         
         <div class="content">
-            <h2>¡Hola {userName}!</h2>
+            <h2>¡Bienvenido/a a XpenBox, {userName}!</h2>
             
-            <p>Gracias por registrarte en XpenBox. Para completar tu registro, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente botón:</p>
+            <p>Tu correo electrónico ha sido verificado exitosamente. Ahora puedes disfrutar de todas las funcionalidades de XpenBox para gestionar tus finanzas personales.</p>
             
-            <div style="text-align: center;">
-                <a href="{verificationLink}" target="_blank" class="button">Verificar Correo Electrónico</a>
+            <h3>¿Qué puedes hacer en XpenBox?</h3>
+            <div class="feature-list">
+                <ul>
+                    <li>📊 Gestionar tus cuentas bancarias y tarjetas de crédito</li>
+                    <li>💰 Registrar ingresos y gastos de forma sencilla</li>
+                    <li>📈 Visualizar estadísticas y dashboards de tus finanzas</li>
+                    <li>🏷️ Organizar transacciones por categorías</li>
+                    <li>💳 Hacer seguimiento de tus tarjetas de crédito</li>
+                    <li>🔄 Registrar transferencias entre cuentas</li>
+                </ul>
             </div>
             
-            <p>Si no puedes hacer clic en el botón, copia y pega el siguiente enlace en tu navegador:</p>
-            <p style="word-break: break-all; color: #666; font-size: 14px;">{verificationLink}</p>
+            <p>Para comenzar a utilizar la aplicación, inicia sesión con tus credenciales:</p>
             
-            <p>Si no has solicitado este correo, puedes ignorarlo de forma segura.</p>
+            <div style="text-align: center;">
+                <a href="{loginLink}" target="_blank" class="button">Iniciar Sesión</a>
+            </div>
+            
+            <p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>
+            
+            <p>¡Gracias por confiar en XpenBox para gestionar tus finanzas!</p>
             
             <p>Saludos,<br>El equipo de XpenBox</p>
         </div>

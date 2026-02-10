@@ -14,4 +14,11 @@ public interface IEmailService {
      * @param verificationLink The URL that the user will click to verify their email address
      */
     void sendVerificationEmail(User user, String verificationLink);
+
+    /**
+     * Sends a welcome email to the specified user with the provided login link.
+     * @param user The user to whom the welcome email will be sent
+     * @param loginLink The URL that the user will click to log in to their account
+     */
+    void sendWelcomeEmail(User user, String loginLink);
 }

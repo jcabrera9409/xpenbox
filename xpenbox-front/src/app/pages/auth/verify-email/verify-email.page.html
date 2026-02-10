@@ -1,0 +1,100 @@
+@if (isLoading()) {
+    <app-loading-ui></app-loading-ui>
+} @else if (!isLoading() && errorVerifyEmail()) {
+    <!-- Error State -->
+    <div class="min-h-screen xpb-bg-main flex items-center justify-center p-4">
+        <div class="xpb-bg-card rounded-2xl shadow-xl w-full max-w-md p-8 sm:p-10 text-center">
+            <!-- Error Icon -->
+            <div class="xpb-bg-main rounded-full w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mx-auto mb-6">
+                <span style="font-size: 5rem!important;" class="material-icons text-5xl sm:text-6xl text-[var(--xpb-expense)]">
+                    error_outline
+                </span>
+            </div>
+            
+            <!-- Title -->
+            <h1 class="text-2xl sm:text-3xl font-bold xpb-text-primary mb-3">
+                Verificación requerida
+            </h1>
+            
+            <!-- Description -->
+            <p class="xpb-text-secondary text-base sm:text-lg mb-8">
+                No se pudo completar la verificación de tu correo electrónico. Sin verificar tu correo, no podrás acceder a tu cuenta.
+            </p>
+            
+            <!-- Error Details Alert -->
+            <div class="xpb-bg-main rounded-lg p-4 border-l-4 border-[var(--xpb-expense)] mb-8 text-left">
+                <div class="flex items-start gap-3">
+                    <span class="material-icons text-[var(--xpb-expense)] text-xl mt-0.5">
+                        info
+                    </span>
+                    <div class="flex-1">
+                        <p class="text-sm text-[var(--xpb-expense)] font-medium mb-1">
+                            {{ errorVerifyEmail() || 'El enlace de verificación es inválido o ha expirado.' }}
+                        </p>
+                        <p class="text-sm xpb-text-secondary">
+                            Solicita un nuevo enlace en la pantalla de login o contacta con soporte al correo electrónico <a href="mailto:firstcode94@gmail.com" class="text-[var(--xpb-primary)] hover:underline">firstcode94@gmail.com</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex flex-col gap-3">
+                <a 
+                    [routerLink]="'/login'" 
+                    class="w-full xpb-btn-primary inline-flex items-center justify-center gap-2 py-3">
+                    <span class="material-icons text-lg">
+                        login
+                    </span>
+                    <span>Inicia sesión para solicitar un nuevo enlace</span>
+                </a>
+            </div>
+        </div>
+    </div>
+} @else {
+    <!-- Success State -->
+    <div class="min-h-screen xpb-bg-main flex items-center justify-center p-4">
+        <div class="xpb-bg-card rounded-2xl shadow-xl w-full max-w-md p-8 sm:p-10 text-center">
+            <!-- Success Icon -->
+            <div class="xpb-bg-main rounded-full w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mx-auto mb-6">
+                <span style="font-size: 5rem!important;" class="material-icons text-5xl sm:text-6xl text-[var(--xpb-income)]">
+                    check_circle
+                </span>
+            </div>
+            
+            <!-- Title -->
+            <h1 class="text-2xl sm:text-3xl font-bold xpb-text-primary mb-3">
+                ¡Correo verificado!
+            </h1>
+            
+            <!-- Description -->
+            <p class="xpb-text-secondary text-base sm:text-lg mb-8">
+                Tu correo electrónico ha sido verificado exitosamente. Ya puedes acceder a tu cuenta.
+            </p>
+            
+            <!-- Success Details Alert -->
+            <div class="xpb-bg-main rounded-lg p-4 border-l-4 border-[var(--xpb-income)] mb-8 text-left">
+                <div class="flex items-start gap-3">
+                    <span class="material-icons text-[var(--xpb-income)] text-xl mt-0.5">
+                        verified
+                    </span>
+                    <div class="flex-1">
+                        <p class="text-sm xpb-text-secondary">
+                            Tu cuenta está completamente activa. Ahora puedes iniciar sesión y comenzar a gestionar tus finanzas personales.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Button -->
+            <a 
+                [routerLink]="'/login'" 
+                class="w-full xpb-btn-primary inline-flex items-center justify-center gap-2 py-3">
+                <span class="material-icons text-lg">
+                    login
+                </span>
+                <span>Iniciar sesión ahora</span>
+            </a>
+        </div>
+    </div>
+}

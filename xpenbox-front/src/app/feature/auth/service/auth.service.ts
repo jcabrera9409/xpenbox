@@ -23,8 +23,33 @@ export class AuthService {
     this.apiUrl = `${this.envService.getApiUrl()}/auth`;
   }
 
+  /**
+   * Register a new user with the provided user data
+   * @param userRequest User registration data transfer object
+   * @returns Observable that completes when registration is successful
+   */
   register(userRequest: UserRequestDTO): Observable<ApiResponseDTO<void>> {
     return this.http.post<ApiResponseDTO<void>>(`${this.apiUrl}/register`, userRequest);
+  }
+
+  /**
+   * Verify email using the provided token
+   * @param token Email verification token sent to the user's email
+   * @returns Observable that completes when email verification is successful
+   */
+  verifyEmail(token: string): Observable<ApiResponseDTO<void>> {
+    return this.http.get<ApiResponseDTO<void>>(`${this.apiUrl}/verify-email?token=${token}`);
+  }
+
+  /**
+   * Resend email verification token
+   * @param email User's email address
+   * @returns Observable that completes when the email verification token is resent
+   */
+  verifyEmailResend(email: string): Observable<ApiResponseDTO<void>> {
+    return this.http.post<ApiResponseDTO<void>>(`${this.apiUrl}/verify-email/resend`, 
+      { 'email': email }
+    );
   }
 
   /**

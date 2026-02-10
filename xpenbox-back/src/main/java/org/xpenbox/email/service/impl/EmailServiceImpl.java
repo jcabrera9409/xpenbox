@@ -5,6 +5,7 @@ import org.xpenbox.email.client.EmailApiClient;
 import org.xpenbox.email.service.IEmailService;
 import org.xpenbox.email.template.EmailTemplateFactory;
 import org.xpenbox.email.template.impl.VerifyEmailTemplate;
+import org.xpenbox.email.template.impl.WelcomeEmailTemplate;
 import org.xpenbox.user.entity.User;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -28,6 +29,15 @@ public class EmailServiceImpl implements IEmailService {
 
         emailApiClient.sendEmail(user.getEmail(), template.getSubject(), template.getContent());
         LOG.infof("Verification email sent to user: %s", user.getEmail());
+    }
+
+    @Override
+    public void sendWelcomeEmail(User user, String loginLink) {
+        LOG.infof("Preparing to send welcome email to user: %s", user.getEmail());
+        WelcomeEmailTemplate template = emailTemplateFactory.createWelcomeEmailTemplate(user, loginLink);
+
+        emailApiClient.sendEmail(user.getEmail(), template.getSubject(), template.getContent());
+        LOG.infof("Welcome email sent to user: %s", user.getEmail());
     }
     
 }

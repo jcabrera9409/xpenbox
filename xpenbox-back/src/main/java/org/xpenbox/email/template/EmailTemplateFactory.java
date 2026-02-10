@@ -1,6 +1,7 @@
 package org.xpenbox.email.template;
 
 import org.xpenbox.email.template.impl.VerifyEmailTemplate;
+import org.xpenbox.email.template.impl.WelcomeEmailTemplate;
 import org.xpenbox.user.entity.User;
 
 import io.quarkus.qute.Engine;
@@ -28,5 +29,10 @@ public class EmailTemplateFactory {
     public VerifyEmailTemplate createVerifyEmailTemplate(User user, String verificationLink) {
         String userName = user.getEmail().split("@")[0];
         return new VerifyEmailTemplate(quteEngine, userName, verificationLink);
+    }
+
+    public WelcomeEmailTemplate createWelcomeEmailTemplate(User user, String loginLink) {
+        String userName = user.getEmail().split("@")[0];
+        return new WelcomeEmailTemplate(quteEngine, userName, loginLink);
     }
 }
