@@ -16,6 +16,13 @@ public interface IEmailService {
     void sendVerificationEmail(User user, String verificationLink);
 
     /**
+     * Sends a password reset email to the specified user with the provided reset link.
+     * @param user The user to whom the password reset email will be sent
+     * @param resetLink The URL that the user will click to reset their password
+     */
+    void sendPasswordResetEmail(User user, String resetLink);
+
+    /**
      * Sends a welcome email to the specified user with the provided login link.
      * @param user The user to whom the welcome email will be sent
      * @param loginLink The URL that the user will click to log in to their account

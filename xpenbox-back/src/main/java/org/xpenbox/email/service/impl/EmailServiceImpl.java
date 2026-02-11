@@ -4,6 +4,7 @@ import org.jboss.logging.Logger;
 import org.xpenbox.email.client.EmailApiClient;
 import org.xpenbox.email.service.IEmailService;
 import org.xpenbox.email.template.EmailTemplateFactory;
+import org.xpenbox.email.template.impl.PasswordResetEmailTemplate;
 import org.xpenbox.email.template.impl.VerifyEmailTemplate;
 import org.xpenbox.email.template.impl.WelcomeEmailTemplate;
 import org.xpenbox.user.entity.User;
@@ -29,6 +30,15 @@ public class EmailServiceImpl implements IEmailService {
 
         emailApiClient.sendEmail(user.getEmail(), template.getSubject(), template.getContent());
         LOG.infof("Verification email sent to user: %s", user.getEmail());
+    }
+
+    @Override 
+    public void sendPasswordResetEmail(User user, String resetLink) {
+        LOG.infof("Preparing to send password reset email to user: %s", user.getEmail());
+        PasswordResetEmailTemplate template = emailTemplateFactory.createPasswordResetEmailTemplate(user, resetLink);
+
+        emailApiClient.sendEmail(user.getEmail(), template.getSubject(), template.getContent());
+        LOG.infof("Password reset email sent to user: %s", user.getEmail());
     }
 
     @Override

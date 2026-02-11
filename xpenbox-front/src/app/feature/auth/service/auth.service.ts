@@ -6,6 +6,7 @@ import { authState } from './auth.state';
 import { Observable, tap, catchError, throwError, map } from 'rxjs';
 import { ApiResponseDTO } from '../../common/model/api.response.dto';
 import { UserRequestDTO } from '../../user/model/user.request.dto';
+import { StorageService } from '../../../shared/service/storage.service';
 
 /**
  * Service for handling authentication-related operations
@@ -18,7 +19,8 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private envService: EnvService
+    private envService: EnvService,
+    private storageService: StorageService
   ) {
     this.apiUrl = `${this.envService.getApiUrl()}/auth`;
   }
@@ -49,6 +51,29 @@ export class AuthService {
   verifyEmailResend(email: string): Observable<ApiResponseDTO<void>> {
     return this.http.post<ApiResponseDTO<void>>(`${this.apiUrl}/verify-email/resend`, 
       { 'email': email }
+    );
+  }
+
+  /**
+   * Request a password reset for the user with the provided email
+   * @param email User's email address to send the password reset link to
+   * @returns Observable that completes when the password reset request is successful
+   */
+  resetPasswordRequest(email: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/password-reset`, 
+      { "email": email }
+    );
+  }
+
+  /**
+   * Confirm password reset using the provided token and new password
+   * @param token Password reset token sent to the user's email
+   * @param newPassword The new password to be set for the user
+   * @returns Observable that completes when the password reset is confirmed and successful
+   */
+  confirmPasswordReset(token: string, newPassword: string): Observable<ApiResponseDTO<void>> {
+    return this.http.post<ApiResponseDTO<void>>(`${this.apiUrl}/password-reset/confirm`, 
+      { "token": token, "newPassword": newPassword }
     );
   }
 
@@ -102,6 +127,7 @@ export class AuthService {
     }).pipe(
       tap(() => {
         authState.isAuthenticated.set(false);
+        this.storageService.clearStorage();
       })
     );
   }

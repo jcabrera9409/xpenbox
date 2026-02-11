@@ -98,10 +98,6 @@ export class LoginPage {
         }
       });
 
-      setTimeout(() => {
-        this.isSubmitting.set(false);
-      }, 1000);
-
     } else {
       Object.keys(this.loginForm.controls).forEach(key => {
         this.loginForm.get(key)?.markAsTouched();

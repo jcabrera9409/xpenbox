@@ -1,5 +1,6 @@
 package org.xpenbox.email.template;
 
+import org.xpenbox.email.template.impl.PasswordResetEmailTemplate;
 import org.xpenbox.email.template.impl.VerifyEmailTemplate;
 import org.xpenbox.email.template.impl.WelcomeEmailTemplate;
 import org.xpenbox.user.entity.User;
@@ -31,6 +32,23 @@ public class EmailTemplateFactory {
         return new VerifyEmailTemplate(quteEngine, userName, verificationLink);
     }
 
+    /**
+     * Creates a password reset email template with user data
+     * @param user The user to reset password for
+     * @param resetLink The password reset URL
+     * @return Configured email template
+     */
+    public PasswordResetEmailTemplate createPasswordResetEmailTemplate(User user, String resetLink) {
+        String userName = user.getEmail().split("@")[0];
+        return new PasswordResetEmailTemplate(quteEngine, userName, resetLink);
+    }
+
+    /**
+     * Creates a welcome email template with user data
+     * @param user The user to welcome
+     * @param loginLink The login URL
+     * @return Configured email template
+     */
     public WelcomeEmailTemplate createWelcomeEmailTemplate(User user, String loginLink) {
         String userName = user.getEmail().split("@")[0];
         return new WelcomeEmailTemplate(quteEngine, userName, loginLink);

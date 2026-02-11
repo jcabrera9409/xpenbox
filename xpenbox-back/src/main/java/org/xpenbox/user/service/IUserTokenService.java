@@ -18,6 +18,13 @@ public interface IUserTokenService {
     void generateEmailVerificationToken(String email);
 
     /**
+     * Verifies the password reset token and resets the user's password if the token is valid.
+     * @param token the password reset token to be verified
+     * @param newPassword the new password to be set for the user
+     */
+    void verifyAndResetPasswordWithToken(String token, String newPassword);
+
+    /**
      * Generates a token for password reset and associates it with the user's email.
      * @param email the email of the user for whom the token is being generated
      */

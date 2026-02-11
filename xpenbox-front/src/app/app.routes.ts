@@ -6,10 +6,14 @@ import { LandingPage } from './pages/landing/landing.page';
 import { guestGuard } from './feature/common/auth/guest.guard';
 import { authGuard } from './feature/common/auth/auth.guard';
 import { VerifyEmailPage } from './pages/auth/verify-email/verify-email.page';
+import { ForgotPasswordPage } from './pages/auth/forgot-password/forgot-password.page';
+import { ResetPasswordPage } from './pages/auth/reset-password/reset-password.page';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'verify-email', component: VerifyEmailPage },
+    { path: 'forgot-password', component: ForgotPasswordPage },
+    { path: 'reset-password', component: ResetPasswordPage },
     { path: 'login', component: LoginPage, canActivate: [guestGuard] },
     { path: 'register', component: RegisterPage, canActivate: [guestGuard] },
     { path: 'landing', component: LandingPage, children: landingRoutes, canActivate: [authGuard] }

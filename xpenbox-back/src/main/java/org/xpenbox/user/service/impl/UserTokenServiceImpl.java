@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
+import org.mindrot.jbcrypt.BCrypt;
 import org.xpenbox.email.service.IEmailService;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.user.entity.User;
@@ -29,6 +30,9 @@ public class UserTokenServiceImpl implements IUserTokenService {
     @ConfigProperty(name = "email.token.verification.url")
     private String emailTokenVerificationUrl;
 
+    @ConfigProperty(name = "password.reset.token.verification.url")
+    private String passwordResetTokenVerificationUrl;
+
     @ConfigProperty(name = "email.token.login.url")
     private String emailTokenLoginUrl;
 
@@ -49,11 +53,11 @@ public class UserTokenServiceImpl implements IUserTokenService {
     @Override
     public void verifyEmailToken(String token) {
         LOG.infof("Verifying email token: %s", token);
-        UserToken userToken = userTokenRepository.findByToken(token);
-        if (userToken == null || userToken.getTokenType() != UserTokenType.EMAIL_VERIFICATION) {
-            LOG.warnf("Invalid email verification token: %s", token);
-            throw new BadRequestException("Invalid email verification token");
-        }
+        UserToken userToken = userTokenRepository.findByToken(token)
+            .orElseThrow(() -> {
+                LOG.warnf("Invalid email verification token: %s", token);
+                return new BadRequestException("Invalid email verification token");
+            });
 
         if (userToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             LOG.warnf("Email verification token expired: %s", token);
@@ -85,15 +89,20 @@ public class UserTokenServiceImpl implements IUserTokenService {
         LOG.infof("Generating email verification token for email: %s", email);
         User user = validateAndGetUser(email);
 
+        if (user == null) {
+            LOG.warnf("User with email %s not found, cannot generate email verification token", email);
+            return;
+        }
+
         if (user.getVerified()) {
             LOG.warnf("Email %s is already verified", email);
-            throw new BadRequestException("Email is already verified");
+            return;
         }
 
         UserToken existingToken = userTokenRepository.findActiveTokenByUserIdAndType(user.id, UserTokenType.EMAIL_VERIFICATION);
         if (existingToken != null) {
             LOG.warnf("An active email verification token already exists for email: %s", email);
-            throw new BadRequestException("An active email verification token already exists. Please check your email.");
+            return;
         }
 
         userTokenRepository.deleteByUserIdAndUserTokenType(user.id, UserTokenType.EMAIL_VERIFICATION);
@@ -106,17 +115,70 @@ public class UserTokenServiceImpl implements IUserTokenService {
     }
 
     @Override
+    public void verifyAndResetPasswordWithToken(String token, String newPassword) {
+        LOG.infof("Verifying password reset token: %s", token);
+        UserToken userToken = userTokenRepository.findByToken(token)
+            .orElseThrow(() -> {
+                LOG.warnf("Invalid password reset token: %s", token);
+                return new BadRequestException("Cannot reset password. Please verify your email first.");
+            });
+
+        if (userToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            LOG.warnf("Password reset token expired: %s", token);
+            throw new BadRequestException("Cannot reset password. Please verify your email first.");
+        }
+
+        if (!userToken.getUser().getVerified()) {
+            LOG.warnf("Email %s is not verified, cannot reset password", userToken.getUser().getEmail());
+            throw new BadRequestException("Cannot reset password. Please verify your email first.");
+        }
+
+        if (userToken.getUsed()) {
+            LOG.warnf("Password reset token already used: %s", token);
+            throw new BadRequestException("Cannot reset password. Please verify your email first.");
+        }
+
+        User user = userToken.getUser();
+        user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+
+        userRepository.persist(user);
+        userTokenRepository.delete(userToken);
+
+        LOG.infof("Password reset successfully for user: %s", user.getEmail());
+    }
+
+    @Override
     public void generatePasswordResetToken(String email) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'generatePasswordResetToken'");
+        LOG.infof("Generating password reset token for email: %s", email);
+        User user = validateAndGetUser(email);
+
+        if (user == null) {
+            LOG.warnf("User with email %s not found, cannot generate password reset token", email);
+            return;
+        }
+
+        if (!user.getVerified()) {
+            LOG.warnf("Email %s is not verified, cannot generate password reset token", email);
+            return;
+        }
+
+        UserToken existingToken = userTokenRepository.findActiveTokenByUserIdAndType(user.id, UserTokenType.PASSWORD_RESET);
+        if (existingToken != null) {
+            LOG.warnf("An active password reset token already exists for email: %s", email);
+            return;
+        }
+
+        userTokenRepository.deleteByUserIdAndUserTokenType(user.id, UserTokenType.PASSWORD_RESET);
+
+        UserToken token = generatePasswordResetToken(user);
+        String resetLink = String.format("%s?token=%s", passwordResetTokenVerificationUrl, token.getToken());
+
+        this.emailService.sendPasswordResetEmail(user, resetLink);
+        LOG.infof("Password reset token generated and email sent to: %s", email);
     }
 
     private User validateAndGetUser(String email) {
-        return userRepository.findByEmail(email)
-            .orElseThrow(() -> {
-                LOG.warnf("User with email %s not found", email);
-                return new BadRequestException("User with email " + email + " not found");
-            });
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     private UserToken generateEmailVerificationToken(User user) {
@@ -129,4 +191,16 @@ public class UserTokenServiceImpl implements IUserTokenService {
 
         return userToken;
     }
+
+    private UserToken generatePasswordResetToken(User user) {
+        String token = UUID.randomUUID().toString();
+        LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(emailTokenExpiration / 1000);
+        UserToken userToken = UserToken.generatePasswordResetToken(user, token, expiresAt);
+
+        userTokenRepository.persist(userToken);
+        LOG.infof("Password reset token generated and saved for user: %s", user.getEmail());
+
+        return userToken;
+    }
+
 }

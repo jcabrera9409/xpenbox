@@ -1,6 +1,7 @@
 package org.xpenbox.user.repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.user.entity.UserToken;
@@ -35,10 +36,10 @@ public class UserTokenRepository implements PanacheRepository<UserToken> {
      * @param token the token value
      * @return the UserToken if found, or null if not found
      */
-    public UserToken findByToken(String token) {
+    public Optional<UserToken> findByToken(String token) {
         LOG.infof("Finding UserToken for token: %s", token);
         return find("token = :token", 
-            Parameters.with("token", token)).firstResult();
+            Parameters.with("token", token)).firstResultOptional();
     }
 
     /**

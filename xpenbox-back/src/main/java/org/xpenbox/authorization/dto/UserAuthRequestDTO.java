@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
  * @param email The email address to verify.
  */
 @RegisterForReflection
-public record VerifyEmailRequestDTO (
+public record UserAuthRequestDTO (
     @NotNull(message = "Email cannot be null")
     @Email(message = "Email should be valid")
     String email
