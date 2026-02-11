@@ -4,6 +4,7 @@ import org.jboss.logging.Logger;
 import org.xpenbox.common.dto.APIResponseDTO;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.ConflictException;
+import org.xpenbox.exception.EmailNotVerifiedException;
 import org.xpenbox.exception.ForbiddenException;
 import org.xpenbox.exception.InsufficientFoundsException;
 import org.xpenbox.exception.ResourceNotFoundException;
@@ -47,6 +48,10 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
 
         if (exception instanceof ForbiddenException ex) {
             return handleForbiddenException(ex);
+        }
+
+        if (exception instanceof EmailNotVerifiedException ex) {
+            return handleEmailNotVerifiedException(ex);
         }
 
         if (exception instanceof ConflictException ex) {
@@ -159,6 +164,19 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
 
         APIResponseDTO<Void> response = APIResponseDTO.error(message, Response.Status.FORBIDDEN.getStatusCode());
         return Response.status(Response.Status.FORBIDDEN).entity(response).build();
+    }
+
+    public Response handleEmailNotVerifiedException(EmailNotVerifiedException ex) {
+        LOG.warn("Email not verified: " + ex.getMessage());
+        String message = "Email not verified";
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Exception details: ", ex);
+            message += ": " + ex.getMessage();
+        }
+
+        APIResponseDTO<Void> response = APIResponseDTO.error(message, Response.Status.PRECONDITION_REQUIRED.getStatusCode());
+        return Response.status(Response.Status.PRECONDITION_REQUIRED).entity(response).build();
     }
 
     private Response handleResourceNotFoundException(ResourceNotFoundException ex) {

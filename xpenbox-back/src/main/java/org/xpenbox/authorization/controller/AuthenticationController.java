@@ -2,11 +2,15 @@ package org.xpenbox.authorization.controller;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.authorization.dto.LoginRequestDTO;
+import org.xpenbox.authorization.dto.ResetPasswordRequestDTO;
 import org.xpenbox.authorization.dto.TokenResponseDTO;
+import org.xpenbox.authorization.dto.UserAuthRequestDTO;
 import org.xpenbox.authorization.service.IAuthenticationService;
 import org.xpenbox.authorization.service.ITokenService;
+import org.xpenbox.common.dto.APIResponseDTO;
 import org.xpenbox.user.dto.UserCreateDTO;
 import org.xpenbox.user.service.IUserService;
+import org.xpenbox.user.service.IUserTokenService;
 
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
@@ -18,6 +22,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
@@ -35,15 +40,18 @@ public class AuthenticationController {
     private final IUserService userService;
     private final ITokenService tokenService;
     private final IAuthenticationService authenticationService;
+    private final IUserTokenService userTokenService;
 
     public AuthenticationController(
         IUserService userService,
         ITokenService tokenService,
-        IAuthenticationService authenticationService
+        IAuthenticationService authenticationService,
+        IUserTokenService userTokenService
     ) {
         this.userService = userService;
         this.tokenService = tokenService;
         this.authenticationService = authenticationService;
+        this.userTokenService = userTokenService;
     }
 
     /**
@@ -60,6 +68,87 @@ public class AuthenticationController {
         userService.register(userRequest);
         LOG.infof("Register successful for email: %s", userRequest.email());
         return Response.status(Response.Status.CREATED).build();
+    }
+
+    /**
+     * Verify email using the provided token
+     * @param token Email verification token from query parameter
+     * @return Response indicating the result of the email verification
+     */
+    @GET
+    @Path("/verify-email")
+    @PermitAll
+    @Transactional
+    public Response verifyEmail(@Valid @QueryParam("token") String token) {
+        LOG.infof("Email verification request received with token: %s", token);
+
+        userTokenService.verifyEmailToken(token);
+
+        LOG.infof("Email verification successful for token: %s", token);
+
+        return Response.ok(
+            APIResponseDTO.success(
+                "Email verified successfully. You can now log in.", 
+                null, 
+                Response.Status.OK.getStatusCode())
+        ).build();
+    }
+
+    /**
+     * Resend email verification token to the user's email address.
+     * @param verifyEmailRequest Request data transfer object containing the email to resend the verification token to
+     * @return Response indicating the result of the resend operation
+     */
+    @POST
+    @Path("/verify-email/resend")
+    @PermitAll
+    @Transactional
+    public Response resendVerifyEmail(@Valid UserAuthRequestDTO verifyEmailRequest) {
+        LOG.infof("Resend email verification request received for email: %s", verifyEmailRequest.email());
+
+        userTokenService.generateEmailVerificationToken(verifyEmailRequest.email());
+
+        LOG.infof("Resend email verification successful for email: %s", verifyEmailRequest.email());
+
+        return Response.noContent().build();
+    }
+
+    /**
+     * Request a password reset email
+     * @param passwordResetRequest Request data transfer object containing the email to send the password reset link to
+     * @return Response indicating the result of the password reset request
+     */
+    @POST
+    @Path("/password-reset")
+    @PermitAll
+    @Transactional
+    public Response requestPasswordReset(@Valid UserAuthRequestDTO passwordResetRequest) {
+        LOG.infof("Password reset request received for email: %s", passwordResetRequest.email());
+
+        userTokenService.generatePasswordResetToken(passwordResetRequest.email());
+
+        LOG.infof("Password reset email sent successfully for email: %s", passwordResetRequest.email());
+
+        return Response.noContent().build();
+    }
+
+    @POST
+    @Path("/password-reset/confirm")
+    @PermitAll
+    @Transactional
+    public Response confirmPasswordReset(@Valid ResetPasswordRequestDTO resetPasswordRequest) {
+        LOG.infof("Password reset confirmation request received with token: %s", resetPasswordRequest.token());
+
+        userTokenService.verifyAndResetPasswordWithToken(resetPasswordRequest.token(), resetPasswordRequest.newPassword());
+
+        LOG.infof("Password reset confirmed successfully for token: %s", resetPasswordRequest.token());
+
+        return Response.ok(
+            APIResponseDTO.success(
+                "Password reset successfully. You can now log in with your new password.", 
+                null, 
+                Response.Status.OK.getStatusCode())
+        ).build();
     }
 
     /**

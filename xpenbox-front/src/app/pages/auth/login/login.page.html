@@ -91,6 +91,7 @@
             </span>
           </label>
           <a
+            routerLink="/forgot-password"
             class="text-sm xpb-text-primary-accent hover:text-[var(--xpb-primary-hover)] hover:underline transition-colors"
           >
             ¿Olvidaste tu contraseña?
@@ -98,11 +99,39 @@
         </div>
 
         <!-- Error Message -->
-        @if (errorMessage()) {
+        @if (sendVerificationEmail()) {
+          <app-loading-ui [cssClasses]="'pb-5'"></app-loading-ui>
+        } @else if (errorMessage() && !showResendVerification()) {
           <div class="p-4 rounded-lg bg-[var(--xpb-expense)]/10 border border-[var(--xpb-expense)]/20 flex items-start gap-3">
             <span class="material-icons xpb-text-expense text-xl mt-0.5">error</span>
             <div class="flex-1">
               <p class="text-sm xpb-text-expense font-medium">{{ errorMessage() }}</p>
+              @if (errorStatus() === 428) {
+                <div class="mt-3 pt-3 border-t border-[var(--xpb-expense)]/20">
+                  <p class="text-sm xpb-text-secondary mb-2">
+                    Tu correo electrónico aún no ha sido verificado. Solicita un nuevo enlace de verificación.
+                  </p>
+                  <button
+                    (click)="verifyEmail()"
+                    type="button"
+                    class="inline-flex items-center gap-2 text-sm font-medium text-[var(--xpb-primary)] hover:text-[var(--xpb-primary-hover)] transition-colors"
+                  >
+                    <span class="material-icons text-base">mark_email_read</span>
+                    <span class="hover:underline">Reenviar código de verificación</span>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (showResendVerification()) {
+          <div class="p-4 rounded-lg bg-[var(--xpb-income)]/10 border border-[var(--xpb-income)]/20 flex items-start gap-3">
+            <span class="material-icons text-[var(--xpb-income)] text-xl mt-0.5">check_circle</span>
+            <div class="flex-1">
+              <p class="text-sm text-[var(--xpb-income)] font-medium">
+                Se ha enviado un nuevo enlace de verificación a tu correo electrónico.
+              </p>
             </div>
           </div>
         }
@@ -144,7 +173,7 @@
     </div>
 
     <!-- Footer -->
-    <p class="text-center text-xs sm:text-sm xpb-text-secondary mt-6">
+    <p class="text-center text-xs sm:text-sm xpb-text-secondary mt-6" style="display: none;">
       Al iniciar sesión, aceptas nuestros
       <a class="xpb-text-primary-accent hover:underline">Términos de Servicio</a>
       y

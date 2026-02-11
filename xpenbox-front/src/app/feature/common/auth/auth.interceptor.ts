@@ -4,6 +4,7 @@ import { AuthService } from "../../auth/service/auth.service";
 import { Router } from "@angular/router";
 import { catchError, Observable, switchMap, throwError } from "rxjs";
 import { NotificationService } from "../service/notification.service";
+import { StorageService } from "../../../shared/service/storage.service";
 
 // Singleton to track ongoing refresh token requests
 let ongoingRefresh$: Observable<void> | null = null;
@@ -20,6 +21,7 @@ export function authInterceptor(
 ) {
     const notificationService = inject(NotificationService);
     const authService = inject(AuthService);
+    const storageService = inject(StorageService);
     const router = inject(Router);
 
     return next(req.clone({withCredentials: true})).pipe(
@@ -50,7 +52,10 @@ export function authInterceptor(
                         ongoingRefresh$ = null;
                         authService.logout().subscribe({
                             complete: () => {
-                                notificationService.error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+                                if (storageService.getHasLoggedBefore()) {
+                                    notificationService.error('Por tu seguridad, por favor inicia sesión nuevamente.');
+                                    storageService.clearStorage();
+                                }
                                 authService.clearAuthState();
                                 router.navigate(['/login']);
                             },
