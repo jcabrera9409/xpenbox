@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotNull;
  * @param paymentProviderType the type of payment provider for the pre-approval plan, must not be null
  */
 @RegisterForReflection
-public record PreApprovalPlanRequestDTO (
+public record PreApprovalSubscriptionRequestDTO (
 
     @NotNull(message = "Resource code of the plan is required")
     @NotBlank(message = "Resource code of the plan must not be blank")

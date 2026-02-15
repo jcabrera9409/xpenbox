@@ -161,12 +161,13 @@ CREATE TABLE IF NOT EXISTS tbl_subscription (
     `end_date` DATETIME NULL,
     `next_billing_date` DATETIME NULL,
     `provider` VARCHAR(30) NOT NULL,
+    `provider_plan_id` VARCHAR(100) NOT NULL,
     `provider_subscription_id` VARCHAR(100) NOT NULL,
     `status` ENUM('PENDING', 'ACTIVE', 'PAST_DUE', 'CANCELLED', 'EXPIRED', 'TRIAL') NOT NULL,
     `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_date` DATETIME ON UPDATE CURRENT_TIMESTAMP,
     
-    UNIQUE KEY uk_provider_subscription (provider, provider_subscription_id),
+    UNIQUE KEY uk_provider_subscription (provider, provider_plan_id, provider_subscription_id),
     CONSTRAINT fk_subs_plan FOREIGN KEY (plan_id) REFERENCES tbl_plan(id) ON DELETE CASCADE,
     CONSTRAINT fk_subs_user FOREIGN KEY (user_id) REFERENCES tbl_user(id) ON DELETE CASCADE
 );

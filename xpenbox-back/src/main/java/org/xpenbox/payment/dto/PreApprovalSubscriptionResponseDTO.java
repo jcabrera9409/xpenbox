@@ -7,6 +7,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
  * @param initPointUrl the URL to which the user should be redirected to approve the subscription plan
  */
 @RegisterForReflection
-public record PreApprovalPlanResponseDTO (
+public record PreApprovalSubscriptionResponseDTO (
     String initPointUrl
 ) { }

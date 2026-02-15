@@ -1,7 +1,5 @@
 package org.xpenbox.payment.provider.mercadopago.client.dto;
 
-import java.math.BigDecimal;
-
 /**
  * Data Transfer Object for creating a subscription approval request in MercadoPago.
  * @param reason The reason for the subscription.
@@ -10,21 +8,10 @@ import java.math.BigDecimal;
  * @param auto_recurring The auto-recurring payment details.
  * @param back_url The URL to redirect the user after the approval process.
  */
-public record MPApprovalRequestDTO (
+public record MPApprovalSubscriptionRequestDTO (
     String reason,
     String external_reference,
     String payer_email,
-    AutoRecurring auto_recurring,
+    MPAutoRecurring auto_recurring,
     String back_url
-) { 
-    public static AutoRecurring generateMonthlyAutoRecurring(BigDecimal amount, String currency) {
-        return new AutoRecurring(1, "months", amount, currency);
-    }
-}
-
-record AutoRecurring (
-    Integer frequency,
-    String frequency_type,
-    BigDecimal transaction_amount,
-    String currency_id
 ) { }

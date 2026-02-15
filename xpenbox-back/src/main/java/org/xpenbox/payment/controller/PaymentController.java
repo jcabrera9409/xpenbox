@@ -2,11 +2,12 @@ package org.xpenbox.payment.controller;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.common.dto.APIResponseDTO;
-import org.xpenbox.payment.dto.PreApprovalPlanRequestDTO;
-import org.xpenbox.payment.dto.PreApprovalPlanResponseDTO;
+import org.xpenbox.payment.dto.PreApprovalSubscriptionRequestDTO;
+import org.xpenbox.payment.dto.PreApprovalSubscriptionResponseDTO;
 import org.xpenbox.payment.service.IPaymentService;
 
 import io.quarkus.security.Authenticated;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -36,22 +37,23 @@ public class PaymentController {
     }
 
     /**
-     * Create a new pre-approval plan for the authenticated user
+     * Create a new pre-approval subscription for the authenticated user
      * @param securityContext the security context containing user information
-     * @param request the pre-approval plan request data transfer object
-     * @return a response indicating the result of the create pre-approval plan operation
+     * @param request the pre-approval subscription request data transfer object
+     * @return a response indicating the result of the create pre-approval subscription operation
      */
     @POST
-    @Path("/pre-approval-plan")
-    public Response createPreApprovalPlan(@Context SecurityContext securityContext, @Valid PreApprovalPlanRequestDTO request) {
+    @Path("/pre-approval")
+    @Transactional
+    public Response createPreApprovalSubscription(@Context SecurityContext securityContext, @Valid PreApprovalSubscriptionRequestDTO request) {
         String userEmail = securityContext.getUserPrincipal().getName();
-        LOG.infof("Create pre-approval plan request received for user: %s", userEmail);
+        LOG.infof("Create pre-approval subscription request received for user: %s", userEmail);
 
-        PreApprovalPlanResponseDTO response = paymentService.createPreApprovalPlan(request, userEmail);
-        LOG.infof("Pre-approval plan created successfully for user: %s", userEmail);
+        PreApprovalSubscriptionResponseDTO response = paymentService.createPreApprovalSubscription(request, userEmail);
+        LOG.infof("Pre-approval subscription created successfully for user: %s", userEmail);
 
         return Response.ok(
-            APIResponseDTO.success("Pre-approval plan created successfully", response, Response.Status.OK.getStatusCode())
+            APIResponseDTO.success("Pre-approval subscription created successfully", response, Response.Status.OK.getStatusCode())
         ).build();
     }
 

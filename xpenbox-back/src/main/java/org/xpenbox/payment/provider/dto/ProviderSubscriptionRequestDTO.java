@@ -1,7 +1,8 @@
-package org.xpenbox.payment.dto;
+package org.xpenbox.payment.provider.dto;
 
 import java.math.BigDecimal;
 
+import org.xpenbox.payment.entity.Plan.BillingCycle;
 import org.xpenbox.payment.enums.PaymentProviderType;
 
 /**
@@ -13,11 +14,12 @@ import org.xpenbox.payment.enums.PaymentProviderType;
  * @param currency The currency in which the amount is specified.
  * @param paymentProviderType The type of payment provider to be used for the subscription.
  */
-public record SubscriptionRequestDTO (
+public record ProviderSubscriptionRequestDTO (
     Long userId,
     String userEmail,
     String planName,
     BigDecimal amount,
     String currency,
+    BillingCycle billingCycle,
     PaymentProviderType paymentProviderType
 ) { }

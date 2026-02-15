@@ -1,8 +1,8 @@
 package org.xpenbox.payment.provider.mercadopago.client;
 
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
-import org.xpenbox.payment.provider.mercadopago.client.dto.MPApprovalRequestDTO;
-import org.xpenbox.payment.provider.mercadopago.client.dto.MPApprovalResponseDTO;
+import org.xpenbox.payment.provider.mercadopago.client.dto.MPApprovalSubscriptionRequestDTO;
+import org.xpenbox.payment.provider.mercadopago.client.dto.MPApprovalSubscriptionResponseDTO;
 
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -25,5 +25,5 @@ public interface MercadoPagoClient {
      */
     @POST
     @Path("/preapproval")
-    MPApprovalResponseDTO createSubscription(MPApprovalRequestDTO request);
+    MPApprovalSubscriptionResponseDTO createSubscription(MPApprovalSubscriptionRequestDTO request);
 }

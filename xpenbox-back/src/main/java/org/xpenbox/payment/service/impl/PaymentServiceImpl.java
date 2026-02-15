@@ -1,20 +1,21 @@
 package org.xpenbox.payment.service.impl;
 
-import java.math.BigDecimal;
-
 import org.jboss.logging.Logger;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.ForbiddenException;
-import org.xpenbox.payment.dto.PreApprovalPlanRequestDTO;
-import org.xpenbox.payment.dto.PreApprovalPlanResponseDTO;
-import org.xpenbox.payment.dto.SubscriptionRequestDTO;
-import org.xpenbox.payment.dto.SubscriptionResponseDTO;
+import org.xpenbox.payment.dto.PreApprovalSubscriptionRequestDTO;
+import org.xpenbox.payment.dto.PreApprovalSubscriptionResponseDTO;
 import org.xpenbox.payment.entity.Plan;
+import org.xpenbox.payment.entity.Subscription;
 import org.xpenbox.payment.entity.Plan.PlanStatus;
-import org.xpenbox.payment.enums.PaymentProviderType;
+import org.xpenbox.payment.mapper.PaymentMapper;
 import org.xpenbox.payment.provider.PaymentProvider;
 import org.xpenbox.payment.provider.PaymentProviderFactory;
+import org.xpenbox.payment.provider.dto.ProviderSubscriptionRequestDTO;
+import org.xpenbox.payment.provider.dto.ProviderSubscriptionResponseDTO;
+import org.xpenbox.payment.provider.mapper.ProviderMapper;
 import org.xpenbox.payment.repository.PlanRepository;
+import org.xpenbox.payment.repository.SubscriptionRepository;
 import org.xpenbox.payment.service.IPaymentService;
 import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
@@ -27,54 +28,52 @@ public class PaymentServiceImpl implements IPaymentService {
 
     private final UserRepository userRepository;
     private final PlanRepository planRepository;
+    private final SubscriptionRepository subscriptionRepository;
     private final PaymentProviderFactory paymentProviderFactory;
+    private final ProviderMapper providerMapper;
+    private final PaymentMapper paymentMapper;
 
     public PaymentServiceImpl(
         UserRepository userRepository,
         PlanRepository planRepository,
-        PaymentProviderFactory paymentProviderFactory
+        SubscriptionRepository subscriptionRepository,
+        PaymentProviderFactory paymentProviderFactory,
+        ProviderMapper providerMapper,
+        PaymentMapper paymentMapper
     ) {
         this.userRepository = userRepository;
         this.planRepository = planRepository;
+        this.subscriptionRepository = subscriptionRepository;
         this.paymentProviderFactory = paymentProviderFactory;
+        this.providerMapper = providerMapper;
+        this.paymentMapper = paymentMapper;
     }
 
     @Override
-    public PreApprovalPlanResponseDTO createPreApprovalPlan(PreApprovalPlanRequestDTO request, String userEmail) {
+    public PreApprovalSubscriptionResponseDTO createPreApprovalSubscription(PreApprovalSubscriptionRequestDTO request, String userEmail) {
+        LOG.infof("Creating pre-approval subscription for user %s with plan resource code %s and payment provider %s", userEmail, request.resourceCodePlan(), request.paymentProviderType());
         User user = validateAndGetUser(userEmail);
         
         Plan plan = validateAndGetPlan(request.resourceCodePlan());
 
-        SubscriptionRequestDTO subscriptionRequest = generateSubscriptionRequest(plan, user, request.paymentProviderType());
+        ProviderSubscriptionRequestDTO subscriptionRequest = providerMapper.toSubscriptionPlanRequestDTO(plan, user, request.paymentProviderType());
 
         PaymentProvider paymentProvider = paymentProviderFactory.getPaymentProvider(request.paymentProviderType());
         
-        SubscriptionResponseDTO subscriptionResponse = paymentProvider.createPreApprovalPlan(subscriptionRequest);
-
+        ProviderSubscriptionResponseDTO subscriptionResponse = paymentProvider.createPreApprovalSubscription(subscriptionRequest);
+  
         if (subscriptionResponse == null) {
-            LOG.warnf("Failed to create pre-approval plan for user %s and plan %s", userEmail, request.resourceCodePlan());
-            throw new BadRequestException("Failed to create pre-approval plan");
+            LOG.warnf("Failed to create pre-approval subscription for user %s and plan %s", userEmail, request.resourceCodePlan());
+            throw new BadRequestException("Failed to create pre-approval subscription");
         }
+        
+        LOG.infof("Pre-approval subscription created successfully for user %s and plan %s with provider %s", userEmail, request.resourceCodePlan(), request.paymentProviderType());
+        Subscription subscriptionEntity = paymentMapper.toSubscriptionEntity(subscriptionResponse, plan, user);
+        subscriptionRepository.persist(subscriptionEntity);
 
-        return new PreApprovalPlanResponseDTO(
+        LOG.infof("Subscription entity persisted successfully for user %s and plan %s with provider %s", userEmail, request.resourceCodePlan(), request.paymentProviderType());
+        return new PreApprovalSubscriptionResponseDTO(
             subscriptionResponse.checkoutUrl()
-        );
-    }
-
-    private SubscriptionRequestDTO generateSubscriptionRequest(Plan plan, User user, PaymentProviderType paymentProviderType) {
-        Long userId = user.id;
-        String userEmail = user.getEmail();
-        String planName = plan.getName();
-        BigDecimal amount = plan.getPrice();
-        String currency = plan.getCurrency();
-
-        return new SubscriptionRequestDTO(
-            userId,
-            userEmail,
-            planName,
-            amount,
-            currency,
-            paymentProviderType
         );
     }
 

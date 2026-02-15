@@ -57,6 +57,9 @@ public class Subscription extends PanacheEntityBase {
     @Column(name = "provider", nullable = true, length = 30)
     private String provider;
 
+    @Column(name = "provider_plan_id", nullable = true, length = 100)
+    private String providerPlanId;
+
     @Column(name = "provider_subscription_id", nullable = true, length = 100)
     private String providerSubscriptionId;
 
@@ -145,6 +148,14 @@ public class Subscription extends PanacheEntityBase {
 
     public void setProvider(String provider) {
         this.provider = provider;
+    }
+    
+    public String getProviderPlanId() {
+        return providerPlanId;
+    }
+
+    public void setProviderPlanId(String providerPlanId) {
+        this.providerPlanId = providerPlanId;
     }
 
     public String getProviderSubscriptionId() {

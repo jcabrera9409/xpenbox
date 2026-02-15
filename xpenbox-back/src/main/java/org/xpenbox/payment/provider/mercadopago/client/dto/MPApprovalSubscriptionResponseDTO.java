@@ -17,7 +17,7 @@ package org.xpenbox.payment.provider.mercadopago.client.dto;
  * @param subscription_id Unique identifier of the subscription (if applicable).
  * @param auto_recurring Auto-recurring payment details (if applicable).
  */
-public record MPApprovalResponseDTO (
+public record MPApprovalSubscriptionResponseDTO (
     String id, 
     Long payer_id,
     String payer_email,
@@ -31,5 +31,5 @@ public record MPApprovalResponseDTO (
     String last_modified,
     String init_point,
     String subscription_id,
-    AutoRecurring auto_recurring
+    MPAutoRecurring auto_recurring
 ) { }
