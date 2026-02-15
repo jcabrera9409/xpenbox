@@ -24,7 +24,11 @@ public class ResourceCode {
         CATEGORY("category"),
         CREDIT_CARD("creditcard"),
         INCOME("income"),
-        TRANSACTION("transaction");
+        TRANSACTION("transaction"),
+        PLAN("plan"),
+        SUBSCRIPTION("subscription"),
+        SUBSCRIPTION_PAYMENT("subscriptionpayment");
+
 
         private final String value;
 
@@ -108,5 +112,32 @@ public class ResourceCode {
      */
     public static String generateTransactionResourceCode() {
         return generateResourceCode(ResourceType.TRANSACTION);
+    }
+
+    /**
+     * Generate a plan resource code.
+     *
+     * @return the generated plan resource code
+     */
+    public static String generatePlanResourceCode() {
+        return generateResourceCode(ResourceType.PLAN);
+    }
+
+    /**
+     * Generate a subscription resource code.
+     *
+     * @return the generated subscription resource code
+     */
+    public static String generateSubscriptionResourceCode() {
+        return generateResourceCode(ResourceType.SUBSCRIPTION);
+    }
+
+    /**
+     * Generate a subscription payment resource code.
+     *
+     * @return the generated subscription payment resource code
+     */
+    public static String generateSubscriptionPaymentResourceCode() {
+        return generateResourceCode(ResourceType.SUBSCRIPTION_PAYMENT);
     }
 }

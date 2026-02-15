@@ -1,0 +1,15 @@
+meta {
+  name: GetPayment
+  type: http
+  seq: 4
+}
+
+get {
+  url: https://api.mercadopago.com/v1/payments/{{mpPaymentId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{mpToken}}
+}

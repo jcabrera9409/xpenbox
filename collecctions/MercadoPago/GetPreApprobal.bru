@@ -1,0 +1,15 @@
+meta {
+  name: GetPreApprobal
+  type: http
+  seq: 3
+}
+
+get {
+  url: https://api.mercadopago.com/preapproval/{{mpPreApprovalId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{mpToken}}
+}

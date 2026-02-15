@@ -1,0 +1,30 @@
+meta {
+  name: PreApprovalPlan
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://api.mercadopago.com/preapproval_plan
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{mpToken}}
+}
+
+body:json {
+  {
+    "reason": "XPENBOX_PRO TEST",
+    "external_reference": "USER_1234",
+    "payer_email": "test_user_414709156255098563@testuser.com",
+    "auto_recurring": {
+      "frequency": 1,
+      "frequency_type": "months",
+      "transaction_amount": 9.99,
+      "currency_id": "PEN"
+    },
+    "back_url": "https://xpenbox.firstcode.online/success"
+  }
+}

@@ -25,6 +25,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
+/**
+ * TransactionController is responsible for handling all transaction-related HTTP requests, including creating, updating, filtering, retrieving, and rolling back transactions. It uses the ITransactionService to perform business logic and interacts with the authenticated user's security context to ensure proper authorization and access control.
+ */
 @Path("/transaction")
 @Authenticated
 @Consumes(MediaType.APPLICATION_JSON)

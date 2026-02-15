@@ -131,6 +131,62 @@ CREATE TABLE IF NOT EXISTS tbl_transaction (
     CONSTRAINT fk_trans_card FOREIGN KEY (credit_card_id) REFERENCES tbl_credit_card(id) ON DELETE CASCADE
 );
 
+-- 7. Subscription
+CREATE TABLE IF NOT EXISTS tbl_plan (
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
+    `name` VARCHAR(100) NOT NULL,
+    `description` VARCHAR(500) NULL,
+    `price` DECIMAL(13,2) NOT NULL,
+    `currency` CHAR(3) NOT NULL DEFAULT 'USD',
+    `billing_cycle` ENUM('MONTHLY', 'ANNUALLY') NOT NULL,
+    `status` ENUM('ACTIVE','INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_date` DATETIME ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO tbl_plan (resource_code, name, description, price, currency, billing_cycle) VALUES
+('plan_free', 'XpenBox Free', 'Access to basic features on a monthly basis', 0.00, 'PEN', 'ANNUALLY'),
+('plan_betatester', 'XpenBox Beta Tester', 'Access to all and beta features free', 0.00, 'PEN', 'ANNUALLY'),
+('plan_pro_monthly', 'XpenBox Pro', 'Access to all features on a monthly basis with a discount', 9.99, 'PEN', 'MONTHLY');
+
+CREATE TABLE IF NOT EXISTS tbl_subscription (
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
+    `plan_id` BIGINT NOT NULL,
+    `user_id` BIGINT NOT NULL,
+    `plan_price` DECIMAL(13,2) NOT NULL,
+    `plan_currency` CHAR(3) NOT NULL DEFAULT 'USD',
+    `start_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `end_date` DATETIME NULL,
+    `next_billing_date` DATETIME NULL,
+    `provider` VARCHAR(30) NOT NULL,
+    `provider_subscription_id` VARCHAR(100) NOT NULL,
+    `status` ENUM('PENDING', 'ACTIVE', 'PAST_DUE', 'CANCELLED', 'EXPIRED', 'TRIAL') NOT NULL,
+    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_date` DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    
+    UNIQUE KEY uk_provider_subscription (provider, provider_subscription_id),
+    CONSTRAINT fk_subs_plan FOREIGN KEY (plan_id) REFERENCES tbl_plan(id) ON DELETE CASCADE,
+    CONSTRAINT fk_subs_user FOREIGN KEY (user_id) REFERENCES tbl_user(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS tbl_subscription_payment (
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
+    `subscription_id` BIGINT NOT NULL,
+    `provider` VARCHAR(30) NOT NULL,
+    `provider_payment_id` VARCHAR(100) NOT NULL,
+    `amount` DECIMAL(13,2) NOT NULL,
+    `currency` CHAR(3) NOT NULL DEFAULT 'USD',
+    `payment_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `status` ENUM('APPROVED', 'REJECTED', 'PENDING', 'REFUNDED') NOT NULL,
+    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    UNIQUE KEY uk_provider_payment (provider, provider_payment_id),
+    CONSTRAINT fk_subs_pay_subscription FOREIGN KEY (subscription_id) REFERENCES tbl_subscription(id) ON DELETE CASCADE
+);
+
 CREATE INDEX idx_token_user
 ON tbl_token(user_id);
 
@@ -149,4 +205,9 @@ ON tbl_transaction(user_id, credit_card_id);
 CREATE UNIQUE INDEX idx_user_token_token 
 ON tbl_user_token(token);
 
+CREATE INDEX idx_subscription_user_status ON tbl_subscription(user_id, status);
+CREATE INDEX idx_subscription_status ON tbl_subscription(status);
+CREATE INDEX idx_subscription_next_billing ON tbl_subscription(next_billing_date);
 
+CREATE INDEX idx_sub_payment_subscription ON tbl_subscription_payment(subscription_id);
+CREATE INDEX idx_sub_payment_provider ON tbl_subscription_payment(provider_payment_id);
