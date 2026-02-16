@@ -4,7 +4,7 @@ import org.jboss.logging.Logger;
 import org.xpenbox.common.dto.APIResponseDTO;
 import org.xpenbox.payment.dto.PreApprovalSubscriptionRequestDTO;
 import org.xpenbox.payment.dto.PreApprovalSubscriptionResponseDTO;
-import org.xpenbox.payment.service.IPaymentService;
+import org.xpenbox.payment.service.ISubscriptionService;
 
 import io.quarkus.security.Authenticated;
 import jakarta.transaction.Transactional;
@@ -19,21 +19,21 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
 /**
- * PaymentController is responsible for handling all payment-related HTTP requests, including creating pre-approval plans. It uses the IPaymentService to perform business logic and interacts with the authenticated user's security context to ensure proper authorization and access control.
+ * SubscriptionController is responsible for handling all subscription-related HTTP requests, including creating pre-approval plans. It uses the ISubscriptionService to perform business logic and interacts with the authenticated user's security context to ensure proper authorization and access control.
  */
-@Path("/payment")
+@Path("/subscription")
 @Authenticated
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class PaymentController {
-    private static final Logger LOG = Logger.getLogger(PaymentController.class);
+public class SubscriptionController {
+    private static final Logger LOG = Logger.getLogger(SubscriptionController.class);
 
-    private final IPaymentService paymentService;
+    private final ISubscriptionService subscriptionService;
 
-    public PaymentController(
-        IPaymentService paymentService
+    public SubscriptionController(
+        ISubscriptionService subscriptionService
     ) {
-        this.paymentService = paymentService;
+        this.subscriptionService = subscriptionService;
     }
 
     /**
@@ -49,7 +49,7 @@ public class PaymentController {
         String userEmail = securityContext.getUserPrincipal().getName();
         LOG.infof("Create pre-approval subscription request received for user: %s", userEmail);
 
-        PreApprovalSubscriptionResponseDTO response = paymentService.createPreApprovalSubscription(request, userEmail);
+        PreApprovalSubscriptionResponseDTO response = subscriptionService.createPreApprovalSubscription(request, userEmail);
         LOG.infof("Pre-approval subscription created successfully for user: %s", userEmail);
 
         return Response.ok(

@@ -2,15 +2,19 @@ package org.xpenbox.payment.service.impl;
 
 import java.time.LocalDateTime;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.ForbiddenException;
 import org.xpenbox.payment.dto.PreApprovalSubscriptionRequestDTO;
 import org.xpenbox.payment.dto.PreApprovalSubscriptionResponseDTO;
+import org.xpenbox.payment.dto.SubscriptionResponseDTO;
 import org.xpenbox.payment.entity.Plan;
 import org.xpenbox.payment.entity.Subscription;
 import org.xpenbox.payment.entity.Plan.PlanStatus;
+import org.xpenbox.payment.entity.Subscription.SubscriptionStatus;
 import org.xpenbox.payment.mapper.PaymentMapper;
+import org.xpenbox.payment.mapper.SubscriptionMapper;
 import org.xpenbox.payment.provider.PaymentProvider;
 import org.xpenbox.payment.provider.PaymentProviderFactory;
 import org.xpenbox.payment.provider.dto.ProviderSubscriptionRequestDTO;
@@ -18,15 +22,18 @@ import org.xpenbox.payment.provider.dto.ProviderSubscriptionResponseDTO;
 import org.xpenbox.payment.provider.mapper.ProviderMapper;
 import org.xpenbox.payment.repository.PlanRepository;
 import org.xpenbox.payment.repository.SubscriptionRepository;
-import org.xpenbox.payment.service.IPaymentService;
+import org.xpenbox.payment.service.ISubscriptionService;
 import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class PaymentServiceImpl implements IPaymentService {
-    private static final Logger LOG = Logger.getLogger(PaymentServiceImpl.class);
+public class SubscriptionServiceImpl implements ISubscriptionService {
+    private static final Logger LOG = Logger.getLogger(SubscriptionServiceImpl.class);
+
+    @ConfigProperty(name = "plan.free.resourcecode")
+    private String freePlanResourceCode;
 
     private final UserRepository userRepository;
     private final PlanRepository planRepository;
@@ -34,14 +41,16 @@ public class PaymentServiceImpl implements IPaymentService {
     private final PaymentProviderFactory paymentProviderFactory;
     private final ProviderMapper providerMapper;
     private final PaymentMapper paymentMapper;
+    private final SubscriptionMapper subscriptionMapper;
 
-    public PaymentServiceImpl(
+    public SubscriptionServiceImpl(
         UserRepository userRepository,
         PlanRepository planRepository,
         SubscriptionRepository subscriptionRepository,
         PaymentProviderFactory paymentProviderFactory,
         ProviderMapper providerMapper,
-        PaymentMapper paymentMapper
+        PaymentMapper paymentMapper,
+        SubscriptionMapper subscriptionMapper
     ) {
         this.userRepository = userRepository;
         this.planRepository = planRepository;
@@ -49,6 +58,46 @@ public class PaymentServiceImpl implements IPaymentService {
         this.paymentProviderFactory = paymentProviderFactory;
         this.providerMapper = providerMapper;
         this.paymentMapper = paymentMapper;
+        this.subscriptionMapper = subscriptionMapper;
+    }
+
+    @Override
+    public SubscriptionResponseDTO createFreeSubscription(String userEmail) {
+        LOG.infof("Creating free subscription for user with email: %s", userEmail);
+        User user = validateAndGetUser(userEmail);
+        Subscription activeSubscription = findActiveSubscription(user.id);
+
+        if (activeSubscription != null) {
+            LOG.warnf("User with email %s already has an active subscription with resource code %s and provider %s", userEmail, activeSubscription.getResourceCode(), activeSubscription.getProvider());
+            return subscriptionMapper.toDTO(activeSubscription);
+        }
+
+        Plan freePlan = planRepository.findByResourceCode(freePlanResourceCode)
+            .orElseThrow(() -> {
+                LOG.warnf("Free plan not found");
+                return new BadRequestException("Free plan not found");
+            });
+
+        Subscription subscriptionEntity = subscriptionMapper.createFreeSubscriptionEntity(user, freePlan);
+
+        subscriptionRepository.persist(subscriptionEntity);
+
+        LOG.infof("Free subscription created successfully for user with email: %s", userEmail);
+        return subscriptionMapper.toDTO(subscriptionEntity);
+    }
+
+    @Override
+    public SubscriptionResponseDTO getActiveSubscription(String userEmail) {
+        LOG.infof("Retrieving active subscription for user with email: %s", userEmail);
+        User user = validateAndGetUser(userEmail);
+        Subscription activeSubscription = findActiveSubscription(user.id);
+
+        if (activeSubscription == null) {
+            LOG.infof("No active subscription found for user with email: %s, returning free subscription", userEmail);
+            return createFreeSubscription(userEmail);
+        }
+
+        return subscriptionMapper.toDTO(activeSubscription);
     }
 
     @Override
@@ -119,9 +168,19 @@ public class PaymentServiceImpl implements IPaymentService {
         subscriptionRepository.persist(subscription);
     }
 
+    private Subscription findActiveSubscription(Long userId) {
+        LOG.infof("Checking for existing active subscription for user ID %s", userId);
+        return findSubscriptionByUserIdAndStatus(userId, SubscriptionStatus.ACTIVE);
+    }
+
     private Subscription findPendingSubscription(Long userId) {
         LOG.infof("Checking for existing pending subscription for user ID %s", userId);
-        return subscriptionRepository.findByUserIdAndStatus(userId, Subscription.SubscriptionStatus.PENDING)
+        return findSubscriptionByUserIdAndStatus(userId, SubscriptionStatus.PENDING);
+    }
+
+    private Subscription findSubscriptionByUserIdAndStatus(Long userId, SubscriptionStatus status) {
+        LOG.infof("Finding subscription for user ID %s with status %s", userId, status);
+        return subscriptionRepository.findByUserIdAndStatus(userId, status)
             .orElse(null);
     }
 

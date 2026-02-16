@@ -1,14 +1,18 @@
 package org.xpenbox.payment.mapper;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
 import org.jboss.logging.Logger;
+import org.xpenbox.common.ResourceCode;
 import org.xpenbox.common.mapper.GenericMapper;
 import org.xpenbox.payment.dto.SubscriptionResponseDTO;
+import org.xpenbox.payment.entity.Plan;
 import org.xpenbox.payment.entity.Subscription;
+import org.xpenbox.payment.entity.Subscription.SubscriptionStatus;
+import org.xpenbox.payment.enums.PaymentProviderType;
 import org.xpenbox.user.entity.User;
-import org.xpenbox.user.mapper.UserMapper;
 
 import jakarta.inject.Singleton;
 
@@ -46,7 +50,7 @@ public class SubscriptionMapper implements GenericMapper<Subscription, Subscript
             entity.getProviderSubscriptionId(),
             entity.getStatus(),
             entity.getPlan() != null ? planMapper.toDTO(entity.getPlan()) : null,
-            entity.getUser() != null ? UserMapper.toDTO(entity.getUser()) : null
+            null
         );
         return dto;
     }
@@ -114,6 +118,28 @@ public class SubscriptionMapper implements GenericMapper<Subscription, Subscript
     public boolean updateEntity(SubscriptionResponseDTO updateDto, Subscription entity) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'updateEntity'");
+    }
+
+    /**
+     * Creates a new Subscription entity for a free subscription based on the provided User and Plan. This method generates a new Subscription entity with the appropriate fields set for a free subscription, including generating a unique resource code, setting the provider to "FREE", and associating it with the provided User and Plan.
+     * @param user the User for whom the free subscription is being created, which may be used for associating the subscription with the user in the subscription provider's system
+     * @param freePlan the Plan representing the free subscription plan, which may be used for setting the plan details in the subscription provider's system
+     * @return a Subscription entity representing the created free subscription, with all relevant fields set for a free subscription
+     */
+    public Subscription createFreeSubscriptionEntity(User user, Plan freePlan) {
+        Subscription subscriptionEntity = new Subscription();
+        subscriptionEntity.setResourceCode(ResourceCode.generateSubscriptionPaymentResourceCode());
+        subscriptionEntity.setPlan(freePlan);
+        subscriptionEntity.setUser(user);
+        subscriptionEntity.setPlanPrice(freePlan.getPrice());
+        subscriptionEntity.setPlanCurrency(freePlan.getCurrency());
+        subscriptionEntity.setStartDate(LocalDateTime.now());
+        subscriptionEntity.setProvider(PaymentProviderType.FREE.name());
+        subscriptionEntity.setProviderPlanId(subscriptionEntity.getResourceCode());
+        subscriptionEntity.setProviderSubscriptionId(subscriptionEntity.getResourceCode());
+        subscriptionEntity.setStatus(SubscriptionStatus.ACTIVE);
+        
+        return subscriptionEntity;
     }
     
 }
