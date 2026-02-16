@@ -48,11 +48,10 @@ public class WebhookController {
         @HeaderParam("x-signature") String signature,
         @HeaderParam("x-request-id") String requestId,
         @QueryParam("data.id") String dataId,
-        @QueryParam("type") String type,
         MPWebhookRequestDTO payload
     ) {
         LOG.info("Received MercadoPago webhook with payload: " + payload);
-        LOG.debugf("Webhook headers - x-signature: %s, x-request-id: %s, data.id: %s, type: %s", signature, requestId, dataId, type);
+        LOG.debugf("Webhook headers - x-signature: %s, x-request-id: %s, data.id: %s", signature, requestId, dataId);
         
         webhookService.validateWebhook(PaymentProviderType.MERCADOPAGO, signature, requestId, dataId);
         
