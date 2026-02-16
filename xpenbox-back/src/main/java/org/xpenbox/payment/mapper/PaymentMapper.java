@@ -31,6 +31,7 @@ public class PaymentMapper {
         subscription.setProvider(providerPlan.paymentProviderType().name());
         subscription.setProviderPlanId(providerPlan.providerSubscriptionPlanId());
         subscription.setProviderSubscriptionId(providerPlan.providerSubscriptionPlanId());
+        subscription.setProviderSubscriptionUrl(providerPlan.checkoutUrl());
         subscription.setStatus(SubscriptionStatus.PENDING);
 
         return subscription;

@@ -22,4 +22,13 @@ public class PaymentProviderFactory {
             default -> throw new IllegalArgumentException("Unsupported payment provider: " + providerType);
         };
     }
+
+    public PaymentProvider getPaymentProvider(String providerType) {
+        try {
+            PaymentProviderType type = PaymentProviderType.valueOf(providerType.toUpperCase());
+            return getPaymentProvider(type);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unsupported payment provider: " + providerType, e);
+        }
+    }
 }

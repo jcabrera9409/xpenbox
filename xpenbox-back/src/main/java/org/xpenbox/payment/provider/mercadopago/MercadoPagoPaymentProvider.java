@@ -8,6 +8,7 @@ import org.xpenbox.payment.provider.dto.ProviderSubscriptionResponseDTO;
 import org.xpenbox.payment.provider.mercadopago.client.MercadoPagoClient;
 import org.xpenbox.payment.provider.mercadopago.client.dto.MPApprovalSubscriptionRequestDTO;
 import org.xpenbox.payment.provider.mercadopago.client.dto.MPApprovalSubscriptionResponseDTO;
+import org.xpenbox.payment.provider.mercadopago.client.dto.MPUpdateSubscriptionRequestDTO;
 import org.xpenbox.payment.provider.mercadopago.mapper.MPMapper;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -40,6 +41,17 @@ public class MercadoPagoPaymentProvider implements PaymentProvider {
         
         LOG.debugf("Received MPApprovalSubscriptionResponseDTO from MercadoPago: %s", mpApprovalResponse);
         return mpMapper.toProviderSubscriptionResponseDTO(mpApprovalResponse);
+    }
+
+    @Override
+    public ProviderSubscriptionResponseDTO cancelSubscription(String subscriptionId) {
+        LOG.infof("Cancelling subscription with ID %s using MercadoPago", subscriptionId);
+
+        MPUpdateSubscriptionRequestDTO mpUpdateRequest = new MPUpdateSubscriptionRequestDTO("cancelled");
+        MPApprovalSubscriptionResponseDTO mpUpdateResponse = mercadoPagoClient.updateSubscription(subscriptionId, mpUpdateRequest);
+        
+        LOG.debugf("Received MPApprovalSubscriptionResponseDTO from MercadoPago: %s", mpUpdateResponse);
+        return mpMapper.toProviderSubscriptionResponseDTO(mpUpdateResponse);
     }
 
     @Override

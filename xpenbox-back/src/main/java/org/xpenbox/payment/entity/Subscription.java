@@ -63,6 +63,9 @@ public class Subscription extends PanacheEntityBase {
     @Column(name = "provider_subscription_id", nullable = true, length = 100)
     private String providerSubscriptionId;
 
+    @Column(name = "provider_subscription_url", nullable = true, length = 255)
+    private String providerSubscriptionUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private SubscriptionStatus status;
@@ -164,6 +167,14 @@ public class Subscription extends PanacheEntityBase {
 
     public void setProviderSubscriptionId(String providerSubscriptionId) {
         this.providerSubscriptionId = providerSubscriptionId;
+    }
+
+    public String getProviderSubscriptionUrl() {
+        return providerSubscriptionUrl;
+    }
+
+    public void setProviderSubscriptionUrl(String providerSubscriptionUrl) {
+        this.providerSubscriptionUrl = providerSubscriptionUrl;
     }
 
     public SubscriptionStatus getStatus() {

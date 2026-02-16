@@ -1,0 +1,119 @@
+package org.xpenbox.payment.mapper;
+
+import java.time.ZoneId;
+import java.util.List;
+
+import org.jboss.logging.Logger;
+import org.xpenbox.common.mapper.GenericMapper;
+import org.xpenbox.payment.dto.SubscriptionResponseDTO;
+import org.xpenbox.payment.entity.Subscription;
+import org.xpenbox.user.entity.User;
+import org.xpenbox.user.mapper.UserMapper;
+
+import jakarta.inject.Singleton;
+
+/**
+ * Mapper class for converting between Subscription entity and SubscriptionResponseDTO. This class implements the GenericMapper interface to provide methods for mapping between the entity and DTO.
+ */
+@Singleton
+public class SubscriptionMapper implements GenericMapper<Subscription, SubscriptionResponseDTO, SubscriptionResponseDTO, SubscriptionResponseDTO> {
+    private static final Logger LOG = Logger.getLogger(SubscriptionMapper.class.getName());
+
+    private final PlanMapper planMapper;
+
+    public SubscriptionMapper(PlanMapper planMapper) {
+        this.planMapper = planMapper;
+    }
+
+    /**
+     * Converts a Subscription entity to a SubscriptionResponseDTO. This method maps all relevant fields from the Subscription entity to the DTO, including nested Plan and User details.
+     * 
+     * @param entity the Subscription entity to convert
+     * @return the corresponding SubscriptionResponseDTO
+     */
+    @Override
+    public SubscriptionResponseDTO toDTO(Subscription entity) {
+        LOG.infof("Mapping Subscription entity to DTO: %s", entity);
+        SubscriptionResponseDTO dto = new SubscriptionResponseDTO(
+            entity.getResourceCode(),
+            entity.getPlanPrice(),
+            entity.getPlanCurrency(),
+            entity.getStartDate() != null ? entity.getStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
+            entity.getEndDate() != null ? entity.getEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
+            entity.getNextBillingDate() != null ? entity.getNextBillingDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
+            entity.getProvider(),
+            entity.getProviderPlanId(),
+            entity.getProviderSubscriptionId(),
+            entity.getStatus(),
+            entity.getPlan() != null ? planMapper.toDTO(entity.getPlan()) : null,
+            entity.getUser() != null ? UserMapper.toDTO(entity.getUser()) : null
+        );
+        return dto;
+    }
+
+    /**
+     * Converts a Subscription entity to a simple SubscriptionResponseDTO. This method maps only the basic fields from the Subscription entity to the DTO, excluding nested Plan and User details for simplicity.
+     * 
+     * @param entity the Subscription entity to convert
+     * @return the corresponding simple SubscriptionResponseDTO
+     */
+    @Override
+    public SubscriptionResponseDTO toSimpleDTO(Subscription entity) {
+        LOG.infof("Mapping Subscription entity to simple DTO: %s", entity);
+
+        SubscriptionResponseDTO dto = new SubscriptionResponseDTO(
+            entity.getResourceCode(),
+            entity.getPlanPrice(),
+            entity.getPlanCurrency(),
+            entity.getStartDate() != null ? entity.getStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
+            entity.getEndDate() != null ? entity.getEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
+            entity.getNextBillingDate() != null ? entity.getNextBillingDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
+            entity.getProvider(),
+            entity.getProviderPlanId(),
+            entity.getProviderSubscriptionId(),
+            entity.getStatus(),
+            null, // Exclude plan details for simple DTO
+            null  // Exclude user details for simple DTO
+        );
+
+        return dto;
+    }
+
+    /**
+     * Converts a list of Subscription entities to a list of SubscriptionResponseDTOs. This method uses the toDTO method to convert each Subscription entity in the list to its corresponding DTO.
+     * 
+     * @param entities the list of Subscription entities to convert
+     * @return the corresponding list of SubscriptionResponseDTOs
+     */
+    @Override
+    public List<SubscriptionResponseDTO> toDTOList(List<Subscription> entities) {
+        return entities.stream().map(this::toDTO).toList();
+    }
+
+    /**
+     * Converts a SubscriptionResponseDTO to a Subscription entity. This method is used for creating new Subscription entities from DTOs. It maps the fields from the DTO to the Subscription entity, but does not handle nested Plan and User details as they are not included in the DTO for creation.
+     * 
+     * @param createDto the SubscriptionResponseDTO to convert
+     * @param user the User associated with the Subscription (not used in this case, but included for consistency with the GenericMapper interface)
+     * @return the corresponding Subscription entity
+     */
+    @Override
+    public Subscription toEntity(SubscriptionResponseDTO createDto, User user) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toEntity'");
+    }
+    
+    /**
+     * Updates an existing Subscription entity with data from a SubscriptionResponseDTO. This method is used for updating existing Subscription entities based on the data provided in the DTO. It maps the fields from the DTO to the Subscription entity, but does not handle nested Plan and User details as they are not included in the DTO for updates.
+     * 
+     * @param updateDto the SubscriptionResponseDTO containing the updated data
+     * @param entity the existing Subscription entity to update
+     * @return true if the entity was updated, false otherwise
+     */
+    @Override
+    public boolean updateEntity(SubscriptionResponseDTO updateDto, Subscription entity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateEntity'");
+    }
+    
+}

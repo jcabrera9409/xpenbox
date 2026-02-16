@@ -15,4 +15,11 @@ public interface IPaymentService {
      * @return a PreApprovalSubscriptionResponseDTO containing details about the created pre-approval subscription, including its ID, status, and any relevant URLs for managing the subscription
      */
     PreApprovalSubscriptionResponseDTO createPreApprovalSubscription(PreApprovalSubscriptionRequestDTO request, String userEmail);
+
+    /**
+     * Cancels an existing subscription based on the provided resource code and user email. This method should interact with the payment provider's API to cancel the subscription, which may involve updating the subscription status or deleting it from the provider's system. The method should return a PreApprovalSubscriptionResponseDTO containing details about the canceled subscription, such as its ID, cancellation status, and any relevant information from the payment provider.
+     * @param resourceCode the unique resource code of the subscription to be canceled, which should be provided by the payment provider when the subscription was created and may be used to identify the subscription in the provider's system
+     * @param userEmail the email of the user associated with the subscription being canceled, which may be used for verifying the user's identity and ensuring that the correct subscription is canceled in the payment provider's system
+     */
+    void cancelSubscription(String resourceCode, String userEmail);
 }

@@ -1,5 +1,7 @@
 package org.xpenbox.payment.service.impl;
 
+import java.time.LocalDateTime;
+
 import org.jboss.logging.Logger;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.ForbiddenException;
@@ -53,13 +55,23 @@ public class PaymentServiceImpl implements IPaymentService {
     public PreApprovalSubscriptionResponseDTO createPreApprovalSubscription(PreApprovalSubscriptionRequestDTO request, String userEmail) {
         LOG.infof("Creating pre-approval subscription for user %s with plan resource code %s and payment provider %s", userEmail, request.resourceCodePlan(), request.paymentProviderType());
         User user = validateAndGetUser(userEmail);
-        
         Plan plan = validateAndGetPlan(request.resourceCodePlan());
+        Subscription existingSubscription = findPendingSubscription(user.id);
+
+        if (existingSubscription != null) {
+            //validate if subscription expired or provider is different
+            if (!existingSubscription.getProvider().equals(request.paymentProviderType().name()) || existingSubscription.getStartDate().plusHours(1).isBefore(LocalDateTime.now())) {
+                cancelSubscription(existingSubscription.getResourceCode(), userEmail);
+            } else if (!existingSubscription.getStartDate().plusHours(1).isBefore(LocalDateTime.now())) {
+                LOG.warnf("User %s already has a pending subscription with resource code %s and provider %s", userEmail, existingSubscription.getResourceCode(), existingSubscription.getProvider());
+                return new PreApprovalSubscriptionResponseDTO(
+                    existingSubscription.getProviderSubscriptionUrl()
+                );
+            }
+        }
 
         ProviderSubscriptionRequestDTO subscriptionRequest = providerMapper.toSubscriptionPlanRequestDTO(plan, user, request.paymentProviderType());
-
         PaymentProvider paymentProvider = paymentProviderFactory.getPaymentProvider(request.paymentProviderType());
-        
         ProviderSubscriptionResponseDTO subscriptionResponse = paymentProvider.createPreApprovalSubscription(subscriptionRequest);
   
         if (subscriptionResponse == null) {
@@ -75,6 +87,51 @@ public class PaymentServiceImpl implements IPaymentService {
         return new PreApprovalSubscriptionResponseDTO(
             subscriptionResponse.checkoutUrl()
         );
+    }
+
+    @Override
+    public void cancelSubscription(String resourceCode, String userEmail) {
+        LOG.infof("Cancelling subscription with resource code %s for user %s", resourceCode, userEmail);
+        User user = validateAndGetUser(userEmail);
+        Subscription subscription = validateAndGetSubscription(resourceCode, user.id);
+
+        if (subscription.getUser().id != user.id) {
+            LOG.warnf("Subscription with resource code %s does not belong to user %s", resourceCode, userEmail);
+            throw new ForbiddenException("Subscription does not belong to the user");
+        }
+
+        if (subscription.getStatus() == Subscription.SubscriptionStatus.CANCELLED) {
+            LOG.warnf("Subscription with resource code %s is already cancelled for user %s", resourceCode, userEmail);
+            throw new BadRequestException("Subscription is already cancelled");
+        }
+
+        PaymentProvider paymentProvider = paymentProviderFactory.getPaymentProvider(subscription.getProvider());
+        ProviderSubscriptionResponseDTO cancelResponse = paymentProvider.cancelSubscription(subscription.getResourceCode());
+
+        if (cancelResponse == null) {
+            LOG.warnf("Failed to cancel subscription with resource code %s for user %s", resourceCode, userEmail);
+            throw new BadRequestException("Failed to cancel subscription");
+        }
+
+        LOG.infof("Subscription with resource code %s cancelled successfully for user %s", resourceCode, userEmail);
+        subscription.setProviderSubscriptionUrl("");
+        subscription.setStatus(Subscription.SubscriptionStatus.CANCELLED);
+        subscriptionRepository.persist(subscription);
+    }
+
+    private Subscription findPendingSubscription(Long userId) {
+        LOG.infof("Checking for existing pending subscription for user ID %s", userId);
+        return subscriptionRepository.findByUserIdAndStatus(userId, Subscription.SubscriptionStatus.PENDING)
+            .orElse(null);
+    }
+
+    private Subscription validateAndGetSubscription(String resourceCode, Long userId) {
+        LOG.infof("Validating subscription with resource code %s for user ID %s", resourceCode, userId);
+        return subscriptionRepository.findByResourceCodeAndUserId(resourceCode, userId)
+            .orElseThrow(() -> {
+                LOG.warnf("Subscription with resource code %s not found for user ID %s", resourceCode, userId);
+                return new BadRequestException("Subscription not found");
+            });
     }
 
     private Plan validateAndGetPlan(String resourceCode) {

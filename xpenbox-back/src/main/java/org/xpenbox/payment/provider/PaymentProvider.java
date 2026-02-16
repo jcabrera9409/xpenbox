@@ -16,6 +16,13 @@ public interface PaymentProvider {
     ProviderSubscriptionResponseDTO createPreApprovalSubscription(ProviderSubscriptionRequestDTO subscriptionRequest);
 
     /**
+     * Cancels an existing subscription based on the provided subscription ID. This method should interact with the payment provider's API to cancel the subscription and return relevant details in a SubscriptionResponseDTO.
+     * @param subscriptionId the unique identifier of the subscription to be canceled, which should be provided by the payment provider when the subscription was created
+     * @return a ProviderSubscriptionResponseDTO containing details about the canceled subscription, such as the cancellation status and any relevant information from the payment provider
+     */
+    ProviderSubscriptionResponseDTO cancelSubscription(String subscriptionId);
+
+    /**
      * Handles incoming webhooks from the payment provider. This method should process the payload received from the payment provider, which may contain information about subscription events, payment updates, or other relevant notifications.
      * @param payload the raw payload received from the payment provider's webhook, which should be parsed and processed according to the provider's specifications
      */

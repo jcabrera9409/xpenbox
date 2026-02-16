@@ -163,6 +163,7 @@ CREATE TABLE IF NOT EXISTS tbl_subscription (
     `provider` VARCHAR(30) NOT NULL,
     `provider_plan_id` VARCHAR(100) NOT NULL,
     `provider_subscription_id` VARCHAR(100) NOT NULL,
+    `provider_subscription_url` VARCHAR(255) NOT NULL,
     `status` ENUM('PENDING', 'ACTIVE', 'PAST_DUE', 'CANCELLED', 'EXPIRED', 'TRIAL') NOT NULL,
     `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_date` DATETIME ON UPDATE CURRENT_TIMESTAMP,
