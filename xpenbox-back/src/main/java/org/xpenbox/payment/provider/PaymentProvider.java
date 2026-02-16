@@ -27,4 +27,12 @@ public interface PaymentProvider {
      * @param payload the raw payload received from the payment provider's webhook, which should be parsed and processed according to the provider's specifications
      */
     void handleWebhook(String payload);
+    
+    /**
+     * Validates the webhook request by verifying the signature and ensuring that the request is legitimate. This method should check the provided signature against the expected value based on the payment provider's specifications, and also verify the request ID and data ID to ensure that the webhook is valid and has not been tampered with.
+     * @param signature the signature provided in the webhook request, which should be compared against the expected signature generated using the payment provider's secret key and the request payload
+     * @param requestId the unique identifier of the webhook request, which can be used to track and log the request for auditing purposes
+     * @param dataId the unique identifier of the data associated with the webhook event, which can be used to correlate the webhook event with specific actions or records in the system
+     */
+    void validateWebhook(String signature, String requestId, String dataId);
 }
