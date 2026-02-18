@@ -1,5 +1,6 @@
 package org.xpenbox.payment.provider;
 
+import org.xpenbox.payment.provider.dto.ProviderPaymentResponseDTO;
 import org.xpenbox.payment.provider.dto.ProviderSubscriptionRequestDTO;
 import org.xpenbox.payment.provider.dto.ProviderSubscriptionResponseDTO;
 
@@ -7,6 +8,13 @@ import org.xpenbox.payment.provider.dto.ProviderSubscriptionResponseDTO;
  * The PaymentProvider interface defines the contract for integrating with different payment providers. It includes methods for creating subscriptions and handling webhooks, allowing for a standardized way to interact with various payment services. Implementations of this interface will provide the specific logic for interacting with the APIs of different payment providers, such as Stripe, PayPal, or others.
  */
 public interface PaymentProvider {
+
+    /**
+     * Retrieves the details of a subscription based on the provided subscription ID. This method should interact with the payment provider's API to fetch the subscription details and return them in a ProviderSubscriptionResponseDTO.
+     * @param subscriptionId the unique identifier of the subscription to retrieve, which should be provided by the payment provider when the subscription was created
+     * @return a ProviderSubscriptionResponseDTO containing details about the subscription, such as its status, plan information, and any relevant data from the payment provider
+     */
+    ProviderSubscriptionResponseDTO getSubscription(String subscriptionId);
 
     /**
      * Creates a pre-approval subscription for a user based on the provided subscription request. This method should interact with the payment provider's API to create the pre-approval subscription and return relevant details in a SubscriptionResponseDTO.
@@ -21,13 +29,14 @@ public interface PaymentProvider {
      * @return a ProviderSubscriptionResponseDTO containing details about the canceled subscription, such as the cancellation status and any relevant information from the payment provider
      */
     ProviderSubscriptionResponseDTO cancelSubscription(String subscriptionId);
-
-    /**
-     * Handles incoming webhooks from the payment provider. This method should process the payload received from the payment provider, which may contain information about subscription events, payment updates, or other relevant notifications.
-     * @param payload the raw payload received from the payment provider's webhook, which should be parsed and processed according to the provider's specifications
-     */
-    void handleWebhook(String payload);
     
+    /**
+     * Retrieves the details of a payment based on the provided payment ID. This method should interact with the payment provider's API to fetch the payment details and return them in a ProviderPaymentResponseDTO.
+     * @param paymentId the unique identifier of the payment to retrieve, which should be provided by the payment provider when the payment was processed
+     * @return a ProviderPaymentResponseDTO containing details about the payment, such as its amount, status, currency, approval date, and any relevant data from the payment provider
+     */
+    ProviderPaymentResponseDTO getPayment(String paymentId);
+
     /**
      * Validates the webhook request by verifying the signature and ensuring that the request is legitimate. This method should check the provided signature against the expected value based on the payment provider's specifications, and also verify the request ID and data ID to ensure that the webhook is valid and has not been tampered with.
      * @param signature the signature provided in the webhook request, which should be compared against the expected signature generated using the payment provider's secret key and the request payload

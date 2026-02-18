@@ -48,14 +48,14 @@ public class Plan extends PanacheEntityBase {
     // Public enums
     public enum BillingCycle {
         MONTHLY,
-        YEARLY;
+        ANNUALLY;
         
         public String getFrecuencyName() {
             switch (this) {
                 case MONTHLY -> {
                     return "months";
                 }
-                case YEARLY -> {
+                case ANNUALLY -> {
                     return "years";
                 }
                 default -> throw new IllegalArgumentException("Unknown billing cycle: " + this);
@@ -67,7 +67,7 @@ public class Plan extends PanacheEntityBase {
                 case MONTHLY -> {
                     return 1;
                 }
-                case YEARLY -> {
+                case ANNUALLY -> {
                     return 12;
                 }
                 default -> throw new IllegalArgumentException("Unknown billing cycle: " + this);

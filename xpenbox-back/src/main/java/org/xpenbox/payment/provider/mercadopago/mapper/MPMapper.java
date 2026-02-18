@@ -1,13 +1,18 @@
 package org.xpenbox.payment.provider.mercadopago.mapper;
 
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 import org.xpenbox.payment.enums.PaymentProviderType;
+import org.xpenbox.payment.provider.dto.ProviderPaymentResponseDTO;
 import org.xpenbox.payment.provider.dto.ProviderSubscriptionRequestDTO;
 import org.xpenbox.payment.provider.dto.ProviderSubscriptionResponseDTO;
 import org.xpenbox.payment.provider.mercadopago.client.dto.MPApprovalSubscriptionRequestDTO;
 import org.xpenbox.payment.provider.mercadopago.client.dto.MPApprovalSubscriptionResponseDTO;
 import org.xpenbox.payment.provider.mercadopago.client.dto.MPAutoRecurring;
+import org.xpenbox.payment.provider.mercadopago.client.dto.MPPaymentResponseDTO;
 
 import jakarta.inject.Singleton;
 
@@ -51,6 +56,22 @@ public class MPMapper {
             mpApprovalSubscriptionResponseDTO.init_point(),
             mpApprovalSubscriptionResponseDTO.status(),
             PaymentProviderType.MERCADOPAGO
+        );
+    }
+
+    public ProviderPaymentResponseDTO toProviderPaymentResponseDTO(MPPaymentResponseDTO mpPaymentResponseDTO) {
+        LOG.debugf("Mapping MPPaymentResponseDTO to ProviderPaymentResponseDTO: %s", mpPaymentResponseDTO);
+
+        return new ProviderPaymentResponseDTO(
+            mpPaymentResponseDTO.id(),
+            mpPaymentResponseDTO.transaction_amount(),
+            MPPaymentResponseDTO.mapStatus(mpPaymentResponseDTO.status()),
+            mpPaymentResponseDTO.status(),
+            mpPaymentResponseDTO.currency_id(),
+            java.time.OffsetDateTime.parse(mpPaymentResponseDTO.date_approved(), DateTimeFormatter.ISO_DATE_TIME)
+                .atZoneSameInstant(ZoneOffset.UTC)
+                .toLocalDateTime(),
+            mpPaymentResponseDTO.point_of_interaction().transaction_data().subscription_id()
         );
     }
 }

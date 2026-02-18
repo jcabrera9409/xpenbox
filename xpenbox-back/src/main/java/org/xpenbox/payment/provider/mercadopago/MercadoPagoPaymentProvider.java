@@ -8,11 +8,14 @@ import org.xpenbox.payment.provider.PaymentProvider;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+
+import org.xpenbox.payment.provider.dto.ProviderPaymentResponseDTO;
 import org.xpenbox.payment.provider.dto.ProviderSubscriptionRequestDTO;
 import org.xpenbox.payment.provider.dto.ProviderSubscriptionResponseDTO;
 import org.xpenbox.payment.provider.mercadopago.client.MercadoPagoClient;
 import org.xpenbox.payment.provider.mercadopago.client.dto.MPApprovalSubscriptionRequestDTO;
 import org.xpenbox.payment.provider.mercadopago.client.dto.MPApprovalSubscriptionResponseDTO;
+import org.xpenbox.payment.provider.mercadopago.client.dto.MPPaymentResponseDTO;
 import org.xpenbox.payment.provider.mercadopago.client.dto.MPUpdateSubscriptionRequestDTO;
 import org.xpenbox.payment.provider.mercadopago.mapper.MPMapper;
 
@@ -39,6 +42,15 @@ public class MercadoPagoPaymentProvider implements PaymentProvider {
     }
 
     @Override
+    public ProviderSubscriptionResponseDTO getSubscription(String subscriptionId) {
+        LOG.infof("Retrieving subscription with ID %s using MercadoPago", subscriptionId);
+        MPApprovalSubscriptionResponseDTO mpResponse = mercadoPagoClient.getSubscription(subscriptionId);
+        
+        LOG.debugf("Received MPApprovalSubscriptionResponseDTO from MercadoPago: %s", mpResponse);
+        return mpMapper.toProviderSubscriptionResponseDTO(mpResponse);
+    }
+
+    @Override
     public ProviderSubscriptionResponseDTO createPreApprovalSubscription(ProviderSubscriptionRequestDTO subscriptionRequest) {
         LOG.infof("Creating pre-approval subscription for user %s with plan %s using MercadoPago", subscriptionRequest.userEmail(), subscriptionRequest.planName());
 
@@ -58,14 +70,26 @@ public class MercadoPagoPaymentProvider implements PaymentProvider {
         MPUpdateSubscriptionRequestDTO mpUpdateRequest = new MPUpdateSubscriptionRequestDTO("cancelled");
         MPApprovalSubscriptionResponseDTO mpUpdateResponse = mercadoPagoClient.updateSubscription(subscriptionId, mpUpdateRequest);
         
+        if (mpUpdateResponse == null || !mpUpdateResponse.status().equalsIgnoreCase("cancelled")) {
+            LOG.errorf("Failed to cancel subscription with ID %s using MercadoPago: No response received", subscriptionId);
+            throw new RuntimeException("Failed to cancel subscription: No response from MercadoPago");
+        }
+
         LOG.debugf("Received MPApprovalSubscriptionResponseDTO from MercadoPago: %s", mpUpdateResponse);
         return mpMapper.toProviderSubscriptionResponseDTO(mpUpdateResponse);
     }
 
     @Override
-    public void handleWebhook(String payload) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'handleWebhook'");
+    public ProviderPaymentResponseDTO getPayment(String paymentId) {
+        LOG.infof("Retrieving payment with ID %s using MercadoPago", paymentId);
+        MPPaymentResponseDTO paymentResponse = mercadoPagoClient.getPayment(paymentId);
+
+        if (paymentResponse == null) {
+            LOG.errorf("Failed to retrieve payment with ID %s using MercadoPago: No response received", paymentId);
+            throw new RuntimeException("Failed to retrieve payment: No response from MercadoPago");
+        }
+
+        return mpMapper.toProviderPaymentResponseDTO(paymentResponse);
     }
 
     @Override

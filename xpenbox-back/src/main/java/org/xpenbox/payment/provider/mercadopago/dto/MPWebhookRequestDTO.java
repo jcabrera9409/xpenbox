@@ -21,8 +21,8 @@ public record MPWebhookRequestDTO (
     String user_id,
     MPWebhookDataDTO data
 ) { 
+    public record MPWebhookDataDTO (
+        String id
+    ) { }
 }
 
-record MPWebhookDataDTO (
-    String id
-) { }

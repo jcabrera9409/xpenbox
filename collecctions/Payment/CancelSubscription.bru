@@ -1,0 +1,16 @@
+meta {
+  name: CancelSubscription
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{apiUrl}}/api/rest/v1/subscription/cancel
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+  }
+}

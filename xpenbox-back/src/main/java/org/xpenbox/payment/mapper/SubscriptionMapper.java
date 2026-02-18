@@ -1,5 +1,6 @@
 package org.xpenbox.payment.mapper;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.xpenbox.payment.entity.Plan;
 import org.xpenbox.payment.entity.Subscription;
 import org.xpenbox.payment.entity.Subscription.SubscriptionStatus;
 import org.xpenbox.payment.enums.PaymentProviderType;
+import org.xpenbox.payment.provider.dto.ProviderSubscriptionResponseDTO;
 import org.xpenbox.user.entity.User;
 
 import jakarta.inject.Singleton;
@@ -133,13 +135,42 @@ public class SubscriptionMapper implements GenericMapper<Subscription, Subscript
         subscriptionEntity.setUser(user);
         subscriptionEntity.setPlanPrice(freePlan.getPrice());
         subscriptionEntity.setPlanCurrency(freePlan.getCurrency());
-        subscriptionEntity.setStartDate(LocalDateTime.now());
+        subscriptionEntity.setStartDate(LocalDate.now().atStartOfDay());
         subscriptionEntity.setProvider(PaymentProviderType.FREE.name());
         subscriptionEntity.setProviderPlanId(subscriptionEntity.getResourceCode());
         subscriptionEntity.setProviderSubscriptionId(subscriptionEntity.getResourceCode());
+        subscriptionEntity.setProviderSubscriptionUrl("");
         subscriptionEntity.setStatus(SubscriptionStatus.ACTIVE);
         
         return subscriptionEntity;
+    }
+
+    /**
+     * Converts a ProviderSubscriptionResponseDTO to a Subscription entity. This method maps the fields from the ProviderSubscriptionResponseDTO to a new Subscription entity, including setting the provider details and associating it with the provided Plan and User. The resulting Subscription entity can then be persisted in the database or used for further processing.
+     * @param providerPlan the ProviderSubscriptionResponseDTO containing the subscription details from the payment provider, which may include information such as the provider subscription ID, checkout URL, and subscription status
+     * @param plan the Plan associated with the subscription, which may be used for setting the plan details in the Subscription entity
+     * @param user the User associated with the subscription, which may be used for associating the subscription with the user in the Subscription entity
+     * @return a Subscription entity representing the subscription details from the payment provider, with all relevant fields set based on the data from the ProviderSubscriptionResponseDTO, and associated with the provided Plan and User
+     */
+    public Subscription toEntity(ProviderSubscriptionResponseDTO providerPlan, Plan plan, User user) {
+        LOG.infof("Mapping ProviderPlanResponseDTO to Subscription entity for plan %s and user %s", plan.getResourceCode(), user.getEmail());
+
+        Subscription subscription = new Subscription();
+        subscription.setResourceCode(ResourceCode.generateSubscriptionResourceCode());
+        subscription.setPlan(plan);
+        subscription.setUser(user);
+        subscription.setPlanPrice(plan.getPrice());
+        subscription.setPlanCurrency(plan.getCurrency());
+        subscription.setStartDate(LocalDateTime.now());        
+        subscription.setEndDate(null);
+        subscription.setNextBillingDate(null);
+        subscription.setProvider(providerPlan.paymentProviderType().name());
+        subscription.setProviderPlanId(providerPlan.providerSubscriptionPlanId());
+        subscription.setProviderSubscriptionId(providerPlan.providerSubscriptionPlanId());
+        subscription.setProviderSubscriptionUrl(providerPlan.checkoutUrl());
+        subscription.setStatus(SubscriptionStatus.PENDING);
+
+        return subscription;
     }
     
 }

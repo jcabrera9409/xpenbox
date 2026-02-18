@@ -52,10 +52,10 @@ public class WebhookController {
     ) {
         LOG.info("Received MercadoPago webhook with payload: " + payload);
         LOG.debugf("Webhook headers - x-signature: %s, x-request-id: %s, data.id: %s", signature, requestId, dataId);
-        
         webhookService.validateWebhook(PaymentProviderType.MERCADOPAGO, signature, requestId, dataId);
         
         LOG.debugf("Webhook payload: %s", payload);
+        webhookService.registerNewPaymentProviderWebhook(PaymentProviderType.MERCADOPAGO, payload);
         
         return Response.ok().build();
     }    
