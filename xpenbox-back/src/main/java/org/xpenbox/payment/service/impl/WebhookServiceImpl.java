@@ -2,6 +2,7 @@ package org.xpenbox.payment.service.impl;
 
 import java.time.LocalDateTime;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 import org.xpenbox.payment.entity.Subscription;
 import org.xpenbox.payment.entity.SubscriptionPayment;
@@ -26,6 +27,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class WebhookServiceImpl implements IWebhookService {
     private static final Logger LOG = Logger.getLogger(WebhookServiceImpl.class);
+
+    @ConfigProperty(name = "subscription.grace.period.days")
+    private Integer subscriptionGracePeriodDays;
 
     private final ISubscriptionService subscriptionService;
     private final PaymentProviderFactory paymentProviderFactory;
@@ -70,12 +74,16 @@ public class WebhookServiceImpl implements IWebhookService {
             return;
         }
         
-        Subscription subscription = getSubscriptionByIdAndProviderType(paymentResponse.subscriptionId(), providerType);
+        // Acquire a pessimistic write lock (SELECT FOR UPDATE) on the subscription row.
+        // This serializes concurrent webhook calls for the same subscription:
+        // only one thread proceeds at a time; the others wait and then find the payment already registered.
+        Subscription subscription = getSubscriptionByIdAndProviderTypeWithLock(paymentResponse.subscriptionId(), providerType);
         if (subscription == null) {
             LOG.warnf("No subscription found for payment with subscription ID %s and provider %s. Skipping processing.", paymentResponse.subscriptionId(), providerType);
             return;
         }
 
+        // This check is now safe: it runs AFTER the lock is held, so no two threads can pass it simultaneously.
         SubscriptionPayment existingPayment = getSubscriptionPaymentExists(subscription.id, paymentResponse.id().toString(), providerType.name());
         if (existingPayment != null) {
             LOG.warnf("SubscriptionPayment already exists for subscription ID %d, provider payment ID %s, and provider %s. Skipping processing to avoid duplicates.", subscription.id, paymentResponse.id(), providerType.name());
@@ -117,14 +125,15 @@ public class WebhookServiceImpl implements IWebhookService {
         Subscription currentSubscription = subscriptionService.findActiveSubscription(subscription.getUser().id);
         if (currentSubscription != null) {
             currentSubscription.setStatus(SubscriptionStatus.CANCELLED);
-            currentSubscription.setEndDate(LocalDateTime.now());
+            currentSubscription.setRenew(false);
             subscriptionRepository.persist(currentSubscription);
             LOG.debugf("Existing active subscription with ID %d cancelled successfully", currentSubscription.id);
         }
 
         LocalDateTime nextBillingDate = paymentResponse.dateApproved().plusMonths(subscription.getPlan().getBillingCycle().getFrecuencyValue());
         subscription.setStatus(SubscriptionStatus.ACTIVE);
-        subscription.setEndDate(nextBillingDate.plusDays(5));
+        subscription.setRenew(true);
+        subscription.setEndDate(nextBillingDate.plusDays(subscriptionGracePeriodDays));
         subscription.setNextBillingDate(nextBillingDate);
 
         subscriptionRepository.persist(subscription);
@@ -132,17 +141,17 @@ public class WebhookServiceImpl implements IWebhookService {
     }
 
     /**
-     * Retrieves a subscription based on the provided subscription ID and payment provider type. This method queries the SubscriptionRepository to find a subscription that matches the given provider subscription ID and provider type. If a matching subscription is found, it is returned; otherwise, null is returned, indicating that no subscription was found for the specified criteria.
+     * Retrieves a subscription based on the provided subscription ID and payment provider type, acquiring a pessimistic write lock (SELECT FOR UPDATE) on the subscription record. This method queries the SubscriptionRepository to find a subscription that matches the given provider subscription ID and provider type, while also applying a lock to prevent concurrent modifications. If a matching subscription is found, it is returned; otherwise, null is returned, indicating that no subscription was found for the specified criteria.
      * @param subscriptionId the unique identifier of the subscription to retrieve, which should be provided by the payment provider when the subscription was created
      * @param providerType the type of the payment provider, which can be used to determine the specific logic for retrieving the subscription based on the provider's specifications
      * @return the Subscription entity that matches the provided subscription ID and provider type, or null if no matching subscription is found
      */
-    private Subscription getSubscriptionByIdAndProviderType(String subscriptionId, PaymentProviderType providerType) {
-        LOG.infof("Retrieving subscription with ID %s for provider %s", subscriptionId, providerType);
-        Subscription subscription = subscriptionRepository.findByProviderSubscriptionIdAndProvider(subscriptionId, providerType.name())
+    private Subscription getSubscriptionByIdAndProviderTypeWithLock(String subscriptionId, PaymentProviderType providerType) {
+        LOG.infof("Retrieving subscription with ID %s for provider %s (with exclusive lock)", subscriptionId, providerType);
+        Subscription subscription = subscriptionRepository.findByProviderSubscriptionIdAndProviderWithLock(subscriptionId, providerType.name())
             .orElse(null);
 
-        LOG.debugf("Retrieved subscription: %s", subscription);
+        LOG.debugf("Retrieved subscription with lock: %s", subscription);
         return subscription;
     }
 

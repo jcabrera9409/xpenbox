@@ -160,6 +160,7 @@ CREATE TABLE IF NOT EXISTS tbl_subscription (
     `start_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `end_date` DATETIME NULL,
     `next_billing_date` DATETIME NULL,
+    `renew` TINYINT(1) NOT NULL DEFAULT 0,
     `provider` VARCHAR(30) NOT NULL,
     `provider_plan_id` VARCHAR(100) NOT NULL,
     `provider_subscription_id` VARCHAR(100) NOT NULL,

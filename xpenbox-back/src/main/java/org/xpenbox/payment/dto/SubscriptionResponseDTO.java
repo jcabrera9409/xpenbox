@@ -30,6 +30,7 @@ public record SubscriptionResponseDTO (
     Long startDateTimestamp,
     Long endDateTimestamp,
     Long nextBillingDateTimestamp,
+    Boolean renew,
     String provider,
     String providerPlanId,
     String providerSubscriptionId,

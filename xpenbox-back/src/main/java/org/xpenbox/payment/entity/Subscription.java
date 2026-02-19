@@ -54,6 +54,9 @@ public class Subscription extends PanacheEntityBase {
     @Column(name = "next_billing_date", nullable = true)
     private LocalDateTime nextBillingDate;
 
+    @Column(name = "renew", nullable = false)
+    private Boolean renew = false;
+
     @Column(name = "provider", nullable = true, length = 30)
     private String provider;
 
@@ -143,6 +146,14 @@ public class Subscription extends PanacheEntityBase {
 
     public void setNextBillingDate(LocalDateTime nextBillingDate) {
         this.nextBillingDate = nextBillingDate;
+    }
+
+    public Boolean getRenew() {
+        return renew;
+    }
+
+    public void setRenew(Boolean renew) {
+        this.renew = renew;
     }
 
     public String getProvider() {

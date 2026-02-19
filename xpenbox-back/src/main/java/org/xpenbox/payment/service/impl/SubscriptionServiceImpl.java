@@ -35,6 +35,9 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
     @ConfigProperty(name = "plan.free.resourcecode")
     private String freePlanResourceCode;
 
+    @ConfigProperty(name = "subscription.pending.payment.grace.period.hours")
+    private Integer subscriptionPendingPaymentGracePeriodHours;
+
     private final UserRepository userRepository;
     private final PlanRepository planRepository;
     private final SubscriptionRepository subscriptionRepository;
@@ -181,9 +184,10 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
         if (subscription.getStatus().equals(SubscriptionStatus.PENDING)) {
             LOG.infof("Existing subscription with resource code %s for user ID %s is pending, setting status to cancelled", subscription.getResourceCode(), subscription.getUser().id);
             subscription.setStatus(SubscriptionStatus.CANCELLED);
-        } else if (subscription.getStatus().equals(SubscriptionStatus.ACTIVE)) {
+        } else if (subscription.getStatus().equals(SubscriptionStatus.ACTIVE) && subscription.getRenew()) {
             LOG.infof("Existing subscription with resource code %s for user ID %s is active, setting status to cancelled", subscription.getResourceCode(), subscription.getUser().id);
-            subscription.setNextBillingDate(subscription.getEndDate());
+            subscription.setRenew(false);
+            subscription.setEndDate(subscription.getNextBillingDate());
         } else {
             LOG.warnf("Existing subscription with resource code %s for user ID %s has non-cancellable status %s", subscription.getResourceCode(), subscription.getUser().id, subscription.getStatus());
             throw new BadRequestException("Existing subscription has non-cancellable status");
@@ -228,7 +232,7 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
      * @return true if the pending subscription is either expired or has a different provider than the specified provider type, false otherwise.
      */
     private boolean isPendingSubscriptionExpiredOrDifferentProvider(Subscription subscription, PaymentProviderType providerType) {
-        return subscription.getStartDate().plusHours(1).isBefore(LocalDateTime.now()) 
+        return subscription.getStartDate().plusHours(subscriptionPendingPaymentGracePeriodHours).isBefore(LocalDateTime.now()) 
                 || !subscription.getProvider().equals(providerType.name());
     }
 
