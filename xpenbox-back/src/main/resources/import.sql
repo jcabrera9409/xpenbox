@@ -150,6 +150,19 @@ INSERT INTO tbl_plan (resource_code, name, description, price, currency, billing
 ('plan_betatester', 'XpenBox Beta Tester', 'Access to all and beta features free', 0.00, 'PEN', 'ANNUALLY'),
 ('plan_pro_monthly', 'XpenBox Pro', 'Access to all features on a monthly basis with a discount', 9.99, 'PEN', 'MONTHLY');
 
+CREATE TABLE IF NOT EXISTS tbl_plan_feature (
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `plan_id` BIGINT NOT NULL,
+    `feature_code` VARCHAR(100) NOT NULL,
+    `limit_value` INT NULL,
+    `is_enabled` TINYINT(1) NOT NULL DEFAULT 1,
+    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_date` DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    
+    UNIQUE KEY uk_plan_feature (plan_id, feature_code),
+    CONSTRAINT fk_plan_feature_plan FOREIGN KEY (plan_id) REFERENCES tbl_plan(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS tbl_subscription (
     `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `resource_code` VARCHAR(100) NOT NULL UNIQUE,
@@ -191,23 +204,16 @@ CREATE TABLE IF NOT EXISTS tbl_subscription_payment (
     CONSTRAINT fk_subs_pay_subscription FOREIGN KEY (subscription_id) REFERENCES tbl_subscription(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_token_user
-ON tbl_token(user_id);
+CREATE INDEX idx_token_user ON tbl_token(user_id);
+CREATE INDEX idx_token_validON tbl_token(user_id, revoked, refresh_token_expires_at);
 
-CREATE INDEX idx_token_valid
-ON tbl_token(user_id, revoked, refresh_token_expires_at);
+CREATE INDEX idx_transaction_user_date ON tbl_transaction(user_id, transaction_date);
+CREATE INDEX idx_transaction_account ON tbl_transaction(user_id, account_id);
+CREATE INDEX idx_transaction_card ON tbl_transaction(user_id, credit_card_id);
 
-CREATE INDEX idx_transaction_user_date 
-ON tbl_transaction(user_id, transaction_date);
+CREATE UNIQUE INDEX idx_user_token_token ON tbl_user_token(token);
 
-CREATE INDEX idx_transaction_account 
-ON tbl_transaction(user_id, account_id);
-
-CREATE INDEX idx_transaction_card 
-ON tbl_transaction(user_id, credit_card_id);
-
-CREATE UNIQUE INDEX idx_user_token_token 
-ON tbl_user_token(token);
+CREATE INDEX idx_plan_feature_plan ON tbl_plan_feature(plan_id);
 
 CREATE INDEX idx_subscription_user_status ON tbl_subscription(user_id, status);
 CREATE INDEX idx_subscription_status ON tbl_subscription(status);

@@ -1,15 +1,19 @@
 package org.xpenbox.payment.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
@@ -44,6 +48,9 @@ public class Plan extends PanacheEntityBase {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private PlanStatus status;
+
+    @OneToMany(mappedBy = "plan", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PlanFeature> features;
 
     // Public enums
     public enum BillingCycle {
@@ -135,5 +142,13 @@ public class Plan extends PanacheEntityBase {
 
     public void setStatus(PlanStatus status) {
         this.status = status;
+    }
+
+    public List<PlanFeature> getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(List<PlanFeature> features) {
+        this.features = features;
     }
 }
