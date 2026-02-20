@@ -90,14 +90,13 @@ public class WebhookServiceImpl implements IWebhookService {
             return;
         }
 
+        LOG.infof("Registering payment with ID %s for subscription ID %d", paymentResponse.id(), subscription.id);
+        registerPayment(paymentResponse, subscription, providerType);
+
         if (paymentResponse.status() == PaymentStatus.APPROVED) {
             LOG.infof("Payment with ID %s for subscription ID %d has been approved. Updating subscription status.", paymentResponse.id(), subscription.id);
             updateSubscriptionStatus(subscription, paymentResponse);
         }
-
-        LOG.infof("Registering payment with ID %s for subscription ID %d", paymentResponse.id(), subscription.id);
-        registerPayment(paymentResponse, subscription, providerType);
-
     }
     
     /**

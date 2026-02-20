@@ -1,5 +1,7 @@
 package org.xpenbox.payment.provider.mercadopago.mapper;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
@@ -62,13 +64,21 @@ public class MPMapper {
     public ProviderPaymentResponseDTO toProviderPaymentResponseDTO(MPPaymentResponseDTO mpPaymentResponseDTO) {
         LOG.debugf("Mapping MPPaymentResponseDTO to ProviderPaymentResponseDTO: %s", mpPaymentResponseDTO);
 
+        LocalDateTime dateApproved = null;
+        if (mpPaymentResponseDTO.date_approved() != null) {
+            dateApproved = OffsetDateTime.parse(mpPaymentResponseDTO.date_approved(), DateTimeFormatter.ISO_DATE_TIME)
+                .atZoneSameInstant(ZoneOffset.UTC)
+                .toLocalDateTime();
+        }
+
         return new ProviderPaymentResponseDTO(
             mpPaymentResponseDTO.id(),
             mpPaymentResponseDTO.transaction_amount(),
             MPPaymentResponseDTO.mapStatus(mpPaymentResponseDTO.status()),
             mpPaymentResponseDTO.status(),
             mpPaymentResponseDTO.currency_id(),
-            java.time.OffsetDateTime.parse(mpPaymentResponseDTO.date_approved(), DateTimeFormatter.ISO_DATE_TIME)
+            dateApproved,
+            OffsetDateTime.parse(mpPaymentResponseDTO.date_created(), DateTimeFormatter.ISO_DATE_TIME)
                 .atZoneSameInstant(ZoneOffset.UTC)
                 .toLocalDateTime(),
             mpPaymentResponseDTO.point_of_interaction().transaction_data().subscription_id()

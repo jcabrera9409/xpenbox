@@ -182,7 +182,8 @@ CREATE TABLE IF NOT EXISTS tbl_subscription_payment (
     `provider_payment_id` VARCHAR(100) NOT NULL,
     `amount` DECIMAL(13,2) NOT NULL,
     `currency` CHAR(3) NOT NULL DEFAULT 'USD',
-    `payment_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `payment_date` DATETIME,
+    `payment_created_date` DATETIME NOT NULL,
     `status` ENUM('APPROVED', 'REJECTED', 'PENDING', 'REFUNDED') NOT NULL,
     `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     

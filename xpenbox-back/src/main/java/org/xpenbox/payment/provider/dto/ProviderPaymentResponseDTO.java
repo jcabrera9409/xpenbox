@@ -12,6 +12,7 @@ import org.xpenbox.payment.entity.SubscriptionPayment.PaymentStatus;
  * @param status The current status of the payment (e.g., "approved", "pending", "rejected").
  * @param currency The currency code of the transaction amount (e.g., "USD", "ARS").
  * @param dateApproved The timestamp when the payment was approved.
+ * @param dateCreated The timestamp when the payment was created in the payment provider's system.
  * @param subscriptionId The unique identifier of the subscription associated with the payment, which can be used to correlate the payment with specific subscription records in the system.
  */
 public record ProviderPaymentResponseDTO (
@@ -21,5 +22,6 @@ public record ProviderPaymentResponseDTO (
     String rawStatus,
     String currency,
     LocalDateTime dateApproved,
+    LocalDateTime dateCreated,
     String subscriptionId
 ) { }

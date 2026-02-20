@@ -33,6 +33,7 @@ public class SubscriptionPaymentMapper {
         entity.setAmount(paymentResponse.amount());
         entity.setCurrency(paymentResponse.currency());
         entity.setPaymentDate(paymentResponse.dateApproved());
+        entity.setPaymentCreatedDate(paymentResponse.dateCreated());
         entity.setStatus(paymentResponse.status());
 
         return entity;

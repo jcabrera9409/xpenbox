@@ -3,6 +3,7 @@ package org.xpenbox.payment.provider.mercadopago;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
+import org.xpenbox.payment.enums.PaymentProviderType;
 import org.xpenbox.payment.provider.PaymentProvider;
 
 import javax.crypto.Mac;
@@ -20,6 +21,7 @@ import org.xpenbox.payment.provider.mercadopago.client.dto.MPUpdateSubscriptionR
 import org.xpenbox.payment.provider.mercadopago.mapper.MPMapper;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.WebApplicationException;
 
 /**
  * Implementation of the PaymentProvider interface for MercadoPago. This class provides specific logic for interacting with the MercadoPago API to manage subscriptions and handle webhooks.
@@ -67,16 +69,34 @@ public class MercadoPagoPaymentProvider implements PaymentProvider {
     public ProviderSubscriptionResponseDTO cancelSubscription(String subscriptionId) {
         LOG.infof("Cancelling subscription with ID %s using MercadoPago", subscriptionId);
 
-        MPUpdateSubscriptionRequestDTO mpUpdateRequest = new MPUpdateSubscriptionRequestDTO("cancelled");
-        MPApprovalSubscriptionResponseDTO mpUpdateResponse = mercadoPagoClient.updateSubscription(subscriptionId, mpUpdateRequest);
-        
-        if (mpUpdateResponse == null || !mpUpdateResponse.status().equalsIgnoreCase("cancelled")) {
-            LOG.errorf("Failed to cancel subscription with ID %s using MercadoPago: No response received", subscriptionId);
-            throw new RuntimeException("Failed to cancel subscription: No response from MercadoPago");
-        }
+        try {
+            MPUpdateSubscriptionRequestDTO mpUpdateRequest =
+                    new MPUpdateSubscriptionRequestDTO("cancelled");
+            MPApprovalSubscriptionResponseDTO mpUpdateResponse =
+                    mercadoPagoClient.updateSubscription(subscriptionId, mpUpdateRequest);
+            if (mpUpdateResponse == null) {
+                throw new RuntimeException("Null response from MercadoPago");
+            }
 
-        LOG.debugf("Received MPApprovalSubscriptionResponseDTO from MercadoPago: %s", mpUpdateResponse);
-        return mpMapper.toProviderSubscriptionResponseDTO(mpUpdateResponse);
+            LOG.debugf("Received MPApprovalSubscriptionResponseDTO from MercadoPago: %s",
+                    mpUpdateResponse);
+            return mpMapper.toProviderSubscriptionResponseDTO(mpUpdateResponse);
+
+        } catch (WebApplicationException ex) {
+            if (isAlreadyCancelledError(ex)) {
+                LOG.infof("Subscription %s already cancelled in MercadoPago (idempotent success)",
+                        subscriptionId);
+                return new ProviderSubscriptionResponseDTO(
+                    subscriptionId,
+                    null,
+                    "cancelled",
+                    PaymentProviderType.MERCADOPAGO
+                );
+            }
+
+            LOG.errorf(ex, "Error cancelling subscription %s in MercadoPago", subscriptionId);
+            throw ex;
+        }
     }
 
     @Override
@@ -136,6 +156,27 @@ public class MercadoPagoPaymentProvider implements PaymentProvider {
         } catch (Exception e) {
             LOG.errorf(e, "Error generating HMAC SHA256 signature");
             throw new RuntimeException("Failed to generate HMAC SHA256 signature", e);
+        }
+    }
+
+    /**
+     * Checks if the WebApplicationException corresponds to an "already cancelled" error from MercadoPago. This is used to handle idempotent cancellation requests gracefully, treating them as successful if the subscription is already cancelled.
+     * @param ex the WebApplicationException thrown during the cancellation attempt, which may contain details about the error response from MercadoPago
+     * @return true if the exception indicates that the subscription was already cancelled, allowing the cancellation to be treated as successful; false otherwise, indicating that the error is due to a different issue that should be handled as a failure
+    */
+    private boolean isAlreadyCancelledError(WebApplicationException ex) {
+        try {
+            if (ex.getResponse() == null) return false;
+
+            int status = ex.getResponse().getStatus();
+            String body = ex.getResponse().readEntity(String.class);
+
+            return status == 400 &&
+                body != null &&
+                body.contains("cancelled preapproval");
+
+        } catch (Exception e) {
+            return false;
         }
     }
 }

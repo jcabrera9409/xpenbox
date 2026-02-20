@@ -44,8 +44,11 @@ public class SubscriptionPayment extends PanacheEntityBase {
     @Column(name = "currency", nullable = false, length = 3)
     private String currency;
 
-    @Column(name = "payment_date", nullable = false)
+    @Column(name = "payment_date", nullable = true)
     private LocalDateTime paymentDate;
+
+    @Column(name = "payment_created_date", nullable = false)
+    private LocalDateTime paymentCreatedDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -114,6 +117,14 @@ public class SubscriptionPayment extends PanacheEntityBase {
 
     public void setPaymentDate(LocalDateTime paymentDate) {
         this.paymentDate = paymentDate;
+    }
+
+    public LocalDateTime getPaymentCreatedDate() {
+        return paymentCreatedDate;
+    }
+
+    public void setPaymentCreatedDate(LocalDateTime paymentCreatedDate) {
+        this.paymentCreatedDate = paymentCreatedDate;
     }
 
     public PaymentStatus getStatus() {
