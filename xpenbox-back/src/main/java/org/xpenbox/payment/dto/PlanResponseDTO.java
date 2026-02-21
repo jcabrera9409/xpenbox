@@ -1,8 +1,10 @@
 package org.xpenbox.payment.dto;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import org.xpenbox.payment.entity.Plan.BillingCycle;
+import org.xpenbox.payment.enums.FeatureCodeEnum;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
@@ -14,6 +16,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
  * @param price Price of the plan.
  * @param currency Currency of the plan price (e.g., USD, EUR).
  * @param billingCycle Billing cycle of the plan (e.g., MONTHLY, YEARLY).
+ * @param features Map of feature codes to their corresponding PlanFeatureResponseDTOs, representing the features included in the plan.
  */
 @RegisterForReflection
 public record PlanResponseDTO (
@@ -22,5 +25,6 @@ public record PlanResponseDTO (
     String description,
     BigDecimal price,
     String currency,
-    BillingCycle billingCycle
+    BillingCycle billingCycle,
+    Map<FeatureCodeEnum, PlanFeatureResponseDTO> features
 ) { }

@@ -163,6 +163,31 @@ CREATE TABLE IF NOT EXISTS tbl_plan_feature (
     CONSTRAINT fk_plan_feature_plan FOREIGN KEY (plan_id) REFERENCES tbl_plan(id) ON DELETE CASCADE
 );
 
+INSERT INTO tbl_plan_feature (plan_id, feature_code, limit_value, is_enabled) VALUES
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'DASHBOARD_ADVANCED_FILTERS', NULL, 0),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'ACCOUNTS_LIMIT', 2, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'CREDIT_CARDS_LIMIT', 1, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'CATEGORIES_LIMIT', 3, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'TRANSACTIONS_LIMIT', 50, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'TRANSACTION_HISTORY_MONTHS', 1, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'ADVANCED_TRANSACTION_SEARCH', NULL, 0),
+
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'DASHBOARD_ADVANCED_FILTERS', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'ACCOUNTS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'CREDIT_CARDS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'CATEGORIES_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'TRANSACTIONS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'TRANSACTION_HISTORY_MONTHS', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'ADVANCED_TRANSACTION_SEARCH', NULL, 1),
+
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'DASHBOARD_ADVANCED_FILTERS', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'ACCOUNTS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'CREDIT_CARDS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'CATEGORIES_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'TRANSACTIONS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'TRANSACTION_HISTORY_MONTHS', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'ADVANCED_TRANSACTION_SEARCH', NULL, 1);
+
 CREATE TABLE IF NOT EXISTS tbl_subscription (
     `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `resource_code` VARCHAR(100) NOT NULL UNIQUE,

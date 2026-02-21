@@ -17,6 +17,12 @@ import jakarta.inject.Singleton;
 public class PlanMapper implements GenericMapper<Plan, PlanResponseDTO, PlanResponseDTO, PlanResponseDTO> {
     private static final Logger LOG = Logger.getLogger(PlanMapper.class.getName());
 
+    private final PlanFeatureMapper planFeatureMapper;
+
+    public PlanMapper(PlanFeatureMapper planFeatureMapper) {
+        this.planFeatureMapper = planFeatureMapper;
+    }
+
     /**
      * Converts a Plan entity to a PlanResponseDTO.
      * 
@@ -32,7 +38,8 @@ public class PlanMapper implements GenericMapper<Plan, PlanResponseDTO, PlanResp
             entity.getDescription(),
             entity.getPrice(),
             entity.getCurrency(),
-            entity.getBillingCycle()
+            entity.getBillingCycle(),
+            planFeatureMapper.toDTOMap(entity.getFeatures())
         );
         return dto;
     }
