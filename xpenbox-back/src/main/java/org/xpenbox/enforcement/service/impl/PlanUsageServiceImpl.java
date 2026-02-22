@@ -30,21 +30,21 @@ public class PlanUsageServiceImpl implements IPlanUsageService {
     }
 
     @Override
-    public int countUserAccounts(Long userId) {
+    public long countUserAccounts(Long userId) {
         LOG.debugf("Counting user accounts for userId: %d", userId);
-        return accountRepository.findAllByUserIdAndStateTrue(userId).size();
+        return accountRepository.countAllByUserIdAndStateTrue(userId);
     }
 
     @Override
-    public int countUserCreditCards(Long userId) {
+    public long countUserCreditCards(Long userId) {
         LOG.debugf("Counting user credit cards for userId: %d", userId);
-        return creditCardRepository.findAllByUserIdAndStateTrue(userId).size();
+        return creditCardRepository.countAllByUserIdAndStateTrue(userId);
     }
 
     @Override
-    public int countUserCategories(Long userId) {
+    public long countUserCategories(Long userId) {
         LOG.debugf("Counting user categories for userId: %d", userId);
-        return categoryRepository.findAllByUserId(userId).size();
+        return categoryRepository.countAllByUserId(userId);
     }
 
 }

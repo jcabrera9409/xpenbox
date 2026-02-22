@@ -10,8 +10,8 @@ import jakarta.ws.rs.core.Response;
 public class PlanException extends BussinessException {
 
     private FeatureCodeEnum featureCode;
-    private Integer limit;
-    private Integer currentUsage;
+    private Long limit;
+    private Long currentUsage;
     private Boolean enabled;
 
     public PlanException(String message) {
@@ -30,8 +30,8 @@ public class PlanException extends BussinessException {
     public PlanException(
         String message, 
         FeatureCodeEnum featureCode, 
-        Integer limit, 
-        Integer currentUsage
+        Long limit, 
+        Long currentUsage
     ) {
         super(message, Response.Status.FORBIDDEN.getStatusCode());
         this.featureCode = featureCode;
@@ -44,11 +44,11 @@ public class PlanException extends BussinessException {
         return featureCode;
     }
 
-    public Integer getLimit() {
+    public Long getLimit() {
         return limit;
     }
 
-    public Integer getCurrentUsage() {
+    public Long getCurrentUsage() {
         return currentUsage;
     }
     

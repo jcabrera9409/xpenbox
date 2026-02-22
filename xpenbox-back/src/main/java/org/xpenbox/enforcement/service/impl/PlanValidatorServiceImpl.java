@@ -35,8 +35,8 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
                 featureCode);
         }
 
-        int limit = feature.limitValue();
-        int currentUsage = planUsageService.countUserAccounts(snapshot.userId());
+        long limit = feature.limitValue();
+        long currentUsage = planUsageService.countUserAccounts(snapshot.userId());
 
         if (currentUsage >= limit) {
             LOG.warnf("User %d has reached the accounts limit: %d/%d", snapshot.userId(), currentUsage, limit);
@@ -60,8 +60,8 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
                 featureCode);
         }
 
-        int limit = feature.limitValue();
-        int currentUsage = planUsageService.countUserCreditCards(snapshot.userId());
+        long limit = feature.limitValue();
+        long currentUsage = planUsageService.countUserCreditCards(snapshot.userId());
 
         if (currentUsage >= limit) {
             LOG.warnf("User %d has reached the credit cards limit: %d/%d", snapshot.userId(), currentUsage, limit);
@@ -85,8 +85,8 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
                 featureCode);
         }
 
-        int limit = feature.limitValue();
-        int currentUsage = planUsageService.countUserCategories(snapshot.userId());
+        long limit = feature.limitValue();
+        long currentUsage = planUsageService.countUserCategories(snapshot.userId());
 
         if (currentUsage >= limit) {
             LOG.warnf("User %d has reached the categories limit: %d/%d", snapshot.userId(), currentUsage, limit);

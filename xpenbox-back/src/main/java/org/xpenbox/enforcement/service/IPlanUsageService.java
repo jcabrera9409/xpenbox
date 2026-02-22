@@ -8,21 +8,21 @@ public interface IPlanUsageService {
     /**
      * Counts the number of user accounts, credit cards, and categories for a given user ID.
      * @param userId the ID of the user for whom the plan usage is to be counted
-     * @return an integer representing the count of user accounts, credit cards, and categories for the specified user
+     * @return a long representing the count of user accounts, credit cards, and categories for the specified user
      */
-    int countUserAccounts(Long userId);
+    long countUserAccounts(Long userId);
 
     /**
      * Counts the number of credit cards and categories for a given user ID.
      * @param userId the ID of the user for whom the plan usage is to be counted
-     * @return an integer representing the count of credit cards and categories for the specified user
+     * @return a long representing the count of credit cards and categories for the specified user
      */
-    int countUserCreditCards(Long userId);
+    long countUserCreditCards(Long userId);
 
     /**
      * Counts the number of categories for a given user ID.
      * @param userId the ID of the user for whom the plan usage is to be counted
-     * @return an integer representing the count of categories for the specified user
+     * @return a long representing the count of categories for the specified user
      */
-    int countUserCategories(Long userId);
+    long countUserCategories(Long userId);
 }
