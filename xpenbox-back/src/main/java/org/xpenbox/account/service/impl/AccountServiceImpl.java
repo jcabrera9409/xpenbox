@@ -15,6 +15,9 @@ import org.xpenbox.account.mapper.AccountMapper;
 import org.xpenbox.account.repository.AccountRepository;
 import org.xpenbox.account.service.IAccountService;
 import org.xpenbox.common.service.impl.GenericServiceImpl;
+import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
+import org.xpenbox.enforcement.service.IPlanSnapshotService;
+import org.xpenbox.enforcement.service.IPlanValidatorService;
 import org.xpenbox.exception.InsufficientFoundsException;
 import org.xpenbox.transaction.dto.TransactionCreateDTO;
 import org.xpenbox.transaction.entity.Transaction.TransactionType;
@@ -36,17 +39,23 @@ public class AccountServiceImpl extends GenericServiceImpl<Account, AccountCreat
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
     private final ITransactionService transactionService;
+    private final IPlanValidatorService planValidatorService;
+    private final IPlanSnapshotService planSnapshotService;
 
     public AccountServiceImpl(
         UserRepository userRepository,
         AccountRepository accountRepository,
         AccountMapper accountMapper,
-        ITransactionService transactionService
+        ITransactionService transactionService,
+        IPlanValidatorService planValidatorService,
+        IPlanSnapshotService planSnapshotService
     ) {
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
         this.accountMapper = accountMapper;
         this.transactionService = transactionService;
+        this.planValidatorService = planValidatorService;
+        this.planSnapshotService = planSnapshotService;
     }
 
     @Override
@@ -67,6 +76,16 @@ public class AccountServiceImpl extends GenericServiceImpl<Account, AccountCreat
     @Override
     protected AccountMapper getGenericMapper() {
         return accountMapper;
+    }
+
+    @Override
+    public AccountResponseDTO create(AccountCreateDTO accountCreateDTO, String userEmail) {
+        LOG.infof("Validating plan limits for user email: %s before creating account", userEmail);
+
+        SnapshotPlanDTO activePlanSnapshot = planSnapshotService.getPlanSnapshotByEmail(userEmail);
+        planValidatorService.validateCanCreateAccounts(activePlanSnapshot);
+
+        return super.create(accountCreateDTO, userEmail);
     }
 
     @Override 

@@ -40,6 +40,16 @@ public abstract class GenericRepository<T> implements PanacheRepository<T> {
     }
 
     /**
+     * Find all active entities associated with a specific user ID.
+     * @param userId the ID of the user
+     * @return a list of active entities associated with the user ID
+     */
+    public List<T> findAllByUserIdAndStateTrue(Long userId) {
+        LOG.infof("Finding all active entities for user id: %d", userId);
+        return list("user.id = ?1 and state = true", userId);
+    }
+
+    /**
      * Delete an entity by its ID and user ID.
      * @param id the ID of the entity
      * @param userId the ID of the user

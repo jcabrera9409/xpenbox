@@ -1,12 +1,14 @@
 package org.xpenbox.exception.handler;
 
 import org.jboss.logging.Logger;
+import org.xpenbox.common.dto.APILimitExceptionDTO;
 import org.xpenbox.common.dto.APIResponseDTO;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.ConflictException;
 import org.xpenbox.exception.EmailNotVerifiedException;
 import org.xpenbox.exception.ForbiddenException;
 import org.xpenbox.exception.InsufficientFoundsException;
+import org.xpenbox.exception.PlanException;
 import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.exception.ValidationException;
 
@@ -36,6 +38,10 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
         
         if (exception instanceof UnauthorizedException ex) {
             return handleUnauthorizedException(ex);
+        }
+
+        if (exception instanceof PlanException ex) {
+            return handlePlanLimitExceededException(ex);
         }
 
         if (exception instanceof ValidationException ex) {
@@ -203,6 +209,25 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
 
         APIResponseDTO<Void> response = APIResponseDTO.error(message, Response.Status.UNAUTHORIZED.getStatusCode());
         return Response.status(Response.Status.UNAUTHORIZED).entity(response).build();
+    }
+
+    private Response handlePlanLimitExceededException(PlanException ex) {
+        LOG.warn("Plan limit exceeded: " + ex.getMessage());
+        String message = ex.getMessage();
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Exception details: ", ex);
+        }
+        
+        return Response.status(Response.Status.FORBIDDEN).entity(
+            new APILimitExceptionDTO(
+                message,
+                ex.getFeatureCode(),
+                ex.getLimit(),
+                ex.getCurrentUsage(),
+                ex.getEnabled()
+            )
+        ).build();
     }
     
     private Response handleGenericException(Throwable ex) {
