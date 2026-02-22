@@ -185,15 +185,15 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
             Long monthsLimit = featureTransactionHistoryMonths.limitValue();
             LocalDateTime now = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
             LocalDateTime limitDate = now.minusMonths(monthsLimit);
-            LocalDateTime from = Instant.ofEpochMilli(transactionFilterDTO.transactionDateTimestampFrom()).atZone(ZoneId.systemDefault()).toLocalDateTime();;
-            LocalDateTime to = Instant.ofEpochMilli(transactionFilterDTO.transactionDateTimestampTo()).atZone(ZoneId.systemDefault()).toLocalDateTime();;
+            LocalDateTime from = transactionFilterDTO.transactionDateTimestampFrom() != null ? Instant.ofEpochMilli(transactionFilterDTO.transactionDateTimestampFrom()).atZone(ZoneId.systemDefault()).toLocalDateTime() : null;
+            LocalDateTime to = transactionFilterDTO.transactionDateTimestampTo() != null ? Instant.ofEpochMilli(transactionFilterDTO.transactionDateTimestampTo()).atZone(ZoneId.systemDefault()).toLocalDateTime() : null;
 
-            if (from.isBefore(limitDate)) {
+            if (from == null || from.isBefore(limitDate)) {
                 LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampFrom to %s", snapshot.userId(), monthsLimit, limitDate);
                 transactionDateTimestampFrom = limitDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
             }
 
-            if (to.isBefore(limitDate)) {
+            if (to == null || to.isBefore(limitDate)) {
                 LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampTo to %s", snapshot.userId(), monthsLimit, limitDate);
                 transactionDateTimestampTo = now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
             }
