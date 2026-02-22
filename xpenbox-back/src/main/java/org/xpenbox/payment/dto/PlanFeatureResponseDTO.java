@@ -8,6 +8,6 @@ package org.xpenbox.payment.dto;
  */
 public record PlanFeatureResponseDTO(
     String featureCode,
-    Integer limitValue,
+    Long limitValue,
     Boolean isEnabled
 ) { }

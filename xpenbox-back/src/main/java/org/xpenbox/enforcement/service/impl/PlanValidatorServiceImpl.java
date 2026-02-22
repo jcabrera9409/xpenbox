@@ -1,6 +1,7 @@
 package org.xpenbox.enforcement.service.impl;
 
 import org.jboss.logging.Logger;
+import org.xpenbox.dashboard.dto.PeriodFilter;
 import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
 import org.xpenbox.enforcement.service.IPlanValidatorService;
 import org.xpenbox.enforcement.service.IPlanUsageService;
@@ -29,17 +30,22 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
         PlanFeatureResponseDTO feature = snapshot.plan().features().get(featureCode);
 
         if (!feature.isEnabled()) {
-            LOG.warnf("Feature %s is not enabled", featureCode);
+            LOG.debugf("Feature %s is not enabled", featureCode);
             throw new PlanException(
                 "Your current plan does not allow creating accounts. Please upgrade your plan to access this feature.",
                 featureCode);
         }
 
-        long limit = feature.limitValue();
-        long currentUsage = planUsageService.countUserAccounts(snapshot.userId());
+        if (feature.limitValue() == null) {
+            LOG.debugf("Feature %s is enabled but has no limit", featureCode);
+            return;
+        }
+
+        Long limit = feature.limitValue();
+        Long currentUsage = planUsageService.countUserAccounts(snapshot.userId());
 
         if (currentUsage >= limit) {
-            LOG.warnf("User %d has reached the accounts limit: %d/%d", snapshot.userId(), currentUsage, limit);
+            LOG.debugf("User %d has reached the accounts limit: %d/%d", snapshot.userId(), currentUsage, limit);
             throw new PlanException(
                 String.format("You have reached the maximum number of accounts allowed by your current plan (%d/%d). Please upgrade your plan to create more accounts.", currentUsage, limit),
                 featureCode,
@@ -54,17 +60,17 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
         PlanFeatureResponseDTO feature = snapshot.plan().features().get(featureCode);
 
         if (!feature.isEnabled()) {
-            LOG.warnf("Feature %s is not enabled", featureCode);
+            LOG.debugf("Feature %s is not enabled", featureCode);
             throw new PlanException(
                 "Your current plan does not allow creating credit cards. Please upgrade your plan to access this feature.",
                 featureCode);
         }
 
-        long limit = feature.limitValue();
-        long currentUsage = planUsageService.countUserCreditCards(snapshot.userId());
+        Long limit = feature.limitValue();
+        Long currentUsage = planUsageService.countUserCreditCards(snapshot.userId());
 
         if (currentUsage >= limit) {
-            LOG.warnf("User %d has reached the credit cards limit: %d/%d", snapshot.userId(), currentUsage, limit);
+            LOG.debugf("User %d has reached the credit cards limit: %d/%d", snapshot.userId(), currentUsage, limit);
             throw new PlanException(
                 String.format("You have reached the maximum number of credit cards allowed by your current plan (%d/%d). Please upgrade your plan to create more credit cards.", currentUsage, limit),
                 featureCode,
@@ -79,22 +85,35 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
         PlanFeatureResponseDTO feature = snapshot.plan().features().get(featureCode);
 
         if (!feature.isEnabled()) {
-            LOG.warnf("Feature %s is not enabled", featureCode);
+            LOG.debugf("Feature %s is not enabled", featureCode);
             throw new PlanException(
                 "Your current plan does not allow creating categories. Please upgrade your plan to access this feature.",
                 featureCode);
         }
 
-        long limit = feature.limitValue();
-        long currentUsage = planUsageService.countUserCategories(snapshot.userId());
+        Long limit = feature.limitValue();
+        Long currentUsage = planUsageService.countUserCategories(snapshot.userId());
 
         if (currentUsage >= limit) {
-            LOG.warnf("User %d has reached the categories limit: %d/%d", snapshot.userId(), currentUsage, limit);
+            LOG.debugf("User %d has reached the categories limit: %d/%d", snapshot.userId(), currentUsage, limit);
             throw new PlanException(
                 String.format("You have reached the maximum number of categories allowed by your current plan (%d/%d). Please upgrade your plan to create more categories.", currentUsage, limit),
                 featureCode,
                 limit,
                 currentUsage);
+        }
+    }
+
+    @Override
+    public void validateCanUseAdvancedDashboardFilters(SnapshotPlanDTO snapshot, PeriodFilter periodFilter) {
+        FeatureCodeEnum featureCode = FeatureCodeEnum.DASHBOARD_ADVANCED_FILTERS;
+        PlanFeatureResponseDTO feature = snapshot.plan().features().get(featureCode);
+   
+        if (!feature.isEnabled() && periodFilter.isAdvancedFilter()) {
+            LOG.debugf("User %d is trying to use advanced dashboard filters but the feature is not enabled", snapshot.userId());
+            throw new PlanException(
+                "Your current plan does not allow using advanced dashboard filters. Please upgrade your plan to access this feature.",
+                featureCode);
         }
     }
     

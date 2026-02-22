@@ -16,6 +16,9 @@ import org.xpenbox.creditcard.entity.CreditCard;
 import org.xpenbox.creditcard.mapper.CreditCardMapper;
 import org.xpenbox.creditcard.repository.CreditCardRepository;
 import org.xpenbox.creditcard.service.ICreditCardService;
+import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
+import org.xpenbox.enforcement.service.IPlanSnapshotService;
+import org.xpenbox.enforcement.service.IPlanValidatorService;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.InsufficientFoundsException;
 import org.xpenbox.exception.ResourceNotFoundException;
@@ -38,17 +41,23 @@ public class CreditCardServiceImpl extends GenericServiceImpl<CreditCard, Credit
     private final CreditCardRepository creditCardRepository;
     private final CreditCardMapper creditCardMapper;
     private final ITransactionService transactionService;
+    private final IPlanValidatorService planValidatorService;
+    private final IPlanSnapshotService planSnapshotService;
 
     public CreditCardServiceImpl(
         UserRepository userRepository,
         CreditCardRepository creditCardRepository,
         CreditCardMapper creditCardMapper,
-        ITransactionService transactionService
+        ITransactionService transactionService,
+        IPlanValidatorService planValidatorService,
+        IPlanSnapshotService planSnapshotService
     ) {
         this.userRepository = userRepository;
         this.creditCardRepository = creditCardRepository;
         this.creditCardMapper = creditCardMapper;
         this.transactionService = transactionService;
+        this.planValidatorService = planValidatorService;
+        this.planSnapshotService = planSnapshotService;
     }
 
     @Override
@@ -69,6 +78,16 @@ public class CreditCardServiceImpl extends GenericServiceImpl<CreditCard, Credit
     @Override
     protected GenericMapper<CreditCard, CreditCardCreateDTO, CreditCardUpdateDTO, CreditCardResponseDTO> getGenericMapper() {
         return creditCardMapper;
+    }
+
+    @Override
+    public CreditCardResponseDTO create(CreditCardCreateDTO creditCardCreateDTO, String userEmail) {
+        LOG.infof("Validating plan limits for user email: %s before creating credit card", userEmail);
+
+        SnapshotPlanDTO activePlanSnapshot = planSnapshotService.getPlanSnapshotByEmail(userEmail);
+        planValidatorService.validateCanCreateCreditCards(activePlanSnapshot);
+        
+        return super.create(creditCardCreateDTO, userEmail);
     }
 
     @Override

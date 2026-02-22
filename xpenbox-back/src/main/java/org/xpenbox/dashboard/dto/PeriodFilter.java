@@ -47,4 +47,15 @@ public enum PeriodFilter {
                 throw new BadRequestException("Unknown period filter: " + filter);
         }
     }
+
+    /**
+     * Determines if the given period filter is considered an advanced filter. Advanced filters include LAST_3_MONTHS, LAST_6_MONTHS, CURRENT_YEAR, and LAST_YEAR.
+     * @return true if the period filter is an advanced filter, false otherwise
+     */
+    public Boolean isAdvancedFilter() {
+        return switch (this) {
+            case LAST_3_MONTHS, LAST_6_MONTHS, CURRENT_YEAR, LAST_YEAR -> true;
+            default -> false;
+        };
+    }
 }

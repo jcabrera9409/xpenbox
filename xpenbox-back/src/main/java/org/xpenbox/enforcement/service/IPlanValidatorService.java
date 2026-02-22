@@ -1,5 +1,6 @@
 package org.xpenbox.enforcement.service;
 
+import org.xpenbox.dashboard.dto.PeriodFilter;
 import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
 
 public interface IPlanValidatorService {
@@ -21,4 +22,11 @@ public interface IPlanValidatorService {
      * @param snapshot the SnapshotPlanDTO containing the current plan information for the user
      */
     void validateCanCreateCategories(SnapshotPlanDTO snapshot);
+
+    /**
+     * Validates whether the user can use advanced dashboard filters based on their current plan limits. If the user has reached the limit for using advanced dashboard filters, an exception should be thrown.
+     * @param snapshot the SnapshotPlanDTO containing the current plan information for the user
+     * @param periodFilter the PeriodFilter containing the filter information for the dashboard
+     */
+    void validateCanUseAdvancedDashboardFilters(SnapshotPlanDTO snapshot, PeriodFilter periodFilter);
 }

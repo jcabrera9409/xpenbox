@@ -19,6 +19,9 @@ import org.xpenbox.dashboard.dto.DashboardPeriodFilterDTO;
 import org.xpenbox.dashboard.dto.DashboardResponseDTO;
 import org.xpenbox.dashboard.dto.PeriodFilter;
 import org.xpenbox.dashboard.service.IDashboardService;
+import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
+import org.xpenbox.enforcement.service.IPlanSnapshotService;
+import org.xpenbox.enforcement.service.IPlanValidatorService;
 import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.transaction.dto.TransactionResponseDTO;
 import org.xpenbox.transaction.entity.Transaction;
@@ -47,6 +50,8 @@ public class DashboardServiceImpl implements IDashboardService {
     private final TransactionRepository transactionRepository;
     private final CategoryMapper categoryMapper;
     private final TransactionMapper transactionMapper;
+    private final IPlanValidatorService planValidatorService;
+    private final IPlanSnapshotService planSnapshotService;
 
     public DashboardServiceImpl(
         UserRepository userRepository,
@@ -54,7 +59,9 @@ public class DashboardServiceImpl implements IDashboardService {
         ICreditCardService creditCardService,
         TransactionRepository transactionRepository,
         CategoryMapper categoryMapper,
-        TransactionMapper transactionMapper
+        TransactionMapper transactionMapper,
+        IPlanValidatorService planValidatorService,
+        IPlanSnapshotService planSnapshotService
     ) {
         this.userRepository = userRepository;
         this.accountService = accountService;
@@ -62,16 +69,23 @@ public class DashboardServiceImpl implements IDashboardService {
         this.transactionRepository = transactionRepository;
         this.categoryMapper = categoryMapper;
         this.transactionMapper = transactionMapper;
+        this.planValidatorService = planValidatorService;
+        this.planSnapshotService = planSnapshotService;
     }
 
     @Override
     public DashboardResponseDTO generateDashboardData(PeriodFilter periodFilter, String userEmail) {
-        LOG.infof("Generating dashboard data for user: %s with period filter: %s", userEmail, periodFilter);        
+        LOG.infof("Validating plan limits for user: %s and period filter: %s", userEmail, periodFilter);
+
+        SnapshotPlanDTO snapshot = planSnapshotService.getPlanSnapshotByEmail(userEmail);
+        planValidatorService.validateCanUseAdvancedDashboardFilters(snapshot, periodFilter);
+        
+        LOG.infof("Generating dashboard data for user: %s with period filter: %s", userEmail, periodFilter);  
 
         User user = userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> {
-                LOG.errorf("User not found with email: %s", userEmail);
-                return new ResourceNotFoundException("User not found with email: " + userEmail);
+        .orElseThrow(() -> {
+            LOG.errorf("User not found with email: %s", userEmail);
+            return new ResourceNotFoundException("User not found with email: " + userEmail);
             });
 
         Map<String, LocalDateTime> dateRange = PeriodFilter.getDateRange(periodFilter);

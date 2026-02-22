@@ -27,7 +27,7 @@ public class PlanFeatureMapper implements GenericMapper<PlanFeature, PlanFeature
     public PlanFeatureResponseDTO toDTO(PlanFeature entity) {
         return new PlanFeatureResponseDTO(
             entity.getFeatureCode(),
-            entity.getLimitValue(),
+            entity.getLimitValue() != null ? entity.getLimitValue().longValue() : null,
             entity.getIsEnabled()
         );
     }
