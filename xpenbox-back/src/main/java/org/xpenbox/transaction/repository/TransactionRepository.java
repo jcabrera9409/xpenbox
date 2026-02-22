@@ -137,6 +137,19 @@ public class TransactionRepository extends GenericRepository<Transaction> {
     }
 
     /**
+     * Count transactions by user ID and period range.
+     * @param userId the ID of the user
+     * @param from the start of the period
+     * @param to the end of the period
+     * @return the count of transactions matching the criteria
+     */
+    public Long countByUserIdAndPeriodRange(Long userId, LocalDateTime from, LocalDateTime to) {
+        LOG.debugf("Counting transactions for User ID: %d between %s and %s", userId, from, to);
+        return count("user.id = :userId and transactionDate between :from and :to", 
+                Parameters.with("userId", userId).and("from", from).and("to", to));
+    }
+
+    /**
      * Build query parameters based on filter criteria and user.
      * @param filterDTO the filter criteria
      * @param user the user

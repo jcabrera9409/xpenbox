@@ -1,10 +1,13 @@
 package org.xpenbox.enforcement.service.impl;
 
+import java.time.LocalDateTime;
+
 import org.jboss.logging.Logger;
 import org.xpenbox.account.repository.AccountRepository;
 import org.xpenbox.category.repository.CategoryRepository;
 import org.xpenbox.creditcard.repository.CreditCardRepository;
 import org.xpenbox.enforcement.service.IPlanUsageService;
+import org.xpenbox.transaction.repository.TransactionRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -18,33 +21,45 @@ public class PlanUsageServiceImpl implements IPlanUsageService {
     private final AccountRepository accountRepository;
     private final CreditCardRepository creditCardRepository;
     private final CategoryRepository categoryRepository;
+    private final TransactionRepository transactionRepository;
 
     public PlanUsageServiceImpl(
         AccountRepository accountRepository, 
         CreditCardRepository creditCardRepository, 
-        CategoryRepository categoryRepository
+        CategoryRepository categoryRepository,
+        TransactionRepository transactionRepository
     ) {
         this.accountRepository = accountRepository;
         this.creditCardRepository = creditCardRepository;
         this.categoryRepository = categoryRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @Override
-    public long countUserAccounts(Long userId) {
+    public Long countUserAccounts(Long userId) {
         LOG.debugf("Counting user accounts for userId: %d", userId);
         return accountRepository.countAllByUserIdAndStateTrue(userId);
     }
 
     @Override
-    public long countUserCreditCards(Long userId) {
+    public Long countUserCreditCards(Long userId) {
         LOG.debugf("Counting user credit cards for userId: %d", userId);
         return creditCardRepository.countAllByUserIdAndStateTrue(userId);
     }
 
     @Override
-    public long countUserCategories(Long userId) {
+    public Long countUserCategories(Long userId) {
         LOG.debugf("Counting user categories for userId: %d", userId);
         return categoryRepository.countAllByUserId(userId);
+    }
+
+    @Override
+    public Long countUserTransactionsInCurrentPeriod(Long userId) {
+        LOG.debugf("Counting user transactions in current period for userId: %d", userId);
+        LocalDateTime currentDate = LocalDateTime.now();
+        LocalDateTime firstDay = currentDate.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0); 
+        LocalDateTime lastDay = currentDate.withDayOfMonth(currentDate.toLocalDate().lengthOfMonth()).withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+        return transactionRepository.countByUserIdAndPeriodRange(userId, firstDay, lastDay);
     }
 
 }

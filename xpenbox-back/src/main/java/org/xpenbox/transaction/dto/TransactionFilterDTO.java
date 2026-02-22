@@ -53,4 +53,31 @@ public record TransactionFilterDTO(
     
     @Min(value = 1, message = "Page size must be a positive number")
     Integer pageSize
-) {}
+) {
+     /**
+      * Compare this TransactionFilterDTO with another instance to check if they are equivalent based on their non-null fields. This method is useful for determining if two filter DTOs represent the same filtering criteria, even if some fields are null in one of the instances.
+      * @param other the other TransactionFilterDTO to compare with
+      * @return true if the non-null fields of both DTOs are equal, false otherwise
+      */
+    public Boolean compareTo(TransactionFilterDTO other) {
+        if (other == null) {
+            return false;
+        }
+        if (this.transactionType != null && !this.transactionType.equals(other.transactionType)) {
+            return false;
+        }
+        if (this.description != null && !this.description.equals(other.description)) {
+            return false;
+        }
+        if (this.transactionDateTimestampFrom != null && !this.transactionDateTimestampFrom.equals(other.transactionDateTimestampFrom)) {
+            return false;
+        }
+        if (this.transactionDateTimestampTo != null && !this.transactionDateTimestampTo.equals(other.transactionDateTimestampTo)) {
+            return false;
+        }
+        if (this.categoryResourceCode != null && !this.categoryResourceCode.equals(other.categoryResourceCode)) {
+            return false;
+        }
+        return true;
+    }
+}

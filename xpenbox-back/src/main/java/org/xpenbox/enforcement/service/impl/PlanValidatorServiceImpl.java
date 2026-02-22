@@ -1,5 +1,9 @@
 package org.xpenbox.enforcement.service.impl;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import org.jboss.logging.Logger;
 import org.xpenbox.dashboard.dto.PeriodFilter;
 import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
@@ -8,6 +12,8 @@ import org.xpenbox.enforcement.service.IPlanUsageService;
 import org.xpenbox.exception.PlanException;
 import org.xpenbox.payment.dto.PlanFeatureResponseDTO;
 import org.xpenbox.payment.enums.FeatureCodeEnum;
+import org.xpenbox.transaction.dto.TransactionFilterDTO;
+import org.xpenbox.transaction.entity.Transaction.TransactionType;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -116,5 +122,96 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
                 featureCode);
         }
     }
+
+    @Override
+    public void validateCanCreateTransactions(SnapshotPlanDTO snapshot) {
+        FeatureCodeEnum featureCode = FeatureCodeEnum.TRANSACTIONS_LIMIT;
+        PlanFeatureResponseDTO feature = snapshot.plan().features().get(featureCode);
+        
+        if(!feature.isEnabled()) {
+            LOG.debugf("Feature %s is not enabled", featureCode);
+            throw new PlanException(
+                "Your current plan does not allow creating transactions. Please upgrade your plan to access this feature.",
+                featureCode);
+        }
+
+        if (feature.limitValue() == null) {
+            LOG.debugf("Feature %s is enabled but has no limit", featureCode);
+            return;
+        }
+
+        Long limit = feature.limitValue();
+        Long currentUsage = planUsageService.countUserTransactionsInCurrentPeriod(snapshot.userId());
+
+        if (currentUsage >= limit) {
+            LOG.debugf("User %d has reached the transactions limit: %d/%d", snapshot.userId(), currentUsage, limit);
+            throw new PlanException(
+                String.format("You have reached the maximum number of transactions allowed by your current plan for the current period (%d/%d). Please upgrade your plan to create more transactions.", currentUsage, limit),
+                featureCode,
+                limit,
+                currentUsage);
+        } 
+        
+        LOG.debugf("User %d has not reached the transactions limit: %d/%d", snapshot.userId(), currentUsage, limit);
+    }
     
+    @Override
+    public TransactionFilterDTO validateTransactionFilterDTO(SnapshotPlanDTO snapshot, TransactionFilterDTO transactionFilterDTO) {
+        FeatureCodeEnum transactionHistoryMonths = FeatureCodeEnum.TRANSACTION_HISTORY_MONTHS;
+        FeatureCodeEnum advancedTransactionSearch = FeatureCodeEnum.ADVANCED_TRANSACTION_SEARCH;
+
+        PlanFeatureResponseDTO featureTransactionHistoryMonths = snapshot.plan().features().get(transactionHistoryMonths);
+        PlanFeatureResponseDTO featureAdvancedTransactionSearch = snapshot.plan().features().get(advancedTransactionSearch);
+
+        if (featureTransactionHistoryMonths.limitValue() == null && featureAdvancedTransactionSearch.isEnabled()) {
+            LOG.debugf("User %d has access to advanced transaction filters and no limit on transaction history months", snapshot.userId());
+            return transactionFilterDTO;
+        }
+
+        TransactionType transactionType = transactionFilterDTO.transactionType();
+        String description = transactionFilterDTO.description();
+        Long transactionDateTimestampFrom = transactionFilterDTO.transactionDateTimestampFrom();
+        Long transactionDateTimestampTo = transactionFilterDTO.transactionDateTimestampTo();
+        String categoryResourceCode = transactionFilterDTO.categoryResourceCode();
+
+        if (!featureAdvancedTransactionSearch.isEnabled()) {
+            LOG.debugf("User %d does not have access to advanced transaction filters, removing advanced filters from TransactionFilterDTO", snapshot.userId());
+            transactionType = null;
+            description = null;
+            categoryResourceCode = null;
+        }
+
+        if (featureTransactionHistoryMonths.limitValue() != null) {
+            Long monthsLimit = featureTransactionHistoryMonths.limitValue();
+            LocalDateTime now = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+            LocalDateTime limitDate = now.minusMonths(monthsLimit);
+            LocalDateTime from = Instant.ofEpochMilli(transactionFilterDTO.transactionDateTimestampFrom()).atZone(ZoneId.systemDefault()).toLocalDateTime();;
+            LocalDateTime to = Instant.ofEpochMilli(transactionFilterDTO.transactionDateTimestampTo()).atZone(ZoneId.systemDefault()).toLocalDateTime();;
+
+            if (from.isBefore(limitDate)) {
+                LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampFrom to %s", snapshot.userId(), monthsLimit, limitDate);
+                transactionDateTimestampFrom = limitDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            }
+
+            if (to.isBefore(limitDate)) {
+                LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampTo to %s", snapshot.userId(), monthsLimit, limitDate);
+                transactionDateTimestampTo = now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            }
+            
+        }
+
+        return new TransactionFilterDTO(
+            transactionFilterDTO.resourceCode(),
+            transactionType,
+            description,
+            transactionDateTimestampFrom,
+            transactionDateTimestampTo,
+            categoryResourceCode,
+            transactionFilterDTO.incomeResourceCode(),
+            transactionFilterDTO.accountResourceCode(),
+            transactionFilterDTO.creditCardResourceCode(),
+            transactionFilterDTO.pageNumber(),
+            transactionFilterDTO.pageSize()
+        );
+    }
 }
