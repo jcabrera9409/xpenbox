@@ -1,12 +1,11 @@
 package org.xpenbox.income.mapper;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
 import org.jboss.logging.Logger;
+import org.xpenbox.common.DateConvertir;
 import org.xpenbox.common.ResourceCode;
 import org.xpenbox.common.mapper.GenericMapper;
 import org.xpenbox.income.dto.IncomeCreateDTO;
@@ -35,7 +34,7 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
         IncomeResponseDTO dto = new IncomeResponseDTO(
             entity.getResourceCode(),
             entity.getConcept(),
-            entity.getIncomeDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+            DateConvertir.convertToTimestamp(entity.getIncomeDate()),
             entity.getTotalAmount(),
             BigDecimal.ZERO
         );
@@ -53,7 +52,7 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
         IncomeResponseDTO dto = new IncomeResponseDTO(
             entity.getResourceCode(),
             entity.getConcept(),
-            entity.getIncomeDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+            DateConvertir.convertToTimestamp(entity.getIncomeDate()),
             entity.getTotalAmount(),
             allocatedAmount
         );
@@ -128,9 +127,7 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
         Income entity = new Income();
         entity.setResourceCode(ResourceCode.generateIncomeResourceCode());
         entity.setConcept(dto.concept());
-        entity.setIncomeDate(
-            Instant.ofEpochMilli(dto.incomeDateTimestamp()).atZone(ZoneId.systemDefault()).toLocalDateTime()
-        );
+        entity.setIncomeDate(DateConvertir.convertToLocalDateTime(dto.incomeDateTimestamp()));
         entity.setTotalAmount(dto.totalAmount());
         entity.setUser(user);
         return entity;
@@ -152,11 +149,9 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
             isUpdated = true;
         }
 
-        Long entityIncomeDateTimestamp = entity.getIncomeDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        Long entityIncomeDateTimestamp = DateConvertir.convertToTimestamp(entity.getIncomeDate());
         if (updateDto.incomeDateTimestamp() != null && !updateDto.incomeDateTimestamp().equals(entityIncomeDateTimestamp)) {
-            entity.setIncomeDate(
-                Instant.ofEpochMilli(updateDto.incomeDateTimestamp()).atZone(ZoneId.systemDefault()).toLocalDateTime()
-            );
+            entity.setIncomeDate(DateConvertir.convertToLocalDateTime(updateDto.incomeDateTimestamp()));
             isUpdated = true;
         }
 

@@ -1,11 +1,12 @@
 package org.xpenbox.payment.scheduler;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
+import org.xpenbox.common.DateConvertir;
+import org.xpenbox.enforcement.service.IPlanSnapshotService;
 import org.xpenbox.payment.entity.Plan;
 import org.xpenbox.payment.entity.Subscription;
 import org.xpenbox.payment.entity.SubscriptionPayment;
@@ -35,16 +36,19 @@ public class SubscriptionScheduler {
     private final PlanRepository planRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionPaymentRepository subscriptionPaymentRepository;
+    private final IPlanSnapshotService planSnapshotService; 
 
     public SubscriptionScheduler(
         PlanRepository planRepository,
         SubscriptionRepository subscriptionRepository,
-        SubscriptionPaymentRepository subscriptionPaymentRepository
+        SubscriptionPaymentRepository subscriptionPaymentRepository,
+        IPlanSnapshotService planSnapshotService
     ) {
         LOG.info("SubscriptionScheduler initialized");
         this.planRepository = planRepository;
         this.subscriptionRepository = subscriptionRepository;
         this.subscriptionPaymentRepository = subscriptionPaymentRepository;
+        this.planSnapshotService = planSnapshotService;
     }
     
     /**
@@ -57,7 +61,8 @@ public class SubscriptionScheduler {
         Plan proPlan = planRepository.findByResourceCode(planProResourceCode)
             .orElseThrow(() -> new IllegalStateException("Pro plan not found with resource code: " + planProResourceCode));
         
-        List<Subscription> subscriptionActiveProPlan = subscriptionRepository.findAllSubscriptionsByStatusAndPlanIdAndBeforeEndDate(Subscription.SubscriptionStatus.ACTIVE, proPlan.id, LocalDateTime.now());
+        List<Subscription> subscriptionActiveProPlan = subscriptionRepository.findAllSubscriptionsByStatusAndPlanIdAndBeforeEndDate(
+            SubscriptionStatus.ACTIVE, proPlan.id, DateConvertir.currentLocalDateTime());
         
         LOG.infof("Found %d active subscriptions for Pro plan", subscriptionActiveProPlan.size());
         for (Subscription subscription : subscriptionActiveProPlan) {
@@ -81,6 +86,8 @@ public class SubscriptionScheduler {
                 subscription.setNextBillingDate(nextBillingDate);
                 subscription.setEndDate(nextBillingDate.plusDays(subscriptionGracePeriodDays));
                 subscriptionRepository.persist(subscription);
+                planSnapshotService.clearPlanSnapshotByEmail(subscription.getUser().getEmail());
+                LOG.infof("Cleared plan snapshot for user with email: %s after successful payment for subscription ID %d", subscription.getUser().getEmail(), subscription.id);
                 return;
             }
         }
@@ -89,6 +96,9 @@ public class SubscriptionScheduler {
         subscription.setStatus(SubscriptionStatus.CANCELLED);
         subscription.setRenew(false);
         subscriptionRepository.persist(subscription);
+
+        planSnapshotService.clearPlanSnapshotByEmail(subscription.getUser().getEmail());
+        LOG.infof("Cleared plan snapshot for user with email: %s after subscription cancellation for subscription ID %d", subscription.getUser().getEmail(), subscription.id);
     }
 
     /**
@@ -97,7 +107,7 @@ public class SubscriptionScheduler {
      * @return true if the subscription has expired (i.e., its end date is before the current date and time), or false if it is still active (i.e., its end date is in the future)
      */
     boolean isSubscriptionExpired(Subscription subscription) {
-        return subscription.getEndDate().isBefore(LocalDateTime.now(ZoneOffset.UTC));
+        return subscription.getEndDate().isBefore(DateConvertir.currentLocalDateTime());
     }
 
     /**

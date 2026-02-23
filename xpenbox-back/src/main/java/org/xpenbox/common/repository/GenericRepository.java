@@ -45,7 +45,7 @@ public abstract class GenericRepository<T> implements PanacheRepository<T> {
      * @return the count of active entities associated with the user ID
      */
     public long countAllByUserIdAndStateTrue(Long userId) {
-        LOG.infof("Counting all active entities for user id: %d", userId);
+        LOG.infof("Counting all active entities for user id: %d with PESSIMISTIC_WRITE lock", userId);
         return count("user.id = ?1 and state = true", userId);
     }
 

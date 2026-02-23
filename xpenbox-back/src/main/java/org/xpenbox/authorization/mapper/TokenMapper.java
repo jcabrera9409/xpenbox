@@ -1,11 +1,9 @@
 package org.xpenbox.authorization.mapper;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-
 import org.jboss.logging.Logger;
 import org.xpenbox.authorization.dto.TokenResponseDTO;
 import org.xpenbox.authorization.entity.Token;
+import org.xpenbox.common.DateConvertir;
 
 import jakarta.inject.Singleton;
 
@@ -36,10 +34,10 @@ public class TokenMapper {
             token.getLastUsedAt(),
             // calculate expiresIn based on current time and accessTokenExpiresAt
             token.getAccessTokenExpiresAt() != null
-                ? Duration.between(LocalDateTime.now(), token.getAccessTokenExpiresAt()).getSeconds()
+                ? DateConvertir.calculateDuration(DateConvertir.currentLocalDateTime(), token.getAccessTokenExpiresAt()).getSeconds()
                 : null,
             token.getRefreshTokenExpiresAt() != null
-                ? Duration.between(LocalDateTime.now(), token.getRefreshTokenExpiresAt()).getSeconds()
+                ? DateConvertir.calculateDuration(DateConvertir.currentLocalDateTime(), token.getRefreshTokenExpiresAt()).getSeconds()
                 : null
         );
         

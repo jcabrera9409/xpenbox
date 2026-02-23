@@ -1,10 +1,9 @@
 package org.xpenbox.enforcement.service.impl;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 import org.jboss.logging.Logger;
+import org.xpenbox.common.DateConvertir;
 import org.xpenbox.dashboard.dto.PeriodFilter;
 import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
 import org.xpenbox.enforcement.service.IPlanValidatorService;
@@ -72,6 +71,11 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
                 featureCode);
         }
 
+        if (feature.limitValue() == null) {
+            LOG.debugf("Feature %s is enabled but has no limit", featureCode);
+            return;
+        }
+
         Long limit = feature.limitValue();
         Long currentUsage = planUsageService.countUserCreditCards(snapshot.userId());
 
@@ -95,6 +99,11 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
             throw new PlanException(
                 "Your current plan does not allow creating categories. Please upgrade your plan to access this feature.",
                 featureCode);
+        }
+
+        if (feature.limitValue() == null) {
+            LOG.debugf("Feature %s is enabled but has no limit", featureCode);
+            return;
         }
 
         Long limit = feature.limitValue();
@@ -183,19 +192,19 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
 
         if (featureTransactionHistoryMonths.limitValue() != null) {
             Long monthsLimit = featureTransactionHistoryMonths.limitValue();
-            LocalDateTime now = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+            LocalDateTime now = DateConvertir.toStartDay(DateConvertir.currentLocalDateTime());
             LocalDateTime limitDate = now.minusMonths(monthsLimit);
-            LocalDateTime from = transactionFilterDTO.transactionDateTimestampFrom() != null ? Instant.ofEpochMilli(transactionFilterDTO.transactionDateTimestampFrom()).atZone(ZoneId.systemDefault()).toLocalDateTime() : null;
-            LocalDateTime to = transactionFilterDTO.transactionDateTimestampTo() != null ? Instant.ofEpochMilli(transactionFilterDTO.transactionDateTimestampTo()).atZone(ZoneId.systemDefault()).toLocalDateTime() : null;
+            LocalDateTime from = DateConvertir.convertToLocalDateTime(transactionFilterDTO.transactionDateTimestampFrom());
+            LocalDateTime to = DateConvertir.convertToLocalDateTime(transactionFilterDTO.transactionDateTimestampTo());
 
             if (from == null || from.isBefore(limitDate)) {
                 LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampFrom to %s", snapshot.userId(), monthsLimit, limitDate);
-                transactionDateTimestampFrom = limitDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                transactionDateTimestampFrom = DateConvertir.convertToTimestamp(limitDate);
             }
 
             if (to == null || to.isBefore(limitDate)) {
                 LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampTo to %s", snapshot.userId(), monthsLimit, limitDate);
-                transactionDateTimestampTo = now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                transactionDateTimestampTo = DateConvertir.convertToTimestamp(now);
             }
             
         }

@@ -1,11 +1,10 @@
 package org.xpenbox.creditcard.service.impl;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.jboss.logging.Logger;
+import org.xpenbox.common.DateConvertir;
 import org.xpenbox.common.mapper.GenericMapper;
 import org.xpenbox.common.service.impl.GenericServiceImpl;
 import org.xpenbox.creditcard.dto.CreditCardCreateDTO;
@@ -144,7 +143,7 @@ public class CreditCardServiceImpl extends GenericServiceImpl<CreditCard, Credit
                 creditCard.getCurrentBalance(), 
                 null, 
                 null, 
-                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), 
+                DateConvertir.currentTimestamp(), 
                 null, 
                 null,
                 creditCardDeactivateRequestDTO.accountResourceCode(),
@@ -155,7 +154,7 @@ public class CreditCardServiceImpl extends GenericServiceImpl<CreditCard, Credit
             transactionService.create(transactionCreateDTO, userEmail);
         }
 
-        creditCard.setClosingDate(LocalDateTime.now());
+        creditCard.setClosingDate(DateConvertir.currentLocalDateTime());
         creditCard.setState(false);
 
         creditCardRepository.persist(creditCard);

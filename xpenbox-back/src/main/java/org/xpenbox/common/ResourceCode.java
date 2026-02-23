@@ -1,6 +1,5 @@
 package org.xpenbox.common;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -50,7 +49,7 @@ public class ResourceCode {
     private static String generateResourceCode(ResourceType resourceType) {
         LOG.debug("Generating token resource code");
 
-        String timestamp = LocalDateTime.now().format(DATE_FORMATTER);
+        String timestamp = DateConvertir.currentLocalDateTime().format(DATE_FORMATTER);
         String uuid = UUID.randomUUID().toString();
 
         return String.format("%s:%s:%s:%s", 

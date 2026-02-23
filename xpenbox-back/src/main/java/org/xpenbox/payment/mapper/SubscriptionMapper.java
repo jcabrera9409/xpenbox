@@ -1,11 +1,9 @@
 package org.xpenbox.payment.mapper;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.jboss.logging.Logger;
+import org.xpenbox.common.DateConvertir;
 import org.xpenbox.common.ResourceCode;
 import org.xpenbox.common.mapper.GenericMapper;
 import org.xpenbox.payment.dto.SubscriptionResponseDTO;
@@ -44,9 +42,9 @@ public class SubscriptionMapper implements GenericMapper<Subscription, Subscript
             entity.getResourceCode(),
             entity.getPlanPrice(),
             entity.getPlanCurrency(),
-            entity.getStartDate() != null ? entity.getStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
-            entity.getEndDate() != null ? entity.getEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
-            entity.getNextBillingDate() != null ? entity.getNextBillingDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
+            DateConvertir.convertToTimestamp(entity.getStartDate()),
+            DateConvertir.convertToTimestamp(entity.getEndDate()),
+            DateConvertir.convertToTimestamp(entity.getNextBillingDate()),
             entity.getRenew(),
             entity.getProvider(),
             entity.getProviderPlanId(),
@@ -72,9 +70,9 @@ public class SubscriptionMapper implements GenericMapper<Subscription, Subscript
             entity.getResourceCode(),
             entity.getPlanPrice(),
             entity.getPlanCurrency(),
-            entity.getStartDate() != null ? entity.getStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
-            entity.getEndDate() != null ? entity.getEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
-            entity.getNextBillingDate() != null ? entity.getNextBillingDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
+            DateConvertir.convertToTimestamp(entity.getStartDate()),
+            DateConvertir.convertToTimestamp(entity.getEndDate()),
+            DateConvertir.convertToTimestamp(entity.getNextBillingDate()),
             entity.getRenew(),
             entity.getProvider(),
             entity.getProviderPlanId(),
@@ -137,7 +135,7 @@ public class SubscriptionMapper implements GenericMapper<Subscription, Subscript
         subscriptionEntity.setUser(user);
         subscriptionEntity.setPlanPrice(freePlan.getPrice());
         subscriptionEntity.setPlanCurrency(freePlan.getCurrency());
-        subscriptionEntity.setStartDate(LocalDate.now().atStartOfDay());
+        subscriptionEntity.setStartDate(DateConvertir.currentLocalDateTime());
         subscriptionEntity.setProvider(PaymentProviderType.FREE.name());
         subscriptionEntity.setProviderPlanId(subscriptionEntity.getResourceCode());
         subscriptionEntity.setProviderSubscriptionId(subscriptionEntity.getResourceCode());
@@ -163,7 +161,7 @@ public class SubscriptionMapper implements GenericMapper<Subscription, Subscript
         subscription.setUser(user);
         subscription.setPlanPrice(plan.getPrice());
         subscription.setPlanCurrency(plan.getCurrency());
-        subscription.setStartDate(LocalDateTime.now());        
+        subscription.setStartDate(DateConvertir.currentLocalDateTime());        
         subscription.setEndDate(null);
         subscription.setNextBillingDate(null);
         subscription.setProvider(providerPlan.paymentProviderType().name());

@@ -1,12 +1,11 @@
 package org.xpenbox.transaction.mapper;
 
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.account.mapper.AccountMapper;
 import org.xpenbox.category.mapper.CategoryMapper;
+import org.xpenbox.common.DateConvertir;
 import org.xpenbox.common.ResourceCode;
 import org.xpenbox.common.mapper.GenericMapper;
 import org.xpenbox.creditcard.mapper.CreditCardMapper;
@@ -56,7 +55,7 @@ public class TransactionMapper implements GenericMapper<Transaction, Transaction
             entity.getAmount(),
             entity.getLatitude(),
             entity.getLongitude(),
-            entity.getTransactionDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+            DateConvertir.convertToTimestamp(entity.getTransactionDate()),
             entity.getCategory() != null ? categoryMapper.toSimpleDTO(entity.getCategory()) : null,
             entity.getIncome() != null ? incomeMapper.toSimpleDTO(entity.getIncome()) : null,
             entity.getAccount() != null ? accountMapper.toSimpleDTO(entity.getAccount()) : null,
@@ -81,7 +80,7 @@ public class TransactionMapper implements GenericMapper<Transaction, Transaction
             entity.getAmount(),
             entity.getLatitude(),
             entity.getLongitude(),
-            entity.getTransactionDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+            DateConvertir.convertToTimestamp(entity.getTransactionDate()),
             entity.getCategory() != null ? categoryMapper.toSimpleDTO(entity.getCategory()) : null, 
             null, 
             null, 
@@ -125,9 +124,7 @@ public class TransactionMapper implements GenericMapper<Transaction, Transaction
         entity.setAmount(dto.amount());
         entity.setLatitude(dto.latitude());
         entity.setLongitude(dto.longitude());
-        entity.setTransactionDate(
-            Instant.ofEpochMilli(dto.transactionDateTimestamp()).atZone(ZoneId.systemDefault()).toLocalDateTime()
-        );
+        entity.setTransactionDate(DateConvertir.convertToLocalDateTime(dto.transactionDateTimestamp()));
         entity.setUser(user);
         return entity;
     }
@@ -148,11 +145,9 @@ public class TransactionMapper implements GenericMapper<Transaction, Transaction
             isUpdated = true;
         }
 
-        Long entityTransactionDateTimestamp = entity.getTransactionDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        Long entityTransactionDateTimestamp = DateConvertir.convertToTimestamp(entity.getTransactionDate());
         if (updateDto.transactionDateTimestamp() != null && !updateDto.transactionDateTimestamp().equals(entityTransactionDateTimestamp)) {
-            entity.setTransactionDate(
-                Instant.ofEpochMilli(updateDto.transactionDateTimestamp()).atZone(ZoneId.systemDefault()).toLocalDateTime()
-            );
+            entity.setTransactionDate(DateConvertir.convertToLocalDateTime(updateDto.transactionDateTimestamp()));
             isUpdated = true;
         }
 

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
+import org.xpenbox.enforcement.service.IPlanSnapshotService;
 import org.xpenbox.payment.entity.Subscription;
 import org.xpenbox.payment.entity.SubscriptionPayment;
 import org.xpenbox.payment.entity.Subscription.SubscriptionStatus;
@@ -36,19 +37,22 @@ public class WebhookServiceImpl implements IWebhookService {
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionPaymentRepository subscriptionPaymentRepository;
     private final SubscriptionPaymentMapper subscriptionPaymentMapper;
+    private final IPlanSnapshotService planSnapshotService;
 
     public WebhookServiceImpl(
         ISubscriptionService subscriptionService,
         PaymentProviderFactory paymentProviderFactory,
         SubscriptionRepository subscriptionRepository,
         SubscriptionPaymentRepository subscriptionPaymentRepository,
-        SubscriptionPaymentMapper subscriptionPaymentMapper
+        SubscriptionPaymentMapper subscriptionPaymentMapper,
+        IPlanSnapshotService planSnapshotService
     ) {
         this.subscriptionService = subscriptionService;
         this.paymentProviderFactory = paymentProviderFactory;
         this.subscriptionRepository = subscriptionRepository;
         this.subscriptionPaymentRepository = subscriptionPaymentRepository;
         this.subscriptionPaymentMapper = subscriptionPaymentMapper;
+        this.planSnapshotService = planSnapshotService;
     }
 
     @Override
@@ -96,6 +100,9 @@ public class WebhookServiceImpl implements IWebhookService {
         if (paymentResponse.status() == PaymentStatus.APPROVED) {
             LOG.infof("Payment with ID %s for subscription ID %d has been approved. Updating subscription status.", paymentResponse.id(), subscription.id);
             updateSubscriptionStatus(subscription, paymentResponse);
+
+            planSnapshotService.clearPlanSnapshotByEmail(subscription.getUser().getEmail());
+            LOG.infof("Cleared plan snapshot for user with email: %s after successful payment for subscription ID %d", subscription.getUser().getEmail(), subscription.id);
         }
     }
     

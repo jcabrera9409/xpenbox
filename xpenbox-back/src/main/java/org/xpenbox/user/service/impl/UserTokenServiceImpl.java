@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 import org.mindrot.jbcrypt.BCrypt;
+import org.xpenbox.common.DateConvertir;
 import org.xpenbox.email.service.IEmailService;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.user.entity.User;
@@ -59,7 +60,7 @@ public class UserTokenServiceImpl implements IUserTokenService {
                 return new BadRequestException("Invalid email verification token");
             });
 
-        if (userToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+        if (userToken.getExpiresAt().isBefore(DateConvertir.currentLocalDateTime())) {
             LOG.warnf("Email verification token expired: %s", token);
             throw new BadRequestException("Email verification token has expired");
         }
@@ -123,7 +124,7 @@ public class UserTokenServiceImpl implements IUserTokenService {
                 return new BadRequestException("Cannot reset password. Please verify your email first.");
             });
 
-        if (userToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+        if (userToken.getExpiresAt().isBefore(DateConvertir.currentLocalDateTime())) {
             LOG.warnf("Password reset token expired: %s", token);
             throw new BadRequestException("Cannot reset password. Please verify your email first.");
         }
@@ -183,7 +184,7 @@ public class UserTokenServiceImpl implements IUserTokenService {
 
     private UserToken generateEmailVerificationToken(User user) {
         String token = UUID.randomUUID().toString();
-        LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(emailTokenExpiration / 1000);
+        LocalDateTime expiresAt = DateConvertir.currentLocalDateTime().plusSeconds(emailTokenExpiration / 1000);
         UserToken userToken = UserToken.generateEmailVerificationToken(user, token, expiresAt);
 
         userTokenRepository.persist(userToken);

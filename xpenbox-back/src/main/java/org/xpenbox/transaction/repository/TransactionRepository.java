@@ -1,14 +1,13 @@
 package org.xpenbox.transaction.repository;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
+import org.xpenbox.common.DateConvertir;
 import org.xpenbox.common.repository.GenericRepository;
 import org.xpenbox.transaction.dto.TransactionFilterDTO;
 import org.xpenbox.transaction.entity.Transaction;
@@ -173,8 +172,8 @@ public class TransactionRepository extends GenericRepository<Transaction> {
         }
 
         if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
-            LocalDateTime from = Instant.ofEpochMilli(filterDTO.transactionDateTimestampFrom()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-            LocalDateTime to = Instant.ofEpochMilli(filterDTO.transactionDateTimestampTo()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime from = DateConvertir.convertToLocalDateTime(filterDTO.transactionDateTimestampFrom());
+            LocalDateTime to = DateConvertir.convertToLocalDateTime(filterDTO.transactionDateTimestampTo());
             params.and("transactionDateFrom", from);
             params.and("transactionDateTo", to);
         }
@@ -347,8 +346,8 @@ public class TransactionRepository extends GenericRepository<Transaction> {
             query.setParameter("description", filterDTO.description());
         }
         if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
-            LocalDateTime from = Instant.ofEpochMilli(filterDTO.transactionDateTimestampFrom()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-            LocalDateTime to = Instant.ofEpochMilli(filterDTO.transactionDateTimestampTo()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime from = DateConvertir.convertToLocalDateTime(filterDTO.transactionDateTimestampFrom());
+            LocalDateTime to = DateConvertir.convertToLocalDateTime(filterDTO.transactionDateTimestampTo());
             query.setParameter("transactionDateFrom", from);
             query.setParameter("transactionDateTo", to);
         }

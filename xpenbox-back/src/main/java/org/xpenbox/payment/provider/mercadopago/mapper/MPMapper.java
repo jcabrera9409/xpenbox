@@ -1,12 +1,11 @@
 package org.xpenbox.payment.provider.mercadopago.mapper;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
+import org.xpenbox.common.DateConvertir;
 import org.xpenbox.payment.enums.PaymentProviderType;
 import org.xpenbox.payment.provider.dto.ProviderPaymentResponseDTO;
 import org.xpenbox.payment.provider.dto.ProviderSubscriptionRequestDTO;
@@ -66,9 +65,7 @@ public class MPMapper {
 
         LocalDateTime dateApproved = null;
         if (mpPaymentResponseDTO.date_approved() != null) {
-            dateApproved = OffsetDateTime.parse(mpPaymentResponseDTO.date_approved(), DateTimeFormatter.ISO_DATE_TIME)
-                .atZoneSameInstant(ZoneOffset.UTC)
-                .toLocalDateTime();
+            dateApproved = DateConvertir.toDateTimeFormatter(mpPaymentResponseDTO.date_approved(), DateTimeFormatter.ISO_DATE_TIME);
         }
 
         return new ProviderPaymentResponseDTO(
@@ -78,9 +75,7 @@ public class MPMapper {
             mpPaymentResponseDTO.status(),
             mpPaymentResponseDTO.currency_id(),
             dateApproved,
-            OffsetDateTime.parse(mpPaymentResponseDTO.date_created(), DateTimeFormatter.ISO_DATE_TIME)
-                .atZoneSameInstant(ZoneOffset.UTC)
-                .toLocalDateTime(),
+            DateConvertir.toDateTimeFormatter(mpPaymentResponseDTO.date_created(), DateTimeFormatter.ISO_DATE_TIME),
             mpPaymentResponseDTO.point_of_interaction().transaction_data().subscription_id()
         );
     }

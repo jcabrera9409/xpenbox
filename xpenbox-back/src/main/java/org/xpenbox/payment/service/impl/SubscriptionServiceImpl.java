@@ -1,9 +1,9 @@
 package org.xpenbox.payment.service.impl;
 
-import java.time.LocalDateTime;
-
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
+import org.xpenbox.common.DateConvertir;
+import org.xpenbox.enforcement.service.IPlanSnapshotService;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.ForbiddenException;
 import org.xpenbox.payment.dto.PreApprovalSubscriptionRequestDTO;
@@ -44,6 +44,7 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
     private final PaymentProviderFactory paymentProviderFactory;
     private final ProviderMapper providerMapper;
     private final SubscriptionMapper subscriptionMapper;
+    private final IPlanSnapshotService planSnapshotService;
 
     public SubscriptionServiceImpl(
         UserRepository userRepository,
@@ -51,7 +52,8 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
         SubscriptionRepository subscriptionRepository,
         PaymentProviderFactory paymentProviderFactory,
         ProviderMapper providerMapper,
-        SubscriptionMapper subscriptionMapper
+        SubscriptionMapper subscriptionMapper,
+        IPlanSnapshotService planSnapshotService
     ) {
         this.userRepository = userRepository;
         this.planRepository = planRepository;
@@ -59,6 +61,7 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
         this.paymentProviderFactory = paymentProviderFactory;
         this.providerMapper = providerMapper;
         this.subscriptionMapper = subscriptionMapper;
+        this.planSnapshotService = planSnapshotService;
     }
 
     @Override
@@ -124,6 +127,8 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
         }
         
         cancelExistingSubscription(activeSubscription);
+        planSnapshotService.clearPlanSnapshotByEmail(userEmail);
+        LOG.infof("Active subscription cancelled successfully for user with email: %s", userEmail);
     }
 
     /**
@@ -232,7 +237,7 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
      * @return true if the pending subscription is either expired or has a different provider than the specified provider type, false otherwise.
      */
     private boolean isPendingSubscriptionExpiredOrDifferentProvider(Subscription subscription, PaymentProviderType providerType) {
-        return subscription.getStartDate().plusHours(subscriptionPendingPaymentGracePeriodHours).isBefore(LocalDateTime.now()) 
+        return subscription.getStartDate().plusHours(subscriptionPendingPaymentGracePeriodHours).isBefore(DateConvertir.currentLocalDateTime()) 
                 || !subscription.getProvider().equals(providerType.name());
     }
 

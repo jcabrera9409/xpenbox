@@ -1,8 +1,6 @@
 package org.xpenbox.account.service.impl;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.jboss.logging.Logger;
@@ -14,6 +12,7 @@ import org.xpenbox.account.entity.Account;
 import org.xpenbox.account.mapper.AccountMapper;
 import org.xpenbox.account.repository.AccountRepository;
 import org.xpenbox.account.service.IAccountService;
+import org.xpenbox.common.DateConvertir;
 import org.xpenbox.common.service.impl.GenericServiceImpl;
 import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
 import org.xpenbox.enforcement.service.IPlanSnapshotService;
@@ -140,7 +139,7 @@ public class AccountServiceImpl extends GenericServiceImpl<Account, AccountCreat
                 accountToDeactivate.getBalance(), 
                 null, 
                 null, 
-                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), 
+                DateConvertir.currentTimestamp(), 
                 null, 
                 null, 
                 accountToDeactivate.getResourceCode(), 
@@ -151,7 +150,7 @@ public class AccountServiceImpl extends GenericServiceImpl<Account, AccountCreat
             transactionService.create(transactionCreateDTO, userEmail);
         }
 
-        accountToDeactivate.setClosingDate(LocalDateTime.now());
+        accountToDeactivate.setClosingDate(DateConvertir.currentLocalDateTime());
         accountToDeactivate.setState(false);
 
         accountRepository.persist(accountToDeactivate);
