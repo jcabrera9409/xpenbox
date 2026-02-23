@@ -11,6 +11,8 @@ import { IncomeEditionModal } from '../../modal/income/income-edition-modal/inco
 import { CreditcardPaymentModal } from '../../modal/account/creditcard-payment-modal/creditcard-payment.modal';
 import { TransferModal } from '../../modal/account/transfer-modal/transfer.modal';
 import { ReceiptModal } from '../../modal/common/receipt-modal/receipt.modal';
+import { SubscriptionService } from '../../feature/subscription/service/subscription.service';
+import { subscriptionState } from '../../feature/subscription/service/subscription.state';
 
 @Component({
   selector: 'app-landing-page',
@@ -26,15 +28,22 @@ export class LandingPage implements OnInit {
   showQuickCreditCardPaymentModal = signal(false);
 
   private userState = userState;
+  private subscriptionState = subscriptionState;
   private platformId = inject(PLATFORM_ID);
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private subscriptionService: SubscriptionService
   ) {}
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId) && !this.userState.userLogged()) {
-      this.userService.loadUserLoggedIn();
+    if (isPlatformBrowser(this.platformId)) {
+      if (!this.userState.userLogged()) {
+        this.userService.loadUserLoggedIn();
+      }
+      if(!this.subscriptionState.subscription()) {
+        this.subscriptionService.loadUserSubscription();
+      }
     }
   }
 
