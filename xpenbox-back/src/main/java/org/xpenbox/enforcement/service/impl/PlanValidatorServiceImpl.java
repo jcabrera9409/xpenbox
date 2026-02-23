@@ -1,6 +1,7 @@
 package org.xpenbox.enforcement.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.function.Supplier;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.common.DateFunctions;
@@ -12,7 +13,6 @@ import org.xpenbox.exception.PlanException;
 import org.xpenbox.payment.dto.PlanFeatureResponseDTO;
 import org.xpenbox.payment.enums.FeatureCodeEnum;
 import org.xpenbox.transaction.dto.TransactionFilterDTO;
-import org.xpenbox.transaction.entity.Transaction.TransactionType;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -31,92 +31,32 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
 
     @Override
     public void validateCanCreateAccounts(SnapshotPlanDTO snapshot) {
-        FeatureCodeEnum featureCode = FeatureCodeEnum.ACCOUNTS_LIMIT;
-        PlanFeatureResponseDTO feature = snapshot.plan().features().get(featureCode);
-
-        if (!feature.isEnabled()) {
-            LOG.debugf("Feature %s is not enabled", featureCode);
-            throw new PlanException(
-                "Your current plan does not allow creating accounts. Please upgrade your plan to access this feature.",
-                featureCode);
-        }
-
-        if (feature.limitValue() == null) {
-            LOG.debugf("Feature %s is enabled but has no limit", featureCode);
-            return;
-        }
-
-        Long limit = feature.limitValue();
-        Long currentUsage = planUsageService.countUserAccounts(snapshot.userId());
-
-        if (currentUsage >= limit) {
-            LOG.debugf("User %d has reached the accounts limit: %d/%d", snapshot.userId(), currentUsage, limit);
-            throw new PlanException(
-                String.format("You have reached the maximum number of accounts allowed by your current plan (%d/%d). Please upgrade your plan to create more accounts.", currentUsage, limit),
-                featureCode,
-                limit,
-                currentUsage);
-        }
+        validateResourceLimit(
+            snapshot,
+            FeatureCodeEnum.ACCOUNTS_LIMIT,
+            "accounts",
+            () -> planUsageService.countUserAccounts(snapshot.userId())
+        );
     }
 
     @Override
     public void validateCanCreateCreditCards(SnapshotPlanDTO snapshot) {
-        FeatureCodeEnum featureCode = FeatureCodeEnum.CREDIT_CARDS_LIMIT;
-        PlanFeatureResponseDTO feature = snapshot.plan().features().get(featureCode);
-
-        if (!feature.isEnabled()) {
-            LOG.debugf("Feature %s is not enabled", featureCode);
-            throw new PlanException(
-                "Your current plan does not allow creating credit cards. Please upgrade your plan to access this feature.",
-                featureCode);
-        }
-
-        if (feature.limitValue() == null) {
-            LOG.debugf("Feature %s is enabled but has no limit", featureCode);
-            return;
-        }
-
-        Long limit = feature.limitValue();
-        Long currentUsage = planUsageService.countUserCreditCards(snapshot.userId());
-
-        if (currentUsage >= limit) {
-            LOG.debugf("User %d has reached the credit cards limit: %d/%d", snapshot.userId(), currentUsage, limit);
-            throw new PlanException(
-                String.format("You have reached the maximum number of credit cards allowed by your current plan (%d/%d). Please upgrade your plan to create more credit cards.", currentUsage, limit),
-                featureCode,
-                limit,
-                currentUsage);
-        }
+        validateResourceLimit(
+            snapshot,
+            FeatureCodeEnum.CREDIT_CARDS_LIMIT,
+            "credit cards",
+            () -> planUsageService.countUserCreditCards(snapshot.userId())
+        );
     }
 
     @Override
     public void validateCanCreateCategories(SnapshotPlanDTO snapshot) {
-        FeatureCodeEnum featureCode = FeatureCodeEnum.CATEGORIES_LIMIT;
-        PlanFeatureResponseDTO feature = snapshot.plan().features().get(featureCode);
-
-        if (!feature.isEnabled()) {
-            LOG.debugf("Feature %s is not enabled", featureCode);
-            throw new PlanException(
-                "Your current plan does not allow creating categories. Please upgrade your plan to access this feature.",
-                featureCode);
-        }
-
-        if (feature.limitValue() == null) {
-            LOG.debugf("Feature %s is enabled but has no limit", featureCode);
-            return;
-        }
-
-        Long limit = feature.limitValue();
-        Long currentUsage = planUsageService.countUserCategories(snapshot.userId());
-
-        if (currentUsage >= limit) {
-            LOG.debugf("User %d has reached the categories limit: %d/%d", snapshot.userId(), currentUsage, limit);
-            throw new PlanException(
-                String.format("You have reached the maximum number of categories allowed by your current plan (%d/%d). Please upgrade your plan to create more categories.", currentUsage, limit),
-                featureCode,
-                limit,
-                currentUsage);
-        }
+        validateResourceLimit(
+            snapshot,
+            FeatureCodeEnum.CATEGORIES_LIMIT,
+            "categories",
+            () -> planUsageService.countUserCategories(snapshot.userId())
+        );
     }
 
     @Override
@@ -134,13 +74,159 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
 
     @Override
     public void validateCanCreateTransactions(SnapshotPlanDTO snapshot) {
-        FeatureCodeEnum featureCode = FeatureCodeEnum.TRANSACTIONS_LIMIT;
-        PlanFeatureResponseDTO feature = snapshot.plan().features().get(featureCode);
+        validateResourceLimit(
+            snapshot,
+            FeatureCodeEnum.TRANSACTIONS_LIMIT,
+            "transactions",
+            () -> planUsageService.countUserTransactionsInCurrentPeriod(snapshot.userId())
+        );
+    }
+    
+    @Override
+    public TransactionFilterDTO validateTransactionFilterDTO(SnapshotPlanDTO snapshot, TransactionFilterDTO filter) {
+        PlanFeatureResponseDTO historyFeature = snapshot.plan().features().get(FeatureCodeEnum.TRANSACTION_HISTORY_MONTHS);
+        PlanFeatureResponseDTO advancedSearchFeature = snapshot.plan().features().get(FeatureCodeEnum.ADVANCED_TRANSACTION_SEARCH);
+
+        if (historyFeature.limitValue() == null && advancedSearchFeature.isEnabled()) {
+            LOG.debugf("User %d has access to advanced transaction filters and no limit on transaction history months", snapshot.userId());
+            return filter;
+        }
+
+        TransactionFilterDTO sanitizedFilter = sanitizeAdvancedFilters(snapshot.userId(), filter, advancedSearchFeature);
+        return adjustDateRangeToHistoryLimit(snapshot.userId(), sanitizedFilter, historyFeature);
+    }
+
+    /**
+     * Removes advanced filter fields if the user doesn't have access to advanced transaction search.
+     * @param userId The ID of the user
+     * @param filter The original transaction filter DTO
+     * @param advancedSearchFeature The plan feature response DTO for advanced transaction search
+     * @return The sanitized transaction filter DTO
+     */
+    private TransactionFilterDTO sanitizeAdvancedFilters(
+            Long userId,
+            TransactionFilterDTO filter,
+            PlanFeatureResponseDTO advancedSearchFeature) {
         
-        if(!feature.isEnabled()) {
+        if (advancedSearchFeature.isEnabled()) {
+            return filter;
+        }
+
+        LOG.debugf("User %d does not have access to advanced transaction filters, removing advanced filters", userId);
+        
+        return new TransactionFilterDTO(
+            filter.resourceCode(),
+            null,  // transactionType
+            null,  // description
+            filter.transactionDateTimestampFrom(),
+            filter.transactionDateTimestampTo(),
+            null,  // categoryResourceCode
+            filter.incomeResourceCode(),
+            filter.accountResourceCode(),
+            filter.creditCardResourceCode(),
+            filter.pageNumber(),
+            filter.pageSize()
+        );
+    }
+
+    /**
+     * Adjusts the date range to respect the transaction history limit defined in the user's plan.
+     * @param userId The ID of the user
+     * @param filter The original transaction filter DTO
+     * @param historyFeature The plan feature response DTO for transaction history months
+     * @return The adjusted transaction filter DTO with date range respecting the history limit
+     */
+    private TransactionFilterDTO adjustDateRangeToHistoryLimit(
+            Long userId,
+            TransactionFilterDTO filter,
+            PlanFeatureResponseDTO historyFeature) {
+        
+        if (historyFeature.limitValue() == null) {
+            return filter;
+        }
+
+        Long monthsLimit = historyFeature.limitValue();
+        LocalDateTime now = DateFunctions.toStartDay(DateFunctions.currentLocalDateTime());
+        LocalDateTime limitDate = now.minusMonths(monthsLimit);
+        
+        Long adjustedFrom = adjustFromDate(userId, filter.transactionDateTimestampFrom(), limitDate, monthsLimit);
+        Long adjustedTo = adjustToDate(userId, filter.transactionDateTimestampTo(), limitDate, now, monthsLimit);
+
+        return new TransactionFilterDTO(
+            filter.resourceCode(),
+            filter.transactionType(),
+            filter.description(),
+            adjustedFrom,
+            adjustedTo,
+            filter.categoryResourceCode(),
+            filter.incomeResourceCode(),
+            filter.accountResourceCode(),
+            filter.creditCardResourceCode(),
+            filter.pageNumber(),
+            filter.pageSize()
+        );
+    }
+
+    /**
+     * Adjusts the "from" date to ensure it does not exceed the transaction history limit.
+     * @param userId The ID of the user
+     * @param fromTimestamp The original "from" timestamp
+     * @param limitDate The earliest allowed date based on the user's plan
+     * @param monthsLimit The number of months allowed by the user's plan
+     * @return The adjusted "from" timestamp
+     */
+    private Long adjustFromDate(Long userId, Long fromTimestamp, LocalDateTime limitDate, Long monthsLimit) {
+        LocalDateTime from = DateFunctions.convertToLocalDateTime(fromTimestamp);
+        
+        if (from == null || from.isBefore(limitDate)) {
+            LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampFrom to %s", userId, monthsLimit, limitDate);
+            return DateFunctions.convertToTimestamp(limitDate);
+        }
+        
+        return fromTimestamp;
+    }
+
+    /**
+     * Adjusts the "to" date to ensure it does not exceed the current date and respects the transaction history limit.
+     * @param userId The ID of the user
+     * @param toTimestamp The original "to" timestamp
+     * @param limitDate The earliest allowed date based on the user's plan
+     * @param now The current date and time
+     * @param monthsLimit The number of months allowed by the user's plan
+     * @return The adjusted "to" timestamp
+
+     */
+    private Long adjustToDate(Long userId, Long toTimestamp, LocalDateTime limitDate, LocalDateTime now, Long monthsLimit) {
+        LocalDateTime to = DateFunctions.convertToLocalDateTime(toTimestamp);
+        
+        if (to == null || to.isBefore(limitDate)) {
+            LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampTo to %s", userId, monthsLimit, limitDate);
+            return DateFunctions.convertToTimestamp(now);
+        }
+        
+        return toTimestamp;
+    }
+
+    /**
+     * Generic method to validate resource limits based on plan features.
+     * 
+     * @param snapshot      The user's plan snapshot
+     * @param featureCode   The feature code to validate
+     * @param resourceName  Human-readable name of the resource (e.g., "accounts", "credit cards")
+     * @param usageCounter  Supplier that returns the current usage count
+     */
+    private void validateResourceLimit(
+            SnapshotPlanDTO snapshot,
+            FeatureCodeEnum featureCode,
+            String resourceName,
+            Supplier<Long> usageCounter) {
+        
+        PlanFeatureResponseDTO feature = snapshot.plan().features().get(featureCode);
+
+        if (!feature.isEnabled()) {
             LOG.debugf("Feature %s is not enabled", featureCode);
             throw new PlanException(
-                "Your current plan does not allow creating transactions. Please upgrade your plan to access this feature.",
+                String.format("Your current plan does not allow creating %s. Please upgrade your plan to access this feature.", resourceName),
                 featureCode);
         }
 
@@ -150,77 +236,18 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
         }
 
         Long limit = feature.limitValue();
-        Long currentUsage = planUsageService.countUserTransactionsInCurrentPeriod(snapshot.userId());
+        Long currentUsage = usageCounter.get();
 
         if (currentUsage >= limit) {
-            LOG.debugf("User %d has reached the transactions limit: %d/%d", snapshot.userId(), currentUsage, limit);
+            LOG.debugf("User %d has reached the %s limit: %d/%d", snapshot.userId(), resourceName, currentUsage, limit);
             throw new PlanException(
-                String.format("You have reached the maximum number of transactions allowed by your current plan for the current period (%d/%d). Please upgrade your plan to create more transactions.", currentUsage, limit),
+                String.format("You have reached the maximum number of %s allowed by your current plan (%d/%d). Please upgrade your plan to create more %s.", 
+                    resourceName, currentUsage, limit, resourceName),
                 featureCode,
                 limit,
                 currentUsage);
-        } 
+        }
         
-        LOG.debugf("User %d has not reached the transactions limit: %d/%d", snapshot.userId(), currentUsage, limit);
-    }
-    
-    @Override
-    public TransactionFilterDTO validateTransactionFilterDTO(SnapshotPlanDTO snapshot, TransactionFilterDTO transactionFilterDTO) {
-        FeatureCodeEnum transactionHistoryMonths = FeatureCodeEnum.TRANSACTION_HISTORY_MONTHS;
-        FeatureCodeEnum advancedTransactionSearch = FeatureCodeEnum.ADVANCED_TRANSACTION_SEARCH;
-
-        PlanFeatureResponseDTO featureTransactionHistoryMonths = snapshot.plan().features().get(transactionHistoryMonths);
-        PlanFeatureResponseDTO featureAdvancedTransactionSearch = snapshot.plan().features().get(advancedTransactionSearch);
-
-        if (featureTransactionHistoryMonths.limitValue() == null && featureAdvancedTransactionSearch.isEnabled()) {
-            LOG.debugf("User %d has access to advanced transaction filters and no limit on transaction history months", snapshot.userId());
-            return transactionFilterDTO;
-        }
-
-        TransactionType transactionType = transactionFilterDTO.transactionType();
-        String description = transactionFilterDTO.description();
-        Long transactionDateTimestampFrom = transactionFilterDTO.transactionDateTimestampFrom();
-        Long transactionDateTimestampTo = transactionFilterDTO.transactionDateTimestampTo();
-        String categoryResourceCode = transactionFilterDTO.categoryResourceCode();
-
-        if (!featureAdvancedTransactionSearch.isEnabled()) {
-            LOG.debugf("User %d does not have access to advanced transaction filters, removing advanced filters from TransactionFilterDTO", snapshot.userId());
-            transactionType = null;
-            description = null;
-            categoryResourceCode = null;
-        }
-
-        if (featureTransactionHistoryMonths.limitValue() != null) {
-            Long monthsLimit = featureTransactionHistoryMonths.limitValue();
-            LocalDateTime now = DateFunctions.toStartDay(DateFunctions.currentLocalDateTime());
-            LocalDateTime limitDate = now.minusMonths(monthsLimit);
-            LocalDateTime from = DateFunctions.convertToLocalDateTime(transactionFilterDTO.transactionDateTimestampFrom());
-            LocalDateTime to = DateFunctions.convertToLocalDateTime(transactionFilterDTO.transactionDateTimestampTo());
-
-            if (from == null || from.isBefore(limitDate)) {
-                LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampFrom to %s", snapshot.userId(), monthsLimit, limitDate);
-                transactionDateTimestampFrom = DateFunctions.convertToTimestamp(limitDate);
-            }
-
-            if (to == null || to.isBefore(limitDate)) {
-                LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampTo to %s", snapshot.userId(), monthsLimit, limitDate);
-                transactionDateTimestampTo = DateFunctions.convertToTimestamp(now);
-            }
-            
-        }
-
-        return new TransactionFilterDTO(
-            transactionFilterDTO.resourceCode(),
-            transactionType,
-            description,
-            transactionDateTimestampFrom,
-            transactionDateTimestampTo,
-            categoryResourceCode,
-            transactionFilterDTO.incomeResourceCode(),
-            transactionFilterDTO.accountResourceCode(),
-            transactionFilterDTO.creditCardResourceCode(),
-            transactionFilterDTO.pageNumber(),
-            transactionFilterDTO.pageSize()
-        );
+        LOG.debugf("User %d has not reached the %s limit: %d/%d", snapshot.userId(), resourceName, currentUsage, limit);
     }
 }
