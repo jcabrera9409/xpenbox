@@ -12,7 +12,7 @@ import org.xpenbox.account.entity.Account;
 import org.xpenbox.account.mapper.AccountMapper;
 import org.xpenbox.account.repository.AccountRepository;
 import org.xpenbox.account.service.IAccountService;
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.common.service.impl.GenericServiceImpl;
 import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
 import org.xpenbox.enforcement.service.IPlanSnapshotService;
@@ -139,7 +139,7 @@ public class AccountServiceImpl extends GenericServiceImpl<Account, AccountCreat
                 accountToDeactivate.getBalance(), 
                 null, 
                 null, 
-                DateConvertir.currentTimestamp(), 
+                DateFunctions.currentTimestamp(), 
                 null, 
                 null, 
                 accountToDeactivate.getResourceCode(), 
@@ -150,7 +150,7 @@ public class AccountServiceImpl extends GenericServiceImpl<Account, AccountCreat
             transactionService.create(transactionCreateDTO, userEmail);
         }
 
-        accountToDeactivate.setClosingDate(DateConvertir.currentLocalDateTime());
+        accountToDeactivate.setClosingDate(DateFunctions.currentLocalDateTime());
         accountToDeactivate.setState(false);
 
         accountRepository.persist(accountToDeactivate);

@@ -49,7 +49,7 @@ public class ResourceCode {
     private static String generateResourceCode(ResourceType resourceType) {
         LOG.debug("Generating token resource code");
 
-        String timestamp = DateConvertir.currentLocalDateTime().format(DATE_FORMATTER);
+        String timestamp = DateFunctions.currentLocalDateTime().format(DATE_FORMATTER);
         String uuid = UUID.randomUUID().toString();
 
         return String.format("%s:%s:%s:%s", 

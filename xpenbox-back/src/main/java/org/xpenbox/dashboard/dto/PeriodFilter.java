@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.exception.BadRequestException;
 
 /**
@@ -24,25 +24,25 @@ public enum PeriodFilter {
      * @return a map containing the "from" and "to" LocalDateTime values for the specified period filter
      */
     public static Map<String, LocalDateTime> getDateRange(PeriodFilter filter) {
-        LocalDate now = DateConvertir.currentLocalDateTime().toLocalDate();
+        LocalDate now = DateFunctions.currentLocalDateTime().toLocalDate();
         switch (filter) {
             case CURRENT_MONTH:
-                return Map.of("from", DateConvertir.toFirstDayOfMonth(now), "to", DateConvertir.toEndDay(now));
+                return Map.of("from", DateFunctions.toFirstDayOfMonth(now), "to", DateFunctions.toEndDay(now));
             case LAST_MONTH:
-                LocalDateTime lastMonthStart = DateConvertir.toFirstDayOfMonth(now.minusMonths(1));
-                LocalDateTime lastMonthEnd = DateConvertir.toLastDayOfMonth(now.minusMonths(1));
+                LocalDateTime lastMonthStart = DateFunctions.toFirstDayOfMonth(now.minusMonths(1));
+                LocalDateTime lastMonthEnd = DateFunctions.toLastDayOfMonth(now.minusMonths(1));
                 return Map.of("from", lastMonthStart, "to", lastMonthEnd);
             case LAST_3_MONTHS:
-                LocalDateTime threeMonthsAgo = DateConvertir.toFirstDayOfMonth(now.minusMonths(3));
-                return Map.of("from", threeMonthsAgo, "to", DateConvertir.toEndDay(now));
+                LocalDateTime threeMonthsAgo = DateFunctions.toFirstDayOfMonth(now.minusMonths(3));
+                return Map.of("from", threeMonthsAgo, "to", DateFunctions.toEndDay(now));
             case LAST_6_MONTHS:
-                LocalDateTime sixMonthsAgo = DateConvertir.toFirstDayOfMonth(now.minusMonths(6));
-                return Map.of("from", sixMonthsAgo, "to", DateConvertir.toEndDay(now));
+                LocalDateTime sixMonthsAgo = DateFunctions.toFirstDayOfMonth(now.minusMonths(6));
+                return Map.of("from", sixMonthsAgo, "to", DateFunctions.toEndDay(now));
             case CURRENT_YEAR:
-                return Map.of("from", DateConvertir.toFirstDayOfYear(now), "to", DateConvertir.toEndDay(now));
+                return Map.of("from", DateFunctions.toFirstDayOfYear(now), "to", DateFunctions.toEndDay(now));
             case LAST_YEAR:
-                LocalDateTime lastYearStart = DateConvertir.toFirstDayOfYear(now.minusYears(1));
-                LocalDateTime lastYearEnd = DateConvertir.toLastDayOfYear(now.minusYears(1));
+                LocalDateTime lastYearStart = DateFunctions.toFirstDayOfYear(now.minusYears(1));
+                LocalDateTime lastYearEnd = DateFunctions.toLastDayOfYear(now.minusYears(1));
                 return Map.of("from", lastYearStart, "to", lastYearEnd);
             default:
                 throw new BadRequestException("Unknown period filter: " + filter);

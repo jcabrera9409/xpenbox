@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.common.repository.GenericRepository;
 import org.xpenbox.transaction.dto.TransactionFilterDTO;
 import org.xpenbox.transaction.entity.Transaction;
@@ -172,8 +172,8 @@ public class TransactionRepository extends GenericRepository<Transaction> {
         }
 
         if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
-            LocalDateTime from = DateConvertir.convertToLocalDateTime(filterDTO.transactionDateTimestampFrom());
-            LocalDateTime to = DateConvertir.convertToLocalDateTime(filterDTO.transactionDateTimestampTo());
+            LocalDateTime from = DateFunctions.convertToLocalDateTime(filterDTO.transactionDateTimestampFrom());
+            LocalDateTime to = DateFunctions.convertToLocalDateTime(filterDTO.transactionDateTimestampTo());
             params.and("transactionDateFrom", from);
             params.and("transactionDateTo", to);
         }
@@ -346,8 +346,8 @@ public class TransactionRepository extends GenericRepository<Transaction> {
             query.setParameter("description", filterDTO.description());
         }
         if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
-            LocalDateTime from = DateConvertir.convertToLocalDateTime(filterDTO.transactionDateTimestampFrom());
-            LocalDateTime to = DateConvertir.convertToLocalDateTime(filterDTO.transactionDateTimestampTo());
+            LocalDateTime from = DateFunctions.convertToLocalDateTime(filterDTO.transactionDateTimestampFrom());
+            LocalDateTime to = DateFunctions.convertToLocalDateTime(filterDTO.transactionDateTimestampTo());
             query.setParameter("transactionDateFrom", from);
             query.setParameter("transactionDateTo", to);
         }

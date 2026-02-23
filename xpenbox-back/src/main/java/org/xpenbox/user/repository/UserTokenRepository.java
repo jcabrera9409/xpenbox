@@ -3,7 +3,7 @@ package org.xpenbox.user.repository;
 import java.util.Optional;
 
 import org.jboss.logging.Logger;
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.user.entity.UserToken;
 import org.xpenbox.user.entity.UserToken.UserTokenType;
 
@@ -26,7 +26,7 @@ public class UserTokenRepository implements PanacheRepository<UserToken> {
         return find("user.id = :userId and tokenType = :tokenType and expiresAt > :now", 
             Parameters.with("userId", userId)
                     .and("tokenType", tokenType)
-                    .and("now", DateConvertir.currentLocalDateTime()))
+                    .and("now", DateFunctions.currentLocalDateTime()))
             .firstResult();
     }
 

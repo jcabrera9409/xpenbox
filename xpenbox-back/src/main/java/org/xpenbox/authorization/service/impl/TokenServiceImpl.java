@@ -9,7 +9,7 @@ import org.xpenbox.authorization.entity.Token;
 import org.xpenbox.authorization.mapper.TokenMapper;
 import org.xpenbox.authorization.repository.TokenRepository;
 import org.xpenbox.authorization.service.ITokenService;
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.common.ResourceCode;
 import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.user.entity.User;
@@ -56,7 +56,7 @@ public class TokenServiceImpl implements ITokenService {
         token.setResourceCode(ResourceCode.generateTokenResourceCode());
         token.setUser(user);
         token.setPersistentSession(rememberMe);
-        token.setRefreshTokenExpiresAt(DateConvertir.currentLocalDateTime().plusSeconds(
+        token.setRefreshTokenExpiresAt(DateFunctions.currentLocalDateTime().plusSeconds(
             rememberMe ? refreshExpirationMaxTime : refreshExpirationMinTime
         ));
         
@@ -76,7 +76,7 @@ public class TokenServiceImpl implements ITokenService {
         Token token = tokenRepository.findValidRefreshToken(refreshToken)
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid or expired refresh token"));
         
-        if (DateConvertir.currentLocalDateTime().isAfter(token.getRefreshTokenExpiresAt())) {
+        if (DateFunctions.currentLocalDateTime().isAfter(token.getRefreshTokenExpiresAt())) {
             LOG.warnf("Refresh token expired for email: %s", token.getUser().getEmail());
             throw new UnauthorizedException("Refresh token has expired");
         }
@@ -110,9 +110,9 @@ public class TokenServiceImpl implements ITokenService {
         String refreshToken = UUID.randomUUID().toString();
         token.setAccessToken(accessToken);
         token.setRefreshToken(refreshToken);
-        token.setIssuedAt(DateConvertir.currentLocalDateTime());
-        token.setLastUsedAt(DateConvertir.currentLocalDateTime());
-        token.setAccessTokenExpiresAt(DateConvertir.currentLocalDateTime().plusSeconds(expirationTime));
+        token.setIssuedAt(DateFunctions.currentLocalDateTime());
+        token.setLastUsedAt(DateFunctions.currentLocalDateTime());
+        token.setAccessTokenExpiresAt(DateFunctions.currentLocalDateTime().plusSeconds(expirationTime));
         
         return token;
     }

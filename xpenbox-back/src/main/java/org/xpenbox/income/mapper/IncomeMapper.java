@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.logging.Logger;
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.common.ResourceCode;
 import org.xpenbox.common.mapper.GenericMapper;
 import org.xpenbox.income.dto.IncomeCreateDTO;
@@ -34,7 +34,7 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
         IncomeResponseDTO dto = new IncomeResponseDTO(
             entity.getResourceCode(),
             entity.getConcept(),
-            DateConvertir.convertToTimestamp(entity.getIncomeDate()),
+            DateFunctions.convertToTimestamp(entity.getIncomeDate()),
             entity.getTotalAmount(),
             BigDecimal.ZERO
         );
@@ -52,7 +52,7 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
         IncomeResponseDTO dto = new IncomeResponseDTO(
             entity.getResourceCode(),
             entity.getConcept(),
-            DateConvertir.convertToTimestamp(entity.getIncomeDate()),
+            DateFunctions.convertToTimestamp(entity.getIncomeDate()),
             entity.getTotalAmount(),
             allocatedAmount
         );
@@ -127,7 +127,7 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
         Income entity = new Income();
         entity.setResourceCode(ResourceCode.generateIncomeResourceCode());
         entity.setConcept(dto.concept());
-        entity.setIncomeDate(DateConvertir.convertToLocalDateTime(dto.incomeDateTimestamp()));
+        entity.setIncomeDate(DateFunctions.convertToLocalDateTime(dto.incomeDateTimestamp()));
         entity.setTotalAmount(dto.totalAmount());
         entity.setUser(user);
         return entity;
@@ -149,9 +149,9 @@ public class IncomeMapper implements GenericMapper<Income, IncomeCreateDTO, Inco
             isUpdated = true;
         }
 
-        Long entityIncomeDateTimestamp = DateConvertir.convertToTimestamp(entity.getIncomeDate());
+        Long entityIncomeDateTimestamp = DateFunctions.convertToTimestamp(entity.getIncomeDate());
         if (updateDto.incomeDateTimestamp() != null && !updateDto.incomeDateTimestamp().equals(entityIncomeDateTimestamp)) {
-            entity.setIncomeDate(DateConvertir.convertToLocalDateTime(updateDto.incomeDateTimestamp()));
+            entity.setIncomeDate(DateFunctions.convertToLocalDateTime(updateDto.incomeDateTimestamp()));
             isUpdated = true;
         }
 

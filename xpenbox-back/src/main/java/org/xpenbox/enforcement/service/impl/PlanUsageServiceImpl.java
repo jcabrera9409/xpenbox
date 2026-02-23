@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import org.jboss.logging.Logger;
 import org.xpenbox.account.repository.AccountRepository;
 import org.xpenbox.category.repository.CategoryRepository;
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.creditcard.repository.CreditCardRepository;
 import org.xpenbox.enforcement.service.IPlanUsageService;
 import org.xpenbox.transaction.repository.TransactionRepository;
@@ -57,9 +57,9 @@ public class PlanUsageServiceImpl implements IPlanUsageService {
     @Override
     public Long countUserTransactionsInCurrentPeriod(Long userId) {
         LOG.debugf("Counting user transactions in current period for userId: %d", userId);
-        LocalDateTime currentDate = DateConvertir.currentLocalDateTime();
-        LocalDateTime firstDay = DateConvertir.toFirstDayOfMonth(currentDate); 
-        LocalDateTime lastDay = DateConvertir.toLastDayOfMonth(currentDate);
+        LocalDateTime currentDate = DateFunctions.currentLocalDateTime();
+        LocalDateTime firstDay = DateFunctions.toFirstDayOfMonth(currentDate); 
+        LocalDateTime lastDay = DateFunctions.toLastDayOfMonth(currentDate);
         return transactionRepository.countByUserIdAndPeriodRange(userId, firstDay, lastDay);
     }
 

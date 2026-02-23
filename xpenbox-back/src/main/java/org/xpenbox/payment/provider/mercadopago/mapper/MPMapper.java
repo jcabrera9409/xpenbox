@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.payment.enums.PaymentProviderType;
 import org.xpenbox.payment.provider.dto.ProviderPaymentResponseDTO;
 import org.xpenbox.payment.provider.dto.ProviderSubscriptionRequestDTO;
@@ -65,7 +65,7 @@ public class MPMapper {
 
         LocalDateTime dateApproved = null;
         if (mpPaymentResponseDTO.date_approved() != null) {
-            dateApproved = DateConvertir.toDateTimeFormatter(mpPaymentResponseDTO.date_approved(), DateTimeFormatter.ISO_DATE_TIME);
+            dateApproved = DateFunctions.toDateTimeFormatter(mpPaymentResponseDTO.date_approved(), DateTimeFormatter.ISO_DATE_TIME);
         }
 
         return new ProviderPaymentResponseDTO(
@@ -75,7 +75,7 @@ public class MPMapper {
             mpPaymentResponseDTO.status(),
             mpPaymentResponseDTO.currency_id(),
             dateApproved,
-            DateConvertir.toDateTimeFormatter(mpPaymentResponseDTO.date_created(), DateTimeFormatter.ISO_DATE_TIME),
+            DateFunctions.toDateTimeFormatter(mpPaymentResponseDTO.date_created(), DateTimeFormatter.ISO_DATE_TIME),
             mpPaymentResponseDTO.point_of_interaction().transaction_data().subscription_id()
         );
     }

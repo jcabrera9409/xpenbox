@@ -13,8 +13,8 @@ import org.jboss.logging.Logger;
 /**
  * Utility class for date conversion.
  */
-public class DateConvertir {
-    private static final Logger LOG = Logger.getLogger(DateConvertir.class);
+public class DateFunctions {
+    private static final Logger LOG = Logger.getLogger(DateFunctions.class);
 
     /**
      * Converts a LocalDateTime to a timestamp in milliseconds.

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.enforcement.service.IPlanSnapshotService;
 import org.xpenbox.payment.entity.Plan;
 import org.xpenbox.payment.entity.Subscription;
@@ -62,7 +62,7 @@ public class SubscriptionScheduler {
             .orElseThrow(() -> new IllegalStateException("Pro plan not found with resource code: " + planProResourceCode));
         
         List<Subscription> subscriptionActiveProPlan = subscriptionRepository.findAllSubscriptionsByStatusAndPlanIdAndBeforeEndDate(
-            SubscriptionStatus.ACTIVE, proPlan.id, DateConvertir.currentLocalDateTime());
+            SubscriptionStatus.ACTIVE, proPlan.id, DateFunctions.currentLocalDateTime());
         
         LOG.infof("Found %d active subscriptions for Pro plan", subscriptionActiveProPlan.size());
         for (Subscription subscription : subscriptionActiveProPlan) {
@@ -107,7 +107,7 @@ public class SubscriptionScheduler {
      * @return true if the subscription has expired (i.e., its end date is before the current date and time), or false if it is still active (i.e., its end date is in the future)
      */
     boolean isSubscriptionExpired(Subscription subscription) {
-        return subscription.getEndDate().isBefore(DateConvertir.currentLocalDateTime());
+        return subscription.getEndDate().isBefore(DateFunctions.currentLocalDateTime());
     }
 
     /**

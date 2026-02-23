@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.jboss.logging.Logger;
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.common.mapper.GenericMapper;
 import org.xpenbox.common.service.impl.GenericServiceImpl;
 import org.xpenbox.creditcard.dto.CreditCardCreateDTO;
@@ -143,7 +143,7 @@ public class CreditCardServiceImpl extends GenericServiceImpl<CreditCard, Credit
                 creditCard.getCurrentBalance(), 
                 null, 
                 null, 
-                DateConvertir.currentTimestamp(), 
+                DateFunctions.currentTimestamp(), 
                 null, 
                 null,
                 creditCardDeactivateRequestDTO.accountResourceCode(),
@@ -154,7 +154,7 @@ public class CreditCardServiceImpl extends GenericServiceImpl<CreditCard, Credit
             transactionService.create(transactionCreateDTO, userEmail);
         }
 
-        creditCard.setClosingDate(DateConvertir.currentLocalDateTime());
+        creditCard.setClosingDate(DateFunctions.currentLocalDateTime());
         creditCard.setState(false);
 
         creditCardRepository.persist(creditCard);

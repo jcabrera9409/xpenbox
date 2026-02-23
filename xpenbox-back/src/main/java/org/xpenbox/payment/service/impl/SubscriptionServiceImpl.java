@@ -2,7 +2,7 @@ package org.xpenbox.payment.service.impl;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.enforcement.service.IPlanSnapshotService;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.ForbiddenException;
@@ -237,7 +237,7 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
      * @return true if the pending subscription is either expired or has a different provider than the specified provider type, false otherwise.
      */
     private boolean isPendingSubscriptionExpiredOrDifferentProvider(Subscription subscription, PaymentProviderType providerType) {
-        return subscription.getStartDate().plusHours(subscriptionPendingPaymentGracePeriodHours).isBefore(DateConvertir.currentLocalDateTime()) 
+        return subscription.getStartDate().plusHours(subscriptionPendingPaymentGracePeriodHours).isBefore(DateFunctions.currentLocalDateTime()) 
                 || !subscription.getProvider().equals(providerType.name());
     }
 

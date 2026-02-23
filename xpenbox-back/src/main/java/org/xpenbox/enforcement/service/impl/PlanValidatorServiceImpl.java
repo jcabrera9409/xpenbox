@@ -3,7 +3,7 @@ package org.xpenbox.enforcement.service.impl;
 import java.time.LocalDateTime;
 
 import org.jboss.logging.Logger;
-import org.xpenbox.common.DateConvertir;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.dashboard.dto.PeriodFilter;
 import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
 import org.xpenbox.enforcement.service.IPlanValidatorService;
@@ -192,19 +192,19 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
 
         if (featureTransactionHistoryMonths.limitValue() != null) {
             Long monthsLimit = featureTransactionHistoryMonths.limitValue();
-            LocalDateTime now = DateConvertir.toStartDay(DateConvertir.currentLocalDateTime());
+            LocalDateTime now = DateFunctions.toStartDay(DateFunctions.currentLocalDateTime());
             LocalDateTime limitDate = now.minusMonths(monthsLimit);
-            LocalDateTime from = DateConvertir.convertToLocalDateTime(transactionFilterDTO.transactionDateTimestampFrom());
-            LocalDateTime to = DateConvertir.convertToLocalDateTime(transactionFilterDTO.transactionDateTimestampTo());
+            LocalDateTime from = DateFunctions.convertToLocalDateTime(transactionFilterDTO.transactionDateTimestampFrom());
+            LocalDateTime to = DateFunctions.convertToLocalDateTime(transactionFilterDTO.transactionDateTimestampTo());
 
             if (from == null || from.isBefore(limitDate)) {
                 LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampFrom to %s", snapshot.userId(), monthsLimit, limitDate);
-                transactionDateTimestampFrom = DateConvertir.convertToTimestamp(limitDate);
+                transactionDateTimestampFrom = DateFunctions.convertToTimestamp(limitDate);
             }
 
             if (to == null || to.isBefore(limitDate)) {
                 LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampTo to %s", snapshot.userId(), monthsLimit, limitDate);
-                transactionDateTimestampTo = DateConvertir.convertToTimestamp(now);
+                transactionDateTimestampTo = DateFunctions.convertToTimestamp(now);
             }
             
         }
