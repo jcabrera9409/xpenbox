@@ -7,7 +7,7 @@ export interface PlanResponseDTO {
     price: number;
     currency: string;
     billingCycle: BillingCycle;
-    features: Map<FeatureCodeEnum, PlanFeatureResponseDTO>;
+    features: Record<FeatureCodeEnum, PlanFeatureResponseDTO>;
 }
 
 export enum BillingCycle {

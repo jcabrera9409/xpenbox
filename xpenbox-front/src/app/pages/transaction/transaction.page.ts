@@ -21,11 +21,12 @@ import { userState } from '../../feature/user/service/user.state';
 import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
 import { genericState } from '../../feature/common/service/generic.state';
 import { TransactionDetailModal } from '../../modal/transaction/transaction-detail-modal/transaction-detail.modal';
+import { UpgradeProModal } from '../../modal/subscription/upgrade-pro-modal/upgrade-pro.modal';
 
 @Component({
   selector: 'app-transaction-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent, TransactionEditionModal, ConfirmModal, TransactionDetailModal],
+  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent, TransactionEditionModal, ConfirmModal, TransactionDetailModal, UpgradeProModal],
   templateUrl: './transaction.page.html',
   styleUrl: './transaction.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -119,7 +120,7 @@ export class TransactionPage {
     this.transactionState.errorFilteredList.set(null);
 
     this.transactionService.filterTransactions(filter).subscribe({
-      next: (response: ApiResponseDTO<PageableResponseDTO<TransactionResponseDTO>>) => {
+      next: (response: ApiResponseDTO<PageableResponseDTO<TransactionResponseDTO, TransactionFilterRequestDTO>>) => {
         this.transactionState.isLoadingFilteredList.set(false);
         if (response.data && response.data.content) {
           const currentContent = this.accumulatedTransactions();
@@ -135,7 +136,6 @@ export class TransactionPage {
           this.transactionState.errorFilteredList.set('Error del servidor. Por favor, inténtalo de nuevo.');
         } else {
           this.transactionState.errorFilteredList.set(error.error.message || 'Error cargando las transacciones.');
-
         }
       }
     });

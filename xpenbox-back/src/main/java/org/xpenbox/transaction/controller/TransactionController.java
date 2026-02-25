@@ -97,7 +97,7 @@ public class TransactionController {
         String userEmail = securityContext.getUserPrincipal().getName();
         LOG.infof("Filter transactions request received for user: %s", userEmail);
 
-        APIPageableDTO<TransactionResponseDTO> filteredTransactions = transactionService.filterTransactions(filterDTO, userEmail);
+        APIPageableDTO<TransactionResponseDTO, TransactionFilterDTO> filteredTransactions = transactionService.filterTransactions(filterDTO, userEmail);
         LOG.infof("Filtered transactions retrieved successfully for user: %s", userEmail);
 
         return Response.status(Response.Status.OK).entity(

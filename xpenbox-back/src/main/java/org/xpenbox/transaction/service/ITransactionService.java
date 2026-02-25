@@ -26,5 +26,5 @@ public interface ITransactionService extends IGenericService<Transaction, Transa
      * @param userEmail The email of the user requesting the filtered transactions.
      * @return A pageable DTO containing the filtered transactions.
      */
-    APIPageableDTO<TransactionResponseDTO> filterTransactions(TransactionFilterDTO filterDTO, String userEmail);
+    APIPageableDTO<TransactionResponseDTO, TransactionFilterDTO> filterTransactions(TransactionFilterDTO filterDTO, String userEmail);
 }

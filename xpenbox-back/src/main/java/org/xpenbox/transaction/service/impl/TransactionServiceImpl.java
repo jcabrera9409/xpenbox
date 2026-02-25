@@ -218,7 +218,7 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
      * @return A pageable DTO containing the filtered transactions.
      */
     @Override
-    public APIPageableDTO<TransactionResponseDTO> filterTransactions(TransactionFilterDTO filterDTO, String userEmail) {
+    public APIPageableDTO<TransactionResponseDTO, TransactionFilterDTO> filterTransactions(TransactionFilterDTO filterDTO, String userEmail) {
         LOG.infof("Validating plan limits for user email: %s before creating transaction", userEmail);
         
         SnapshotPlanDTO activePlanSnapshot = planSnapshotService.getPlanSnapshotByEmail(userEmail);

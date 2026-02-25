@@ -1,0 +1,84 @@
+<!-- Overlay with backdrop -->
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
+  <div class="xpb-bg-card md:rounded-xl shadow-2xl md:w-full md:max-w-xl md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">
+    <!-- Header -->
+    <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-4">
+          <!-- Icon container -->
+          <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+            <span class="material-icons text-[var(--xpb-primary)] text-2xl">workspace_premium</span>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-xl font-semibold xpb-text-primary">Desbloquea tu historial completo</h3>
+          </div>
+        </div>
+        <!-- Close button -->
+        <button 
+          type="button"
+          (click)="onClose()"
+          class="xpb-text-secondary hover:xpb-text-primary transition-colors">
+          <span class="material-icons text-2xl">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body content -->
+    <div class="p-6">
+      <!-- Message -->
+      <div class="xpb-bg-main rounded-lg p-4 border xpb-border mb-6">
+        <div class="flex items-start gap-3">
+          <span class="material-icons text-[var(--xpb-primary)] text-2xl">info</span>
+          <div class="flex-1">
+            <p class="xpb-text-primary text-sm leading-relaxed">
+                Tu plan Free solo permite ver transacciones de los últimos 30 días desde hoy.
+                Actualiza a <strong>Pro</strong> y accede a todo tu historial de transacciones.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pro Features -->
+      <div class="space-y-3 mb-6">
+        <h3 class="text-sm font-semibold xpb-text-primary mb-3">Beneficios del Plan Pro:</h3>
+        
+        <div class="flex items-start gap-3">
+          <span class="material-icons text-[var(--xpb-income)] text-xl">check_circle</span>
+          <p class="xpb-text-secondary text-sm flex-1">Transacciones ilimitadas</p>
+        </div>
+        
+        <div class="flex items-start gap-3">
+          <span class="material-icons text-[var(--xpb-income)] text-xl">check_circle</span>
+          <p class="xpb-text-secondary text-sm flex-1">Cuentas y tarjetas sin límite</p>
+        </div>
+        
+        <div class="flex items-start gap-3">
+          <span class="material-icons text-[var(--xpb-income)] text-xl">check_circle</span>
+          <p class="xpb-text-secondary text-sm flex-1">Reportes y análisis avanzados</p>
+        </div>
+      </div>
+
+      <!-- Pricing -->
+      <div class="xpb-bg-sidebar rounded-lg p-4 border-2 border-[var(--xpb-primary)] mb-6">
+        <div class="text-center">
+          <div class="flex items-baseline justify-center gap-1">
+            <span class="text-3xl font-bold text-[var(--xpb-primary)]">$9.99</span>
+            <span class="xpb-text-secondary text-sm">/mes</span>
+          </div>
+          <p class="xpb-text-secondary text-xs mt-1">Cancela cuando quieras</p>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      
+      <!-- Action buttons -->
+        <app-modal-buttons-ui
+            [cancelText]="'Ahora no'"
+            [cancelIcon]="'close'"
+            [isValidForm]="true"
+            [confirmText]="'Actualizar ahora'"
+            [confirmIcon]="'workspace_premium'">
+        </app-modal-buttons-ui>
+    </div>
+  </div>
+</div>

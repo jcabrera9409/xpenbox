@@ -15,6 +15,7 @@ import { RouterLink } from '@angular/router';
 import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../shared/components/retry-component/retry.component';
 import { TooltipUi } from '../../shared/ui/tooltip-ui/tooltip.ui';
+import { EntitlementService } from '../../feature/subscription/service/entitlement.service';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -56,7 +57,8 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
   constructor(
     private dashboardService: DashboardService,
-    private dateService: DateService
+    private dateService: DateService,
+    private entitlementService: EntitlementService
   ) {
     // Registrar Chart.js en el constructor si estamos en el navegador
     if (isPlatformBrowser(this.platformId)) {
@@ -82,6 +84,20 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
   isPeriodSelected(period: PeriodFilterRequestDTO): boolean {
     return this.selectedPeriod() === period;
+  }
+
+  isEnableFeature(period: PeriodFilterRequestDTO): boolean {
+    switch (period) {
+      case PeriodFilterRequestDTO.CURRENT_MONTH:
+      case PeriodFilterRequestDTO.LAST_MONTH:
+        return true;
+      default:
+        if (this.entitlementService.canUseDashboardAvancedFilters()) {
+          return true;
+        };
+        return false;
+    }
+    
   }
 
   ngOnInit(): void {

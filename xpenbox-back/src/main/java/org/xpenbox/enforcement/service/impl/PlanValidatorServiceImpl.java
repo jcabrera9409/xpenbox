@@ -85,48 +85,13 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
     @Override
     public TransactionFilterDTO validateTransactionFilterDTO(SnapshotPlanDTO snapshot, TransactionFilterDTO filter) {
         PlanFeatureResponseDTO historyFeature = snapshot.plan().features().get(FeatureCodeEnum.TRANSACTION_HISTORY_MONTHS);
-        PlanFeatureResponseDTO advancedSearchFeature = snapshot.plan().features().get(FeatureCodeEnum.ADVANCED_TRANSACTION_SEARCH);
 
-        if (historyFeature.limitValue() == null && advancedSearchFeature.isEnabled()) {
+        if (historyFeature.limitValue() == null) {
             LOG.debugf("User %d has access to advanced transaction filters and no limit on transaction history months", snapshot.userId());
             return filter;
         }
 
-        TransactionFilterDTO sanitizedFilter = sanitizeAdvancedFilters(snapshot.userId(), filter, advancedSearchFeature);
-        return adjustDateRangeToHistoryLimit(snapshot.userId(), sanitizedFilter, historyFeature);
-    }
-
-    /**
-     * Removes advanced filter fields if the user doesn't have access to advanced transaction search.
-     * @param userId The ID of the user
-     * @param filter The original transaction filter DTO
-     * @param advancedSearchFeature The plan feature response DTO for advanced transaction search
-     * @return The sanitized transaction filter DTO
-     */
-    private TransactionFilterDTO sanitizeAdvancedFilters(
-            Long userId,
-            TransactionFilterDTO filter,
-            PlanFeatureResponseDTO advancedSearchFeature) {
-        
-        if (advancedSearchFeature.isEnabled()) {
-            return filter;
-        }
-
-        LOG.debugf("User %d does not have access to advanced transaction filters, removing advanced filters", userId);
-        
-        return new TransactionFilterDTO(
-            filter.resourceCode(),
-            null,  // transactionType
-            null,  // description
-            filter.transactionDateTimestampFrom(),
-            filter.transactionDateTimestampTo(),
-            null,  // categoryResourceCode
-            filter.incomeResourceCode(),
-            filter.accountResourceCode(),
-            filter.creditCardResourceCode(),
-            filter.pageNumber(),
-            filter.pageSize()
-        );
+        return adjustDateRangeToHistoryLimit(snapshot.userId(), filter, historyFeature);
     }
 
     /**

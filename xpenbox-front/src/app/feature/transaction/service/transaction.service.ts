@@ -35,8 +35,8 @@ export class TransactionService extends GenericService<TransactionRequestDTO, Tr
    * @param filter The filter criteria encapsulated in a TransactionFilterRequestDTO object.
    * @returns An Observable emitting an ApiResponseDTO containing a pageable list of filtered TransactionResponseDTOs.
    */
-  filterTransactions(filter: TransactionFilterRequestDTO): Observable<ApiResponseDTO<PageableResponseDTO<TransactionResponseDTO>>> {
-    return this.http.post<ApiResponseDTO<PageableResponseDTO<TransactionResponseDTO>>>(
+  filterTransactions(filter: TransactionFilterRequestDTO): Observable<ApiResponseDTO<PageableResponseDTO<TransactionResponseDTO, TransactionFilterRequestDTO>>> {
+    return this.http.post<ApiResponseDTO<PageableResponseDTO<TransactionResponseDTO, TransactionFilterRequestDTO>>>(
       `${this.apiUrl}/filter`, filter, { withCredentials: true }
     );
   }
