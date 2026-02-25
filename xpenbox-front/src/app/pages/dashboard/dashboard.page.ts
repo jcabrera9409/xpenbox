@@ -16,6 +16,7 @@ import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../shared/components/retry-component/retry.component';
 import { TooltipUi } from '../../shared/ui/tooltip-ui/tooltip.ui';
 import { EntitlementService } from '../../feature/subscription/service/entitlement.service';
+import { upgradeProModalState } from '../../modal/subscription/state/upgrade-pro.modal.state';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -123,6 +124,10 @@ export class DashboardPage implements OnInit, AfterViewInit {
   }
 
   changePeriod(period: PeriodFilterRequestDTO): void {
+    if (!this.isEnableFeature(period)) {
+      this.showUpgradeProModal();
+      return;
+    }
     this.selectedPeriod.set(period);
     this.loadDashboardData();
   }
@@ -155,6 +160,13 @@ export class DashboardPage implements OnInit, AfterViewInit {
     const dateStr = this.dateService.format(dateTransaction.getTime(), 'day-month');
 
     return dateStr
+  }
+
+  private showUpgradeProModal(): void {
+    upgradeProModalState.title.set('Desbloquea todos tus periodos financieros');
+    upgradeProModalState.htmlMessage.set('Tu plan Free solo permite ver el mes actual y el mes anterior. ' +
+              'Actualiza a <strong>Pro</strong> y analiza varios meses para entender mejor la evolución de tus finanzas.');
+    upgradeProModalState.open.set(true);
   }
 
   private updateDashboardData(): void {

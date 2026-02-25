@@ -14,7 +14,7 @@
             <div class="flex gap-2">
                 <button
                   (click)="changePeriod(periodFilter.CURRENT_MONTH)"
-                  [disabled]="isPeriodSelected(periodFilter.CURRENT_MONTH) || !isEnableFeature(periodFilter.CURRENT_MONTH)"
+                  [disabled]="isPeriodSelected(periodFilter.CURRENT_MONTH)"
                   [class]="isPeriodSelected(periodFilter.CURRENT_MONTH) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
                   class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Mes Actual
@@ -24,7 +24,7 @@
                 </button>
                 <button 
                   (click)="changePeriod(periodFilter.LAST_MONTH)"
-                  [disabled]="isPeriodSelected(periodFilter.LAST_MONTH) || !isEnableFeature(periodFilter.LAST_MONTH)"
+                  [disabled]="isPeriodSelected(periodFilter.LAST_MONTH)"
                   [class]="isPeriodSelected(periodFilter.LAST_MONTH) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
                   class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Mes Anterior
@@ -34,7 +34,7 @@
                 </button>
                 <button 
                   (click)="changePeriod(periodFilter.LAST_3_MONTHS)"
-                  [disabled]="isPeriodSelected(periodFilter.LAST_3_MONTHS) || !isEnableFeature(periodFilter.LAST_3_MONTHS)"
+                  [disabled]="isPeriodSelected(periodFilter.LAST_3_MONTHS)"
                   [class]="isPeriodSelected(periodFilter.LAST_3_MONTHS) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
                   class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Últimos 3 meses
@@ -44,7 +44,7 @@
                 </button>
                 <button 
                   (click)="changePeriod(periodFilter.LAST_6_MONTHS)"
-                  [disabled]="isPeriodSelected(periodFilter.LAST_6_MONTHS) || !isEnableFeature(periodFilter.LAST_6_MONTHS)"
+                  [disabled]="isPeriodSelected(periodFilter.LAST_6_MONTHS)"
                   [class]="isPeriodSelected(periodFilter.LAST_6_MONTHS) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
                   class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Últimos 6 meses
@@ -54,7 +54,7 @@
                 </button>
                 <button 
                   (click)="changePeriod(periodFilter.CURRENT_YEAR)"
-                  [disabled]="isPeriodSelected(periodFilter.CURRENT_YEAR) || !isEnableFeature(periodFilter.CURRENT_YEAR)"
+                  [disabled]="isPeriodSelected(periodFilter.CURRENT_YEAR)"
                   [class]="isPeriodSelected(periodFilter.CURRENT_YEAR) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
                   class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Año Actual
@@ -64,7 +64,7 @@
                 </button>
                 <button 
                   (click)="changePeriod(periodFilter.LAST_YEAR)"
-                  [disabled]="isPeriodSelected(periodFilter.LAST_YEAR) || !isEnableFeature(periodFilter.LAST_YEAR)"
+                  [disabled]="isPeriodSelected(periodFilter.LAST_YEAR)"
                   [class]="isPeriodSelected(periodFilter.LAST_YEAR) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
                   class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Año Anterior

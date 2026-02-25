@@ -1,4 +1,4 @@
-import { Component, signal, inject, PLATFORM_ID, OnInit } from '@angular/core';
+import { Component, signal, inject, PLATFORM_ID, OnInit, computed } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MenuComponent } from '../../shared/components/menu-component/menu.component';
 import { RouterOutlet } from '@angular/router';
@@ -13,10 +13,12 @@ import { TransferModal } from '../../modal/account/transfer-modal/transfer.modal
 import { ReceiptModal } from '../../modal/common/receipt-modal/receipt.modal';
 import { SubscriptionService } from '../../feature/subscription/service/subscription.service';
 import { subscriptionState } from '../../feature/subscription/service/subscription.state';
+import { UpgradeProModal } from '../../modal/subscription/upgrade-pro-modal/upgrade-pro.modal';
+import { upgradeProModalState } from '../../modal/subscription/state/upgrade-pro.modal.state';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule, SuccessTransactionComponent, IncomeEditionModal, CreditcardPaymentModal, TransferModal, ReceiptModal],
+  imports: [MenuComponent, RouterOutlet, QuickExpenseModal, CommonModule, SuccessTransactionComponent, IncomeEditionModal, CreditcardPaymentModal, TransferModal, ReceiptModal, UpgradeProModal],
   templateUrl: './landing.page.html',
   styleUrl: './landing.page.css',
 })
@@ -26,6 +28,7 @@ export class LandingPage implements OnInit {
   showQuickIncomeModal = signal(false);
   showQuickTransferModal = signal(false);
   showQuickCreditCardPaymentModal = signal(false);
+  showUpgradeProModal = computed(() => upgradeProModalState.open());
 
   private userState = userState;
   private subscriptionState = subscriptionState;

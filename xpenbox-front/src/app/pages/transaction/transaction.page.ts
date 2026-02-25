@@ -21,12 +21,12 @@ import { userState } from '../../feature/user/service/user.state';
 import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
 import { genericState } from '../../feature/common/service/generic.state';
 import { TransactionDetailModal } from '../../modal/transaction/transaction-detail-modal/transaction-detail.modal';
-import { UpgradeProModal } from '../../modal/subscription/upgrade-pro-modal/upgrade-pro.modal';
+import { upgradeProModalState } from '../../modal/subscription/state/upgrade-pro.modal.state';
 
 @Component({
   selector: 'app-transaction-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent, TransactionEditionModal, ConfirmModal, TransactionDetailModal, UpgradeProModal],
+  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent, TransactionEditionModal, ConfirmModal, TransactionDetailModal],
   templateUrl: './transaction.page.html',
   styleUrl: './transaction.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -126,9 +126,17 @@ export class TransactionPage {
           const currentContent = this.accumulatedTransactions();
           const newContent = response.data.content;
           const accumulated = [...currentContent, ...newContent];
+          const clipped = response.data.clipped;
           this.accumulatedTransactions.set(accumulated);
           this.totalElements.set(response.data.totalElements);
           this.totalPages.set(response.data.totalPages);
+          
+          if (clipped) {
+            const startTimestamp = response.data.filter.transactionDateTimestampFrom || 0;
+            const endTimestamp = response.data.filter.transactionDateTimestampTo || 0;
+            this.clipFilterDates(startTimestamp, endTimestamp);
+            this.showUpgradeProModal();
+          }
         }
       }, error: (error) => {
         this.transactionState.isLoadingFilteredList.set(false);
@@ -139,6 +147,20 @@ export class TransactionPage {
         }
       }
     });
+  }
+
+  private clipFilterDates(startTimestamp: number, endTimestamp: number): void {
+    const startDate = this.dateService.toLocalDate(startTimestamp);
+    const endDate = this.dateService.toLocalDate(endTimestamp);
+    this.filterStartDate.set(this.dateService.format(startDate.getTime(), 'ISO').split('T')[0]);
+    this.filterEndDate.set(this.dateService.format(endDate.getTime(), 'ISO').split('T')[0]);
+  }
+
+  private showUpgradeProModal(): void {
+    upgradeProModalState.title.set('Desbloquea tu historial completo');
+    upgradeProModalState.htmlMessage.set('Tu plan Free solo permite ver transacciones de los últimos 30 días. ' +
+              'Actualiza a <strong>Pro</strong> y accede a todo tu historial de transacciones.');
+    upgradeProModalState.open.set(true);
   }
 
   private buildFilterRequest(): TransactionFilterRequestDTO {

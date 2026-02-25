@@ -159,11 +159,10 @@ export class QuickExpenseModal implements OnInit {
   }
 
   /**
-   * Save the expense
+   * Save the transaction
    * @returns void
    */
   onSubmit(): void {
-    
     if (!this.isFormValid) return;
     
     const amountValue = this.amount();
@@ -177,30 +176,14 @@ export class QuickExpenseModal implements OnInit {
     const transactionRequest = selectedAccount?.type === AccountCreditType.ACCOUNT
       ? TransactionRequestDTO.generateExpenseAccountTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode, dateTimestamp)
       : TransactionRequestDTO.generateExpenseCreditCardTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode, dateTimestamp);
-    
-    this.transactionService.create(transactionRequest).subscribe({
-      next: (response: ApiResponseDTO<TransactionResponseDTO>) => {
-        this.transactionState.isLoadingSendingTransaction.set(false);
-        if (response.success && response.data) {
-          this.close.emit();
-          this.transactionState.successSendingTransaction.set(true);
+  
+    this.transactionService.submitTransaction(transactionRequest, () => this.successTransactionCreated());
+  }
 
-          this.accountService.refresh();
-          this.creditCardService.refresh();
-          this.categoryService.refresh();
-          this.transactionState.transactionCreatedResourceCode.set(response.data.resourceCode);
-        } else {
-          this.transactionState.errorSendingTransaction.set(response.message);
-        }
-      }, error: (error) => {
-        this.transactionState.isLoadingSendingTransaction.set(false);
-        console.error('Error creating expense:', error);
-        if (error.status === 500 || error.status === 0) {
-          this.transactionState.errorSendingTransaction.set('Error guardando la transacción. Por favor, inténtalo de nuevo.');
-        } else {
-          this.transactionState.errorSendingTransaction.set(error.error.message || 'Error guardando la transacción.');
-        }
-      }
-    })
+  private successTransactionCreated(): void {
+    this.close.emit();
+    this.accountService.refresh();
+    this.creditCardService.refresh();
+    this.categoryService.refresh();
   }
 }

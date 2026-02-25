@@ -129,34 +129,13 @@ export class TransferModal implements OnInit {
       dateTimestamp
     );
 
-    this.transactionState.isLoadingSendingTransaction.set(true);
-    this.transactionState.errorSendingTransaction.set(null);
+    this.transactionService.submitTransaction(transactionRequest, () => this.successTransactionCreated());
+  }
 
-    this.transactionService.create(transactionRequest).subscribe({
-      next: (response: ApiResponseDTO<TransactionResponseDTO>) => {
-        this.transactionState.isLoadingSendingTransaction.set(false);
-
-        if (response.success && response.data) {
-          this.close.emit();
-
-          this.accountService.refresh();
-          this.transactionState.successSendingTransaction.set(true);
-
-          if (!this.accountResourceCode()) {
-            this.transactionState.transactionCreatedResourceCode.set(response.data.resourceCode);
-          }
-
-        }
-      }, error: (error) => {
-        this.transactionState.isLoadingSendingTransaction.set(false);
-        console.error('Error creating income assignment:', error);
-        if (error.status === 500 || error.status === 0) {
-          this.transactionState.errorSendingTransaction.set('Error guardando la transacción. Por favor, inténtalo de nuevo.');
-        } else {
-          this.transactionState.errorSendingTransaction.set(error.error.message || 'Error guardando la transacción.');
-        }
-      }
-    });
+  private successTransactionCreated(): void {
+    this.close.emit();
+    this.accountService.refresh();
+    this.transactionService.refresh();
   }
 
   private loadAccountData(): void {
