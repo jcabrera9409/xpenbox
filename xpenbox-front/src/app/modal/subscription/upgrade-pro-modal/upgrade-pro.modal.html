@@ -67,8 +67,16 @@
       <!-- Action buttons -->
 
       <!-- Action buttons -->
-      <app-modal-buttons-ui [cancelText]="'Ahora no'" [cancelIcon]="'close'" [isValidForm]="true"
-        [confirmText]="'Actualizar ahora'" [confirmIcon]="'workspace_premium'" (cancel)="onClose()" 
+      <app-modal-buttons-ui 
+        [cancelText]="'Ahora no'" 
+        [cancelIcon]="'close'"
+        [isLoading]="subscriptionState.isLoadingSending()" 
+        [isValidForm]="true"
+        [loadingText]="''"
+        [loadingIcon]="'autorenew'"
+        [confirmText]="'Actualizar ahora'" 
+        [confirmIcon]="'workspace_premium'" 
+        (cancel)="onClose()" 
         (confirm)="onUpgrade()">
       </app-modal-buttons-ui>
     </div>

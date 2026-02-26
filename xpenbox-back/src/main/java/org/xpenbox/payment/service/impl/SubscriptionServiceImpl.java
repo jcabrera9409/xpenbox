@@ -27,6 +27,7 @@ import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class SubscriptionServiceImpl implements ISubscriptionService {
@@ -65,6 +66,7 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
     }
 
     @Override
+    @Transactional
     public SubscriptionResponseDTO getActiveSubscription(String userEmail) {
         LOG.infof("Retrieving active subscription for user with email: %s", userEmail);
         User user = validateAndGetUser(userEmail);
@@ -136,7 +138,8 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
      * @param user The user for whom the free subscription will be created.
      * @return The created Subscription entity representing the free subscription for the user.
      */
-    private Subscription createFreeSubscription(User user) {
+    @Transactional
+    protected Subscription createFreeSubscription(User user) {
         LOG.infof("Creating free subscription for user ID %s", user.id);
         Plan freePlan = planRepository.findByResourceCode(freePlanResourceCode)
             .orElseThrow(() -> {

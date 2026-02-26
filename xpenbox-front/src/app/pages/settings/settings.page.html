@@ -1,13 +1,21 @@
 <div class="min-h-screen xpb-bg-main p-4 sm:p-6 lg:p-8">
   <div class="max-w-2xl mx-auto">
     <!-- Header -->
-    <div class="mb-6">
+    <div class="mb-4">
       <h1 class="text-2xl sm:text-3xl font-bold xpb-text-primary mb-2">Configuración</h1>
-      <p class="xpb-text-secondary">Información de tu cuenta</p>
+      <p class="xpb-text-secondary mb-4">Gestiona tu cuenta y preferencias</p>
+      
+      @if (!isPremiumUser) {
+        <!-- Premium CTA Button -->
+        <button (click)="onClickPremium()" class="w-full inline-flex items-center gap-2 bg-gradient-to-r from-[var(--xpb-primary)] to-[var(--xpb-income)] text-white font-semibold py-2.5 px-5 rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200">
+          <span class="material-icons text-xl">workspace_premium</span>
+          <span>Obtener Premium</span>
+        </button>
+      }
     </div>
 
     <!-- User Information Card -->
-    <div class="xpb-bg-card rounded-xl shadow-sm p-6 mb-6">
+    <div class="xpb-bg-card rounded-xl shadow-sm p-6 mb-6 border xpb-border">
       <h2 class="text-lg font-semibold xpb-text-primary mb-6 flex items-center gap-2">
         <span class="material-icons text-[var(--xpb-primary)]">person</span>
         Información del Usuario
@@ -82,7 +90,7 @@
     </div>
 
     <!-- Logout Section -->
-    <div class="xpb-bg-card rounded-xl shadow-sm p-6">
+    <div class="xpb-bg-card rounded-xl shadow-sm p-6 border xpb-border">
       <h2 class="text-lg font-semibold xpb-text-primary mb-4 flex items-center gap-2">
         <span class="material-icons text-[var(--xpb-expense)]">logout</span>
         Sesión
@@ -97,10 +105,10 @@
 
       <button 
         (click)="logout()"
-        class="w-full sm:w-auto xpb-btn-secondary inline-flex items-center justify-center gap-2 p-2 rounded-lg text-[var(--xpb-expense)] hover:bg-[var(--xpb-expense)] hover:text-white transition-colors"
+        class="w-full sm:w-auto xpb-btn-secondary inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-[var(--xpb-expense)] hover:bg-[var(--xpb-expense)] hover:text-white transition-all duration-200 border-2 border-[var(--xpb-expense)] font-medium"
       >
         <span class="material-icons">logout</span>
-        Cerrar Sesión
+        <span>Cerrar Sesión</span>
       </button>
     </div>
   </div>

@@ -5,6 +5,8 @@ import { Observable, tap } from 'rxjs';
 import { ApiResponseDTO } from '../../common/model/api.response.dto';
 import { SubscriptionResponseDTO } from '../model/subscription.response.dto';
 import { subscriptionState } from './subscription.state';
+import { PreApprovalSubscriptionResponseDTO } from '../model/pre-approval-subscription.response.dto';
+import { PreApprovalSubscriptionRequestDTO } from '../model/pre-approval-subscription.request.dto';
 
 /**
  * Service for managing user subscriptions, including fetching subscription details and canceling subscriptions.
@@ -37,6 +39,17 @@ export class SubscriptionService {
         subscriptionState.subscription.set(response.data);
       })
     )
+  }
+
+  /**
+   * Creates a pre-approval subscription for the user based on the provided request body.
+   * @param requestBody - The request body containing the subscription plan and payment provider information.
+   * @returns An Observable containing the API response with the pre-approval subscription details, including the URL for completing the subscription process.
+   */
+  createPreApprovalSubscription(requestBody: PreApprovalSubscriptionRequestDTO): Observable<ApiResponseDTO<PreApprovalSubscriptionResponseDTO>> {
+    return this.http.post<ApiResponseDTO<PreApprovalSubscriptionResponseDTO>>(`${this.apiUrl}/pre-approval`, requestBody, {
+      withCredentials: true
+    });
   }
 
   /**
