@@ -1,0 +1,18 @@
+meta {
+  name: MySubscription
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}/api/rest/v1/subscription/me
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "resourceCodePlan": "plan_pro_monthly",
+    "paymentProviderType": "MERCADOPAGO"
+  }
+}

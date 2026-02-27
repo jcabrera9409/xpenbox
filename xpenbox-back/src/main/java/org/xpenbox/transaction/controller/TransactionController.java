@@ -25,6 +25,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
+/**
+ * TransactionController is responsible for handling all transaction-related HTTP requests, including creating, updating, filtering, retrieving, and rolling back transactions. It uses the ITransactionService to perform business logic and interacts with the authenticated user's security context to ensure proper authorization and access control.
+ */
 @Path("/transaction")
 @Authenticated
 @Consumes(MediaType.APPLICATION_JSON)
@@ -94,7 +97,7 @@ public class TransactionController {
         String userEmail = securityContext.getUserPrincipal().getName();
         LOG.infof("Filter transactions request received for user: %s", userEmail);
 
-        APIPageableDTO<TransactionResponseDTO> filteredTransactions = transactionService.filterTransactions(filterDTO, userEmail);
+        APIPageableDTO<TransactionResponseDTO, TransactionFilterDTO> filteredTransactions = transactionService.filterTransactions(filterDTO, userEmail);
         LOG.infof("Filtered transactions retrieved successfully for user: %s", userEmail);
 
         return Response.status(Response.Status.OK).entity(

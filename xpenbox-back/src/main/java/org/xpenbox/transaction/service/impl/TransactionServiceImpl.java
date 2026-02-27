@@ -16,6 +16,9 @@ import org.xpenbox.common.service.impl.GenericServiceImpl;
 import org.xpenbox.creditcard.entity.CreditCard;
 import org.xpenbox.creditcard.repository.CreditCardRepository;
 import org.xpenbox.creditcard.service.ICreditCardService;
+import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
+import org.xpenbox.enforcement.service.IPlanSnapshotService;
+import org.xpenbox.enforcement.service.IPlanValidatorService;
 import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.income.entity.Income;
@@ -50,6 +53,8 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
     private final IAccountService accountService;
     private final CreditCardRepository creditCardRepository;
     private final ICreditCardService creditCardService;
+    private final IPlanValidatorService planValidatorService;
+    private final IPlanSnapshotService planSnapshotService;
 
     public TransactionServiceImpl(UserRepository userRepository,
                                   TransactionRepository transactionRepository,
@@ -59,7 +64,10 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
                                   AccountRepository accountRepository,
                                   IAccountService accountService,
                                   CreditCardRepository creditCardRepository,
-                                  ICreditCardService creditCardService) {
+                                  ICreditCardService creditCardService,
+                                  IPlanValidatorService planValidatorService,
+                                  IPlanSnapshotService planSnapshotService
+    ) {
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
         this.transactionMapper = transactionMapper;
@@ -69,6 +77,8 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         this.accountService = accountService;
         this.creditCardRepository = creditCardRepository;
         this.creditCardService = creditCardService;
+        this.planValidatorService = planValidatorService;
+        this.planSnapshotService = planSnapshotService;
     }
 
     //Completed abstract methods from GenericServiceImpl
@@ -103,6 +113,11 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
      */
     @Override
     public TransactionResponseDTO create(TransactionCreateDTO entityCreateDTO, String userEmail) {
+        LOG.infof("Validating plan limits for user email: %s before creating transaction", userEmail);
+        
+        SnapshotPlanDTO activePlanSnapshot = planSnapshotService.getPlanSnapshotByEmail(userEmail);
+        planValidatorService.validateCanCreateTransactions(activePlanSnapshot);
+
         LOG.infof("Starting creation of %s for user email: %s", getEntityName(), userEmail);
 
         User user = validateAndGetUser(userEmail);
@@ -203,21 +218,28 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
      * @return A pageable DTO containing the filtered transactions.
      */
     @Override
-    public APIPageableDTO<TransactionResponseDTO> filterTransactions(TransactionFilterDTO filterDTO, String userEmail) {
-        LOG.infof("Filtering transactions for user email: %s with filter: %s", userEmail, filterDTO);
+    public APIPageableDTO<TransactionResponseDTO, TransactionFilterDTO> filterTransactions(TransactionFilterDTO filterDTO, String userEmail) {
+        LOG.infof("Validating plan limits for user email: %s before creating transaction", userEmail);
+        
+        SnapshotPlanDTO activePlanSnapshot = planSnapshotService.getPlanSnapshotByEmail(userEmail);
+        TransactionFilterDTO newFilterDTO = planValidatorService.validateTransactionFilterDTO(activePlanSnapshot, filterDTO);
+        
+        LOG.infof("Filtering transactions for user email: %s with filter: %s", userEmail, newFilterDTO);
 
         User user = validateAndGetUser(userEmail);
 
-        List<Transaction> filteredTransactions = transactionRepository.findByFilter(filterDTO, user);
-        Integer totalElements = transactionRepository.countByFilter(filterDTO, user);
+        List<Transaction> filteredTransactions = transactionRepository.findByFilter(newFilterDTO, user);
+        Integer totalElements = transactionRepository.countByFilter(newFilterDTO, user);
         
-        LOG.infof("Found %d transactions for user email: %s with filter: %s", filteredTransactions.size(), userEmail, filterDTO);
+        LOG.infof("Found %d transactions for user email: %s with filter: %s", filteredTransactions.size(), userEmail, newFilterDTO);
 
         return APIPageableDTO.generatePageableDTO(
-            filterDTO.pageNumber(),
-            filterDTO.pageSize(),
+            newFilterDTO.pageNumber(),
+            newFilterDTO.pageSize(),
             totalElements,
-            transactionMapper.toDTOList(filteredTransactions)
+            transactionMapper.toDTOList(filteredTransactions),
+            !filterDTO.compareTo(newFilterDTO),
+            newFilterDTO
         );
     }
 

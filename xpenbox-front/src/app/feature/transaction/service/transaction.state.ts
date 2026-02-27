@@ -9,7 +9,7 @@ import { PageableResponseDTO } from "../../common/model/pageable.response.dto";
  */
 export const transactionState = {
     transactions: signal<TransactionResponseDTO[]>([]),
-    transactionsFiltered: signal<PageableResponseDTO<TransactionResponseDTO> | null>(null),
+    transactionsFiltered: signal<PageableResponseDTO<TransactionResponseDTO, TransactionFilterRequestDTO> | null>(null),
     
     isLoadingFilteredList: signal<boolean>(false),
     errorFilteredList: signal<string | null>(null),

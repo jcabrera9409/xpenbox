@@ -8,6 +8,7 @@ import { authGuard } from './feature/common/auth/auth.guard';
 import { VerifyEmailPage } from './pages/auth/verify-email/verify-email.page';
 import { ForgotPasswordPage } from './pages/auth/forgot-password/forgot-password.page';
 import { ResetPasswordPage } from './pages/auth/reset-password/reset-password.page';
+import { SuccessPage } from './pages/subscription/success/success.page';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -16,5 +17,6 @@ export const routes: Routes = [
     { path: 'reset-password', component: ResetPasswordPage },
     { path: 'login', component: LoginPage, canActivate: [guestGuard] },
     { path: 'register', component: RegisterPage, canActivate: [guestGuard] },
-    { path: 'landing', component: LandingPage, children: landingRoutes, canActivate: [authGuard] }
+    { path: 'landing', component: LandingPage, children: landingRoutes, canActivate: [authGuard] },
+    { path: 'success', component: SuccessPage, canActivate: [authGuard] }
 ];

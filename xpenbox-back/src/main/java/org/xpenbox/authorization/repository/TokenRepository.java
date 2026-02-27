@@ -1,10 +1,10 @@
 package org.xpenbox.authorization.repository;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.authorization.entity.Token;
+import org.xpenbox.common.DateFunctions;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Parameters;
@@ -40,7 +40,7 @@ public class TokenRepository implements PanacheRepository<Token> {
             refreshToken = :refreshToken and 
             revoked = false and 
             (refreshTokenExpiresAt is null or refreshTokenExpiresAt > :refreshTokenExpiresAt)
-            """, Parameters.with("refreshToken", refreshToken).and("refreshTokenExpiresAt", LocalDateTime.now()))
+            """, Parameters.with("refreshToken", refreshToken).and("refreshTokenExpiresAt", DateFunctions.currentLocalDateTime()))
                 .firstResultOptional();
     }
     

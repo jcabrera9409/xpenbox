@@ -1,0 +1,21 @@
+meta {
+  name: UpdateSubscription
+  type: http
+  seq: 2
+}
+
+put {
+  url: https://api.mercadopago.com/preapproval/e5d0b057e6944ba9944b4721afca12bb
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{mpToken}}
+}
+
+body:json {
+  {
+    "status": "cancelled"
+  }
+}

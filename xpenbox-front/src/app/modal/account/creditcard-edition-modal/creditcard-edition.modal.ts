@@ -10,6 +10,7 @@ import { NotificationService } from '../../../feature/common/service/notificatio
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
+import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 
 @Component({
   selector: 'app-creditcard-edition-modal',
@@ -68,9 +69,17 @@ export class CreditcardEditionModal implements OnInit {
         } else {
           this.creditCardState.errorSendingCreditCard.set(response.message);
         }
-      }, error: () => {
-        this.creditCardState.errorSendingCreditCard.set('Error guardando la tarjeta de crédito. Por favor, inténtalo de nuevo más tarde.');
+      }, error: (error) => {
         this.creditCardState.isLoadingSendingCreditCard.set(false);
+        if (error.status === 403) {
+          if (error.error && error.error.featureCode) {
+            this.showUpgradeProModal();
+          } else {
+            this.creditCardState.errorSendingCreditCard.set('No tienes permiso para realizar esta acción. Por favor, contacta con soporte.');
+          }
+        } else {
+          this.creditCardState.errorSendingCreditCard.set('Error guardando la tarjeta de crédito. Por favor, inténtalo de nuevo más tarde.');
+        }
       }
     });
   }
@@ -81,6 +90,13 @@ export class CreditcardEditionModal implements OnInit {
 
   retryLoadCreditCardData(): void {
     this.loadCreditCardData();
+  }
+
+  private showUpgradeProModal(): void {
+    upgradeProModalState.title.set('Alcanzaste el límite de tarjetas de crédito');
+    upgradeProModalState.htmlMessage.set('Tu plan Free permite hasta 1 tarjeta de crédito activa. ' +
+            'Actualiza a <strong>Pro</strong> y gestiona todas tus tarjetas de crédito sin restricciones.');
+    upgradeProModalState.open.set(true);
   }
 
   private buildCreditCardData(): CreditCardRequestDTO {

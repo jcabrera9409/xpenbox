@@ -131,22 +131,118 @@ CREATE TABLE IF NOT EXISTS tbl_transaction (
     CONSTRAINT fk_trans_card FOREIGN KEY (credit_card_id) REFERENCES tbl_credit_card(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_token_user
-ON tbl_token(user_id);
+-- 7. Subscription
+CREATE TABLE IF NOT EXISTS tbl_plan (
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
+    `name` VARCHAR(100) NOT NULL,
+    `description` VARCHAR(500) NULL,
+    `price` DECIMAL(13,2) NOT NULL,
+    `currency` CHAR(3) NOT NULL DEFAULT 'USD',
+    `billing_cycle` ENUM('MONTHLY', 'ANNUALLY') NOT NULL,
+    `status` ENUM('ACTIVE','INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_date` DATETIME ON UPDATE CURRENT_TIMESTAMP
+);
 
-CREATE INDEX idx_token_valid
-ON tbl_token(user_id, revoked, refresh_token_expires_at);
+INSERT INTO tbl_plan (resource_code, name, description, price, currency, billing_cycle) VALUES
+('plan_free', 'XpenBox Free', 'Access to basic features on a monthly basis', 0.00, 'PEN', 'ANNUALLY'),
+('plan_betatester', 'XpenBox Beta Tester', 'Access to all and beta features free', 0.00, 'PEN', 'ANNUALLY'),
+('plan_pro_monthly', 'XpenBox Pro', 'Access to all features on a monthly basis with a discount', 9.99, 'PEN', 'MONTHLY');
 
-CREATE INDEX idx_transaction_user_date 
-ON tbl_transaction(user_id, transaction_date);
+CREATE TABLE IF NOT EXISTS tbl_plan_feature (
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `plan_id` BIGINT NOT NULL,
+    `feature_code` VARCHAR(100) NOT NULL,
+    `limit_value` INT NULL,
+    `is_enabled` TINYINT(1) NOT NULL DEFAULT 1,
+    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_date` DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    
+    UNIQUE KEY uk_plan_feature (plan_id, feature_code),
+    CONSTRAINT fk_plan_feature_plan FOREIGN KEY (plan_id) REFERENCES tbl_plan(id) ON DELETE CASCADE
+);
 
-CREATE INDEX idx_transaction_account 
-ON tbl_transaction(user_id, account_id);
+INSERT INTO tbl_plan_feature (plan_id, feature_code, limit_value, is_enabled) VALUES
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'DASHBOARD_ADVANCED_FILTERS', NULL, 0),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'ACCOUNTS_LIMIT', 2, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'CREDIT_CARDS_LIMIT', 1, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'CATEGORIES_LIMIT', 3, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'TRANSACTIONS_LIMIT', 50, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'TRANSACTION_HISTORY_MONTHS', 1, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_free'), 'ADVANCED_TRANSACTION_SEARCH', NULL, 0),
 
-CREATE INDEX idx_transaction_card 
-ON tbl_transaction(user_id, credit_card_id);
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'DASHBOARD_ADVANCED_FILTERS', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'ACCOUNTS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'CREDIT_CARDS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'CATEGORIES_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'TRANSACTIONS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'TRANSACTION_HISTORY_MONTHS', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_betatester'), 'ADVANCED_TRANSACTION_SEARCH', NULL, 1),
 
-CREATE UNIQUE INDEX idx_user_token_token 
-ON tbl_user_token(token);
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'DASHBOARD_ADVANCED_FILTERS', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'ACCOUNTS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'CREDIT_CARDS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'CATEGORIES_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'TRANSACTIONS_LIMIT', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'TRANSACTION_HISTORY_MONTHS', NULL, 1),
+((SELECT id FROM tbl_plan WHERE resource_code = 'plan_pro_monthly'), 'ADVANCED_TRANSACTION_SEARCH', NULL, 1);
 
+CREATE TABLE IF NOT EXISTS tbl_subscription (
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
+    `plan_id` BIGINT NOT NULL,
+    `user_id` BIGINT NOT NULL,
+    `plan_price` DECIMAL(13,2) NOT NULL,
+    `plan_currency` CHAR(3) NOT NULL DEFAULT 'USD',
+    `start_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `end_date` DATETIME NULL,
+    `next_billing_date` DATETIME NULL,
+    `renew` TINYINT(1) NOT NULL DEFAULT 0,
+    `provider` VARCHAR(30) NOT NULL,
+    `provider_plan_id` VARCHAR(100) NOT NULL,
+    `provider_subscription_id` VARCHAR(100) NOT NULL,
+    `provider_subscription_url` VARCHAR(255) NOT NULL,
+    `status` ENUM('PENDING', 'ACTIVE', 'PAST_DUE', 'CANCELLED', 'EXPIRED', 'TRIAL') NOT NULL,
+    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_date` DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    
+    UNIQUE KEY uk_provider_subscription (provider, provider_plan_id, provider_subscription_id),
+    CONSTRAINT fk_subs_plan FOREIGN KEY (plan_id) REFERENCES tbl_plan(id) ON DELETE CASCADE,
+    CONSTRAINT fk_subs_user FOREIGN KEY (user_id) REFERENCES tbl_user(id) ON DELETE CASCADE
+);
 
+CREATE TABLE IF NOT EXISTS tbl_subscription_payment (
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `resource_code` VARCHAR(100) NOT NULL UNIQUE,
+    `subscription_id` BIGINT NOT NULL,
+    `provider` VARCHAR(30) NOT NULL,
+    `provider_payment_id` VARCHAR(100) NOT NULL,
+    `amount` DECIMAL(13,2) NOT NULL,
+    `currency` CHAR(3) NOT NULL DEFAULT 'USD',
+    `payment_date` DATETIME,
+    `payment_created_date` DATETIME NOT NULL,
+    `status` ENUM('APPROVED', 'REJECTED', 'PENDING', 'REFUNDED') NOT NULL,
+    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    UNIQUE KEY uk_provider_payment (provider, provider_payment_id),
+    CONSTRAINT fk_subs_pay_subscription FOREIGN KEY (subscription_id) REFERENCES tbl_subscription(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_token_user ON tbl_token(user_id);
+CREATE INDEX idx_token_validON tbl_token(user_id, revoked, refresh_token_expires_at);
+
+CREATE INDEX idx_transaction_user_date ON tbl_transaction(user_id, transaction_date);
+CREATE INDEX idx_transaction_account ON tbl_transaction(user_id, account_id);
+CREATE INDEX idx_transaction_card ON tbl_transaction(user_id, credit_card_id);
+
+CREATE UNIQUE INDEX idx_user_token_token ON tbl_user_token(token);
+
+CREATE INDEX idx_plan_feature_plan ON tbl_plan_feature(plan_id);
+
+CREATE INDEX idx_subscription_user_status ON tbl_subscription(user_id, status);
+CREATE INDEX idx_subscription_status ON tbl_subscription(status);
+CREATE INDEX idx_subscription_next_billing ON tbl_subscription(next_billing_date);
+
+CREATE INDEX idx_sub_payment_subscription ON tbl_subscription_payment(subscription_id);
+CREATE INDEX idx_sub_payment_provider ON tbl_subscription_payment(provider_payment_id);

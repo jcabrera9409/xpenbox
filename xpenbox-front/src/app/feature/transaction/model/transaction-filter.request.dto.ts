@@ -8,8 +8,8 @@ export class TransactionFilterRequestDTO {
     resourceCode?: string;
     transactionType?: TransactionType;
     description?: string;
-    transactionDateTimestampFrom?: number;
-    transactionDateTimestampTo?: number;
+    transactionDateFrom?: Date;
+    transactionDateTo?: Date;
     categoryResourceCode?: string;
     incomeResourceCode?: string;
     accountResourceCode?: string;

@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { categoryState } from '../../../feature/category/service/category.state';
 
 @Component({
   selector: 'app-category-card',
@@ -23,10 +24,12 @@ export class CategoryCard {
   categoryCardChangeState = output<string>();
 
   onEditCategory() {
+    categoryState.errorSendingCategory.set(null);
     this.categoryCardEdit.emit(this.categoryCardResourceCode() || '');
   }
 
   onDisableCategory() {
+    categoryState.errorSendingCategory.set(null);
     this.categoryCardChangeState.emit(this.categoryCardResourceCode() || '');
   }
 }

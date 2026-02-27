@@ -1,9 +1,7 @@
 package org.xpenbox.transaction.repository;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -137,6 +135,19 @@ public class TransactionRepository extends GenericRepository<Transaction> {
     }
 
     /**
+     * Count transactions by user ID and period range.
+     * @param userId the ID of the user
+     * @param from the start of the period
+     * @param to the end of the period
+     * @return the count of transactions matching the criteria
+     */
+    public Long countByUserIdAndPeriodRange(Long userId, LocalDateTime from, LocalDateTime to) {
+        LOG.debugf("Counting transactions for User ID: %d between %s and %s", userId, from, to);
+        return count("user.id = :userId and transactionDate between :from and :to", 
+                Parameters.with("userId", userId).and("from", from).and("to", to));
+    }
+
+    /**
      * Build query parameters based on filter criteria and user.
      * @param filterDTO the filter criteria
      * @param user the user
@@ -159,9 +170,9 @@ public class TransactionRepository extends GenericRepository<Transaction> {
             params.and("description", filterDTO.description());
         }
 
-        if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
-            LocalDateTime from = Instant.ofEpochMilli(filterDTO.transactionDateTimestampFrom()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-            LocalDateTime to = Instant.ofEpochMilli(filterDTO.transactionDateTimestampTo()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        if (filterDTO.transactionDateFrom() != null && filterDTO.transactionDateTo() != null) {
+            LocalDateTime from = filterDTO.transactionDateFrom();
+            LocalDateTime to = filterDTO.transactionDateTo();
             params.and("transactionDateFrom", from);
             params.and("transactionDateTo", to);
         }
@@ -208,7 +219,7 @@ public class TransactionRepository extends GenericRepository<Transaction> {
             queryBuilder.append(" and lower(description) like lower(concat('%', :description, '%'))");
         }
 
-        if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
+        if (filterDTO.transactionDateFrom() != null && filterDTO.transactionDateTo() != null) {
             queryBuilder.append(" and transactionDate between :transactionDateFrom and :transactionDateTo");
         }
 
@@ -300,7 +311,7 @@ public class TransactionRepository extends GenericRepository<Transaction> {
         if (filterDTO.description() != null) {
             hql.append("AND LOWER(t.description) LIKE LOWER(CONCAT('%', :description, '%')) ");
         }
-        if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
+        if (filterDTO.transactionDateFrom() != null && filterDTO.transactionDateTo() != null) {
             hql.append("AND t.transactionDate BETWEEN :transactionDateFrom AND :transactionDateTo ");
         }
         if (filterDTO.categoryResourceCode() != null) {
@@ -333,11 +344,9 @@ public class TransactionRepository extends GenericRepository<Transaction> {
         if (filterDTO.description() != null) {
             query.setParameter("description", filterDTO.description());
         }
-        if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
-            LocalDateTime from = Instant.ofEpochMilli(filterDTO.transactionDateTimestampFrom()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-            LocalDateTime to = Instant.ofEpochMilli(filterDTO.transactionDateTimestampTo()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-            query.setParameter("transactionDateFrom", from);
-            query.setParameter("transactionDateTo", to);
+        if (filterDTO.transactionDateFrom() != null && filterDTO.transactionDateTo() != null) {
+            query.setParameter("transactionDateFrom", filterDTO.transactionDateFrom());
+            query.setParameter("transactionDateTo", filterDTO.transactionDateTo());
         }
         if (filterDTO.categoryResourceCode() != null) {
             query.setParameter("categoryResourceCode", filterDTO.categoryResourceCode());

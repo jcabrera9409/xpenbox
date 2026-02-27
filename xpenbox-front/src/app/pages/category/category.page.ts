@@ -63,6 +63,7 @@ export class CategoryPage {
 
   openCategoryEditionModal(resourceCodeCategorySelected: string | null = null) {
     this.resourceCodeCategorySelected.set(resourceCodeCategorySelected);
+    categoryState.errorSendingCategory.set(null);
     this.showCategoryEditionModal.set(true);
   }
 

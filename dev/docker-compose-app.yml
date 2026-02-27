@@ -15,6 +15,10 @@ services:
       JWT_PUBLIC_KEY_PATH:        ${JWT_PUBLIC_KEY_PATH}
       JWT_PRIVATE_KEY_PATH:       ${JWT_PRIVATE_KEY_PATH}
       APP_PATH:                   ${APP_PATH}
+      EMAIL_API_URL:              ${EMAIL_API_URL}
+      FRONTEND_URL:               ${FRONTEND_URL}
+      MP_TOKEN_SECRET:            ${MP_TOKEN_SECRET}
+      MP_WEBHOOK_SECRET_KEY:      ${MP_WEBHOOK_SECRET_KEY}
     depends_on:
       - bd
     volumes:

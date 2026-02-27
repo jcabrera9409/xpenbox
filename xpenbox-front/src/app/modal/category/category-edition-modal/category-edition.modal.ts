@@ -10,6 +10,7 @@ import { categoryState } from '../../../feature/category/service/category.state'
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
+import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 
 @Component({
   selector: 'app-category-edition-modal',
@@ -68,15 +69,30 @@ export class CategoryEditionModal implements OnInit {
         } else {
           this.categoryState.errorSendingCategory.set(response.message);
         }
-      }, error: () => {
-        this.categoryState.errorSendingCategory.set('Error guardando la categoría. Por favor, inténtalo de nuevo más tarde.');
+      }, error: (error) => {
         this.categoryState.isLoadingSendingCategory.set(false);
+        if (error.status === 403) {
+          if (error.error && error.error.featureCode) {
+            this.showUpgradeProModal();
+          } else {
+            this.categoryState.errorSendingCategory.set('No tienes permiso para realizar esta acción. Por favor, contacta con soporte.');
+          }
+        } else {
+          this.categoryState.errorSendingCategory.set('Error guardando la categoría. Por favor, inténtalo de nuevo más tarde.');
+        }
       }
     });
   }
 
   onClose(): void {
     this.close.emit();
+  }
+
+  private showUpgradeProModal(): void {
+    upgradeProModalState.title.set('Alcanzaste el límite de categorías');
+    upgradeProModalState.htmlMessage.set('Tu plan Free permite hasta 3 categorías. ' +
+            'Actualiza a <strong>Pro</strong> y gestiona todas tus categorías sin restricciones.');
+    upgradeProModalState.open.set(true);
   }
 
   private buildCategoryData(): CategoryRequestDTO {

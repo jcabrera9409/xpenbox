@@ -40,6 +40,26 @@ public abstract class GenericRepository<T> implements PanacheRepository<T> {
     }
 
     /**
+     * Count all active entities associated with a specific user ID.
+     * @param userId the ID of the user
+     * @return the count of active entities associated with the user ID
+     */
+    public long countAllByUserIdAndStateTrue(Long userId) {
+        LOG.infof("Counting all active entities for user id: %d with PESSIMISTIC_WRITE lock", userId);
+        return count("user.id = ?1 and state = true", userId);
+    }
+
+    /**
+     * Count all entities associated with a specific user ID, regardless of state.
+     * @param userId the ID of the user
+     * @return the count of all entities associated with the user ID
+     */
+    public long countAllByUserId(Long userId) {
+        LOG.infof("Counting all entities for user id: %d", userId);
+        return count("user.id = ?1", userId);
+    }
+
+    /**
      * Delete an entity by its ID and user ID.
      * @param id the ID of the entity
      * @param userId the ID of the user

@@ -1,9 +1,9 @@
 package org.xpenbox.user.repository;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.jboss.logging.Logger;
+import org.xpenbox.common.DateFunctions;
 import org.xpenbox.user.entity.UserToken;
 import org.xpenbox.user.entity.UserToken.UserTokenType;
 
@@ -26,7 +26,7 @@ public class UserTokenRepository implements PanacheRepository<UserToken> {
         return find("user.id = :userId and tokenType = :tokenType and expiresAt > :now", 
             Parameters.with("userId", userId)
                     .and("tokenType", tokenType)
-                    .and("now", LocalDateTime.now()))
+                    .and("now", DateFunctions.currentLocalDateTime()))
             .firstResult();
     }
 

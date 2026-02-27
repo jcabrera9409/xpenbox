@@ -1,0 +1,229 @@
+<div class="min-h-screen xpb-bg-main flex items-center justify-center p-4">
+  <div class="w-full max-w-2xl mx-auto">
+    
+    @if (paymentStatus() === 'loading') {
+      <app-loading-ui></app-loading-ui>
+    }
+
+    <!-- Payment Confirmed State -->
+    @if (paymentStatus() === 'confirmed') {
+      <div class="xpb-bg-card rounded-2xl shadow-xl overflow-hidden">
+        <!-- Success Header -->
+        <div class="bg-gradient-to-r from-[var(--xpb-primary)] to-[var(--xpb-primary-hover)] px-6 sm:px-8 py-8 sm:py-12 text-center">
+          <div class="flex justify-center mb-4">
+            <div>
+              <span style="font-size: 4rem !important" class="material-icons text-[var(--xpb-income)] text-5xl sm:text-6xl rounded-full xpb-bg-card shadow-lg">
+                check_circle
+              </span>
+            </div>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
+            ¡Pago Confirmado!
+          </h1>
+          <p class="text-white/90 text-base sm:text-lg">
+            Tu suscripción ha sido activada exitosamente
+          </p>
+        </div>
+
+        <!-- Success Content -->
+        <div class="p-6 sm:p-8">
+          <!-- Subscription Info Card -->
+          <div class="xpb-bg-sidebar rounded-xl p-5 sm:p-6 mb-6">
+            <div class="flex items-start gap-4 mb-4">
+              <div class="xpb-bg-card rounded-lg p-2.5 shadow-sm">
+                <span class="material-icons text-[var(--xpb-primary)] text-2xl">
+                  workspace_premium
+                </span>
+              </div>
+              <div class="flex-1">
+                <h2 class="text-lg sm:text-xl font-semibold xpb-text-primary mb-1">
+                  Suscripción Premium Activa
+                </h2>
+                <p class="xpb-text-secondary text-sm">
+                  Ya puedes disfrutar de todas las características exclusivas
+                </p>
+              </div>
+            </div>
+
+            <!-- Benefits List -->
+            <div class="space-y-3 mt-4">
+              <div class="flex items-center gap-3">
+                <span class="material-icons text-[var(--xpb-income)] text-xl">
+                  done
+                </span>
+                <span class="xpb-text-primary text-sm sm:text-base">
+                  Acceso completo a todas las funciones
+                </span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="material-icons text-[var(--xpb-income)] text-xl">
+                  done
+                </span>
+                <span class="xpb-text-primary text-sm sm:text-base">
+                  Reportes avanzados y análisis detallados
+                </span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="material-icons text-[var(--xpb-income)] text-xl">
+                  done
+                </span>
+                <span class="xpb-text-primary text-sm sm:text-base">
+                  Soporte prioritario
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Redirect Notice -->
+          <div class="xpb-bg-main rounded-xl p-5 border-l-4 border-[var(--xpb-primary)] mb-6">
+            <div class="flex items-start gap-3">
+              <span class="material-icons text-[var(--xpb-primary)] text-2xl mt-0.5">
+                info
+              </span>
+              <div class="flex-1">
+                <p class="xpb-text-primary text-sm sm:text-base mb-1">
+                  <strong>Redirigiendo automáticamente...</strong>
+                </p>
+                <p class="xpb-text-secondary text-sm">
+                  Serás redirigido al inicio en <strong class="xpb-text-primary">{{ redirectCountdown() }}</strong> segundos
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <button
+            (click)="redirectToHome()"
+            class="w-full xpb-btn-primary rounded-xl py-3.5 font-semibold inline-flex items-center justify-center gap-2 text-base sm:text-lg shadow-lg hover:shadow-xl transition-all"
+          >
+            <span class="material-icons text-2xl">home</span>
+            <span>Ir al Inicio Ahora</span>
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Payment Pending State -->
+    @if (paymentStatus() === 'pending') {
+      <div class="xpb-bg-card rounded-2xl shadow-xl overflow-hidden">
+        <!-- Pending Header -->
+        <div class="xpb-bg-sidebar px-6 sm:px-8 py-8 sm:py-12 text-center border-b xpb-border">
+          <div class="flex justify-center mb-4">
+            <div>
+              <span style="font-size: 4rem !important" class="material-icons text-[var(--xpb-transfer)] text-5xl sm:text-6xl rounded-full xpb-bg-card shadow-lg">
+                schedule
+              </span>
+            </div>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold xpb-text-primary mb-2">
+            Pago en Proceso
+          </h1>
+        </div>
+
+        <!-- Pending Content -->
+        <div class="p-6 sm:p-8">
+          <!-- Status Info Card -->
+          <div class="xpb-bg-main rounded-xl p-5 sm:p-6 mb-6 border xpb-border">
+            <div class="flex items-start gap-4">
+              <div class="flex-1">
+                <h2 class="text-lg sm:text-xl font-semibold xpb-text-primary mb-2">
+                  Esperando Confirmación
+                </h2>
+                <p class="xpb-text-secondary text-sm sm:text-base leading-relaxed">
+                  Tu pago aún no ha sido confirmado por el proveedor. 
+                  Una vez que se confirme, tu suscripción <strong class="xpb-text-primary">Premium</strong> 
+                  se activará automáticamente.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instructions Card -->
+          <div class="xpb-bg-sidebar rounded-xl p-5 sm:p-6 mb-6">
+            <h3 class="font-semibold xpb-text-primary mb-3 flex items-center gap-2">
+              <span class="material-icons text-xl">lightbulb</span>
+              <span>¿Qué puedes hacer?</span>
+            </h3>
+            <div class="space-y-3">
+              <div class="flex items-start gap-3">
+                <span class="material-icons xpb-text-secondary text-lg mt-0.5">
+                  radio_button_checked
+                </span>
+                <p class="xpb-text-secondary text-sm sm:text-base flex-1">
+                  Espera unos minutos y actualiza el estado del pago
+                </p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="material-icons xpb-text-secondary text-lg mt-0.5">
+                  radio_button_checked
+                </span>
+                <p class="xpb-text-secondary text-sm sm:text-base flex-1">
+                  Regresa al inicio y verifica tu suscripción en la sección de perfil
+                </p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="material-icons xpb-text-secondary text-lg mt-0.5">
+                  radio_button_checked
+                </span>
+                <p class="xpb-text-secondary text-sm sm:text-base flex-1">
+                  El proceso puede tardar hasta 10 minutos
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preapproval ID (if available) -->
+          @if (preapprovalId()) {
+            <div class="xpb-bg-main rounded-lg p-4 mb-6 border xpb-border">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="material-icons xpb-text-secondary text-lg">receipt</span>
+                <span class="text-xs font-semibold xpb-text-secondary uppercase tracking-wide">
+                  ID de Referencia
+                </span>
+              </div>
+              <p class="xpb-text-primary text-sm font-mono break-all">
+                {{ preapprovalId() }}
+              </p>
+            </div>
+          }
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button
+              (click)="refreshStatus()"
+              [disabled]="isLoading()"
+              class="flex-1 xpb-bg-sidebar border xpb-border rounded-xl py-3.5 font-semibold inline-flex items-center justify-center gap-2 text-base hover:xpb-bg-main transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              @if (isLoading()) {
+                <span class="material-icons text-xl animate-spin">autorenew</span>
+                <span class="xpb-text-primary">Verificando...</span>
+              } @else {
+                <span class="material-icons text-xl">refresh</span>
+                <span class="xpb-text-primary">Actualizar Estado</span>
+              }
+            </button>
+            <button
+              (click)="redirectToHome()"
+              [disabled]="isLoading()"
+              class="flex-1 xpb-btn-primary rounded-xl py-3.5 font-semibold inline-flex items-center justify-center gap-2 text-base shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span class="material-icons text-xl">home</span>
+              <span>Ir al Inicio</span>
+            </button>
+          </div>
+
+          <!-- Help Text -->
+          <div class="mt-6 text-center">
+            <p class="xpb-text-secondary text-xs sm:text-sm">
+              ¿Tienes problemas? Contáctanos a
+              <a href="mailto:firstcode94@gmail.com" class="xpb-text-primary-accent font-semibold hover:underline">
+                firstcode94@gmail.com
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    }
+
+  </div>
+</div>

@@ -18,6 +18,7 @@ import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-button
 import { DateService } from '../../../shared/service/date.service';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
 import { userState } from '../../../feature/user/service/user.state';
+import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 
 @Component({
   selector: 'app-income-edition-modal',
@@ -123,6 +124,12 @@ export class IncomeEditionModal implements OnInit {
       }, error: (error) => {
         if (error.status === 500 || error.status === 0) {
           this.incomeState.errorSendingIncome.set('Error guardando el ingreso. Por favor, inténtalo de nuevo más tarde.');
+        } else if (error.status === 403) {
+           if (error.error && error.error.featureCode) {
+            this.showUpgradeProModal();
+            } else {
+              transactionState.errorSendingTransaction.set('No tienes permiso para realizar esta acción. Por favor, contacta con soporte.');
+            } 
         } else {
           this.incomeState.errorSendingIncome.set(error.error.message || 'Error guardando el ingreso');
         }
@@ -130,6 +137,13 @@ export class IncomeEditionModal implements OnInit {
       }
     });
   }
+
+  private showUpgradeProModal(): void {
+      upgradeProModalState.title.set('¡Estás usando Xpenbox a todo ritmo!');
+      upgradeProModalState.htmlMessage.set('Ya registraste 50 transacciones en tu plan Free.' +
+                ' Actualiza a <strong>Pro</strong> para seguir registrando todos tus gastos, ingresos y movimientos sin límites.');
+      upgradeProModalState.open.set(true);
+    }
 
   // Getters para acceso fácil a controles
   get conceptControl() {

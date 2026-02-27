@@ -21,6 +21,7 @@ import { userState } from '../../feature/user/service/user.state';
 import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
 import { genericState } from '../../feature/common/service/generic.state';
 import { TransactionDetailModal } from '../../modal/transaction/transaction-detail-modal/transaction-detail.modal';
+import { upgradeProModalState } from '../../modal/subscription/state/upgrade-pro.modal.state';
 
 @Component({
   selector: 'app-transaction-page',
@@ -84,7 +85,7 @@ export class TransactionPage {
       this.categoryService.load();
     }
 
-    this.maxDate.set(this.dateService.format(this.dateService.getLocalDatetime().getTime(), 'ISO').split('T')[0]);
+    this.maxDate.set(this.dateService.formatLocalDateToIso(new Date()));
 
     this.route.queryParamMap.subscribe(params => {
       this.source.set(params.get('source') || undefined);
@@ -119,15 +120,23 @@ export class TransactionPage {
     this.transactionState.errorFilteredList.set(null);
 
     this.transactionService.filterTransactions(filter).subscribe({
-      next: (response: ApiResponseDTO<PageableResponseDTO<TransactionResponseDTO>>) => {
+      next: (response: ApiResponseDTO<PageableResponseDTO<TransactionResponseDTO, TransactionFilterRequestDTO>>) => {
         this.transactionState.isLoadingFilteredList.set(false);
         if (response.data && response.data.content) {
           const currentContent = this.accumulatedTransactions();
           const newContent = response.data.content;
           const accumulated = [...currentContent, ...newContent];
+          const clipped = response.data.clipped;
           this.accumulatedTransactions.set(accumulated);
           this.totalElements.set(response.data.totalElements);
           this.totalPages.set(response.data.totalPages);
+          
+          if (clipped) {
+            const startDate = response.data.filter.transactionDateFrom || new Date(0);
+            const endDate = response.data.filter.transactionDateTo || new Date(0);
+            this.clipFilterDates(startDate, endDate);
+            this.showUpgradeProModal();
+          }
         }
       }, error: (error) => {
         this.transactionState.isLoadingFilteredList.set(false);
@@ -135,22 +144,35 @@ export class TransactionPage {
           this.transactionState.errorFilteredList.set('Error del servidor. Por favor, inténtalo de nuevo.');
         } else {
           this.transactionState.errorFilteredList.set(error.error.message || 'Error cargando las transacciones.');
-
         }
       }
     });
+  }
+
+  private clipFilterDates(startDate: Date, endDate: Date): void {
+    this.filterStartDate.set(this.dateService.formatUtcTimestampToLocalIso(startDate.getTime()));
+    this.filterEndDate.set(this.dateService.formatUtcTimestampToLocalIso(endDate.getTime()));
+  }
+
+  private showUpgradeProModal(): void {
+    upgradeProModalState.title.set('Desbloquea tu historial completo');
+    upgradeProModalState.htmlMessage.set('Tu plan Free solo permite ver transacciones de los últimos 30 días. ' +
+              'Actualiza a <strong>Pro</strong> y accede a todo tu historial de transacciones.');
+    upgradeProModalState.open.set(true);
   }
 
   private buildFilterRequest(): TransactionFilterRequestDTO {
     const filter = TransactionFilterRequestDTO.createEmpty();
     const source = this.source();
     const code = this.code();
-    filter.transactionDateTimestampFrom = this.dateService.parseDateIsoString(this.filterStartDate()).setHours(0,0,0,0);
-    filter.transactionDateTimestampTo = this.dateService.parseDateIsoString(this.filterEndDate()).setHours(23,59,59,999);
+    filter.transactionDateFrom = this.dateService.parseDateIsoStringToUtcTimestamp(this.filterStartDate());
+    filter.transactionDateTo = this.dateService.parseDateIsoStringToUtcTimestamp(this.filterEndDate());
     filter.description = this.filterDescription().trim() || undefined;
     filter.pageNumber = this.currentPage();
     filter.transactionType = this.filterType() && this.filterType() !== TransactionType.ALL ? this.filterType() : undefined;
     filter.categoryResourceCode = this.filterCategory() && this.filterCategory() !== 'ALL' ? this.filterCategory() : undefined;
+
+    console.log(filter);
 
     if (source && code) {
       switch (source) {
@@ -185,12 +207,12 @@ export class TransactionPage {
   }
 
   resetFilters(): void {
-    const now = this.dateService.getLocalDatetime();
-    const pastDate = this.dateService.getLocalDatetime();
+    const now = new Date();
+    const pastDate = new Date();
     pastDate.setMonth(now.getMonth() - 1);
 
-    this.filterEndDate.set(this.dateService.format(now.getTime(), 'ISO').split('T')[0]);
-    this.filterStartDate.set(this.dateService.format(pastDate.getTime(), 'ISO').split('T')[0]);
+    this.filterEndDate.set(this.dateService.formatLocalDateToIso(now));
+    this.filterStartDate.set(this.dateService.formatLocalDateToIso(pastDate));
     this.filterType.set(TransactionType.ALL);
     this.filterDescription.set('');
     this.filterCategory.set('ALL');

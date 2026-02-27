@@ -10,6 +10,7 @@ import { NotificationService } from '../../../feature/common/service/notificatio
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
+import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 
 @Component({
   selector: 'app-account-edition-modal',
@@ -69,9 +70,17 @@ export class AccountEditionModal implements OnInit {
         } else {
           this.accountState.errorSendingAccount.set(response.message);
         }
-      }, error: () => {
-        this.accountState.errorSendingAccount.set('Error guardando la cuenta. Por favor, inténtalo de nuevo más tarde.');
+      }, error: (error) => {
         this.accountState.isLoadingSendingAccount.set(false);
+        if (error.status === 403) {
+          if (error.error && error.error.featureCode) {
+            this.showUpgradeProModal();
+          } else {
+            this.accountState.errorSendingAccount.set('No tienes permiso para realizar esta acción. Por favor, contacta con soporte.');
+          }
+        } else {
+          this.accountState.errorSendingAccount.set('Error guardando la cuenta. Por favor, inténtalo de nuevo más tarde.');
+        }
       }
     });
   }
@@ -84,6 +93,13 @@ export class AccountEditionModal implements OnInit {
     this.loadAccountData();
   }
 
+  private showUpgradeProModal(): void {
+    upgradeProModalState.title.set('Alcanzaste el límite de cuentas');
+    upgradeProModalState.htmlMessage.set('Tu plan Free permite hasta 2 cuentas activas. ' +
+            'Actualiza a <strong>Pro</strong> y gestiona todas tus cuentas sin restricciones.');
+    upgradeProModalState.open.set(true);
+  }
+  
   private buildAccountData(): AccountRequestDTO {
     const formValues = this.formAccount.value;
     const accountName = formValues.name;

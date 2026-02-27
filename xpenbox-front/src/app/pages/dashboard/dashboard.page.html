@@ -16,43 +16,61 @@
                   (click)="changePeriod(periodFilter.CURRENT_MONTH)"
                   [disabled]="isPeriodSelected(periodFilter.CURRENT_MONTH)"
                   [class]="isPeriodSelected(periodFilter.CURRENT_MONTH) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
-                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors">
+                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Mes Actual
+                  @if (!isEnableFeature(periodFilter.CURRENT_MONTH)) {
+                    <span class="ml-1.5 px-1.5 py-0.5 text-[0.625rem] font-bold rounded bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-sm">PRO</span>
+                  }
                 </button>
                 <button 
                   (click)="changePeriod(periodFilter.LAST_MONTH)"
                   [disabled]="isPeriodSelected(periodFilter.LAST_MONTH)"
                   [class]="isPeriodSelected(periodFilter.LAST_MONTH) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
-                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors">
+                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Mes Anterior
+                  @if (!isEnableFeature(periodFilter.LAST_MONTH)) {
+                    <span class="ml-1.5 px-1.5 py-0.5 text-[0.625rem] font-bold rounded bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-sm">PRO</span>
+                  }
                 </button>
                 <button 
                   (click)="changePeriod(periodFilter.LAST_3_MONTHS)"
                   [disabled]="isPeriodSelected(periodFilter.LAST_3_MONTHS)"
                   [class]="isPeriodSelected(periodFilter.LAST_3_MONTHS) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
-                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors">
+                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Últimos 3 meses
+                  @if (!isEnableFeature(periodFilter.LAST_3_MONTHS)) {
+                    <span class="ml-1.5 px-1.5 py-0.5 text-[0.625rem] font-bold rounded bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-sm">PRO</span>
+                  }
                 </button>
                 <button 
                   (click)="changePeriod(periodFilter.LAST_6_MONTHS)"
                   [disabled]="isPeriodSelected(periodFilter.LAST_6_MONTHS)"
                   [class]="isPeriodSelected(periodFilter.LAST_6_MONTHS) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
-                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors">
+                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Últimos 6 meses
+                  @if (!isEnableFeature(periodFilter.LAST_6_MONTHS)) {
+                    <span class="ml-1.5 px-1.5 py-0.5 text-[0.625rem] font-bold rounded bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-sm">PRO</span>
+                  }
                 </button>
                 <button 
                   (click)="changePeriod(periodFilter.CURRENT_YEAR)"
                   [disabled]="isPeriodSelected(periodFilter.CURRENT_YEAR)"
                   [class]="isPeriodSelected(periodFilter.CURRENT_YEAR) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
-                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors">
+                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Año Actual
+                  @if (!isEnableFeature(periodFilter.CURRENT_YEAR)) {
+                    <span class="ml-1.5 px-1.5 py-0.5 text-[0.625rem] font-bold rounded bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-sm">PRO</span>
+                  }
                 </button>
                 <button 
                   (click)="changePeriod(periodFilter.LAST_YEAR)"
                   [disabled]="isPeriodSelected(periodFilter.LAST_YEAR)"
                   [class]="isPeriodSelected(periodFilter.LAST_YEAR) ? 'bg-[var(--xpb-neutral)]/30 xpb-text-primary font-medium border xpb-border shadow-sm hover:xpb-bg-main' : 'xpb-bg-main xpb-text-secondary hover:xpb-bg-card'"
-                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors">
+                  class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap transition-colors relative">
                   Año Anterior
+                  @if (!isEnableFeature(periodFilter.LAST_YEAR)) {
+                    <span class="ml-1.5 px-1.5 py-0.5 text-[0.625rem] font-bold rounded bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-sm">PRO</span>
+                  }
                 </button>
             </div>
         </div>

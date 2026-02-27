@@ -103,9 +103,8 @@ export class IncomeAssignModal implements OnInit {
    * @returns void
    */
   onSubmit(): void {
-    
     if (!this.isFormValid) return;
-    
+
     const amountValue = this.amount();
     const descriptionValue = this.description();
     const incomeResourceCode = this.incomeResourceCode();
@@ -120,30 +119,13 @@ export class IncomeAssignModal implements OnInit {
       dateTimestamp
     );
 
-    this.transactionState.isLoadingSendingTransaction.set(true);
-    this.transactionState.errorSendingTransaction.set(null);
-    
-    this.transactionService.create(transactionRequest).subscribe({
-      next: (response: ApiResponseDTO<TransactionResponseDTO>) => {
-        this.transactionState.isLoadingSendingTransaction.set(false);
+    this.transactionService.submitTransaction(transactionRequest, () => this.successTransactionCreated());
+  }
 
-        if (response.success && response.data) {
-          this.close.emit();
-          this.transactionState.successSendingTransaction.set(true);
-
-          this.accountService.refresh();
-          this.incomeService.refresh();
-        }
-      }, error: (error) => {
-        this.transactionState.isLoadingSendingTransaction.set(false);
-        console.error('Error creating income assignment:', error);
-        if (error.status === 500 || error.status === 0) {
-          this.transactionState.errorSendingTransaction.set('Error guardando la transacción. Por favor, inténtalo de nuevo.');
-        } else {
-          this.transactionState.errorSendingTransaction.set(error.error.message || 'Error guardando la transacción.');
-        }
-      }
-    });
+  private successTransactionCreated(): void {
+    this.close.emit();
+    this.accountService.refresh();
+    this.incomeService.refresh();
   }
 
   retryLoadIncomeData(): void {
