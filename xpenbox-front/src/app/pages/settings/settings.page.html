@@ -89,6 +89,101 @@
       }
     </div>
 
+    <!-- Premium Subscription Management Card -->
+    @if (isPremiumUser && subscriptionState.subscription()) {
+      <div class="xpb-bg-card rounded-xl shadow-sm p-6 mb-6 border xpb-border">
+        <h2 class="text-lg font-semibold xpb-text-primary mb-6 flex items-center gap-2">
+          <span class="material-icons text-[var(--xpb-primary)]">workspace_premium</span>
+          Suscripción Premium
+        </h2>
+
+        <div class="space-y-5">
+          <!-- Plan Name -->
+          <div class="flex items-start gap-4">
+            <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
+              <span class="material-icons text-[var(--xpb-primary)] text-2xl">card_membership</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm xpb-text-secondary mb-1">Plan Actual</p>
+              <p class="font-medium xpb-text-primary">{{ subscriptionState.subscription()?.plan?.name || "" }}</p>
+            </div>
+          </div>
+
+          <!-- Subscription Status -->
+          <div class="flex items-start gap-4">
+            <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
+              <span class="material-icons text-[var(--xpb-primary)] text-2xl">{{ subscriptionState.subscription()?.status === 'ACTIVE' ? 'check_circle' : 'schedule' }}</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm xpb-text-secondary mb-1">Estado</p>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium"
+                      [ngClass]="{
+                        'bg-[var(--xpb-income)]/10 text-[var(--xpb-income)]': subscriptionState.subscription()?.status === 'ACTIVE',
+                        'bg-yellow-100 text-yellow-700': subscriptionState.subscription()?.status !== 'ACTIVE'
+                      }">
+                  <span class="w-2 h-2 rounded-full"
+                        [ngClass]="{
+                          'bg-[var(--xpb-income)]': subscriptionState.subscription()?.status === 'ACTIVE',
+                          'bg-yellow-500': subscriptionState.subscription()?.status !== 'ACTIVE'
+                        }"></span>
+                  {{ subscriptionState.subscription()?.status === 'ACTIVE' ? 'Activa' : subscriptionState.subscription()?.status }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Renewal Date -->
+          @if (subscriptionState.subscription()?.renew) {
+            <div class="flex items-start gap-4">
+              <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
+                <span class="material-icons text-[var(--xpb-primary)] text-2xl">event_repeat</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm xpb-text-secondary mb-1">Próxima Renovación</p>
+                <p class="font-medium xpb-text-primary">{{ subscriptionRenewDate() }}</p>
+              </div>
+            </div>
+          } @else {
+            <div class="flex items-start gap-4">
+              <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
+                <span class="material-icons text-[var(--xpb-expense)] text-2xl">event_busy</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm xpb-text-secondary mb-1">Finaliza el</p>
+                <p class="font-medium xpb-text-primary">{{ subscriptionEndDate() }}</p>
+                <p class="text-xs xpb-text-secondary mt-1">La suscripción no se renovará automáticamente</p>
+              </div>
+            </div>
+          }
+
+          <!-- Price -->
+          <div class="flex items-start gap-4">
+            <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
+              <span class="material-icons text-[var(--xpb-primary)] text-2xl">payments</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm xpb-text-secondary mb-1">Precio</p>
+              <p class="font-medium xpb-text-primary">{{ subscriptionState.subscription()?.planCurrency }} {{ subscriptionState.subscription()?.planPrice | number:'1.2-2' }} / mes</p>
+            </div>
+          </div>
+
+          <!-- Cancel Subscription Button -->
+          @if (subscriptionState.subscription()?.renew) {
+            <div class="pt-4 border-t xpb-border">
+              <button 
+                (click)="openCancelModal()"
+                class="w-full sm:w-auto xpb-btn-secondary inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-[var(--xpb-expense)] hover:bg-[var(--xpb-expense)] hover:text-white transition-all duration-200 border-2 border-[var(--xpb-expense)] font-medium"
+              >
+                <span class="material-icons">cancel</span>
+                <span>Cancelar Suscripción</span>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
     <!-- Logout Section -->
     <div class="xpb-bg-card rounded-xl shadow-sm p-6 border xpb-border">
       <h2 class="text-lg font-semibold xpb-text-primary mb-4 flex items-center gap-2">
@@ -113,3 +208,7 @@
     </div>
   </div>
 </div>
+
+@if (showCancelModal()) {
+  <app-cancel-pro-modal (close)="closeCancelModal()"></app-cancel-pro-modal> 
+}

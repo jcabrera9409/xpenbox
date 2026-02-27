@@ -57,7 +57,9 @@ export class SubscriptionService {
    * @returns An Observable containing the API response for the cancellation request.
    */
   cancelSubscription(): Observable<ApiResponseDTO<void>> {
-    return this.http.post<ApiResponseDTO<void>>(`${this.apiUrl}/cancel`, {});
+    return this.http.post<ApiResponseDTO<void>>(`${this.apiUrl}/cancel`, {}, {
+      withCredentials: true
+    });
   }
 
   loadUserSubscription(): void {

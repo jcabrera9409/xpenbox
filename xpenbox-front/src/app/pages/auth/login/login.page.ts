@@ -6,6 +6,7 @@ import { AuthService } from '../../../feature/auth/service/auth.service';
 import { LoginRequestDTO } from '../../../feature/auth/model/login.request.dto';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { StorageService } from '../../../shared/service/storage.service';
+import { subscriptionState } from '../../../feature/subscription/service/subscription.state';
 
 @Component({
   selector: 'app-login-page',
@@ -81,6 +82,7 @@ export class LoginPage {
         next: () => {
           this.isSubmitting.set(false);
           this.storageService.setHasLoggedBefore(true);
+          subscriptionState.subscription.set(null);
           this.router.navigate(['/landing']);
         },
         error: (error) => {
