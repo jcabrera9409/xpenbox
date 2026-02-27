@@ -15,8 +15,8 @@ export const routes: Routes = [
     { path: 'verify-email', component: VerifyEmailPage },
     { path: 'forgot-password', component: ForgotPasswordPage },
     { path: 'reset-password', component: ResetPasswordPage },
+    { path: 'register', component: RegisterPage },
     { path: 'login', component: LoginPage, canActivate: [guestGuard] },
-    { path: 'register', component: RegisterPage, canActivate: [guestGuard] },
     { path: 'landing', component: LandingPage, children: landingRoutes, canActivate: [authGuard] },
     { path: 'success', component: SuccessPage, canActivate: [authGuard] }
 ];
