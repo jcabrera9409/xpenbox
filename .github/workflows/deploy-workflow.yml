@@ -26,6 +26,16 @@ jobs:
           remote_user: ${{ secrets.VM_USER }}
           remote_key: ${{ secrets.VM_SSH_KEY }}
 
+      - name: Copy index files to VM
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: -avz --rsync-path="mkdir -p /home/deployment/index && rsync"
+          path: index/
+          remote_path: /home/deployment/index/
+          remote_host: ${{ secrets.VM_HOST }}
+          remote_user: ${{ secrets.VM_USER }}
+          remote_key: ${{ secrets.VM_SSH_KEY }}
+
   init-compose:
     name: Initialize Docker Compose
     needs: deploy-to-vm
