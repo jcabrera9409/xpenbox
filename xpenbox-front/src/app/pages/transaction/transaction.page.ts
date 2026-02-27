@@ -85,7 +85,7 @@ export class TransactionPage {
       this.categoryService.load();
     }
 
-    this.maxDate.set(this.dateService.format(this.dateService.getLocalDatetime().getTime(), 'ISO').split('T')[0]);
+    this.maxDate.set(this.dateService.formatLocalDateToIso(new Date()));
 
     this.route.queryParamMap.subscribe(params => {
       this.source.set(params.get('source') || undefined);
@@ -150,10 +150,8 @@ export class TransactionPage {
   }
 
   private clipFilterDates(startTimestamp: number, endTimestamp: number): void {
-    const startDate = this.dateService.toLocalDate(startTimestamp);
-    const endDate = this.dateService.toLocalDate(endTimestamp);
-    this.filterStartDate.set(this.dateService.format(startDate.getTime(), 'ISO').split('T')[0]);
-    this.filterEndDate.set(this.dateService.format(endDate.getTime(), 'ISO').split('T')[0]);
+    this.filterStartDate.set(this.dateService.formatUtcTimestampToLocalIso(startTimestamp));
+    this.filterEndDate.set(this.dateService.formatUtcTimestampToLocalIso(endTimestamp));
   }
 
   private showUpgradeProModal(): void {
@@ -167,8 +165,8 @@ export class TransactionPage {
     const filter = TransactionFilterRequestDTO.createEmpty();
     const source = this.source();
     const code = this.code();
-    filter.transactionDateTimestampFrom = this.dateService.parseDateIsoString(this.filterStartDate()).setHours(0,0,0,0);
-    filter.transactionDateTimestampTo = this.dateService.parseDateIsoString(this.filterEndDate()).setHours(23,59,59,999);
+    filter.transactionDateTimestampFrom = this.dateService.parseDateIsoStringToUtcTimestamp(this.filterStartDate(), 0, 0, 0, 0);
+    filter.transactionDateTimestampTo = this.dateService.parseDateIsoStringToUtcTimestamp(this.filterEndDate(), 23, 59, 59, 999);
     filter.description = this.filterDescription().trim() || undefined;
     filter.pageNumber = this.currentPage();
     filter.transactionType = this.filterType() && this.filterType() !== TransactionType.ALL ? this.filterType() : undefined;
@@ -207,12 +205,12 @@ export class TransactionPage {
   }
 
   resetFilters(): void {
-    const now = this.dateService.getLocalDatetime();
-    const pastDate = this.dateService.getLocalDatetime();
+    const now = new Date();
+    const pastDate = new Date();
     pastDate.setMonth(now.getMonth() - 1);
 
-    this.filterEndDate.set(this.dateService.format(now.getTime(), 'ISO').split('T')[0]);
-    this.filterStartDate.set(this.dateService.format(pastDate.getTime(), 'ISO').split('T')[0]);
+    this.filterEndDate.set(this.dateService.formatLocalDateToIso(now));
+    this.filterStartDate.set(this.dateService.formatLocalDateToIso(pastDate));
     this.filterType.set(TransactionType.ALL);
     this.filterDescription.set('');
     this.filterCategory.set('ALL');

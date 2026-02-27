@@ -46,6 +46,56 @@ export class DateService {
     return new Date(year, month - 1, day, hours, minutes);
   }
 
+  /**
+   * Converts an ISO date string (YYYY-MM-DD) selected by the user in their local timezone 
+   * to a UTC timestamp. The date is interpreted as being in the client's local timezone,
+   * then converted to UTC.
+   * 
+   * Example: User in UTC-5 selects "2026-01-27" at 00:00 local time
+   *          -> Returns timestamp for "2026-01-27T05:00:00.000Z"
+   * 
+   * @param dateIsoString The date string in ISO format (YYYY-MM-DD) from a date input
+   * @param hours The hour in LOCAL timezone (0-23)
+   * @param minutes The minute (0-59)
+   * @param seconds The second (0-59)
+   * @param milliseconds The millisecond (0-999)
+   * @returns The UTC timestamp in milliseconds
+   */
+  parseDateIsoStringToUtcTimestamp(
+    dateIsoString: string, 
+    hours: number = 0, 
+    minutes: number = 0, 
+    seconds: number = 0, 
+    milliseconds: number = 0
+  ): number {
+    const [year, month, day] = dateIsoString.split('-').map(num => parseInt(num, 10));
+    // Create date in LOCAL timezone, JavaScript automatically handles UTC conversion
+    const localDate = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+    return localDate.getTime();
+  }
+
+  /**
+   * Formats a Date object to an ISO date string (YYYY-MM-DD) in the client's local timezone.
+   * @param date The Date object to format
+   * @returns The formatted date string in ISO format (YYYY-MM-DD)
+   */
+  formatLocalDateToIso(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Converts a UTC timestamp to an ISO date string (YYYY-MM-DD) in the client's local timezone.
+   * @param timestamp The UTC timestamp in milliseconds
+   * @returns The formatted date string in ISO format (YYYY-MM-DD) representing the local date
+   */
+  formatUtcTimestampToLocalIso(timestamp: number): string {
+    const date = new Date(timestamp);
+    return this.formatLocalDateToIso(date);
+  }
+
   addDays(date: Date, days: number): Date {
     const result = new Date(date);
     result.setDate(result.getDate() + days);
