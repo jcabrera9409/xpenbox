@@ -111,8 +111,8 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
         }
 
         Long monthsLimit = historyFeature.limitValue();
-        LocalDateTime now = DateFunctions.toStartDay(DateFunctions.currentLocalDateTime());
-        LocalDateTime limitDate = now.minusMonths(monthsLimit);
+        LocalDateTime now = DateFunctions.toStartDay(DateFunctions.currentLocalDateTime().plusDays(1));
+        LocalDateTime limitDate = now.minusMonths(monthsLimit).minusDays(1);
         
         Long adjustedFrom = adjustFromDate(userId, filter.transactionDateTimestampFrom(), limitDate, monthsLimit);
         Long adjustedTo = adjustToDate(userId, filter.transactionDateTimestampTo(), limitDate, now, monthsLimit);
