@@ -1,5 +1,7 @@
 package org.xpenbox.transaction.dto;
 
+import java.time.LocalDateTime;
+
 import org.xpenbox.transaction.entity.Transaction.TransactionType;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -11,8 +13,8 @@ import jakarta.validation.constraints.Size;
  * @param resourceCode Resource code of the transaction
  * @param transactionType Type of the transaction
  * @param description Description of the transaction
- * @param transactionDateTimestampFrom Start timestamp for transaction date filter
- * @param transactionDateTimestampTo End timestamp for transaction date filter
+ * @param transactionDateFrom Start date for transaction date filter
+ * @param transactionDateTo End date for transaction date filter
  * @param categoryResourceCode Resource code of the category
  * @param incomeResourceCode Resource code of the income
  * @param accountResourceCode Resource code of the account
@@ -30,11 +32,9 @@ public record TransactionFilterDTO(
     @Size(max = 500, message = "Description must not exceed 500 characters")
     String description,
 
-    @Min(value = 1, message = "Date from timestamp must be a positive number")
-    Long transactionDateTimestampFrom,
+    LocalDateTime transactionDateFrom,
 
-    @Min(value = 1, message = "Date to timestamp must be a positive number")
-    Long transactionDateTimestampTo,
+    LocalDateTime transactionDateTo,
 
     @Size(max = 100, message = "Category resource code must not exceed 100 characters")
     String categoryResourceCode,
@@ -69,10 +69,10 @@ public record TransactionFilterDTO(
         if (this.description != null && !this.description.equals(other.description)) {
             return false;
         }
-        if (this.transactionDateTimestampFrom != null && !this.transactionDateTimestampFrom.equals(other.transactionDateTimestampFrom)) {
+        if (this.transactionDateFrom != null && !this.transactionDateFrom.equals(other.transactionDateFrom)) {
             return false;
         }
-        if (this.transactionDateTimestampTo != null && !this.transactionDateTimestampTo.equals(other.transactionDateTimestampTo)) {
+        if (this.transactionDateTo != null && !this.transactionDateTo.equals(other.transactionDateTo)) {
             return false;
         }
         if (this.categoryResourceCode != null && !this.categoryResourceCode.equals(other.categoryResourceCode)) {

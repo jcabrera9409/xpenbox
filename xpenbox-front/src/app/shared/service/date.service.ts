@@ -62,16 +62,13 @@ export class DateService {
    * @returns The UTC timestamp in milliseconds
    */
   parseDateIsoStringToUtcTimestamp(
-    dateIsoString: string, 
-    hours: number = 0, 
-    minutes: number = 0, 
-    seconds: number = 0, 
-    milliseconds: number = 0
-  ): number {
+    dateIsoString: string
+  ): Date {
+    const now = new Date();
     const [year, month, day] = dateIsoString.split('-').map(num => parseInt(num, 10));
     // Create date in LOCAL timezone, JavaScript automatically handles UTC conversion
-    const localDate = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
-    return localDate.getTime();
+    const localDate = new Date(year, month - 1, day, now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+    return localDate;
   }
 
   /**

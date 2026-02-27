@@ -132,9 +132,9 @@ export class TransactionPage {
           this.totalPages.set(response.data.totalPages);
           
           if (clipped) {
-            const startTimestamp = response.data.filter.transactionDateTimestampFrom || 0;
-            const endTimestamp = response.data.filter.transactionDateTimestampTo || 0;
-            this.clipFilterDates(startTimestamp, endTimestamp);
+            const startDate = response.data.filter.transactionDateFrom || new Date(0);
+            const endDate = response.data.filter.transactionDateTo || new Date(0);
+            this.clipFilterDates(startDate, endDate);
             this.showUpgradeProModal();
           }
         }
@@ -149,9 +149,9 @@ export class TransactionPage {
     });
   }
 
-  private clipFilterDates(startTimestamp: number, endTimestamp: number): void {
-    this.filterStartDate.set(this.dateService.formatUtcTimestampToLocalIso(startTimestamp));
-    this.filterEndDate.set(this.dateService.formatUtcTimestampToLocalIso(endTimestamp));
+  private clipFilterDates(startDate: Date, endDate: Date): void {
+    this.filterStartDate.set(this.dateService.formatUtcTimestampToLocalIso(startDate.getTime()));
+    this.filterEndDate.set(this.dateService.formatUtcTimestampToLocalIso(endDate.getTime()));
   }
 
   private showUpgradeProModal(): void {
@@ -165,12 +165,14 @@ export class TransactionPage {
     const filter = TransactionFilterRequestDTO.createEmpty();
     const source = this.source();
     const code = this.code();
-    filter.transactionDateTimestampFrom = this.dateService.parseDateIsoStringToUtcTimestamp(this.filterStartDate(), 0, 0, 0, 0);
-    filter.transactionDateTimestampTo = this.dateService.parseDateIsoStringToUtcTimestamp(this.filterEndDate(), 23, 59, 59, 999);
+    filter.transactionDateFrom = this.dateService.parseDateIsoStringToUtcTimestamp(this.filterStartDate());
+    filter.transactionDateTo = this.dateService.parseDateIsoStringToUtcTimestamp(this.filterEndDate());
     filter.description = this.filterDescription().trim() || undefined;
     filter.pageNumber = this.currentPage();
     filter.transactionType = this.filterType() && this.filterType() !== TransactionType.ALL ? this.filterType() : undefined;
     filter.categoryResourceCode = this.filterCategory() && this.filterCategory() !== 'ALL' ? this.filterCategory() : undefined;
+
+    console.log(filter);
 
     if (source && code) {
       switch (source) {

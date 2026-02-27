@@ -116,13 +116,13 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
 
         LOG.debugf("Validating transaction filter with transaction history limit of %d months. Original from: %s, to: %s. Range validated: from %s to %s",
             monthsLimit,
-            DateFunctions.convertToLocalDateTime(filter.transactionDateTimestampFrom()),
-            DateFunctions.convertToLocalDateTime(filter.transactionDateTimestampTo()),
+            DateFunctions.convertToSystemDefaultZone(filter.transactionDateFrom()),
+            DateFunctions.convertToSystemDefaultZone(filter.transactionDateTo()),
             limitDate,
             now);
         
-        Long adjustedFrom = adjustFromDate(userId, filter.transactionDateTimestampFrom(), limitDate, monthsLimit);
-        Long adjustedTo = adjustToDate(userId, filter.transactionDateTimestampTo(), limitDate, now, monthsLimit);
+        LocalDateTime adjustedFrom = adjustFromDate(userId, filter.transactionDateFrom(), limitDate, monthsLimit);
+        LocalDateTime adjustedTo = adjustToDate(userId, filter.transactionDateTo(), limitDate, now, monthsLimit);
 
         return new TransactionFilterDTO(
             filter.resourceCode(),
@@ -142,41 +142,36 @@ public class PlanValidatorServiceImpl implements IPlanValidatorService {
     /**
      * Adjusts the "from" date to ensure it does not exceed the transaction history limit.
      * @param userId The ID of the user
-     * @param fromTimestamp The original "from" timestamp
+     * @param from The original "from" date as a LocalDateTime
      * @param limitDate The earliest allowed date based on the user's plan
      * @param monthsLimit The number of months allowed by the user's plan
-     * @return The adjusted "from" timestamp
+     * @return The adjusted "from" date as a LocalDateTime
      */
-    private Long adjustFromDate(Long userId, Long fromTimestamp, LocalDateTime limitDate, Long monthsLimit) {
-        LocalDateTime from = DateFunctions.convertToLocalDateTime(fromTimestamp);
-        
+    private LocalDateTime adjustFromDate(Long userId, LocalDateTime from, LocalDateTime limitDate, Long monthsLimit) {
         if (from == null || from.isBefore(limitDate)) {
-            LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampFrom to %s", userId, monthsLimit, limitDate);
-            return DateFunctions.convertToTimestamp(limitDate);
+            LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateFrom to %s", userId, monthsLimit, limitDate);
+            return limitDate;
         }
         
-        return fromTimestamp;
+        return from;
     }
 
     /**
      * Adjusts the "to" date to ensure it does not exceed the current date and respects the transaction history limit.
      * @param userId The ID of the user
-     * @param toTimestamp The original "to" timestamp
+     * @param to The original "to" date as a LocalDateTime
      * @param limitDate The earliest allowed date based on the user's plan
      * @param now The current date and time
      * @param monthsLimit The number of months allowed by the user's plan
-     * @return The adjusted "to" timestamp
-
+     * @return The adjusted "to" date as a LocalDateTime
      */
-    private Long adjustToDate(Long userId, Long toTimestamp, LocalDateTime limitDate, LocalDateTime now, Long monthsLimit) {
-        LocalDateTime to = DateFunctions.convertToLocalDateTime(toTimestamp);
-        
+    private LocalDateTime adjustToDate(Long userId, LocalDateTime to, LocalDateTime limitDate, LocalDateTime now, Long monthsLimit) {
         if (to == null || to.isBefore(limitDate)) {
-            LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTimestampTo to %s", userId, monthsLimit, limitDate);
-            return DateFunctions.convertToTimestamp(now);
+            LOG.debugf("User %d has a transaction history limit of %d months, adjusting transactionDateTo to %s", userId, monthsLimit, limitDate);
+            return now;
         }
         
-        return toTimestamp;
+        return to;
     }
 
     /**

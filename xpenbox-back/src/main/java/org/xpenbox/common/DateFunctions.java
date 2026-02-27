@@ -17,6 +17,22 @@ public class DateFunctions {
     private static final Logger LOG = Logger.getLogger(DateFunctions.class);
 
     /**
+     * Converts a LocalDateTime to the system's default time zone. This method takes a LocalDateTime object and converts it to the equivalent LocalDateTime in the system's default time zone. If the input LocalDateTime is null, the method will return null.
+     * @param dateTime The LocalDateTime to be converted, which is assumed to be in the system's default time zone. If this parameter is null, the method will return null.
+     * @return The LocalDateTime converted to the system's default time zone, or null if the input dateTime is null.
+     */
+    public static LocalDateTime convertToSystemDefaultZone(LocalDateTime dateTime) {
+        LOG.debug("Converting LocalDateTime to system default timezone");
+
+        if (dateTime == null) {
+            LOG.warn("Provided LocalDateTime is null, returning null");
+            return null;
+        }
+
+        return dateTime.atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    /**
      * Converts a LocalDateTime to a timestamp in milliseconds.
      * @param dateTime The LocalDateTime to be converted.
      * @return The corresponding timestamp in milliseconds, or null if the input is null.

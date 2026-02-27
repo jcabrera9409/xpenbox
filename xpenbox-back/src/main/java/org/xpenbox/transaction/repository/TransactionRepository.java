@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
-import org.xpenbox.common.DateFunctions;
 import org.xpenbox.common.repository.GenericRepository;
 import org.xpenbox.transaction.dto.TransactionFilterDTO;
 import org.xpenbox.transaction.entity.Transaction;
@@ -171,9 +170,9 @@ public class TransactionRepository extends GenericRepository<Transaction> {
             params.and("description", filterDTO.description());
         }
 
-        if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
-            LocalDateTime from = DateFunctions.convertToLocalDateTime(filterDTO.transactionDateTimestampFrom());
-            LocalDateTime to = DateFunctions.convertToLocalDateTime(filterDTO.transactionDateTimestampTo());
+        if (filterDTO.transactionDateFrom() != null && filterDTO.transactionDateTo() != null) {
+            LocalDateTime from = filterDTO.transactionDateFrom();
+            LocalDateTime to = filterDTO.transactionDateTo();
             params.and("transactionDateFrom", from);
             params.and("transactionDateTo", to);
         }
@@ -220,7 +219,7 @@ public class TransactionRepository extends GenericRepository<Transaction> {
             queryBuilder.append(" and lower(description) like lower(concat('%', :description, '%'))");
         }
 
-        if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
+        if (filterDTO.transactionDateFrom() != null && filterDTO.transactionDateTo() != null) {
             queryBuilder.append(" and transactionDate between :transactionDateFrom and :transactionDateTo");
         }
 
@@ -312,7 +311,7 @@ public class TransactionRepository extends GenericRepository<Transaction> {
         if (filterDTO.description() != null) {
             hql.append("AND LOWER(t.description) LIKE LOWER(CONCAT('%', :description, '%')) ");
         }
-        if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
+        if (filterDTO.transactionDateFrom() != null && filterDTO.transactionDateTo() != null) {
             hql.append("AND t.transactionDate BETWEEN :transactionDateFrom AND :transactionDateTo ");
         }
         if (filterDTO.categoryResourceCode() != null) {
@@ -345,11 +344,9 @@ public class TransactionRepository extends GenericRepository<Transaction> {
         if (filterDTO.description() != null) {
             query.setParameter("description", filterDTO.description());
         }
-        if (filterDTO.transactionDateTimestampFrom() != null && filterDTO.transactionDateTimestampTo() != null) {
-            LocalDateTime from = DateFunctions.convertToLocalDateTime(filterDTO.transactionDateTimestampFrom());
-            LocalDateTime to = DateFunctions.convertToLocalDateTime(filterDTO.transactionDateTimestampTo());
-            query.setParameter("transactionDateFrom", from);
-            query.setParameter("transactionDateTo", to);
+        if (filterDTO.transactionDateFrom() != null && filterDTO.transactionDateTo() != null) {
+            query.setParameter("transactionDateFrom", filterDTO.transactionDateFrom());
+            query.setParameter("transactionDateTo", filterDTO.transactionDateTo());
         }
         if (filterDTO.categoryResourceCode() != null) {
             query.setParameter("categoryResourceCode", filterDTO.categoryResourceCode());
