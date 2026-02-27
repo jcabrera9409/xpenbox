@@ -2,7 +2,7 @@ name: Deploy to Production VM
 
 on: 
   push:
-    paths: ['deployment/**', '.github/workflows/deploy-workflow.yml']
+    paths: ['deployment/**', 'index/**', '.github/workflows/deploy-workflow.yml']
     branches: [main]
   workflow_dispatch:
 
