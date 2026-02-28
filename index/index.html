@@ -628,6 +628,11 @@
     </footer>
 
     <script>
+        // Redirigir a la app si está en modo PWA (standalone)
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            window.location.href = 'https://xpenbox.firstcode.online/landing';
+        }
+
         // Smooth scroll para los enlaces
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
