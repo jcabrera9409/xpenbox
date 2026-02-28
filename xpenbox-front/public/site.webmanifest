@@ -2,7 +2,7 @@
   "name": "XpenBox",
   "short_name": "XpenBox",
   "description": "XpenBox is an open-source platform for managing income and expenses efficiently.",
-  "start_url": "/",
+  "start_url": "/landing",
   "display": "standalone",
   "background_color": "transparent",
   "theme_color": "#2b2b2b",
