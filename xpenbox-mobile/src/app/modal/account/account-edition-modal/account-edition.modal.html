@@ -1,0 +1,161 @@
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
+    <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto my-auto max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden">
+        
+        <!-- Header -->
+        <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+                        <span class="material-icons text-[var(--xpb-primary)] text-2xl">
+                            @if (isEditMode) {
+                                edit
+                            } @else {
+                                account_balance_wallet
+                            }
+                        </span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold xpb-text-primary">
+                            @if (isEditMode) {
+                                Modificar Cuenta
+                            } @else {
+                                Nueva Cuenta
+                            }
+                        </h2>
+                        <p class="text-sm xpb-text-secondary">
+                            @if (isEditMode) {
+                                Actualiza la información de tu cuenta
+                            } @else {
+                                Registra una nueva cuenta bancaria
+                            }
+                        </p>
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    (click)="onClose()"
+                    class="xpb-text-secondary hover:xpb-text-primary hover:bg-[var(--xpb-main)] rounded-lg p-2 transition-colors"
+                    aria-label="Cerrar modal"
+                >
+                    <span class="material-icons text-2xl">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-4 overflow-y-auto flex-1">
+            @if (this.accountState.isLoadingGetAccount() && isEditMode) {
+                <app-loading-ui></app-loading-ui>
+            } @else if(this.accountState.errorGetAccount() && isEditMode) {
+                <app-retry-component
+                    [message]="'Error al cargar la cuenta'"
+                    (retry)="retryLoadAccountData()">
+                </app-retry-component>
+            } @else if(accountData() || !isEditMode) {
+                <form [formGroup]="formAccount" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+                    <!-- Nombre de la cuenta -->
+                    <div>
+                        <label for="name" class="block text-sm font-medium xpb-text-primary mb-2">
+                            Nombre de la cuenta
+                        </label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                                account_balance
+                            </span>
+                            <input 
+                                id="name" 
+                                type="text" 
+                                formControlName="name"
+                                class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                                placeholder="Ej: Cuenta Corriente Santander"
+                                maxlength="150" 
+                                autocomplete="off" 
+                                aria-required="true" 
+                                aria-label="Nombre de la cuenta" 
+                            />
+                        </div>
+                        @if (formAccount.get('name')?.touched && formAccount.get('name')?.invalid) {
+                            <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                    @if (formAccount.get('name')?.errors?.['required']) {
+                                        <p>El nombre es obligatorio.</p>
+                                    }
+                                    @if (formAccount.get('name')?.errors?.['minlength']) {
+                                        <p>Debe tener mínimo 3 caracteres.</p>
+                                    }
+                                    @if (formAccount.get('name')?.errors?.['maxlength']) {
+                                        <p>Máximo 150 caracteres.</p>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Saldo inicial (solo en modo creación) -->
+                    @if (!isEditMode) {
+                        <div>
+                            <label for="initialBalance" class="block text-sm font-medium xpb-text-primary mb-2">
+                                Saldo inicial
+                            </label>
+                            <div class="relative">
+                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                                    payments
+                                </span>
+                                <input 
+                                    id="initialBalance" 
+                                    type="number" 
+                                    formControlName="initialBalance"
+                                    class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                                    placeholder="0.00"
+                                    min="0" 
+                                    step="0.01" 
+                                    aria-required="true" 
+                                    aria-label="Saldo inicial" 
+                                />
+                            </div>
+                            @if (formAccount.get('initialBalance')?.touched && formAccount.get('initialBalance')?.invalid) {
+                                <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                    <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                        @if (formAccount.get('initialBalance')?.errors?.['min']) {
+                                            <p>El saldo no puede ser negativo.</p>
+                                        }
+                                        @if (formAccount.get('initialBalance')?.errors?.['required']) {
+                                            <p>El saldo es obligatorio.</p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    @if (this.accountState.errorSendingAccount()) {
+                        <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                            <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                            <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                {{ this.accountState.errorSendingAccount() }}
+                            </div>
+                        </div>
+                    }
+                    <!-- Botones de acción -->
+                    <app-modal-buttons-ui
+                        [cancelText]="'Cancelar'"
+                        [cancelIcon]="'close'"
+                        [isEditMode]="isEditMode"
+                        [isLoading]="this.accountState.isLoadingSendingAccount()"
+                        [isValidForm]="formAccount.valid"
+                        [loadingText]="'Guardando...'"
+                        [loadingIcon]="'autorenew'"
+                        [confirmText]="'Registrar'"
+                        [confirmIcon]="'add'"
+                        [confirmEditText]="'Actualizar'"
+                        [confirmEditIcon]="'check'"
+                        (cancel)="onClose()">
+                    </app-modal-buttons-ui>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+

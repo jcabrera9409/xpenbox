@@ -1,0 +1,93 @@
+<div class="h-screen xpb-bg-main p-3 sm:p-4 flex flex-col overflow-hidden">
+  <!-- Header -->
+  <div class="mb-4 flex-shrink-0">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold xpb-text-primary mb-1">Categorías</h1>
+        <p class="xpb-text-secondary text-sm">Gestiona las categorías de tus transacciones</p>
+      </div>
+      <button 
+        (click)="openCategoryEditionModal()"
+        class="flex items-center gap-1.5 px-3 py-2 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors text-sm"
+        type="button">
+        <span class="material-icons text-lg">add</span>
+        <span class="hidden sm:inline">Nueva Categoría</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Card -->
+  <app-summary-card
+    class="mb-4 flex-shrink-0"
+    [isLoading]="this.categoryState.isLoadingGetList()"
+    [titleCard]="'Total de Categorías'"
+    [contentCard]="orderedCategories().length.toString()"
+    [subtitleCard]="
+      activeCategoriesCount() > 1 ? activeCategoriesCount() + ' categorías activas' :
+      activeCategoriesCount() === 1 ? activeCategoriesCount() + ' categoría activa' :
+      'Ninguna categoría activa'
+    "
+    [iconCard]="'category'"
+    [contentClassCard]="'xpb-text-primary'"
+  ></app-summary-card>
+
+  <!-- Categories List -->
+  <div class="flex-1 overflow-hidden">
+    <div class="h-full overflow-y-auto pr-2">
+      @if (this.categoryState.isLoadingGetList()) {
+        <app-loading-ui></app-loading-ui>
+      } @else if (this.categoryState.errorGetList()) {
+        <app-retry-component
+          [message]="'No se encontraron categorías'"
+          (retry)="reloadCategories()">
+        </app-retry-component>
+      } @else if (orderedCategories().length === 0) {
+        <app-create-first-component
+          [icon]="'category'"
+          [title]="'No hay categorías'"
+          [subtitle]="'Comienza creando tu primera categoría para organizar tus transacciones'"
+          [buttonText]="'Crear Primera Categoría'"
+          (create)="openCategoryEditionModal()"
+        ></app-create-first-component>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 pb-4">
+          @for (category of orderedCategories(); track category.resourceCode) {
+            <app-category-card ngSkipHydration 
+              class="block"
+              [categoryCardName]="category.name"
+              [categoryCardColor]="category.color"
+              [categoryCardState]="category.state"
+              [categoryCardResourceCode]="category.resourceCode"
+              [categoryTotalUses]="category.usageCount"
+              (categoryCardEdit)="openCategoryEditionModal($event)"
+              (categoryCardChangeState)="openConfirmNewStateModal($event)">
+            </app-category-card>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+@if (showCategoryEditionModal()) {
+    <app-category-edition-modal 
+        (close)="closeCategoryEditionModal()" 
+        [resourceCodeSelected]="resourceCodeCategorySelected()">
+    </app-category-edition-modal>
+}
+
+@if (showConfirmModal()) {
+  <app-confirm-modal
+    [resourceCode]="resourceCodeCategorySelected()"
+    [isLoading]="categoryState.isLoadingGetCategory()"
+    [isErrorLoading]="categoryState.errorGetCategory()"
+    [isLoadingConfirm]="categoryState.isLoadingSendingCategory()"
+    [isErrorSending]="categoryState.errorSendingCategory()"
+    [title]="titleConfirmModal()!"
+    [message]="messageConfirmModal()!"
+    [confirmText]="confirmTextConfirmModal()!"
+    [confirmIcon]="'warning'"
+    (cancelled)="closeConfirmNewStateModal()!"
+    (confirmed)="confirmNewStateCategory($event)"
+  ></app-confirm-modal>
+}

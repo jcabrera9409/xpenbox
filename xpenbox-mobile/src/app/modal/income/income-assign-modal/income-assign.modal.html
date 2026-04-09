@@ -1,0 +1,102 @@
+<!-- Overlay con backdrop -->
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
+    <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto my-auto max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden">
+    
+    <!-- Header -->
+    <div class="xpb-bg-sidebar px-4 py-3 border-b xpb-border relative flex-shrink-0">
+      <div class="flex items-center gap-4">
+        <!-- Icono -->
+        <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+          <span class="material-icons text-[var(--xpb-income)] text-2xl">account_balance_wallet</span>
+        </div>
+        <!-- Título y subtítulo -->
+        <div class="flex-1">
+          <h3 class="text-xl font-semibold xpb-text-primary">Asignar Ingreso</h3>
+          <p class="text-sm xpb-text-secondary">Distribuye tu ingreso a una cuenta</p>
+        </div>
+        <!-- Botón cerrar -->
+        <button 
+          (click)="onClose()" 
+          class="text-gray-400 hover:text-gray-600 transition-colors -mt-1">
+          <span class="material-icons text-lg">close</span>
+        </button>
+      </div>
+    </div>
+
+    @if (this.incomeState.isLoadingGetIncome()) {
+      <app-loading-ui></app-loading-ui>
+    } @else if (this.incomeState.errorGetIncome()) {
+      <app-retry-component
+          [message]="'Error al cargar la información del ingreso'"
+          (retry)="retryLoadIncomeData()">
+      </app-retry-component>
+    } @else {
+      <!-- Body -->
+      <div class="p-4 overflow-y-auto flex-1">
+        <app-virtual-keyboard-ui 
+          [currency]="userLogged()?.currency!"
+          [defaultAmount]="defaultAmount()"
+          (amountOutput)="amount.set($event)">
+        </app-virtual-keyboard-ui>
+
+        <!-- Descripción -->
+        <div class="mb-3">
+          <label class="block text-sm font-medium xpb-text-secondary mb-2">
+            Descripción <span class="text-xs xpb-text-secondary">(opcional)</span>
+          </label>
+          <div class="relative">
+            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">description</span>
+            <input 
+              type="text"
+              maxlength="250"
+              [value]="description()"
+              (input)="description.set($any($event.target).value)"
+              placeholder="Ej: Asignación para ahorro"
+              class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full xpb-text-primary placeholder:xpb-text-secondary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all" />
+          </div>
+        </div>
+
+        <!-- Selección de cuenta destino (Carrusel) -->
+        <app-accounts-carousel-component
+          ngSkipHydration class="block"
+          [isLoading]="this.accountState.isLoadingGetList()"
+          [errorLoading]="this.accountState.errorGetList()"
+          [carouselTitle]="'Cuenta Destino'"
+          [carouselErrorMessage]="'Error al cargar cuentas'"
+          [currencySymbol]="userLogged()?.currency!"
+          [accountsList]="accountsList()"
+          [currentSelectedAccount]="selectedAccount()"
+          [noAccountsMessage]="'No tienes cuentas disponibles'"
+          (selectedAccountOutput)="this.selectedAccount.set($event)"
+          (retry)="retryLoadAccountsData()">
+        </app-accounts-carousel-component>
+
+        <!-- Mensaje de error al enviar -->
+        @if (this.transactionState.errorSendingTransaction()) {
+          <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+            <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+            <div class="text-sm text-[var(--xpb-expense)] flex-1">
+              {{ this.transactionState.errorSendingTransaction() }}
+            </div>
+          </div>
+        }
+
+        <!-- Botones de acción -->
+        <app-modal-buttons-ui
+            [cancelText]="'Cancelar'"
+            [cancelIcon]="'close'"
+            [isEditMode]="false"
+            [isLoading]="this.transactionState.isLoadingSendingTransaction()"
+            [isValidForm]="isFormValid"
+            [loadingText]="'Guardando...'"
+            [loadingIcon]="'autorenew'"
+            [confirmText]="'Asignar'"
+            [confirmIcon]="'save'"
+            (cancel)="onClose()"
+            (confirm)="onSubmit()">
+        </app-modal-buttons-ui>
+
+      </div>
+    }
+  </div>
+</div>

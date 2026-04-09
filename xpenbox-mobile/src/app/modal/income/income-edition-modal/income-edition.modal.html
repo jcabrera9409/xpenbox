@@ -1,0 +1,211 @@
+<!-- Overlay with backdrop -->
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
+    <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto my-auto max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden">
+    <!-- Header with icon, title, subtitle, and close button -->
+    <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-4">
+          <!-- Icon container -->
+          <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+            <span class="material-icons text-[var(--xpb-income)] text-2xl">
+              @if (isEditMode) {
+                    edit
+                } @else {
+                    trending_up
+                }
+            </span>
+          </div>
+          <div>
+            <h2 class="text-xl font-semibold xpb-text-primary">
+                @if (isEditMode) {
+                    Modificar Ingreso
+                } @else {
+                    Nuevo Ingreso
+                }
+            </h2>
+            <p class="text-sm xpb-text-secondary mt-0.5">
+                @if (isEditMode) {
+                    Modifica los detalles de tu ingreso.
+                } @else {
+                    Registra un nuevo ingreso a tu presupuesto.
+                }    
+            </p>
+          </div>
+        </div>
+        <!-- Close button -->
+        <button
+          type="button"
+          (click)="onClose()"
+          class="xpb-text-secondary hover:xpb-text-primary transition-colors p-1"
+          aria-label="Cerrar modal"
+        >
+          <span class="material-icons text-2xl">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body content -->
+    <div class="p-4 overflow-y-auto flex-1">
+        @if (this.incomeState.isLoadingGetIncome() && isEditMode) {
+            <app-loading-ui></app-loading-ui>
+        } @else if(this.incomeState.errorGetIncome() && isEditMode) {
+            <app-retry-component
+                [message]="'Error al cargar la información del ingreso'"
+                (retry)="retryLoadIncomeData()">
+            </app-retry-component>
+        } @else if(incomeData() || !isEditMode) {
+            <form [formGroup]="formIncome" (ngSubmit)="onSubmit()">
+                <!-- Monto field -->
+                <div class="mb-5">
+                    <label for="amount" class="block text-sm font-medium xpb-text-primary mb-2">
+                    Monto
+                    </label>
+                    <div class="relative">
+                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                        payments
+                    </span>
+                    <input
+                        id="amount"
+                        type="number"
+                        formControlName="amount"
+                        placeholder="0.00"
+                        step="0.01"
+                        min="0.01"
+                        class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                    />
+                    </div>
+                    @if (amountControl?.invalid && amountControl?.touched) {
+                    <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                        <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                        <p>{{ getErrorMessage('amount') }}</p>
+                        </div>
+                    </div>
+                    }
+                </div>
+                <!-- Monto and Fecha in grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+                    <!-- Concepto field -->
+                    <div>
+                        <label for="concept" class="block text-sm font-medium xpb-text-primary mb-2">
+                            Concepto
+                        </label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                            description
+                            </span>
+                            <input
+                            id="concept"
+                            type="text"
+                            formControlName="concept"
+                            placeholder="Ej: Salario mensual, Freelance, etc."
+                            class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                            />
+                        </div>
+                        @if (conceptControl?.invalid && conceptControl?.touched) {
+                            <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                    <p>{{ getErrorMessage('concept') }}</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Fecha de ingreso field -->
+                    <div>
+                        <label for="incomeDate" class="block text-sm font-medium xpb-text-primary mb-2">
+                        Fecha de ingreso
+                        </label>
+                        <div class="relative">
+                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
+                            event
+                        </span>
+                        <input
+                            id="incomeDate"
+                            type="date"
+                            formControlName="incomeDate"
+                            [max]="maxDate()"
+                            class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                        />
+                        </div>
+                        @if (incomeDateControl?.invalid && incomeDateControl?.touched) {
+                        <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                            <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                            <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                            <p>{{ getErrorMessage('incomeDate') }}</p>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                @if (!isEditMode) {
+                    <!-- Checkbox para asignar a cuenta -->
+                    <div class="mb-4">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative">
+                                <input
+                                    type="checkbox"
+                                    [checked]="assignToAccount()"
+                                    (change)="assignToAccount.set(!assignToAccount())"
+                                    class="peer sr-only"
+                                />
+                                <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
+                                    <span class="material-icons text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+                                </div>
+                            </div>
+                            <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
+                                Asignar ingreso a una cuenta automáticamente
+                            </span>
+                        </label>
+                    </div>
+
+                    @if (assignToAccount()) {
+                        <!-- Selección de cuenta destino (Carrusel) -->
+                        <app-accounts-carousel-component
+                            ngSkipHydration class="block"
+                            [isLoading]="this.accountState.isLoadingGetList()"
+                            [errorLoading]="this.accountState.errorGetList()"
+                            [carouselTitle]="'Cuenta Destino'"
+                            [carouselErrorMessage]="'Error al cargar cuentas'"
+                            [currencySymbol]="userLogged()?.currency!"
+                            [accountsList]="accountsList()"
+                            [currentSelectedAccount]="selectedAccount()"
+                            [noAccountsMessage]="'No tienes cuentas disponibles'"
+                            (selectedAccountOutput)="this.selectedAccount.set($event)"
+                            (retry)="retryLoadAccountsData()">
+                        </app-accounts-carousel-component>
+                    }
+                }
+
+                <!-- Mensaje de error al enviar -->
+                @if (this.incomeState.errorSendingIncome()) {
+                    <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                        <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                            {{ this.incomeState.errorSendingIncome() }}
+                        </div>
+                    </div>
+                }
+
+                <!-- Action buttons -->
+                <app-modal-buttons-ui
+                    [cancelText]="'Cancelar'"
+                    [cancelIcon]="'close'"
+                    [isEditMode]="isEditMode"
+                    [isLoading]="this.incomeState.isLoadingSendingIncome()"
+                    [isValidForm]="formIncome.valid"
+                    [loadingText]="'Guardando...'"
+                    [loadingIcon]="'autorenew'"
+                    [confirmText]="'Registrar'"
+                    [confirmIcon]="'add'"
+                    [confirmEditText]="'Actualizar'"
+                    [confirmEditIcon]="'check'"
+                    (cancel)="onClose()">
+                </app-modal-buttons-ui>
+            </form>   
+        }
+    </div>
+  </div>
+</div>

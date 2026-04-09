@@ -1,0 +1,10 @@
+@if (showTooltip()) {
+    <div 
+        (click)="$event.stopPropagation()"
+        class="absolute top-full right-0 mt-2 w-64 xpb-bg-card rounded-lg shadow-lg border xpb-border p-3 z-10 text-xs xpb-text-secondary font-normal">
+        <p class="leading-relaxed" [innerHtml]="message()">
+            
+        </p>
+        <div class="absolute -top-2 right-8 w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-[var(--xpb-border)]"></div>
+    </div>
+}
