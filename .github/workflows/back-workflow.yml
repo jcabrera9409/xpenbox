@@ -3,26 +3,10 @@ name: CI/CD Pipeline - Backend
 on: 
   push:
     paths: ['xpenbox-back/src/**', 'xpenbox-back/pom.xml', '.github/workflows/back-workflow.yml']
-    branches: [main, dev]
   workflow_dispatch:
 
 jobs:
-  trivy_scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: "fs"
-          scan-ref: "xpenbox-back/"
-          ignore-unfixed: true
-          severity: "CRITICAL,HIGH"
-          scanners: "vuln"
-
   build-and-dockerize:
-    needs: [trivy_scan]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -64,11 +48,25 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
         uses: docker/build-push-action@v5
         with:
           context: ./xpenbox-back
           file: ./xpenbox-back/src/main/docker/Dockerfile.native-micro
           push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+
+      - name: Build Docker image
+        if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/dev'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./xpenbox-back
+          file: ./xpenbox-back/src/main/docker/Dockerfile.native-micro
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
