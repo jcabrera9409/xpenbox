@@ -3,7 +3,6 @@ name: CI/CD Pipeline - Frontend
 on: 
   push:
     paths: ['xpenbox-front/**', '.github/workflows/xpenbox-front.yml']
-    branches: [main, feature/*, release/*, dev]
   workflow_dispatch:
 
 jobs:
@@ -60,11 +59,25 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
         uses: docker/build-push-action@v5
         with:
           context: xpenbox-front
           file: xpenbox-front/docker/Dockerfile
           push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+
+      - name: Build Docker image
+        if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/dev'
+        uses: docker/build-push-action@v5
+        with:
+          context: xpenbox-front
+          file: xpenbox-front/docker/Dockerfile
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
