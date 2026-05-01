@@ -1,0 +1,15 @@
+{
+  "android": {
+    "iconBackgroundColor": "#2b2b2b",
+    "iconBackgroundColorDark": "#2b2b2b",
+    "splashBackgroundColor": "#2b2b2b",
+    "adaptiveIconForegroundOffset": 0,
+    "adaptiveIconBackgroundOffset": 0,
+    "legacyIcon": {
+      "backgroundColor": "#2b2b2b"
+    }
+  },
+  "ios": {
+    "splashBackgroundColor": "#2b2b2b"
+  }
+}
