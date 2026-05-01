@@ -2,7 +2,7 @@ name: CI/CD Pipeline - Frontend
 
 on: 
   push:
-    paths: ['xpenbox-front/**', '.github/workflows/xpenbox-front.yml']
+    paths: ['xpenbox-front/**', '.github/workflows/front-workflow.yml']
   workflow_dispatch:
 
 jobs:
