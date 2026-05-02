@@ -172,8 +172,6 @@ export class TransactionPage {
     filter.transactionType = this.filterType() && this.filterType() !== TransactionType.ALL ? this.filterType() : undefined;
     filter.categoryResourceCode = this.filterCategory() && this.filterCategory() !== 'ALL' ? this.filterCategory() : undefined;
 
-    console.log(filter);
-
     if (source && code) {
       switch (source) {
         case 'account':

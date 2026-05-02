@@ -8,7 +8,8 @@ const config: CapacitorConfig = {
     backgroundColor: '#2b2b2b'
   },
   server: {
-    androidScheme: 'https'
+    androidScheme: 'http',
+    cleartext: true
   },
   plugins: {
     SplashScreen: {
