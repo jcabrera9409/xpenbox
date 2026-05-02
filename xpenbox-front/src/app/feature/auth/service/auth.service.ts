@@ -93,9 +93,9 @@ export class AuthService {
     .pipe(
       tap((response: AuthenticationResponseDTO) => {
         if (this.capacitorService.isNativePlatform()) {
-          authState.accessToken.set(response.accessToken);
           this.capacitorService.setRefreshToken(response.refreshToken);
         }
+        authState.accessToken.set(response.accessToken);
         authState.isAuthenticated.set(true);
         authState.error.set(null);
         authState.isLoading.set(false);
@@ -114,21 +114,15 @@ export class AuthService {
 
     return refreshToken$.pipe(
       switchMap((refreshToken) => {
-        if (!refreshToken) {
-          authState.isAuthenticated.set(false);
-          authState.error.set('Sesión expirada');
-          return throwError(() => new Error('No refresh token available'));
-        }
-
         return this.http.post<AuthenticationResponseDTO>(`${this.apiUrl}/refresh`, { "refreshToken": refreshToken }, { 
           withCredentials: true 
         });
       }),
       tap((response: AuthenticationResponseDTO) => {
         if (this.capacitorService.isNativePlatform()) {
-          authState.accessToken.set(response.accessToken);
           this.capacitorService.setRefreshToken(response.refreshToken);
         }
+        authState.accessToken.set(response.accessToken);
         authState.isAuthenticated.set(true);
         authState.error.set(null);
       }),
@@ -155,8 +149,8 @@ export class AuthService {
       tap(() => {
         authState.isAuthenticated.set(false);
         this.storageService.clearStorage();
+        authState.accessToken.set(null);
         if (this.capacitorService.isNativePlatform()) {
-          authState.accessToken.set(null);
           this.capacitorService.clearRefreshToken();
         }
       })

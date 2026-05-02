@@ -25,18 +25,15 @@ export function authInterceptor(
     const authService = inject(AuthService);
     const storageService = inject(StorageService);
     const router = inject(Router);
-    const capacitorService = inject(CapacitorService);
 
-    if (capacitorService.isNativePlatform()) {
-        const accessToken = authState.accessToken();
-        if (accessToken) {
-            req = req.clone({
-                setHeaders: {
-                    Authorization: `Bearer ${accessToken}`
-                },
-                withCredentials: true
-            });
-        }
+    const accessToken = authState.accessToken();
+    if (accessToken) {
+        req = req.clone({
+            setHeaders: {
+                Authorization: `Bearer ${accessToken}`
+            },
+            withCredentials: true
+        });
     }
 
     return next(req.clone({withCredentials: true})).pipe(
@@ -88,16 +85,14 @@ export function authInterceptor(
                 switchMap(() => {
                     ongoingRefresh$ = null;
                     let newReq = req.clone({ withCredentials: true });
-
-                    if (capacitorService.isNativePlatform()) {
-                        const newToken = authState.accessToken();
-                        if (newToken) {
-                            newReq = newReq.clone({
-                                setHeaders: {
-                                Authorization: `Bearer ${newToken}`
-                                }
-                            });
-                        }
+                    
+                    const newToken = authState.accessToken();
+                    if (newToken) {
+                        newReq = newReq.clone({
+                            setHeaders: {
+                            Authorization: `Bearer ${newToken}`
+                            }
+                        });
                     }
 
                     return next(newReq);

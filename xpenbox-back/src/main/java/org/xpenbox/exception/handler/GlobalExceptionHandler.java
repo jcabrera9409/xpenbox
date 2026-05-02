@@ -10,9 +10,9 @@ import org.xpenbox.exception.ForbiddenException;
 import org.xpenbox.exception.InsufficientFoundsException;
 import org.xpenbox.exception.PlanException;
 import org.xpenbox.exception.ResourceNotFoundException;
+import org.xpenbox.exception.UnauthorizedException;
 import org.xpenbox.exception.ValidationException;
 
-import io.quarkus.security.UnauthorizedException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
