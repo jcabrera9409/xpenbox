@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.firstcode"
+    namespace = "com.firstcode.xpenbox"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.firstcode"
+        applicationId "com.firstcode.xpenbox"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

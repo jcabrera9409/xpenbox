@@ -1,4 +1,4 @@
-package com.firstcode;
+package com.firstcode.xpenbox;
 
 import com.getcapacitor.BridgeActivity;
 
