@@ -8,8 +8,5 @@
     "legacyIcon": {
       "backgroundColor": "#2b2b2b"
     }
-  },
-  "ios": {
-    "splashBackgroundColor": "#2b2b2b"
   }
 }
