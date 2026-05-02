@@ -7,5 +7,9 @@ meta {
 post {
   url: {{apiUrl}}/api/rest/v1/auth/refresh
   body: json
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJ4cGVuYm94LWJhY2siLCJzdWIiOiJqY2FicmVyYTk0MDlAZ21haWwuY29tIiwiZXhwIjoxNzc3NjcyMzM4LCJpYXQiOjE3Nzc2NzE0MzgsImp0aSI6IjdiYzJhYzExLWU0N2YtNGE0Ny05M2IxLWFjNmE5NjhlNzY4NSJ9.EDfnoZC4-DAUhdyP0WGlRPffD9eRt8SmYzecKfmWfoIEsZR-6TS8R9XxoCX0WsKL6uxdIwaV3l6nn1zzIaXKz5SMGbnSoVH7vUfFDWOvzoG_2dJEb-DYXss3EtlH469cC2aLqkzC3LAUpruvmkim5OsmZ78HZ_KHcBrBwu5VibeB92r9AK7Ybw4vHcVOUv7cWOXhfcbcLsRXjinwVZCui4Z9paSgRJ2-ViMTwz5tY8xJLsttueLrDZA2ct7RcMojWkEVu0mCNMB0RfFJt3MDKEwmLDT_SrIUJqO95_wOQ11QSWYIeg9EFwVhgofqNBGi2NP6za-10n8o01q7R117UA
 }

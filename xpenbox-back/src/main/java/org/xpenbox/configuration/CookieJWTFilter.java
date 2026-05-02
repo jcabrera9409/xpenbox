@@ -61,15 +61,18 @@ public class CookieJWTFilter implements ContainerRequestFilter {
             return;
         }
 
-        Cookie cookie = requestContext.getCookies().get("access_token");
+        String token = extractAccessTokenFromHeader(requestContext);
 
-        if (cookie == null) {
-            LOG.debug("No access_token cookie found");
-            return;
+        if (token == null) {
+            LOG.debug("No access token found in Authorization header, checking cookies...");
+            token = extractAccessTokenFromCookie(requestContext);
+            if (token == null) {
+                LOG.debug("No access token found in cookies either");
+                throw new UnauthorizedException("Access token is missing");
+            }
         }
 
-        String token = cookie.getValue();
-        LOG.debug("Access token from cookie: " + token);
+        LOG.debug("Access token from cookie or header: " + token);
 
         Token tokenEntity = tokenRepository.findByAccessToken(token)
             .orElseThrow(() -> { throw new UnauthorizedException("Invalid access token"); });
@@ -81,5 +84,21 @@ public class CookieJWTFilter implements ContainerRequestFilter {
             throw new UnauthorizedException("Token has been revoked");
         }
         
+    }
+
+    private String extractAccessTokenFromCookie(ContainerRequestContext requestContext) {
+        Cookie cookie = requestContext.getCookies().get("access_token");
+        if (cookie == null) {
+            return null;
+        }
+        return cookie.getValue();
+    }
+
+    private String extractAccessTokenFromHeader(ContainerRequestContext requestContext) {
+        String authHeader = requestContext.getHeaderString("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
     }
 }
