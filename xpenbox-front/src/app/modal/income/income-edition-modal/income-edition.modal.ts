@@ -138,11 +138,11 @@ export class IncomeEditionModal implements OnInit {
   }
 
   private showUpgradeProModal(): void {
-      upgradeProModalState.title.set('¡Estás usando Xpenbox a todo ritmo!');
-      upgradeProModalState.htmlMessage.set('Ya registraste 50 transacciones en tu plan Free.' +
-                ' Actualiza a <strong>Pro</strong> para seguir registrando todos tus gastos, ingresos y movimientos sin límites.');
-      upgradeProModalState.open.set(true);
-    }
+    upgradeProModalState.title.set('¡Estás usando Xpenbox a todo ritmo!');
+    upgradeProModalState.htmlMessage.set('Ya registraste 50 transacciones en tu plan Free.' +
+              ' Actualiza a <strong>Pro</strong> para seguir registrando todos tus gastos, ingresos y movimientos sin límites.');
+    upgradeProModalState.open.set(true);
+  }
 
   // Getters para acceso fácil a controles
   get conceptControl() {
@@ -198,10 +198,10 @@ export class IncomeEditionModal implements OnInit {
     const formValues = this.formIncome.value;
     const concept = formValues['concept'];
 
-    const today = this.dateService.getLocalDatetime();
-    const incomeDate = this.dateService.toUtcDate(new Date(formValues['incomeDate']));
+    const today = this.dateService.getUtcDatetime();
+    const incomeDate = this.dateService.parseDateIsoString(formValues['incomeDate']);
     incomeDate.setHours(today.getHours(), today.getMinutes(), today.getSeconds(), today.getMilliseconds());
-    const incomeDateTimestamp = this.dateService.toTimestamp(this.dateService.toUtcDate(incomeDate));
+    const incomeDateTimestamp = this.dateService.toTimestamp(incomeDate);
     //const incomeDate = this.dateService.toUtcDate(new Date(formValues['incomeDate']));
     //const incomeDateTimestamp = this.dateService.toTimestamp(incomeDate);
     const totalAmount = formValues['amount'];

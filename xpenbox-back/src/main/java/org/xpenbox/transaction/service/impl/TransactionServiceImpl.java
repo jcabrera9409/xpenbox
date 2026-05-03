@@ -23,6 +23,7 @@ import org.xpenbox.exception.BadRequestException;
 import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.income.entity.Income;
 import org.xpenbox.income.repository.IncomeRepository;
+import org.xpenbox.income.service.IIncomeService;
 import org.xpenbox.transaction.dto.TransactionCreateDTO;
 import org.xpenbox.transaction.dto.TransactionFilterDTO;
 import org.xpenbox.transaction.dto.TransactionResponseDTO;
@@ -55,6 +56,7 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
     private final ICreditCardService creditCardService;
     private final IPlanValidatorService planValidatorService;
     private final IPlanSnapshotService planSnapshotService;
+    private final IIncomeService incomeService;
 
     public TransactionServiceImpl(UserRepository userRepository,
                                   TransactionRepository transactionRepository,
@@ -66,7 +68,8 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
                                   CreditCardRepository creditCardRepository,
                                   ICreditCardService creditCardService,
                                   IPlanValidatorService planValidatorService,
-                                  IPlanSnapshotService planSnapshotService
+                                  IPlanSnapshotService planSnapshotService,
+                                  IIncomeService incomeService
     ) {
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
@@ -79,6 +82,7 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         this.creditCardService = creditCardService;
         this.planValidatorService = planValidatorService;
         this.planSnapshotService = planSnapshotService;
+        this.incomeService = incomeService;
     }
 
     //Completed abstract methods from GenericServiceImpl
@@ -209,6 +213,15 @@ public class TransactionServiceImpl extends GenericServiceImpl<Transaction, Tran
         
         transactionRepository.delete(transaction);
         LOG.infof("Successfully rolled back transaction with resource code: %s for user email: %s", resourceCode, userEmail);
+    
+        if (transaction.getTransactionType() == TransactionType.INCOME) {
+            try {
+                this.incomeService.delete(transaction.getIncome().getResourceCode(), userEmail);
+            } catch (Exception e) {
+                LOG.infof("Cannot delete associated Income with resource code: %s.", transaction.getIncome().getResourceCode());
+                LOG.debugf("Error details: %s", e.getMessage());
+            }
+        }
     }
 
     /**

@@ -90,7 +90,7 @@ public class IncomeServiceImpl extends GenericServiceImpl<Income, IncomeCreateDT
         if (incomeCreateDTO.accountResourceCode() != null && !incomeCreateDTO.accountResourceCode().isEmpty()) {
             TransactionCreateDTO transactionCreateDTO = new TransactionCreateDTO(
                 TransactionType.INCOME,
-                "Auto-generated allocation for income: " + incomeCreateDTO.concept(),
+                incomeCreateDTO.concept(),
                 incomeCreateDTO.totalAmount(),
                 null,
                 null,

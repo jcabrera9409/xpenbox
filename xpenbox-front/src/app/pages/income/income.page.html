@@ -220,35 +220,11 @@
       </div>
     </div>
   </div>
-</div>
-
-<app-income-assign-modal
-  *ngIf="incomeAssignModalVisible()"
-  [incomeResourceCode]="selectedIncomeResourceCode()"
-  (close)="closeIncomeAssignModal()"
-></app-income-assign-modal>
+</div>  
 
 @if (showIncomeEditionModal()) {
   <app-income-edition-modal
-    [resourceCodeSelected]="resourceCodeIncomeSelected()"
+    [resourceCodeSelected]="null"
     (close)="closeIncomeEditionModal()"
   ></app-income-edition-modal>
-}
-
-@if (showIncomeDeletionConfirmModal()) {
-  <app-confirm-modal
-    [resourceCode]="this.resourceCodeIncomeSelected()"
-    [isLoading]="this.incomeState.isLoadingGetIncome()"
-    [isErrorLoading]="this.incomeState.errorGetIncome()"
-    [isLoadingConfirm]="this.incomeState.isLoadingSendingIncome()"
-    [isErrorSending]="this.incomeState.errorSendingIncome()"
-    [iconTitle]="'delete'"
-    [title]="'Eliminar Ingreso'"
-    [typeMessage]="'warning'"
-    [message]="this.messageConfirmDeleteIncome()!"
-    [confirmText]="'Eliminar'"
-    [confirmIcon]="'warning'"
-    (cancelled)="closeDeleteIncomeModal()!"
-    (confirmed)="confirmDeleteIncome($event)"
-  ></app-confirm-modal>
 }

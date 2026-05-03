@@ -72,20 +72,7 @@ export class TransactionPage {
     yesterday.setDate(yesterday.getDate() - 1);
     
     transactions.forEach(transaction => {
-      const transactionDate = new Date(transaction.transactionDateTimestamp);
-      transactionDate.setHours(0, 0, 0, 0);
-      
-      let label: string;
-      if (transactionDate.getTime() === today.getTime()) {
-        label = 'Hoy';
-      } else if (transactionDate.getTime() === yesterday.getTime()) {
-        label = 'Ayer';
-      } else {
-        const day = String(transactionDate.getDate()).padStart(2, '0');
-        const month = String(transactionDate.getMonth() + 1).padStart(2, '0');
-        const year = transactionDate.getFullYear();
-        label = `${day}/${month}/${year}`;
-      }
+      let label: string = this.dateService.formatDate(transaction.transactionDateTimestamp);
       
       if (!groupMap.has(label)) {
         groupMap.set(label, []);

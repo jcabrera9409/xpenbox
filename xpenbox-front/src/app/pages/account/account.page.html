@@ -1,4 +1,4 @@
-<div class="h-screen xpb-bg-main p-3 sm:p-4 flex flex-col overflow-hidden">
+<div class="xpb-bg-main p-3 sm:p-4 flex flex-col">
   <!-- Header -->
   <div class="mb-4 flex-shrink-0">
     <h1 class="text-xl sm:text-2xl font-bold xpb-text-primary mb-1">Mis Cuentas</h1>
@@ -65,10 +65,10 @@
   </div>
 
   <!-- Tabs Content -->
-  <div class="flex-1 min-h-0 overflow-hidden">
+  <div class="flex-1">
     <!-- Bank Accounts Section -->
     @if (activeTab() === 'accounts') {
-    <section class="flex flex-col h-full overflow-hidden" [class.slide-in-right]="animationDirection() === 'right'" [class.slide-in-left]="animationDirection() === 'left'">
+    <section class="flex flex-col" [class.slide-in-right]="animationDirection() === 'right'" [class.slide-in-left]="animationDirection() === 'left'">
       <div class="mb-3 flex-shrink-0">
         <button 
           (click)="openAccountEditionModal()"
@@ -80,7 +80,7 @@
       </div>
 
     <!-- Bank Accounts List -->
-    <div class="space-y-3 overflow-y-auto pr-2 flex-1 min-h-0">
+    <div class="space-y-3 pr-2 flex-1">
       @if (this.accountState.isLoadingGetList()) {
         <app-loading-ui></app-loading-ui>
       } @else if (this.accountState.errorGetList()) {
@@ -115,7 +115,7 @@
 
     <!-- Credit Cards Section -->
     @if (activeTab() === 'creditCards') {
-    <section class="flex flex-col h-full overflow-hidden" [class.slide-in-left]="animationDirection() === 'left'" [class.slide-in-right]="animationDirection() === 'right'">
+    <section class="flex flex-col" [class.slide-in-left]="animationDirection() === 'left'" [class.slide-in-right]="animationDirection() === 'right'">
       <div class="mb-3 flex-shrink-0">
         <button 
           (click)="openCreditCardEditionModal()"
@@ -127,7 +127,7 @@
       </div>
 
       <!-- Credit Cards List -->
-      <div class="space-y-3 overflow-y-auto pr-2 flex-1 min-h-0">
+      <div class="space-y-3 pr-2 flex-1">
         @if (this.creditCardState.isLoadingGetList()) {
           <app-loading-ui></app-loading-ui>
         } @else if (this.creditCardState.errorGetList()) {

@@ -145,21 +145,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
   }
 
   formatDate(timestamp: number): string {
-    const today = this.dateService.getUtcDatetime().getTime();
-    const dateToday = new Date(today);
-    const dateTransaction = this.dateService.toDate(timestamp || 0);
-
-    if (dateTransaction.toDateString() === dateToday.toDateString()) {
-      return 'Hoy';
-    } else if (dateTransaction.toDateString() === this.dateService.addDays(dateToday, -1).toDateString()) {
-      return 'Ayer';
-    } else if (dateTransaction.getFullYear() !== dateToday.getFullYear()) {
-      return this.dateService.format(timestamp, 'short');
-    }
-
-    const dateStr = this.dateService.format(dateTransaction.getTime(), 'day-month');
-
-    return dateStr
+    return this.dateService.formatDate(timestamp);
   }
 
   private showUpgradeProModal(): void {
