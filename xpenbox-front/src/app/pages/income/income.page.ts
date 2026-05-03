@@ -44,9 +44,6 @@ export class IncomePage {
   // Control of the filter accordion
   filterExpanded = signal<boolean>(false);
   
-  // Filter for pending incomes
-  showOnlyPending = signal<boolean>(false);
-  
   // Temporary date inputs
   tempStartDate = signal<string>('');
   tempEndDate = signal<string>('');
@@ -90,9 +87,6 @@ export class IncomePage {
 
       return b.incomeDateTimestamp - a.incomeDateTimestamp;
     });
-    if (this.showOnlyPending()) {
-      return incomesSorted.filter(income => income.totalAmount - income.allocatedAmount > 0);
-    }
     return incomesSorted;
   });
   
@@ -168,7 +162,7 @@ export class IncomePage {
     this.showIncomeEditionModal.set(false);
   }
   
-  openDeleteIncomeModal(resourceCode: string): void {
+  openDeleteIncomeModal_(resourceCode: string): void {
     this.resourceCodeIncomeSelected.set(resourceCode);
     this.loadIncomeData();
     this.showIncomeDeletionConfirmModal.set(true);
@@ -203,7 +197,7 @@ export class IncomePage {
     this.resourceCodeIncomeSelected.set(null);
   }
   
-  openIncomeAssignModal(resourceCode: string): void {
+  openIncomeAssignModal_(resourceCode: string): void {
     this.selectedIncomeResourceCode.set(resourceCode);
     this.incomeAssignModalVisible.set(true);
   }
@@ -213,7 +207,7 @@ export class IncomePage {
     this.selectedIncomeResourceCode.set(null);
   }
   
-  viewIncomeTransactions(resourceCode: string): void {
+  viewIncomeTransactions_(resourceCode: string): void {
     this.router.navigate(['/landing/transaction'], { 
       queryParams: { 
         source: 'income', 

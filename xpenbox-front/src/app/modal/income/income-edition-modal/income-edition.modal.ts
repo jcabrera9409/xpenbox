@@ -41,7 +41,6 @@ export class IncomeEditionModal implements OnInit {
 
   selectedAccount = signal<AccountCreditDTO | null>(null);
   accountsList = signal<AccountCreditDTO[]>([]);
-  assignToAccount = signal<boolean>(false);
   
   formIncome!: FormGroup;
 
@@ -86,7 +85,7 @@ export class IncomeEditionModal implements OnInit {
   }
 
   get isValidForm(): boolean {
-    return this.formIncome.valid && (!this.assignToAccount() || (this.assignToAccount() && this.selectedAccount() !== null));
+    return this.formIncome.valid && this.selectedAccount() !== null;
   }
 
   onClose(): void {
@@ -198,10 +197,15 @@ export class IncomeEditionModal implements OnInit {
   private buildIncomeData(): IncomeRequestDTO {
     const formValues = this.formIncome.value;
     const concept = formValues['concept'];
+
+    const today = this.dateService.getLocalDatetime();
     const incomeDate = this.dateService.toUtcDate(new Date(formValues['incomeDate']));
-    const incomeDateTimestamp = this.dateService.toTimestamp(incomeDate);
+    incomeDate.setHours(today.getHours(), today.getMinutes(), today.getSeconds(), today.getMilliseconds());
+    const incomeDateTimestamp = this.dateService.toTimestamp(this.dateService.toUtcDate(incomeDate));
+    //const incomeDate = this.dateService.toUtcDate(new Date(formValues['incomeDate']));
+    //const incomeDateTimestamp = this.dateService.toTimestamp(incomeDate);
     const totalAmount = formValues['amount'];
-    const accountResourceCode: string | undefined = !this.isEditMode && this.assignToAccount() && this.selectedAccount()
+    const accountResourceCode: string | undefined = !this.isEditMode && this.selectedAccount()
       ? this.selectedAccount()!.resourceCode
       : undefined;
 
