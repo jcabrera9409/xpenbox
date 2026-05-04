@@ -3,10 +3,12 @@ import { EnvService } from '../../common/service/env.service';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequestDTO } from '../model/login.request.dto';
 import { authState } from './auth.state';
-import { Observable, tap, catchError, throwError, map } from 'rxjs';
+import { Observable, tap, catchError, throwError, map, from, of, switchMap } from 'rxjs';
 import { ApiResponseDTO } from '../../common/model/api.response.dto';
 import { UserRequestDTO } from '../../user/model/user.request.dto';
 import { StorageService } from '../../../shared/service/storage.service';
+import { CapacitorService } from '../../common/service/capacitor.service';
+import { AuthenticationResponseDTO } from '../model/authentication.response.dto';
 
 /**
  * Service for handling authentication-related operations
@@ -20,7 +22,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private envService: EnvService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private capacitorService: CapacitorService
   ) {
     this.apiUrl = `${this.envService.getApiUrl()}/auth`;
   }
@@ -82,12 +85,17 @@ export class AuthService {
    * @param credentials User login data transfer object
    * @returns Observable that completes when login is successful
    */
-  login(credentials: LoginRequestDTO): Observable<void> {
+  login(credentials: LoginRequestDTO): Observable<AuthenticationResponseDTO> {
     authState.isLoading.set(true);
-    return this.http.post<void>(`${this.apiUrl}/login`, credentials, { 
+    return this.http.post<AuthenticationResponseDTO>(`${this.apiUrl}/login`, credentials, { 
       withCredentials: true 
-    }).pipe(
-      tap(() => {
+    })
+    .pipe(
+      tap((response: AuthenticationResponseDTO) => {
+        if (this.capacitorService.isNativePlatform()) {
+          this.capacitorService.setRefreshToken(response.refreshToken);
+        }
+        authState.accessToken.set(response.accessToken);
         authState.isAuthenticated.set(true);
         authState.error.set(null);
         authState.isLoading.set(false);
@@ -100,21 +108,34 @@ export class AuthService {
    * @returns Observable that completes when the token is refreshed
    */
   refresh(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/refresh`, {}, { 
-      withCredentials: true,
-      observe: 'response' 
-    }).pipe(
-      tap(() => {
+    const refreshToken$ = this.capacitorService.isNativePlatform()
+    ? from(this.capacitorService.getRefreshToken())
+    : of(null);
+
+    return refreshToken$.pipe(
+      switchMap((refreshToken) => {
+        return this.http.post<AuthenticationResponseDTO>(`${this.apiUrl}/refresh`, { "refreshToken": refreshToken }, { 
+          withCredentials: true 
+        });
+      }),
+      tap((response: AuthenticationResponseDTO) => {
+        if (this.capacitorService.isNativePlatform()) {
+          this.capacitorService.setRefreshToken(response.refreshToken);
+        }
+        authState.accessToken.set(response.accessToken);
         authState.isAuthenticated.set(true);
         authState.error.set(null);
       }),
-      map(() => void 0), 
+      map(() => void 0),
       catchError((error) => {
         authState.isAuthenticated.set(false);
         authState.error.set('Sesión expirada');
+        if (this.capacitorService.isNativePlatform()) {
+          this.capacitorService.clearRefreshToken();
+        }
         return throwError(() => error);
       })
-    );
+    )
   }
 
   /**
@@ -128,6 +149,10 @@ export class AuthService {
       tap(() => {
         authState.isAuthenticated.set(false);
         this.storageService.clearStorage();
+        authState.accessToken.set(null);
+        if (this.capacitorService.isNativePlatform()) {
+          this.capacitorService.clearRefreshToken();
+        }
       })
     );
   }

@@ -143,4 +143,22 @@ export class DateService {
 
     return date.toLocaleDateString('es-PE', options);
   }
+
+  formatDate(timestamp: number): string {
+    const today = this.getUtcDatetime().getTime();
+    const dateToday = new Date(today);
+    const dateTransaction = this.toDate(timestamp || 0);
+
+    if (dateTransaction.toDateString() === dateToday.toDateString()) {
+      return 'Hoy';
+    } else if (dateTransaction.toDateString() === this.addDays(dateToday, -1).toDateString()) {
+      return 'Ayer';
+    } else if (dateTransaction.getFullYear() !== dateToday.getFullYear()) {
+      return this.format(timestamp, 'short');
+    }
+
+    const dateStr = this.format(dateTransaction.getTime(), 'day-month');
+
+    return dateStr
+  }
 }

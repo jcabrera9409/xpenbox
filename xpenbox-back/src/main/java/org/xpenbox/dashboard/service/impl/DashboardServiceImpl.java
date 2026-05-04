@@ -122,6 +122,7 @@ public class DashboardServiceImpl implements IDashboardService {
         BigDecimal expenseTotal = calculateExpenseTotal(transactions);
         BigDecimal netTotal = netCashflow(transactions);
         List<CategoryResponseDTO> categoryBreakdown = groupTransactionsByCategory(transactions);
+        List<CategoryResponseDTO> categoryBreakdownCard = groupTransactionsCreditCardByCategory(transactions);
         List<TransactionResponseDTO> lastTransactions = getLastTransactions(transactions, 10);
 
         return new DashboardPeriodFilterDTO(
@@ -129,9 +130,9 @@ public class DashboardServiceImpl implements IDashboardService {
             expenseTotal,
             netTotal,
             categoryBreakdown,
+            categoryBreakdownCard,
             lastTransactions
         );
-
     }
 
     /**
@@ -261,6 +262,40 @@ public class DashboardServiceImpl implements IDashboardService {
                 (
                     t.getTransactionType() == TransactionType.CREDIT_PAYMENT ||
                     (t.getTransactionType() == TransactionType.EXPENSE && t.getAccount() != null)
+                )
+            )
+            .collect(Collectors.groupingBy(
+                Transaction::getCategory,
+                Collectors.reducing(
+                    BigDecimal.ZERO,
+                    Transaction::getAmount,
+                    BigDecimal::add
+                )
+            ));
+
+        return categoryTotals.entrySet().stream()
+            .map(entry ->
+                categoryMapper.toDTOReport(
+                    entry.getKey(),
+                    entry.getValue()
+                )
+            )
+            .sorted((c1, c2) -> c2.amount().compareTo(c1.amount()))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Groups the transactions by their associated category, summing the amounts for each category to create a breakdown of expenses by category. Only transactions of type EXPENSE with an associated creditcard are included in the grouping, as these represent outgoing funds that should be categorized for the dashboard breakdown.
+     * @param transactions The list of transactions for the selected period, used to filter for relevant transactions and group them by their associated category to calculate the total amount for each category for the dashboard breakdown.
+     * @return A list of CategoryResponseDTOs representing the breakdown of expenses by category, sorted by amount in descending order. Each DTO includes the category information and the total amount for that category.
+     */
+    private List<CategoryResponseDTO> groupTransactionsCreditCardByCategory(List<Transaction> transactions) {
+
+        Map<Category, BigDecimal> categoryTotals = transactions.stream()
+            .filter(t ->
+                t.getCategory() != null &&
+                (
+                    t.getTransactionType() == TransactionType.EXPENSE && t.getCreditCard() != null
                 )
             )
             .collect(Collectors.groupingBy(

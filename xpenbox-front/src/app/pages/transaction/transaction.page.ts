@@ -1,4 +1,4 @@
-import { Component, signal, ChangeDetectionStrategy, inject, PLATFORM_ID, effect, OnInit, untracked } from '@angular/core';
+import { Component, signal, computed, ChangeDetectionStrategy, inject, PLATFORM_ID, effect, OnInit, untracked } from '@angular/core';
 import { CommonModule, isPlatformServer } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { transactionState } from '../../feature/transaction/service/transaction.state';
@@ -59,6 +59,33 @@ export class TransactionPage {
   totalElements = signal<number>(0);
   totalPages = signal<number>(0);
   accumulatedTransactions = signal<TransactionResponseDTO[]>([]);
+  
+  // Transacciones agrupadas por fecha
+  groupedTransactions = computed(() => {
+    const transactions = this.accumulatedTransactions();
+    const groups: { label: string; transactions: TransactionResponseDTO[] }[] = [];
+    const groupMap = new Map<string, TransactionResponseDTO[]>();
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    transactions.forEach(transaction => {
+      let label: string = this.dateService.formatDate(transaction.transactionDateTimestamp);
+      
+      if (!groupMap.has(label)) {
+        groupMap.set(label, []);
+      }
+      groupMap.get(label)!.push(transaction);
+    });
+    
+    groupMap.forEach((transactions, label) => {
+      groups.push({ label, transactions });
+    });
+    
+    return groups;
+  });
   
   resourceCodeTransactionSelected = signal<string | null>(null);
   transactionDataSelected = signal<TransactionResponseDTO | null>(null);
@@ -171,8 +198,6 @@ export class TransactionPage {
     filter.pageNumber = this.currentPage();
     filter.transactionType = this.filterType() && this.filterType() !== TransactionType.ALL ? this.filterType() : undefined;
     filter.categoryResourceCode = this.filterCategory() && this.filterCategory() !== 'ALL' ? this.filterCategory() : undefined;
-
-    console.log(filter);
 
     if (source && code) {
       switch (source) {

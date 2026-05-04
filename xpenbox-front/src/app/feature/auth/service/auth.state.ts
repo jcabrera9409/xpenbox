@@ -12,4 +12,5 @@ export const authState = {
   isAuthenticated: signal<boolean>(false),
   error: signal<string | null>(null),
   sessionVerified: signal<boolean>(false), 
+  accessToken: signal<string | null>(null),
 };

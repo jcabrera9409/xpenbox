@@ -34,6 +34,9 @@ public record DashboardPeriodFilterDTO(
     @JsonProperty("categories")
     List<CategoryResponseDTO> categories,
 
+    @JsonProperty("categoriesCard")
+    List<CategoryResponseDTO> categoriesCard,
+
     @JsonProperty("lastTransactions")
     List<TransactionResponseDTO> lastTransactions
 ) { }

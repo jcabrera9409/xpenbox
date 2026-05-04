@@ -21,5 +21,6 @@ export interface DashboardPeriodFilterDTO {
     expenseTotal: number;
     netCashFlow: number;
     categories: CategoryResponseDTO[];
+    categoriesCard: CategoryResponseDTO[];
     lastTransactions: TransactionResponseDTO[];
 }

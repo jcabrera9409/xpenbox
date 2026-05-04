@@ -2,7 +2,7 @@
 <div class="xpb-bg-main min-h-screen p-3 md:p-6 lg:p-8">
   <!-- Header con título y panel de control inteligente -->
   <div class="max-w-7xl mx-auto mb-2 lg:mb-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-col gap-4">
       <div>
         <h1 class="text-2xl md:text-3xl font-bold xpb-text-primary">Resumen Financiero</h1>
         <p class="text-sm xpb-text-secondary mt-1">Panel de control inteligente</p>
@@ -243,40 +243,97 @@
           </div>
         </div>
 
-        <!-- Gastos por categoría -->
+        <!-- Gastos por categoría con Tabs -->
         <div class="order-2 lg:order-1 lg:col-span-2 xpb-bg-card rounded-xl p-6 shadow-sm border xpb-border">
-          <h2 class="text-[0.875rem] lg:text-lg font-semibold xpb-text-primary mb-1 lg:mb-2">Gastos por categoría</h2>
-          <p class="text-[0.75rem] xpb-text-secondary mb-6">Distribución mensual de tus consumos</p>
+          <!-- Tabs Header -->
+          <div class="flex items-center gap-4 mb-6 border-b xpb-border">
+            <button 
+              #tabCuentas
+              (click)="tabCuentas.classList.add('border-[var(--xpb-primary)]', 'xpb-text-primary'); tabCuentas.classList.remove('border-transparent', 'xpb-text-secondary'); tabTarjetas.classList.remove('border-[var(--xpb-primary)]', 'xpb-text-primary'); tabTarjetas.classList.add('border-transparent', 'xpb-text-secondary'); contentCuentas.classList.remove('hidden'); contentTarjetas.classList.add('hidden')"
+              class="pb-3 px-2 text-sm lg:text-base font-semibold border-b-2 border-[var(--xpb-primary)] xpb-text-primary transition-colors">
+              Cuentas
+            </button>
+            <button 
+              #tabTarjetas
+              (click)="tabTarjetas.classList.add('border-[var(--xpb-primary)]', 'xpb-text-primary'); tabTarjetas.classList.remove('border-transparent', 'xpb-text-secondary'); tabCuentas.classList.remove('border-[var(--xpb-primary)]', 'xpb-text-primary'); tabCuentas.classList.add('border-transparent', 'xpb-text-secondary'); contentTarjetas.classList.remove('hidden'); contentCuentas.classList.add('hidden')"
+              class="pb-3 px-2 text-sm lg:text-base font-semibold border-b-2 border-transparent xpb-text-secondary hover:xpb-text-primary transition-colors">
+              Tarjetas
+            </button>
+          </div>
 
-          <div class="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 items-center">
-            <!-- Gráfico de dona -->
-            <div class="flex justify-center items-center">
-              <div class="relative" style="width: 150px; height: 150px;">
-                <canvas id="expenseChart" class="lg:!w-[200px] lg:!h-[200px]" width="150" height="150"></canvas>
+          <!-- Tab Content: Cuentas -->
+          <div #contentCuentas>
+            <h2 class="text-[0.875rem] lg:text-lg font-semibold xpb-text-primary mb-1 lg:mb-2">Gastos por categoría</h2>
+            <p class="text-[0.75rem] xpb-text-secondary mb-6">Distribución de consumos en cuentas</p>
+
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 items-center">
+              <!-- Gráfico de dona -->
+              <div class="flex justify-center items-center">
+                <div class="relative" style="width: 150px; height: 150px;">
+                  <canvas id="expenseChart" class="lg:!w-[200px] lg:!h-[200px]" width="150" height="150"></canvas>
+                </div>
+              </div>
+
+              <!-- Lista de categorías -->
+              <div class="space-y-2 md:space-y-4">
+                @for (category of categories(); track category.resourceCode) {
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                      <div class="w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0" [style.background-color]="category.color"></div>
+                      <span class="text-xs md:text-sm xpb-text-primary truncate">{{ category.name }}</span>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                      <!-- Vista responsive: solo porcentaje -->
+                      <p class="text-xs md:hidden font-semibold xpb-text-primary whitespace-nowrap">
+                        {{ getPercentageCategoryAmount(category.amount) | number:'1.1-1' }}%
+                      </p>
+                      <!-- Vista desktop: monto completo -->
+                      <p class="hidden md:block text-sm font-semibold xpb-text-primary whitespace-nowrap">
+                        PEN {{ category.amount.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
+                        <span class="text-xs xpb-text-secondary ml-1">({{ getPercentageCategoryAmount(category.amount) | number:'1.1-1' }}%)</span>
+                      </p>
+                    </div>
+                  </div>
+                }
               </div>
             </div>
+          </div>
 
-            <!-- Lista de categorías -->
-            <div class="space-y-2 md:space-y-4">
-              @for (category of categories(); track category.resourceCode) {
-                <div class="flex items-center justify-between gap-2">
-                  <div class="flex items-center gap-2 flex-1 min-w-0">
-                    <div class="w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0" [style.background-color]="category.color"></div>
-                    <span class="text-xs md:text-sm xpb-text-primary truncate">{{ category.name }}</span>
-                  </div>
-                  <div class="text-right flex-shrink-0">
-                    <!-- Vista responsive: solo porcentaje -->
-                    <p class="text-xs md:hidden font-semibold xpb-text-primary whitespace-nowrap">
-                      {{ getPercentageCategoryAmount(category.amount) | number:'1.1-1' }}%
-                    </p>
-                    <!-- Vista desktop: monto completo -->
-                    <p class="hidden md:block text-sm font-semibold xpb-text-primary whitespace-nowrap">
-                      PEN {{ category.amount.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
-                      <span class="text-xs xpb-text-secondary ml-1">({{ getPercentageCategoryAmount(category.amount) | number:'1.1-1' }}%)</span>
-                    </p>
-                  </div>
+          <!-- Tab Content: Tarjetas -->
+          <div #contentTarjetas class="hidden">
+            <h2 class="text-[0.875rem] lg:text-lg font-semibold xpb-text-primary mb-1 lg:mb-2">Gastos por categoría</h2>
+            <p class="text-[0.75rem] xpb-text-secondary mb-6">Distribución de consumos en tarjetas de crédito</p>
+
+            <div class="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 items-center">
+              <!-- Gráfico de dona -->
+              <div class="flex justify-center items-center">
+                <div class="relative" style="width: 150px; height: 150px;">
+                  <canvas id="creditCardExpenseChart" class="lg:!w-[200px] lg:!h-[200px]" width="150" height="150"></canvas>
                 </div>
-              }
+              </div>
+
+              <!-- Lista de categorías de tarjeta de crédito -->
+              <div class="space-y-2 md:space-y-4">
+                @for (category of categoriesCard(); track category.resourceCode) {
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                      <div class="w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0" [style.background-color]="category.color"></div>
+                      <span class="text-xs md:text-sm xpb-text-primary truncate">{{ category.name }}</span>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                      <!-- Vista responsive: solo porcentaje -->
+                      <p class="text-xs md:hidden font-semibold xpb-text-primary whitespace-nowrap">
+                        {{ getPercentageCategoryCardAmount(category.amount) | number:'1.1-1' }}%
+                      </p>
+                      <!-- Vista desktop: monto completo -->
+                      <p class="hidden md:block text-sm font-semibold xpb-text-primary whitespace-nowrap">
+                        PEN {{ category.amount.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
+                        <span class="text-xs xpb-text-secondary ml-1">({{ getPercentageCategoryCardAmount(category.amount) | number:'1.1-1' }}%)</span>
+                      </p>
+                    </div>
+                  </div>
+                }
+              </div>
             </div>
           </div>
         </div>

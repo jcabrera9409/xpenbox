@@ -1,11 +1,13 @@
 package org.xpenbox.configuration;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.logging.Logger;
 import org.xpenbox.authorization.entity.Token;
 import org.xpenbox.authorization.repository.TokenRepository;
 import org.xpenbox.exception.UnauthorizedException;
 
 import io.quarkus.security.identity.SecurityIdentity;
+import io.smallrye.jwt.auth.principal.JWTParser;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -27,12 +29,16 @@ public class CookieJWTFilter implements ContainerRequestFilter {
 
     private final TokenRepository tokenRepository;
     private final SecurityIdentity securityIdentity;
+    private final JWTParser jwtParser;
 
     public CookieJWTFilter(
         TokenRepository tokenRepository, 
-        SecurityIdentity securityIdentity) {
+        SecurityIdentity securityIdentity,
+        JWTParser jwtParser
+    ) {
         this.tokenRepository = tokenRepository;
         this.securityIdentity = securityIdentity;
+        this.jwtParser = jwtParser;
     }
 
     /**
@@ -79,10 +85,20 @@ public class CookieJWTFilter implements ContainerRequestFilter {
         
         LOG.debug("Token entity found: " + tokenEntity);
 
+        try {
+            JsonWebToken jwt = jwtParser.parse(token);
+            LOG.debug("JWT parsed successfully: " + jwt.getRawToken());
+        } catch (Exception e) {
+            LOG.debug("Failed to parse JWT: " + e.getMessage());
+            throw new UnauthorizedException("Invalid access token");
+        }
+
         if (tokenEntity.getRevoked()) {
             LOG.debug("Token has been revoked");
             throw new UnauthorizedException("Token has been revoked");
         }
+
+        LOG.debug("Token is valid and not revoked");
         
     }
 
