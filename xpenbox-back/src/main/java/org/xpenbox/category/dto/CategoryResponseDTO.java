@@ -12,6 +12,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
  * @param amount                    the amount associated with the category
  * @param lastUsedDateTimestamp     the timestamp of the last used date
  * @param usageCount                the usage count of the category
+ * @param budget                    the budget of the category
+ * @param hasBudget                 indicates if the category has a budget
  * @param state                     the state of the category
  */
 @RegisterForReflection
@@ -22,5 +24,7 @@ public record CategoryResponseDTO (
     BigDecimal amount,
     Long lastUsedDateTimestamp,
     Long usageCount,
+    BigDecimal budget,
+    Boolean hasBudget,
     Boolean state
 ) { }

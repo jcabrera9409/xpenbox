@@ -37,6 +37,8 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
             BigDecimal.ZERO,
             entity.getLastUsedDate() != null ? entity.getLastUsedDate().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli() : null,
             entity.getUsageCount(),
+            entity.getBudget(),
+            entity.getHasBudget(),
             entity.getState()
         );
         return dto;
@@ -58,6 +60,8 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
             BigDecimal.ZERO,
             null,
             null,
+            entity.getBudget(),
+            entity.getHasBudget(),
             null
         );
         return dto;
@@ -92,6 +96,8 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
             totalAmount,
             null,
             null,
+            entity.getBudget(),
+            entity.getHasBudget(),
             null
         );
         return dto;
@@ -111,6 +117,8 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
         entity.setName(dto.name());
         entity.setColor(dto.color());
         entity.setUser(user);
+        entity.setBudget(dto.budget());
+        entity.setHasBudget(dto.hasBudget());
         return entity;
     }
 
@@ -137,6 +145,16 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
 
         if (dto.state() != null && !dto.state().equals(entity.getState())) {
             entity.setState(dto.state());
+            isUpdated = true;
+        }
+
+        if (dto.budget() != null && !dto.budget().equals(entity.getBudget())) {
+            entity.setBudget(dto.budget());
+            isUpdated = true;
+        }
+
+        if (dto.hasBudget() != null && !dto.hasBudget().equals(entity.getHasBudget())) {
+            entity.setHasBudget(dto.hasBudget());
             isUpdated = true;
         }
 

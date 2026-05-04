@@ -246,3 +246,6 @@ CREATE INDEX idx_subscription_next_billing ON tbl_subscription(next_billing_date
 
 CREATE INDEX idx_sub_payment_subscription ON tbl_subscription_payment(subscription_id);
 CREATE INDEX idx_sub_payment_provider ON tbl_subscription_payment(provider_payment_id);
+
+ALTER TABLE tbl_category ADD COLUMN budget DECIMAL(13,2) NOT NULL DEFAULT 0.00 AFTER usage_count;
+ALTER TABLE tbl_category ADD COLUMN has_budget TINYINT(1) NOT NULL DEFAULT 0 AFTER budget;

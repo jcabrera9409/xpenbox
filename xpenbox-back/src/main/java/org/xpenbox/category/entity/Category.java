@@ -1,5 +1,6 @@
 package org.xpenbox.category.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.xpenbox.user.entity.User;
@@ -39,6 +40,12 @@ public class Category extends PanacheEntityBase {
 
     @Column(name = "usage_count", nullable = false)
     private Long usageCount = 0L;
+
+    @Column(name = "budget", nullable = false, precision = 13, scale = 2)
+    private BigDecimal budget;
+
+    @Column(name = "has_budget", nullable = false)
+    private Boolean hasBudget;
 
     @Column(name = "state", nullable = false)
     private Boolean state = true;
@@ -85,6 +92,22 @@ public class Category extends PanacheEntityBase {
 
     public void setUsageCount(Long usageCount) {
         this.usageCount = usageCount;
+    }
+
+    public BigDecimal getBudget() {
+        return budget;
+    }
+
+    public void setBudget(BigDecimal budget) {
+        this.budget = budget;
+    }
+
+    public Boolean getHasBudget() {
+        return hasBudget;
+    }
+
+    public void setHasBudget(Boolean hasBudget) {
+        this.hasBudget = hasBudget;
     }
 
     public Boolean getState() {
