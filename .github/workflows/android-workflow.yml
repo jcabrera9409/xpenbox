@@ -50,11 +50,10 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          set
           cd xpenbox-front/android
-          ls -la
           chmod +x gradlew
           ./gradlew bundleRelease
+          ls app/build/outputs/bundle/release/
 
       - name: Upload to Play Store
         uses: r0adkll/upload-google-play@v1
@@ -62,5 +61,5 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.firstcode.xpenbox
           releaseFiles: xpenbox-front/android/app/build/outputs/bundle/release/app-release.aab
-          track: internal
+          tracks: internal
           status: completed
