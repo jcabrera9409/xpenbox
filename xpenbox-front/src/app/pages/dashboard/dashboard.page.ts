@@ -33,6 +33,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
   private platformId = inject(PLATFORM_ID);
   private expenseChart: Chart | null = null;
+  private expenseCardChart: Chart | null = null;
   private chartRegistered = false;
 
   showBalanceTooltip = signal<boolean>(false);
@@ -48,11 +49,13 @@ export class DashboardPage implements OnInit, AfterViewInit {
   netCashFlow = signal<number>(0);
   netCashFlowAbs = signal<number>(0);
   totalCategoryAmount = signal<number>(0);
+  totalCategoryCardAmount = signal<number>(0);
   totalCreditLimit = signal<number>(0);
   totalCreditUsed = signal<number>(0);
   percentajeCreditUsed = signal<number>(0);
 
   categories = signal<CategoryResponseDTO[]>([]);
+  categoriesCard = signal<CategoryResponseDTO[]>([]);
   creditCards = signal<CreditCardResponseDTO[]>([]);
   transactions = signal<TransactionResponseDTO[]>([]);
 
@@ -74,6 +77,11 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
   getPercentageCategoryAmount(amount: number): number {
     const total = this.totalCategoryAmount();
+    return total > 0 ? ((amount / total) * 100) : 0;
+  }
+
+  getPercentageCategoryCardAmount(amount: number): number {
+    const total = this.totalCategoryCardAmount();
     return total > 0 ? ((amount / total) * 100) : 0;
   }
 
@@ -109,10 +117,11 @@ export class DashboardPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Si hay categorías pendientes de renderizar, actualizar el gráfico
-    if (isPlatformBrowser(this.platformId) && this.categories().length > 0) {
+    if (isPlatformBrowser(this.platformId) && (this.categories().length > 0 || this.creditCards().length > 0)) {
       // Usar setTimeout para asegurar que el canvas esté completamente renderizado
       setTimeout(() => {
-        this.updateExpenseChart();
+        this.updateExpenseLiquidChart();
+        this.updateExpenseCreditChart();
       }, 0);
     }
   }
@@ -120,6 +129,10 @@ export class DashboardPage implements OnInit, AfterViewInit {
   ngOnDestroy(): void {
     if (this.expenseChart) {
       this.expenseChart.destroy();
+    }
+    
+    if (this.expenseCardChart) {
+      this.expenseCardChart.destroy();
     }
   }
 
@@ -145,21 +158,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
   }
 
   formatDate(timestamp: number): string {
-    const today = this.dateService.getUtcDatetime().getTime();
-    const dateToday = new Date(today);
-    const dateTransaction = this.dateService.toDate(timestamp || 0);
-
-    if (dateTransaction.toDateString() === dateToday.toDateString()) {
-      return 'Hoy';
-    } else if (dateTransaction.toDateString() === this.dateService.addDays(dateToday, -1).toDateString()) {
-      return 'Ayer';
-    } else if (dateTransaction.getFullYear() !== dateToday.getFullYear()) {
-      return this.dateService.format(timestamp, 'short');
-    }
-
-    const dateStr = this.dateService.format(dateTransaction.getTime(), 'day-month');
-
-    return dateStr
+    return this.dateService.formatDate(timestamp);
   }
 
   private showUpgradeProModal(): void {
@@ -186,6 +185,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
     this.netCashFlow.set(data.period.netCashFlow);
     this.netCashFlowAbs.set(Math.abs(data.period.netCashFlow));
     this.totalCategoryAmount.set(data.period.categories.reduce((sum, category) => sum + category.amount, 0));
+    this.totalCategoryCardAmount.set(data.period.categoriesCard.reduce((sum, category) => sum + category.amount, 0));
     this.totalCreditLimit.set(data.current.creditLimit);
     this.totalCreditUsed.set(data.current.creditUsed);
     this.percentajeCreditUsed.set(data.current.creditLimit > 0 ? (data.current.creditUsed / data.current.creditLimit) * 100 : 0);
@@ -198,6 +198,18 @@ export class DashboardPage implements OnInit, AfterViewInit {
         resourceCode: 'others',
         name: 'Otros',
         amount: otherCategoriesAmount,
+        color: '#3f3f3f' // Color gris claro para la categoría "Otros"
+      } as CategoryResponseDTO);
+    }
+
+    // First 4 categories for the card, the rest will be shown in the list
+    const topCategoriesCard = data.period.categoriesCard.slice(0, 4);
+    const otherCategoriesCardAmount = data.period.categoriesCard.slice(4).reduce((sum, category) => sum + category.amount, 0);
+    if (otherCategoriesCardAmount > 0) {
+      topCategoriesCard.push({
+        resourceCode: 'others',
+        name: 'Otros',
+        amount: otherCategoriesCardAmount,
         color: '#3f3f3f' // Color gris claro para la categoría "Otros"
       } as CategoryResponseDTO);
     }
@@ -216,13 +228,15 @@ export class DashboardPage implements OnInit, AfterViewInit {
     }
 
     this.categories.set(data.period.categories.length <= 5 ? data.period.categories : topCategories);
+    this.categoriesCard.set(data.period.categoriesCard.length <= 5 ? data.period.categoriesCard : topCategoriesCard);
     this.creditCards.set(data.current.creditCards.length <= 3 ? data.current.creditCards : topCreditCards);
     this.transactions.set(data.period.lastTransactions);
 
     // Esperar a que el DOM se actualice antes de intentar renderizar el gráfico
-    if (this.categories().length > 0 && isPlatformBrowser(this.platformId)) {
+    if ((this.categories().length > 0 || this.creditCards().length > 0) && isPlatformBrowser(this.platformId)) {
       setTimeout(() => {
-        this.updateExpenseChart();
+        this.updateExpenseLiquidChart();
+        this.updateExpenseCreditChart();
       }, 100);
     }
   }
@@ -252,7 +266,7 @@ export class DashboardPage implements OnInit, AfterViewInit {
     });
   }
 
-  private updateExpenseChart(): void {
+  private updateExpenseLiquidChart(): void {
     // Verificar que estemos en el navegador y que Chart.js esté registrado
     if (!isPlatformBrowser(this.platformId) || !this.chartRegistered) {
       return;
@@ -264,37 +278,56 @@ export class DashboardPage implements OnInit, AfterViewInit {
       setTimeout(() => {
         const retryCanvas = document.getElementById('expenseChart') as HTMLCanvasElement;
         if (retryCanvas) {
-          this.renderChart(retryCanvas);
+          this.renderExpenseCategoriesChart(this.categories(), this.expenseChart, retryCanvas);
         }
       }, 200);
       return;
     }
 
-    this.renderChart(canvas);
+    this.renderExpenseCategoriesChart(this.categories(), this.expenseChart, canvas);
   }
 
-  private renderChart(canvas: HTMLCanvasElement): void {
+  private updateExpenseCreditChart(): void {
+    // Verificar que estemos en el navegador y que Chart.js esté registrado
+    if (!isPlatformBrowser(this.platformId) || !this.chartRegistered) {
+      return;
+    }
+
+    const canvas = document.getElementById('creditCardExpenseChart') as HTMLCanvasElement;
+    if (!canvas) {
+      // Si el canvas aún no está disponible, reintentar después de un tiempo
+      setTimeout(() => {
+        const retryCanvas = document.getElementById('creditCardExpenseChart') as HTMLCanvasElement;
+        if (retryCanvas) {
+          this.renderExpenseCategoriesChart(this.categoriesCard(), this.expenseCardChart, retryCanvas);
+        }
+      }, 200);
+      return;
+    }
+
+    this.renderExpenseCategoriesChart(this.categoriesCard(), this.expenseCardChart, canvas);
+  }
+
+  private renderExpenseCategoriesChart(categories: CategoryResponseDTO[], expenseChart: Chart | null, canvas: HTMLCanvasElement): void {
     const ctx = canvas.getContext('2d');
     if (!ctx) {
       console.warn('Canvas context not available');
       return;
     }
-
-    const categories = this.categories();
     
     // Verificar que haya categorías para mostrar
     if (categories.length === 0) {
-      if (this.expenseChart) {
-        this.expenseChart.destroy();
-        this.expenseChart = null;
+      if (expenseChart) {
+        expenseChart.destroy();
+        expenseChart = null;
       }
       return;
     }
     
     // Destruir el gráfico existente antes de crear uno nuevo
-    if (this.expenseChart) {
-      this.expenseChart.destroy();
-      this.expenseChart = null;
+    if (expenseChart) {
+      expenseChart.destroy();
+      expenseChart = null;
     }
 
     // Crear el nuevo gráfico

@@ -140,16 +140,23 @@
                 [subtitle]="'Ajusta los filtros para ver más resultados'">
             </app-create-first-component>
         } @else {
-            <!-- Tarjetas de transacciones (compactas) -->
-            @for (transaction of accumulatedTransactions(); track transaction.resourceCode) {
-            <app-transaction-card ngSkipHydration 
-                class="block"
-                [transaction]="transaction"
-                [currency]="userLogged()?.currency!"
-                (detailView)="openTransactionDetailModal($event)"
-                (editView)="openTransactionEditionModal($event)"
-                (deleteView)="openTransactionDeletionModal($event)">
-            </app-transaction-card>
+            <!-- Tarjetas de transacciones agrupadas por fecha -->
+            @for (group of groupedTransactions(); track group.label) {
+              <div class="mb-6">
+                <h3 class="text-sm font-semibold xpb-text-secondary mb-3 px-1">{{ group.label }}</h3>
+                <div class="space-y-4">
+                  @for (transaction of group.transactions; track transaction.resourceCode) {
+                    <app-transaction-card ngSkipHydration 
+                        class="block"
+                        [transaction]="transaction"
+                        [currency]="userLogged()?.currency!"
+                        (detailView)="openTransactionDetailModal($event)"
+                        (editView)="openTransactionEditionModal($event)"
+                        (deleteView)="openTransactionDeletionModal($event)">
+                    </app-transaction-card>
+                  }
+                </div>
+              </div>
             }
 
             <!-- Botón Cargar más -->

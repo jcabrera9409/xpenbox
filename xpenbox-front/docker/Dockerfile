@@ -1,11 +1,23 @@
-FROM node:20-alpine
+FROM nginx:1.27-alpine
 
-WORKDIR /app
+RUN apk add --no-cache dumb-init
 
-COPY dist/xpenbox-front/ ./dist/webapp/
+RUN addgroup -S webgroup && \
+    adduser -S webuser -G webgroup
 
-USER node
+COPY --chown=webuser:webgroup dist/xpenbox-front/browser/ /usr/share/nginx/html/
+COPY --chown=webuser:webgroup docker/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=webuser:webgroup docker/conf.d/ /etc/nginx/conf.d
 
-EXPOSE 4000
+RUN chown -R webuser:webgroup /var/cache/nginx && \
+    chown -R webuser:webgroup /var/log/nginx && \
+    chown -R webuser:webgroup /etc/nginx/conf.d && \
+    touch /var/run/nginx.pid && \
+    chown webuser:webgroup /var/run/nginx.pid
 
-CMD ["node", "dist/webapp/server/server.mjs"]
+USER webuser
+
+EXPOSE 80
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["nginx", "-g", "daemon off;"]

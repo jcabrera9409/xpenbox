@@ -48,6 +48,10 @@ export class AccountPage {
   showCreditcardPaymentModal = signal(false);
   resourceCodeCreditcardPaymentSelected = signal<string | null>(null);
 
+  // Active tab control
+  activeTab = signal<'accounts' | 'creditCards'>('accounts');
+  animationDirection = signal<'left' | 'right'>('right');
+
   // Computed signal for ordered accounts by name
   orderedAccounts = computed(() => {
     const accounts = accountState.accounts();
@@ -131,5 +135,14 @@ export class AccountPage {
 
   closeCreditcardPaymentModal() {
     this.showCreditcardPaymentModal.set(false);
+  }
+
+  switchTab(tab: 'accounts' | 'creditCards') {
+    if (tab === 'creditCards' && this.activeTab() === 'accounts') {
+      this.animationDirection.set('left');
+    } else if (tab === 'accounts' && this.activeTab() === 'creditCards') {
+      this.animationDirection.set('right');
+    }
+    this.activeTab.set(tab);
   }
 }

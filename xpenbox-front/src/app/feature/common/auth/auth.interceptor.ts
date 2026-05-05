@@ -5,6 +5,8 @@ import { Router } from "@angular/router";
 import { catchError, Observable, switchMap, throwError } from "rxjs";
 import { NotificationService } from "../service/notification.service";
 import { StorageService } from "../../../shared/service/storage.service";
+import { authState } from "../../auth/service/auth.state";
+import { CapacitorService } from "../service/capacitor.service";
 
 // Singleton to track ongoing refresh token requests
 let ongoingRefresh$: Observable<void> | null = null;
@@ -23,6 +25,16 @@ export function authInterceptor(
     const authService = inject(AuthService);
     const storageService = inject(StorageService);
     const router = inject(Router);
+
+    const accessToken = authState.accessToken();
+    if (accessToken) {
+        req = req.clone({
+            setHeaders: {
+                Authorization: `Bearer ${accessToken}`
+            },
+            withCredentials: true
+        });
+    }
 
     return next(req.clone({withCredentials: true})).pipe(
         catchError((error: HttpErrorResponse) => {
@@ -72,7 +84,18 @@ export function authInterceptor(
             return ongoingRefresh$.pipe(
                 switchMap(() => {
                     ongoingRefresh$ = null;
-                    return next(req.clone({withCredentials: true}));
+                    let newReq = req.clone({ withCredentials: true });
+                    
+                    const newToken = authState.accessToken();
+                    if (newToken) {
+                        newReq = newReq.clone({
+                            setHeaders: {
+                            Authorization: `Bearer ${newToken}`
+                            }
+                        });
+                    }
+
+                    return next(newReq);
                 })
             );
         })

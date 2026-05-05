@@ -4,7 +4,6 @@ import { IncomeService } from '../../feature/income/service/income.service';
 import { incomeState } from '../../feature/income/service/income.state';
 import { FormsModule } from '@angular/forms';
 import { SummaryCard } from '../../shared/cards/summary-card/summary.card';
-import { IncomeAssignModal } from '../../modal/income/income-assign-modal/income-assign.modal';
 import { LoadingUi } from '../../shared/ui/loading-ui/loading.ui';
 import { IncomeEditionModal } from '../../modal/income/income-edition-modal/income-edition.modal';
 import { RetryComponent } from '../../shared/components/retry-component/retry.component';
@@ -12,14 +11,11 @@ import { CreateFirstComponent } from '../../shared/components/create-first-compo
 import { Router } from '@angular/router';
 import { DateService } from '../../shared/service/date.service';
 import { userState } from '../../feature/user/service/user.state';
-import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
-import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
-import { IncomeResponseDTO } from '../../feature/income/model/income.response.dto';
 import { NotificationService } from '../../feature/common/service/notification.service';
 
 @Component({
   selector: 'app-income-page',
-  imports: [CommonModule, FormsModule, SummaryCard, IncomeAssignModal, LoadingUi, IncomeEditionModal, RetryComponent, CreateFirstComponent, ConfirmModal],
+  imports: [CommonModule, FormsModule, SummaryCard, LoadingUi, IncomeEditionModal, RetryComponent, CreateFirstComponent],
   templateUrl: './income.page.html',
   styleUrl: './income.page.css',
 })
@@ -29,23 +25,11 @@ export class IncomePage {
 
   incomeState = incomeState;
   
-  // Income assignment modal state
-  incomeAssignModalVisible = signal<boolean>(false)
-  selectedIncomeResourceCode = signal<string | null>(null);
-
   // Income edition modal state
   showIncomeEditionModal = signal(false);
-  showIncomeDeletionConfirmModal = signal(false);
-  resourceCodeIncomeSelected = signal<string | null>(null);
-
-  messageConfirmDeleteIncome = signal<string | null>(null);
-  incomeDataSelected = signal<IncomeResponseDTO | null>(null);
 
   // Control of the filter accordion
   filterExpanded = signal<boolean>(false);
-  
-  // Filter for pending incomes
-  showOnlyPending = signal<boolean>(false);
   
   // Temporary date inputs
   tempStartDate = signal<string>('');
@@ -90,9 +74,6 @@ export class IncomePage {
 
       return b.incomeDateTimestamp - a.incomeDateTimestamp;
     });
-    if (this.showOnlyPending()) {
-      return incomesSorted.filter(income => income.totalAmount - income.allocatedAmount > 0);
-    }
     return incomesSorted;
   });
   
@@ -159,8 +140,7 @@ export class IncomePage {
     this.filterExpanded.set(!this.filterExpanded());
   }
   
-  openCreateIncomeModal(resourceCodeIncomeSelected: string | null = null): void {
-    this.resourceCodeIncomeSelected.set(resourceCodeIncomeSelected);
+  openCreateIncomeModal(): void {
     this.showIncomeEditionModal.set(true);
   }
 
@@ -168,52 +148,7 @@ export class IncomePage {
     this.showIncomeEditionModal.set(false);
   }
   
-  openDeleteIncomeModal(resourceCode: string): void {
-    this.resourceCodeIncomeSelected.set(resourceCode);
-    this.loadIncomeData();
-    this.showIncomeDeletionConfirmModal.set(true);
-    console.log('Eliminar ingreso:', resourceCode);
-  }
-
-  confirmDeleteIncome(resourceCode: string) {
-    this.incomeState.isLoadingSendingIncome.set(true);
-
-    this.incomeService.delete(resourceCode).subscribe({
-      next: () => {
-        this.incomeState.isLoadingSendingIncome.set(false);
-        this.showIncomeDeletionConfirmModal.set(false);
-        this.reloadIncomes();
-
-        this.notificationService.success('Ingreso eliminado correctamente.');
-      }, 
-      error: (error) => {
-        if (error.status === 500 || error.status === 0) {
-          this.incomeState.errorSendingIncome.set('Ocurrió un error al eliminar el ingreso. Por favor, intenta nuevamente.');
-        } else {
-          this.incomeState.errorSendingIncome.set(error.error.message || 'Ocurrió un error al eliminar el ingreso. Por favor, intenta nuevamente.');
-        }
-        this.incomeState.isLoadingSendingIncome.set(false);
-      }
-    });
-
-  }
-
-  closeDeleteIncomeModal() {
-    this.showIncomeDeletionConfirmModal.set(false);
-    this.resourceCodeIncomeSelected.set(null);
-  }
-  
-  openIncomeAssignModal(resourceCode: string): void {
-    this.selectedIncomeResourceCode.set(resourceCode);
-    this.incomeAssignModalVisible.set(true);
-  }
-
-  closeIncomeAssignModal() {
-    this.incomeAssignModalVisible.set(false);
-    this.selectedIncomeResourceCode.set(null);
-  }
-  
-  viewIncomeTransactions(resourceCode: string): void {
+  viewIncomeTransactions_(resourceCode: string): void {
     this.router.navigate(['/landing/transaction'], { 
       queryParams: { 
         source: 'income', 
@@ -245,36 +180,5 @@ export class IncomePage {
     firstDayPrevMonth.setDate(1);
     firstDayPrevMonth.setHours(0, 0, 0, 0);
     return firstDayPrevMonth;
-  }
-
-  private loadIncomeData(): void {
-    if (!this.resourceCodeIncomeSelected()) return;
-
-    this.incomeState.isLoadingGetIncome.set(true);
-
-    this.incomeService.getByResourceCode(this.resourceCodeIncomeSelected()!).subscribe({
-      next: (data: ApiResponseDTO<IncomeResponseDTO>) => {
-        this.incomeState.isLoadingGetIncome.set(false);
-        this.incomeDataSelected.set(data.data);
-        this.updateDeleteIncomeConfirmMessage(); 
-      },
-      error: (error) => {
-        if (error.status === 500 || error.status === 0) {
-          this.incomeState.errorGetIncome.set('Ocurrió un error al cargar el ingreso. Por favor, intenta nuevamente.');
-        } else {
-          this.incomeState.errorGetIncome.set(error.error.message || 'Ocurrió un error al cargar el ingreso. Por favor, intenta nuevamente.');
-        }
-        this.incomeState.isLoadingGetIncome.set(false);
-      }
-    });
-  }
-
-  private updateDeleteIncomeConfirmMessage(): void {
-    if (!this.incomeDataSelected()) return;
-
-    const incomeConcept = this.incomeDataSelected()!.concept;
-    const amount = this.incomeDataSelected()!.totalAmount;
-
-    this.messageConfirmDeleteIncome.set(`¿Estás seguro de que deseas eliminar el ingreso "${incomeConcept}" por un monto de ${this.userLogged()?.currency} ${amount.toFixed(2)}? Esta acción no se puede deshacer.`);
   }
 }

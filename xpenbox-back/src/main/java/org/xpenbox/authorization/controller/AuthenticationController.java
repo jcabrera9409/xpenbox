@@ -1,7 +1,9 @@
 package org.xpenbox.authorization.controller;
 
 import org.jboss.logging.Logger;
+import org.xpenbox.authorization.dto.AuthenticationResponseDTO;
 import org.xpenbox.authorization.dto.LoginRequestDTO;
+import org.xpenbox.authorization.dto.RefreshTokenRequestDTO;
 import org.xpenbox.authorization.dto.ResetPasswordRequestDTO;
 import org.xpenbox.authorization.dto.TokenResponseDTO;
 import org.xpenbox.authorization.dto.UserAuthRequestDTO;
@@ -163,9 +165,10 @@ public class AuthenticationController {
     public Response login(@Valid LoginRequestDTO loginRequest) {
         LOG.infof("Login request received for email: %s", loginRequest.email());
         TokenResponseDTO token = authenticationService.login(loginRequest.email(), loginRequest.password(), loginRequest.rememberMe());
+        AuthenticationResponseDTO response = new AuthenticationResponseDTO(token.accessToken(), token.refreshToken());
 
         LOG.infof("Login successful for email: %s", loginRequest.email());
-        return Response.ok()
+        return Response.ok(response)
             .cookie(accessCookie(token))
             .cookie(refreshCookie(token))
             .build();
@@ -180,11 +183,19 @@ public class AuthenticationController {
     @Path("/refresh")
     @PermitAll
     @Transactional
-    public Response refresh(@CookieParam("refresh_token") String refreshToken) {
+    public Response refresh(@CookieParam("refresh_token") String refreshToken, RefreshTokenRequestDTO refreshTokenRequest) {
         LOG.infof("Token refresh request received");
+        String tokenFromRequest = refreshTokenRequest.refreshToken();
+        if (tokenFromRequest != null && !tokenFromRequest.isEmpty()) {
+            LOG.infof("Using refresh token from request body");
+            refreshToken = tokenFromRequest;
+        } else {
+            LOG.infof("Using refresh token from cookie");
+        }
         TokenResponseDTO token = tokenService.refreshToken(refreshToken);
+        AuthenticationResponseDTO response = new AuthenticationResponseDTO(token.accessToken(), token.refreshToken());
         LOG.infof("Token refresh successful");
-        return Response.ok()
+        return Response.ok(response)
             .cookie(accessCookie(token))
             .cookie(refreshCookie(token))
             .build();

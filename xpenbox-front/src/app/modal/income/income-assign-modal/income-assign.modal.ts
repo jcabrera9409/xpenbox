@@ -5,7 +5,6 @@ import { AccountService } from '../../../feature/account/service/account.service
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
-import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
 import { IncomeService } from '../../../feature/income/service/income.service';
 import { IncomeResponseDTO } from '../../../feature/income/model/income.response.dto';

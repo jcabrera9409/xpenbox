@@ -1,0 +1,69 @@
+name: Deploy Capacitor App to Play Store
+
+on:
+    push:
+      branches:
+        - feature/*
+    workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Environment File
+        run: |
+          echo "${{ vars.FRONTEND_PUBLIC_ENVIRONMENTS || '' }}" > xpenbox-front/public/env.js
+
+      - name: Install dependencies
+        run: |
+             cd xpenbox-front
+             npm ci
+
+      - name: Build Angular
+        run: |
+             cd xpenbox-front
+             npx ng build --configuration=production
+
+      - name: Sync Capacitor
+        run: |
+             cd xpenbox-front
+             npx cap sync android
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > xpenbox-front/android/app/keystore.jks
+
+      - name: Build Android AAB
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          cd xpenbox-front/android
+          chmod +x gradlew
+          ./gradlew bundleRelease
+          ls app/build/outputs/bundle/release/
+
+      - name: Upload to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.firstcode.xpenbox
+          releaseFiles: xpenbox-front/android/app/build/outputs/bundle/release/app-release.aab
+          tracks: internal
+          status: draft

@@ -141,42 +141,20 @@
                 </div>
 
                 @if (!isEditMode) {
-                    <!-- Checkbox para asignar a cuenta -->
-                    <div class="mb-4">
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <div class="relative">
-                                <input
-                                    type="checkbox"
-                                    [checked]="assignToAccount()"
-                                    (change)="assignToAccount.set(!assignToAccount())"
-                                    class="peer sr-only"
-                                />
-                                <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
-                                    <span class="material-icons text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
-                                </div>
-                            </div>
-                            <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
-                                Asignar ingreso a una cuenta automáticamente
-                            </span>
-                        </label>
-                    </div>
-
-                    @if (assignToAccount()) {
-                        <!-- Selección de cuenta destino (Carrusel) -->
-                        <app-accounts-carousel-component
-                            ngSkipHydration class="block"
-                            [isLoading]="this.accountState.isLoadingGetList()"
-                            [errorLoading]="this.accountState.errorGetList()"
-                            [carouselTitle]="'Cuenta Destino'"
-                            [carouselErrorMessage]="'Error al cargar cuentas'"
-                            [currencySymbol]="userLogged()?.currency!"
-                            [accountsList]="accountsList()"
-                            [currentSelectedAccount]="selectedAccount()"
-                            [noAccountsMessage]="'No tienes cuentas disponibles'"
-                            (selectedAccountOutput)="this.selectedAccount.set($event)"
-                            (retry)="retryLoadAccountsData()">
-                        </app-accounts-carousel-component>
-                    }
+                    <!-- Selección de cuenta destino (Carrusel) -->
+                    <app-accounts-carousel-component
+                        ngSkipHydration class="block"
+                        [isLoading]="this.accountState.isLoadingGetList()"
+                        [errorLoading]="this.accountState.errorGetList()"
+                        [carouselTitle]="'Cuenta Destino'"
+                        [carouselErrorMessage]="'Error al cargar cuentas'"
+                        [currencySymbol]="userLogged()?.currency!"
+                        [accountsList]="accountsList()"
+                        [currentSelectedAccount]="selectedAccount()"
+                        [noAccountsMessage]="'No tienes cuentas disponibles'"
+                        (selectedAccountOutput)="this.selectedAccount.set($event)"
+                        (retry)="retryLoadAccountsData()">
+                    </app-accounts-carousel-component>
                 }
 
                 <!-- Mensaje de error al enviar -->
