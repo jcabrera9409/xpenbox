@@ -45,6 +45,10 @@ jobs:
           echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > xpenbox-front/android/app/keystore.jks
 
       - name: Build Android AAB
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           set
           cd xpenbox-front/android
