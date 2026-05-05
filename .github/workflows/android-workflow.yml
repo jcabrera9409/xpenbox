@@ -47,6 +47,7 @@ jobs:
       - name: Build Android AAB
         run: |
           cd xpenbox-front/android
+          chmod +x gradlew
           ./gradlew bundleRelease
 
       - name: Upload to Play Store
