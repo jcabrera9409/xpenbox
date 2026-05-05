@@ -1,6 +1,9 @@
 name: Deploy Capacitor App to Play Store
 
 on:
+    push:
+      branches:
+        - feature/*
     workflow_dispatch:
 
 jobs:
