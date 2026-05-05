@@ -26,21 +26,27 @@ jobs:
           java-version: '21'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+             cd xpenbox-front
+             npm install
 
       - name: Build Angular
-        run: npm run build
+        run: |
+             cd xpenbox-front
+             npm run build
 
       - name: Sync Capacitor
-        run: npx cap sync android
+        run: |
+             cd xpenbox-front
+             npx cap sync android
 
       - name: Decode Keystore
         run: |
-          echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > android/app/keystore.jks
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > xpenbox-front/android/app/keystore.jks
 
       - name: Build Android AAB
         run: |
-          cd android
+          cd xpenbox-front/android
           ./gradlew bundleRelease
 
       - name: Upload to Play Store
@@ -48,6 +54,6 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.firstcode.xpenbox
-          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+          releaseFiles: xpenbox-front/android/app/build/outputs/bundle/release/app-release.aab
           track: internal
           status: completed
