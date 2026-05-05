@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NotificationComponent } from './shared/components/notification-component/notification.component';
+import { CapacitorService } from './feature/common/service/capacitor.service';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,15 @@ import { NotificationComponent } from './shared/components/notification-componen
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit {
   protected readonly title = signal('xpenbox-front');
+  constructor(
+    protected readonly capacitorService: CapacitorService
+  ) {}
+
+  async ngOnInit() {
+    if (this.capacitorService.isNativePlatform()) {
+      await this.capacitorService.hideSplashScreen();
+    }
+  }
 }

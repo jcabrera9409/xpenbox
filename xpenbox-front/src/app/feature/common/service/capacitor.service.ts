@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Capacitor } from "@capacitor/core";
 import { Preferences } from "@capacitor/preferences";
+import { SplashScreen } from "@capacitor/splash-screen";
 
 @Injectable({
     providedIn: 'root'
@@ -27,5 +28,9 @@ export class CapacitorService {
 
     async clearRefreshToken(): Promise<void> {
         await Preferences.remove({ key: this.REFRESH_TOKEN_KEY });
+    }
+
+    async hideSplashScreen(): Promise<void> {
+        await SplashScreen.hide();
     }
 }
