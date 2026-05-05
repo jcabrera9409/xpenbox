@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    environment: production
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,15 +25,19 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Setup Environment File
+        run: |
+          echo "${{ vars.FRONTEND_PUBLIC_ENVIRONMENTS || '' }}" > xpenbox-front/public/env.js
+
       - name: Install dependencies
         run: |
              cd xpenbox-front
-             npm install
+             npm ci
 
       - name: Build Angular
         run: |
              cd xpenbox-front
-             npm run build
+             npx ng build --configuration=production
 
       - name: Sync Capacitor
         run: |
