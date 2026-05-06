@@ -11,6 +11,7 @@ import org.xpenbox.exception.InsufficientFoundsException;
 import org.xpenbox.exception.PlanException;
 import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.exception.UnauthorizedException;
+import org.xpenbox.exception.UnprocessableContentException;
 import org.xpenbox.exception.ValidationException;
 
 import jakarta.ws.rs.WebApplicationException;
@@ -72,6 +73,10 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
             return handleInsufficientFoundsException(ex);
         }
 
+        if (exception instanceof UnprocessableContentException ex) {
+            return handleUnprocessableContentException(ex);
+        }
+
         if (exception instanceof WebApplicationException ex) {
             return handleWebApplicationException(ex);
         }
@@ -101,6 +106,19 @@ public class GlobalExceptionHandler implements ExceptionMapper<Throwable> {
         
         APIResponseDTO<Void> response = APIResponseDTO.error(message, status);
         return Response.status(status).entity(response).build();
+    }
+
+    private Response handleUnprocessableContentException(UnprocessableContentException ex) {
+        LOG.warn("Unprocessable content: " + ex.getMessage());
+        String message = "Unprocessable content";
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Exception details: ", ex);
+            message += ": " + ex.getMessage();
+        }
+
+        APIResponseDTO<Void> response = APIResponseDTO.error(message, UnprocessableContentException.UNPROCESSABLE_ENTITY_STATUS_CODE);
+        return Response.status(UnprocessableContentException.UNPROCESSABLE_ENTITY_STATUS_CODE).entity(response).build();
     }
 
     private Response handleInsufficientFoundsException(InsufficientFoundsException ex) {
