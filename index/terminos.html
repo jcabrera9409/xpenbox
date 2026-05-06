@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Términos y Condiciones - XpenBox | Gestor Financiero Personal</title>
+    <meta name="description" content="Lee los términos y condiciones de uso de XpenBox. Conoce tus derechos, responsabilidades y las políticas de nuestro servicio de gestión financiera personal.">
+    <meta name="keywords" content="términos y condiciones, XpenBox, términos de uso, política de servicio, legal">
+    <meta name="author" content="FirstCode">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://xpenbox.firstcode.online/terminos.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://xpenbox.firstcode.online/terminos.html">
+    <meta property="og:title" content="Términos y Condiciones - XpenBox">
+    <meta property="og:description" content="Términos y condiciones de uso del servicio XpenBox. Información legal sobre el uso de nuestra aplicación de gestión financiera.">
+    <meta property="og:image" content="https://xpenbox.firstcode.online/icons/icon-512.webp">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta property="og:image:type" content="image/webp">
+    <meta property="og:image:alt" content="Logo de XpenBox">
+    <meta property="og:site_name" content="XpenBox">
+    <meta property="og:locale" content="es_PE">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="https://xpenbox.firstcode.online/terminos.html">
+    <meta name="twitter:title" content="Términos y Condiciones - XpenBox">
+    <meta name="twitter:description" content="Términos y condiciones de uso del servicio XpenBox.">
+    <meta name="twitter:image" content="https://xpenbox.firstcode.online/icons/icon-512.webp">
+    <meta name="twitter:image:alt" content="Logo de XpenBox">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" sizes="48x48" href="/xb/icons/icon-48.webp">
+    <link rel="icon" type="image/webp" sizes="192x192" href="/xb/icons/icon-192.webp">
+    <link rel="apple-touch-icon" href="/xb/icons/icon-192.webp">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#6366f1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #0ea5e9;
+            --accent-color: #8b5cf6;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: var(--bg-light);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo-icon {
+            background: white;
+            color: var(--primary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        /* Content Section */
+        .content {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 2rem 3rem;
+        }
+
+        .terms-container {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .last-updated {
+            background: var(--bg-light);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .last-updated strong {
+            color: var(--primary-color);
+        }
+
+        .terms-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .terms-section h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        .terms-section h3 {
+            color: var(--text-dark);
+            font-size: 1.3rem;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        .terms-section p {
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .terms-section ul, .terms-section ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .terms-section li {
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.8;
+        }
+
+        .highlight-box {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+        }
+
+        .contact-box {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .contact-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .contact-box a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer p {
+            opacity: 0.8;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .logo-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+
+            .nav-buttons {
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .hero {
+                padding: 3rem 1.5rem 2rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .content {
+                margin: 2rem auto;
+                padding: 0 1rem 2rem;
+            }
+
+            .terms-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .terms-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .terms-section h3 {
+                font-size: 1.2rem;
+            }
+
+            .terms-section ul, .terms-section ol {
+                margin-left: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.3rem;
+            }
+
+            .logo-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 1.1rem;
+            }
+
+            .btn {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .terms-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .terms-section h2 {
+                font-size: 1.3rem;
+            }
+
+            .highlight-box {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="/xb/" class="logo">
+                <div class="logo-icon">XB</div>
+                <span>XpenBox</span>
+            </a>
+            <div class="nav-buttons">
+                <a href="/xb/" class="btn btn-outline">Volver al Inicio</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Términos y Condiciones</h1>
+        <p>Por favor, lee cuidadosamente estos términos antes de usar XpenBox</p>
+    </section>
+
+    <!-- Content -->
+    <div class="content">
+        <div class="terms-container">
+            <div class="last-updated">
+                <strong>Última actualización:</strong> 5 de mayo de 2026
+            </div>
+
+            <!-- Sección 1 -->
+            <div class="terms-section">
+                <h2>1. Aceptación de los Términos</h2>
+                <p>Bienvenido a XpenBox. Al acceder y utilizar nuestra aplicación y servicios, aceptas estar legalmente vinculado por estos Términos y Condiciones. Si no estás de acuerdo con alguna parte de estos términos, no debes utilizar nuestros servicios.</p>
+                <p>Estos términos constituyen un acuerdo legal entre tú (el "Usuario") y FirstCode, Perú (el "Proveedor del Servicio", "nosotros" o "nuestro").</p>
+            </div>
+
+            <!-- Sección 2 -->
+            <div class="terms-section">
+                <h2>2. Descripción del Servicio</h2>
+                <p>XpenBox es una aplicación de gestión financiera personal que te permite:</p>
+                <ul>
+                    <li>Registrar y categorizar gastos e ingresos</li>
+                    <li>Administrar información de cuentas y tarjetas de crédito</li>
+                    <li>Visualizar estadísticas y reportes financieros</li>
+                    <li>Organizar tus finanzas personales de manera eficiente</li>
+                </ul>
+                <div class="highlight-box">
+                    <p><strong>Importante:</strong> XpenBox es una herramienta de registro y organización. NO se conecta directamente con bancos ni instituciones financieras. Toda la información es ingresada manualmente por el usuario.</p>
+                </div>
+            </div>
+
+            <!-- Sección 3 -->
+            <div class="terms-section">
+                <h2>3. Modelo de Servicio y Suscripciones</h2>
+                <h3>3.1 Versión Gratuita</h3>
+                <p>XpenBox ofrece una versión gratuita con funcionalidades básicas que te permiten gestionar tus finanzas personales sin costo alguno.</p>
+                
+                <h3>3.2 Planes de Pago (Premium)</h3>
+                <p>Ofrecemos planes de suscripción premium con características adicionales. Los precios, períodos de facturación y características específicas se describen en nuestra aplicación.</p>
+                
+                <h3>3.3 Pagos y Renovación</h3>
+                <p>Los pagos se procesan a través de MercadoPago. Al suscribirte a un plan de pago:</p>
+                <ul>
+                    <li>Autorizas el cargo recurrente en el método de pago seleccionado</li>
+                    <li>La suscripción se renueva automáticamente al final de cada período</li>
+                    <li>Los precios pueden cambiar con aviso previo de 30 días</li>
+                </ul>
+
+                <h3>3.4 Cancelación y Reembolsos</h3>
+                <p>Puedes cancelar tu suscripción en cualquier momento desde la configuración de tu cuenta. La cancelación será efectiva al final del período de facturación actual. <strong>No se ofrecen reembolsos por períodos parciales o no utilizados.</strong></p>
+            </div>
+
+            <!-- Sección 4 -->
+            <div class="terms-section">
+                <h2>4. Registro y Cuenta de Usuario</h2>
+                <h3>4.1 Edad Mínima</h3>
+                <p>Aunque nuestra aplicación está marcada para mayores de 18 años en las tiendas de aplicaciones, reconocemos que personas de cualquier edad pueden descargar y usar XpenBox para aprender sobre gestión financiera. Sin embargo:</p>
+                <ul>
+                    <li>Los usuarios menores de 18 años deben tener el permiso de un padre o tutor legal</li>
+                    <li>Los servicios de pago solo están disponibles para mayores de 18 años</li>
+                </ul>
+
+                <h3>4.2 Información de Registro</h3>
+                <p>Al crear una cuenta, te comprometes a:</p>
+                <ul>
+                    <li>Proporcionar información precisa, actual y completa</li>
+                    <li>Mantener la seguridad de tu contraseña</li>
+                    <li>Notificarnos inmediatamente sobre cualquier uso no autorizado de tu cuenta</li>
+                    <li>Ser responsable de todas las actividades realizadas bajo tu cuenta</li>
+                </ul>
+            </div>
+
+            <!-- Sección 5 -->
+            <div class="terms-section">
+                <h2>5. Uso Aceptable del Servicio</h2>
+                <h3>5.1 Uso Permitido</h3>
+                <p>XpenBox está diseñado exclusivamente para uso personal de gestión financiera. Te comprometes a utilizar el servicio de manera legal y apropiada.</p>
+
+                <h3>5.2 Conductas Prohibidas</h3>
+                <p>No debes:</p>
+                <ul>
+                    <li>Utilizar el servicio para actividades ilegales o fraudulentas</li>
+                    <li>Intentar acceder a cuentas de otros usuarios</li>
+                    <li>Interferir con el funcionamiento normal de la aplicación</li>
+                    <li>Realizar ingeniería inversa, descompilar o desensamblar el software</li>
+                    <li>Utilizar bots, scripts o cualquier medio automatizado no autorizado</li>
+                    <li>Revender o comercializar el servicio sin autorización</li>
+                </ul>
+            </div>
+
+            <!-- Sección 6 -->
+            <div class="terms-section">
+                <h2>6. Privacidad y Protección de Datos</h2>
+                <p>La privacidad de tus datos es fundamental para nosotros. Al utilizar XpenBox:</p>
+                <ul>
+                    <li>Tus datos financieros son privados y están protegidos con encriptación</li>
+                    <li>No compartimos tu información personal con terceros sin tu consentimiento</li>
+                    <li>Puedes exportar o eliminar tus datos en cualquier momento</li>
+                    <li>Para más detalles, consulta nuestra <a href="/xb/politicas" style="color: var(--primary-color); font-weight: 600;">Política de Privacidad</a></li>
+                </ul>
+            </div>
+
+            <!-- Sección 7 -->
+            <div class="terms-section">
+                <h2>7. Responsabilidades del Usuario</h2>
+                <p>Como usuario de XpenBox, reconoces y aceptas que:</p>
+                <ul>
+                    <li>Eres el único responsable de la exactitud de los datos que ingresas</li>
+                    <li>XpenBox es una herramienta de registro, no un asesor financiero</li>
+                    <li>Las decisiones financieras basadas en la información de la aplicación son tu responsabilidad</li>
+                    <li>Debes verificar y conciliar tu información con tus estados de cuenta oficiales</li>
+                    <li>Mantienes la obligación de realizar tus pagos a tiempo independientemente de las notificaciones de la app</li>
+                </ul>
+            </div>
+
+            <!-- Sección 8 -->
+            <div class="terms-section">
+                <h2>8. Limitaciones de Responsabilidad</h2>
+                <div class="highlight-box">
+                    <p><strong>IMPORTANTE:</strong> XpenBox se proporciona "tal cual" sin garantías de ningún tipo.</p>
+                </div>
+                
+                <p>FirstCode no será responsable por:</p>
+                <ul>
+                    <li>Errores en los datos ingresados por el usuario</li>
+                    <li>Decisiones financieras tomadas basándose en la información de la aplicación</li>
+                    <li>Pérdidas financieras, directas o indirectas</li>
+                    <li>Interrupciones temporales del servicio por mantenimiento o problemas técnicos</li>
+                    <li>Pérdida de datos debido a problemas técnicos (aunque hacemos todo lo posible por evitarlo)</li>
+                    <li>Daños derivados del uso o imposibilidad de uso del servicio</li>
+                </ul>
+
+                <p>En ningún caso nuestra responsabilidad total excederá el monto pagado por el usuario en los últimos 12 meses.</p>
+            </div>
+
+            <!-- Sección 9 -->
+            <div class="terms-section">
+                <h2>9. Propiedad Intelectual</h2>
+                <p>Todo el contenido de XpenBox, incluyendo pero no limitado a:</p>
+                <ul>
+                    <li>Diseño, gráficos, logotipos y marcas</li>
+                    <li>Código fuente y arquitectura del software</li>
+                    <li>Textos, documentación y materiales</li>
+                    <li>Funcionalidades y características</li>
+                </ul>
+                <p>Son propiedad de FirstCode y están protegidos por las leyes de propiedad intelectual. No se concede ninguna licencia o derecho excepto el uso personal del servicio.</p>
+            </div>
+
+            <!-- Sección 10 -->
+            <div class="terms-section">
+                <h2>10. Modificaciones del Servicio</h2>
+                <p>Nos reservamos el derecho de:</p>
+                <ul>
+                    <li>Modificar, suspender o descontinuar cualquier aspecto del servicio</li>
+                    <li>Actualizar las características y funcionalidades</li>
+                    <li>Cambiar o eliminar funciones con o sin previo aviso</li>
+                </ul>
+                <p>Haremos nuestro mejor esfuerzo para notificar sobre cambios significativos que afecten tu experiencia.</p>
+            </div>
+
+            <!-- Sección 11 -->
+            <div class="terms-section">
+                <h2>11. Suspensión y Terminación</h2>
+                <h3>11.1 Por Parte del Usuario</h3>
+                <p>Puedes cancelar tu cuenta en cualquier momento desde la configuración de la aplicación. La cancelación es inmediata pero no genera reembolsos.</p>
+
+                <h3>11.2 Por Parte de FirstCode</h3>
+                <p>Podemos suspender o terminar tu acceso si:</p>
+                <ul>
+                    <li>Violas estos Términos y Condiciones</li>
+                    <li>Tu uso pone en riesgo la seguridad o estabilidad del servicio</li>
+                    <li>Se detectan actividades fraudulentas o ilegales</li>
+                    <li>No se realiza el pago de una suscripción activa</li>
+                </ul>
+            </div>
+
+            <!-- Sección 12 -->
+            <div class="terms-section">
+                <h2>12. Modificaciones de los Términos</h2>
+                <p>Podemos actualizar estos Términos y Condiciones periódicamente. Cuando lo hagamos:</p>
+                <ul>
+                    <li>La fecha de "Última actualización" será modificada</li>
+                    <li>Se te notificará sobre cambios importantes mediante correo electrónico o la aplicación</li>
+                    <li>El uso continuado del servicio después de los cambios constituye tu aceptación</li>
+                </ul>
+                <p>Te recomendamos revisar estos términos periódicamente.</p>
+            </div>
+
+            <!-- Sección 13 -->
+            <div class="terms-section">
+                <h2>13. Ley Aplicable y Jurisdicción</h2>
+                <p>Estos términos se rigen por las leyes de la República del Perú. Cualquier disputa relacionada con estos términos o el uso del servicio será sometida a la jurisdicción exclusiva de los tribunales de Perú.</p>
+            </div>
+
+            <!-- Sección 14 -->
+            <div class="terms-section">
+                <h2>14. Disposiciones Generales</h2>
+                <h3>14.1 Acuerdo Completo</h3>
+                <p>Estos términos, junto con nuestra Política de Privacidad, constituyen el acuerdo completo entre tú y FirstCode.</p>
+
+                <h3>14.2 Divisibilidad</h3>
+                <p>Si alguna disposición de estos términos se considera inválida o inaplicable, las demás disposiciones permanecerán en pleno vigor.</p>
+
+                <h3>14.3 Renuncia</h3>
+                <p>La falta de ejercicio de cualquier derecho no constituye una renuncia a dicho derecho.</p>
+
+                <h3>14.4 Cesión</h3>
+                <p>No puedes transferir o ceder tus derechos u obligaciones bajo estos términos sin nuestro consentimiento previo por escrito.</p>
+            </div>
+
+            <!-- Contacto -->
+            <div class="contact-box">
+                <h3>📧 ¿Preguntas sobre estos términos?</h3>
+                <p>Si tienes alguna duda sobre estos Términos y Condiciones, por favor contáctanos:</p>
+                <p style="margin-top: 1rem;">
+                    <strong>Email:</strong> <a href="mailto:firstcode94@gmail.com">firstcode94@gmail.com</a>
+                </p>
+                <p style="margin-top: 0.5rem;">
+                    <strong>Operador:</strong> FirstCode<br>
+                    <strong>País:</strong> Perú
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 XpenBox. Todos los derechos reservados.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                <a href="/xb/">Inicio</a> | 
+                <a href="/xb/terminos">Términos y Condiciones</a> | 
+                <a href="/xb/politicas">Política de Privacidad</a> | 
+                <a href="mailto:firstcode94@gmail.com">Contacto</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll para los enlaces internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Añadir animación de entrada a las secciones
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '0';
+                    entry.target.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        entry.target.style.transition = 'all 0.6s ease';
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.terms-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

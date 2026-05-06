@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Política de Privacidad - XpenBox | Protección de Datos</title>
+    <meta name="description" content="Conoce cómo XpenBox protege tu privacidad y datos personales. Política de privacidad transparente sobre recopilación, uso y almacenamiento de información.">
+    <meta name="keywords" content="política de privacidad, XpenBox, protección de datos, privacidad, GDPR, seguridad de datos">
+    <meta name="author" content="FirstCode">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://xpenbox.firstcode.online/politicas.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://xpenbox.firstcode.online/politicas.html">
+    <meta property="og:title" content="Política de Privacidad - XpenBox">
+    <meta property="og:description" content="Conoce cómo XpenBox protege tu privacidad y datos personales. Nunca compartimos tu información con terceros.">
+    <meta property="og:image" content="https://xpenbox.firstcode.online/icons/icon-512.webp">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta property="og:image:type" content="image/webp">
+    <meta property="og:image:alt" content="Logo de XpenBox">
+    <meta property="og:site_name" content="XpenBox">
+    <meta property="og:locale" content="es_PE">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="https://xpenbox.firstcode.online/politicas.html">
+    <meta name="twitter:title" content="Política de Privacidad - XpenBox">
+    <meta name="twitter:description" content="Conoce cómo XpenBox protege tu privacidad y datos personales.">
+    <meta name="twitter:image" content="https://xpenbox.firstcode.online/icons/icon-512.webp">
+    <meta name="twitter:image:alt" content="Logo de XpenBox">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" sizes="48x48" href="/xb/icons/icon-48.webp">
+    <link rel="icon" type="image/webp" sizes="192x192" href="/xb/icons/icon-192.webp">
+    <link rel="apple-touch-icon" href="/xb/icons/icon-192.webp">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#6366f1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #0ea5e9;
+            --accent-color: #8b5cf6;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: var(--bg-light);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo-icon {
+            background: white;
+            color: var(--primary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        /* Content Section */
+        .content {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 2rem 3rem;
+        }
+
+        .privacy-container {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .last-updated {
+            background: var(--bg-light);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .last-updated strong {
+            color: var(--primary-color);
+        }
+
+        .privacy-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .privacy-section h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        .privacy-section h3 {
+            color: var(--text-dark);
+            font-size: 1.3rem;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        .privacy-section p {
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .privacy-section ul, .privacy-section ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .privacy-section li {
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.8;
+        }
+
+        .highlight-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+        }
+
+        .warning-box {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .warning-box p {
+            margin-bottom: 0;
+        }
+
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .info-box strong {
+            color: #1e40af;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--bg-white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .data-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--bg-light);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover {
+            background: var(--bg-light);
+        }
+
+        .contact-box {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .contact-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .contact-box a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer p {
+            opacity: 0.8;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .logo-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+
+            .nav-buttons {
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .hero {
+                padding: 3rem 1.5rem 2rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .content {
+                margin: 2rem auto;
+                padding: 0 1rem 2rem;
+            }
+
+            .privacy-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .privacy-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .privacy-section h3 {
+                font-size: 1.2rem;
+            }
+
+            .privacy-section ul, .privacy-section ol {
+                margin-left: 1.5rem;
+            }
+
+            .data-table {
+                font-size: 0.9rem;
+            }
+
+            .data-table th, .data-table td {
+                padding: 0.7rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.3rem;
+            }
+
+            .logo-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 1.1rem;
+            }
+
+            .btn {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .privacy-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .privacy-section h2 {
+                font-size: 1.3rem;
+            }
+
+            .highlight-box, .warning-box, .info-box {
+                padding: 1rem;
+            }
+
+            .data-table {
+                font-size: 0.85rem;
+            }
+
+            .data-table th, .data-table td {
+                padding: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="/xb/" class="logo">
+                <div class="logo-icon">XB</div>
+                <span>XpenBox</span>
+            </a>
+            <div class="nav-buttons">
+                <a href="/xb/" class="btn btn-outline">Volver al Inicio</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Política de Privacidad</h1>
+        <p>Tu privacidad es nuestra prioridad. Conoce cómo protegemos tus datos</p>
+    </section>
+
+    <!-- Content -->
+    <div class="content">
+        <div class="privacy-container">
+            <div class="last-updated">
+                <strong>Última actualización:</strong> 5 de mayo de 2026
+            </div>
+
+            <!-- Introducción -->
+            <div class="privacy-section">
+                <h2>Introducción</h2>
+                <p>En XpenBox, operado por FirstCode en Perú, nos comprometemos a proteger tu privacidad y tus datos personales. Esta Política de Privacidad explica qué información recopilamos, cómo la utilizamos, almacenamos y protegemos cuando utilizas nuestra aplicación de gestión financiera personal.</p>
+                
+                <div class="highlight-box">
+                    <p><strong>🔒 Compromiso de privacidad:</strong> Nunca venderemos ni compartiremos tus datos personales o financieros con terceros. Tu información es privada y permanece bajo tu control.</p>
+                </div>
+
+                <p>Al utilizar XpenBox, aceptas las prácticas descritas en esta política. Si no estás de acuerdo, por favor no utilices nuestros servicios. Esta política complementa nuestros <a href="/xb/terminos" style="color: var(--primary-color); font-weight: 600;">Términos y Condiciones</a>.</p>
+            </div>
+
+            <!-- Sección 1 -->
+            <div class="privacy-section">
+                <h2>1. Información que Recopilamos</h2>
+                
+                <h3>1.1 Información de Cuenta</h3>
+                <p>Cuando te registras en XpenBox, recopilamos:</p>
+                <ul>
+                    <li><strong>Correo electrónico:</strong> Utilizado para crear tu cuenta, iniciar sesión y comunicaciones importantes</li>
+                    <li><strong>Contraseña:</strong> Almacenada de forma encriptada (nunca en texto plano)</li>
+                </ul>
+
+                <div class="info-box">
+                    <p><strong>Nota importante:</strong> NO solicitamos ni recopilamos tu nombre real, dirección, teléfono, documento de identidad u otra información personal identificable.</p>
+                </div>
+
+                <h3>1.2 Información Financiera</h3>
+                <p>XpenBox te permite ingresar y gestionar información financiera personal, que incluye:</p>
+                <ul>
+                    <li>Registros de gastos e ingresos</li>
+                    <li>Nombres y descripciones de cuentas bancarias</li>
+                    <li>Nombres y descripciones de tarjetas de crédito</li>
+                    <li>Categorías y etiquetas personalizadas</li>
+                    <li>Notas y comentarios sobre transacciones</li>
+                </ul>
+
+                <div class="warning-box">
+                    <p><strong>⚠️ Importante:</strong> NO solicitamos ni almacenamos números reales de tarjetas de crédito, débito, claves bancarias, PINs o credenciales de acceso a bancos. Eres libre de ingresar nombres o códigos descriptivos que mejor te parezcan sin usar datos reales.</p>
+                </div>
+
+                <h3>1.3 Información Técnica</h3>
+                <p>Para el funcionamiento básico de la aplicación, podemos recopilar automáticamente:</p>
+                <ul>
+                    <li>Dirección IP (para seguridad y prevención de fraudes)</li>
+                    <li>Tipo de dispositivo y sistema operativo</li>
+                    <li>Información de la sesión y autenticación</li>
+                </ul>
+
+                <h3>1.4 Lo que NO Recopilamos</h3>
+                <p>XpenBox NO utiliza:</p>
+                <ul>
+                    <li>❌ Google Analytics ni herramientas de seguimiento de terceros</li>
+                    <li>❌ Cookies de marketing o publicidad</li>
+                    <li>❌ Rastreadores de comportamiento</li>
+                    <li>❌ Identificadores de publicidad</li>
+                </ul>
+            </div>
+
+            <!-- Sección 2 -->
+            <div class="privacy-section">
+                <h2>2. Cómo Utilizamos tu Información</h2>
+                <p>Utilizamos la información recopilada únicamente para los siguientes propósitos:</p>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Dato</th>
+                            <th>Propósito</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Correo electrónico</td>
+                            <td>Autenticación, recuperación de cuenta, notificaciones importantes del servicio</td>
+                        </tr>
+                        <tr>
+                            <td>Contraseña</td>
+                            <td>Autenticación y seguridad de la cuenta</td>
+                        </tr>
+                        <tr>
+                            <td>Datos financieros</td>
+                            <td>Proporcionar funcionalidades de gestión financiera, generar reportes y estadísticas personales</td>
+                        </tr>
+                        <tr>
+                            <td>Información técnica</td>
+                            <td>Mantener la seguridad, prevenir fraudes, mejorar el rendimiento de la aplicación</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>NO utilizamos tus datos para:</p>
+                <ul>
+                    <li>Publicidad dirigida</li>
+                    <li>Venta o comercialización de datos</li>
+                    <li>Análisis de comportamiento para fines comerciales</li>
+                    <li>Compartir con terceros no autorizados</li>
+                </ul>
+            </div>
+
+            <!-- Sección 3 -->
+            <div class="privacy-section">
+                <h2>3. Almacenamiento y Seguridad de los Datos</h2>
+                
+                <h3>3.1 Ubicación de Almacenamiento</h3>
+                <p>Tus datos se almacenan en servidores seguros proporcionados por <strong>Digital Ocean</strong>, un proveedor de infraestructura en la nube reconocido internacionalmente que cumple con estándares de seguridad globales.</p>
+
+                <h3>3.2 Medidas de Seguridad</h3>
+                <p>Implementamos múltiples capas de seguridad para proteger tu información:</p>
+                <ul>
+                    <li><strong>Encriptación de contraseñas:</strong> Todas las contraseñas se encriptan utilizando algoritmos de hash seguros (bcrypt o similar)</li>
+                    <li><strong>Conexiones seguras:</strong> Toda la comunicación entre tu dispositivo y nuestros servidores se realiza mediante HTTPS/SSL</li>
+                    <li><strong>Acceso restringido:</strong> Solo personal autorizado tiene acceso a los servidores, y nunca acceden a datos de usuarios sin consentimiento explícito</li>
+                    <li><strong>Protección contra ataques:</strong> Firewalls, protección DDoS y monitoreo de seguridad constante</li>
+                    <li><strong>Backups regulares:</strong> Realizamos copias de seguridad periódicas para prevenir pérdida de datos</li>
+                </ul>
+
+                <div class="warning-box">
+                    <p><strong>Tu responsabilidad:</strong> Mantén tu contraseña segura y no la compartas con nadie. Utiliza una contraseña única y fuerte para tu cuenta de XpenBox.</p>
+                </div>
+            </div>
+
+            <!-- Sección 4 -->
+            <div class="privacy-section">
+                <h2>4. Compartir Información con Terceros</h2>
+                
+                <div class="highlight-box">
+                    <p><strong>✅ Política clara:</strong> NO compartimos, vendemos ni alquilamos tus datos personales o financieros con terceros para fines de marketing o publicidad.</p>
+                </div>
+
+                <h3>4.1 Excepciones Limitadas</h3>
+                <p>Solo podríamos compartir información en las siguientes circunstancias excepcionales:</p>
+                <ul>
+                    <li><strong>Cumplimiento legal:</strong> Si es requerido por ley, orden judicial o proceso legal válido</li>
+                    <li><strong>Protección de derechos:</strong> Para proteger nuestros derechos legales, prevenir fraude o proteger la seguridad de los usuarios</li>
+                    <li><strong>Procesamiento de pagos:</strong> Para suscripciones premium, MercadoPago procesa los pagos (no compartimos tus datos financieros de gestión, solo información mínima necesaria para la transacción)</li>
+                </ul>
+
+                <h3>4.2 Sin Análisis de Terceros</h3>
+                <p>A diferencia de muchas aplicaciones, XpenBox NO utiliza:</p>
+                <ul>
+                    <li>Google Analytics</li>
+                    <li>Facebook Pixel</li>
+                    <li>Herramientas de análisis de comportamiento de terceros</li>
+                    <li>Redes publicitarias</li>
+                </ul>
+            </div>
+
+            <!-- Sección 5 -->
+            <div class="privacy-section">
+                <h2>5. Cookies y Tecnologías de Seguimiento</h2>
+                
+                <h3>5.1 Cookies Esenciales</h3>
+                <p>XpenBox utiliza únicamente cookies esenciales necesarias para el funcionamiento de la aplicación:</p>
+                <ul>
+                    <li><strong>Cookies de sesión:</strong> Para mantener tu sesión activa mientras usas la aplicación</li>
+                    <li><strong>Cookies de autenticación:</strong> Para verificar tu identidad y mantener tu cuenta segura</li>
+                    <li><strong>Cookies de preferencias:</strong> Para recordar tus configuraciones personales (idioma, tema, etc.)</li>
+                </ul>
+
+                <h3>5.2 Sin Cookies de Terceros</h3>
+                <p>NO utilizamos:</p>
+                <ul>
+                    <li>Cookies de publicidad</li>
+                    <li>Cookies de redes sociales</li>
+                    <li>Cookies de seguimiento de terceros</li>
+                    <li>Cookies de análisis de comportamiento</li>
+                </ul>
+
+                <div class="info-box">
+                    <p><strong>Control de cookies:</strong> Puedes configurar tu navegador para bloquear cookies, pero esto puede afectar el funcionamiento de XpenBox, especialmente las funciones de inicio de sesión.</p>
+                </div>
+            </div>
+
+            <!-- Sección 6 -->
+            <div class="privacy-section">
+                <h2>6. Retención de Datos</h2>
+                
+                <h3>6.1 Duración del Almacenamiento</h3>
+                <p>Mantenemos tu información de forma <strong>indefinida mientras tu cuenta permanezca activa</strong> para que puedas acceder a tu historial financiero completo en cualquier momento.</p>
+
+                <h3>6.2 Eliminación de Cuenta</h3>
+                <p>Si deseas eliminar tu cuenta y todos tus datos asociados:</p>
+                <ul>
+                    <li>Debes contactarnos directamente por correo electrónico a <strong>firstcode94@gmail.com</strong></li>
+                    <li>Procesaremos tu solicitud en un plazo máximo de <strong>30 días</strong></li>
+                    <li>Una vez confirmada la eliminación, todos tus datos personales y financieros serán permanentemente eliminados de nuestros sistemas</li>
+                    <li>Esta acción es <strong>irreversible</strong> y no podrás recuperar tu cuenta o datos después</li>
+                </ul>
+
+                <div class="warning-box">
+                    <p><strong>⚠️ Antes de eliminar:</strong> Asegúrate de exportar cualquier información que desees conservar, ya que la eliminación es permanente e irreversible.</p>
+                </div>
+
+                <h3>6.3 Retención Legal</h3>
+                <p>En casos excepcionales, podemos retener cierta información por períodos más largos si es requerido legalmente (por ejemplo, para cumplir con obligaciones fiscales o resolver disputas).</p>
+            </div>
+
+            <!-- Sección 7 -->
+            <div class="privacy-section">
+                <h2>7. Tus Derechos de Privacidad</h2>
+                <p>Como usuario de XpenBox, tienes los siguientes derechos sobre tus datos personales:</p>
+
+                <h3>7.1 Derecho de Acceso</h3>
+                <p>Puedes acceder a todos tus datos personales y financieros en cualquier momento desde tu cuenta.</p>
+
+                <h3>7.2 Derecho de Rectificación</h3>
+                <p>Puedes editar, actualizar o corregir cualquier información en tu cuenta directamente desde la aplicación.</p>
+
+                <h3>7.3 Derecho de Eliminación</h3>
+                <p>Puedes solicitar la eliminación completa de tu cuenta y todos tus datos contactando a nuestro equipo de soporte.</p>
+
+                <h3>7.4 Derecho de Portabilidad</h3>
+                <p>Puedes exportar tus datos financieros en formatos comunes (CSV, PDF) desde la aplicación para usarlos en otros servicios.</p>
+
+                <h3>7.5 Derecho de Oposición</h3>
+                <p>Puedes oponerte al procesamiento de tus datos para ciertos propósitos, aunque esto puede limitar las funcionalidades disponibles.</p>
+
+                <h3>7.6 Cómo Ejercer tus Derechos</h3>
+                <p>Para ejercer cualquiera de estos derechos, contáctanos a:</p>
+                <ul>
+                    <li>📧 Email: <strong>firstcode94@gmail.com</strong></li>
+                    <li>⏱️ Tiempo de respuesta: Máximo 30 días</li>
+                </ul>
+            </div>
+
+            <!-- Sección 8 -->
+            <div class="privacy-section">
+                <h2>8. Privacidad de Menores</h2>
+                <p>Aunque XpenBox está recomendado para mayores de 18 años, reconocemos que personas de cualquier edad pueden usar la aplicación para aprender sobre gestión financiera.</p>
+                
+                <div class="warning-box">
+                    <p><strong>Para menores de edad:</strong> Si eres menor de 18 años, debes contar con el permiso y supervisión de un padre, madre o tutor legal para usar XpenBox. Los padres o tutores son responsables de supervisar el uso que los menores hacen de la aplicación.</p>
+                </div>
+
+                <p>Si eres padre o tutor y descubres que tu hijo ha proporcionado información personal sin tu consentimiento, contáctanos para eliminar esos datos.</p>
+            </div>
+
+            <!-- Sección 9 -->
+            <div class="privacy-section">
+                <h2>9. Transferencias Internacionales de Datos</h2>
+                <p>Dado que nuestros servidores están alojados en Digital Ocean, tus datos pueden ser procesados en centros de datos ubicados en diferentes países. Digital Ocean cumple con estándares internacionales de protección de datos y seguridad.</p>
+                <p>Al usar XpenBox, consientes estas transferencias necesarias para proporcionar el servicio.</p>
+            </div>
+
+            <!-- Sección 10 -->
+            <div class="privacy-section">
+                <h2>10. Seguridad y Brechas de Datos</h2>
+                
+                <h3>10.1 Medidas Preventivas</h3>
+                <p>Implementamos las mejores prácticas de la industria para proteger tus datos contra acceso no autorizado, alteración, divulgación o destrucción.</p>
+
+                <h3>10.2 Notificación de Brechas</h3>
+                <p>En el improbable caso de una brecha de seguridad que afecte tus datos personales:</p>
+                <ul>
+                    <li>Te notificaremos por correo electrónico lo antes posible</li>
+                    <li>Describiremos la naturaleza de la brecha y los datos afectados</li>
+                    <li>Explicaremos las medidas que hemos tomado y las que debes tomar</li>
+                    <li>Cumpliremos con todas las obligaciones legales de notificación</li>
+                </ul>
+
+                <h3>10.3 Tu Papel en la Seguridad</h3>
+                <p>Ayúdanos a mantener tu cuenta segura:</p>
+                <ul>
+                    <li>Usa una contraseña fuerte y única</li>
+                    <li>No compartas tus credenciales con nadie</li>
+                    <li>Cierra sesión en dispositivos compartidos</li>
+                    <li>Mantén tu correo electrónico seguro</li>
+                    <li>Reporta cualquier actividad sospechosa inmediatamente</li>
+                </ul>
+            </div>
+
+            <!-- Sección 11 -->
+            <div class="privacy-section">
+                <h2>11. Enlaces a Sitios de Terceros</h2>
+                <p>XpenBox puede contener enlaces a sitios web de terceros (por ejemplo, procesadores de pago). Esta Política de Privacidad solo se aplica a XpenBox. No somos responsables de las prácticas de privacidad de otros sitios web.</p>
+                <p>Te recomendamos leer las políticas de privacidad de cualquier sitio web de terceros que visites.</p>
+            </div>
+
+            <!-- Sección 12 -->
+            <div class="privacy-section">
+                <h2>12. Cambios a esta Política de Privacidad</h2>
+                <p>Podemos actualizar esta Política de Privacidad periódicamente para reflejar cambios en nuestras prácticas, tecnología o requisitos legales.</p>
+
+                <h3>Notificación de Cambios</h3>
+                <ul>
+                    <li>Actualizaremos la fecha de "Última actualización" en la parte superior</li>
+                    <li>Para cambios significativos, te notificaremos por correo electrónico</li>
+                    <li>Te recomendamos revisar esta política periódicamente</li>
+                    <li>El uso continuado después de cambios constituye tu aceptación</li>
+                </ul>
+            </div>
+
+            <!-- Sección 13 -->
+            <div class="privacy-section">
+                <h2>13. Base Legal para el Procesamiento</h2>
+                <p>Procesamos tus datos personales bajo las siguientes bases legales:</p>
+                <ul>
+                    <li><strong>Consentimiento:</strong> Al aceptar esta política al registrarte</li>
+                    <li><strong>Ejecución de contrato:</strong> Para proporcionar los servicios que has solicitado</li>
+                    <li><strong>Intereses legítimos:</strong> Para mejorar nuestros servicios, prevenir fraudes y garantizar la seguridad</li>
+                    <li><strong>Obligaciones legales:</strong> Cuando sea requerido por ley</li>
+                </ul>
+            </div>
+
+            <!-- Sección 14 -->
+            <div class="privacy-section">
+                <h2>14. Información Adicional</h2>
+                
+                <h3>14.1 Aplicación Móvil</h3>
+                <p>La aplicación móvil de XpenBox no accede a:</p>
+                <ul>
+                    <li>Tu lista de contactos</li>
+                    <li>Tu galería de fotos (excepto si decides subir una foto de perfil)</li>
+                    <li>Tu ubicación GPS</li>
+                    <li>Tus mensajes SMS</li>
+                    <li>Tus llamadas telefónicas</li>
+                </ul>
+            </div>
+
+            <!-- Contacto -->
+            <div class="contact-box">
+                <h3>📧 ¿Preguntas sobre tu privacidad?</h3>
+                <p>Si tienes preguntas, inquietudes o solicitudes relacionadas con esta Política de Privacidad o el manejo de tus datos personales, no dudes en contactarnos:</p>
+                <p style="margin-top: 1rem;">
+                    <strong>Email:</strong> <a href="mailto:firstcode94@gmail.com">firstcode94@gmail.com</a>
+                </p>
+                <p style="margin-top: 0.5rem;">
+                    <strong>Responsable:</strong> FirstCode<br>
+                    <strong>País:</strong> Perú
+                </p>
+                <p style="margin-top: 1rem; font-size: 0.95rem; color: var(--text-light);">
+                    Nos comprometemos a responder todas las consultas en un plazo máximo de 30 días.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 XpenBox. Todos los derechos reservados.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                <a href="/xb/">Inicio</a> | 
+                <a href="/xb/terminos">Términos y Condiciones</a> | 
+                <a href="/xb/politicas">Política de Privacidad</a> | 
+                <a href="mailto:firstcode94@gmail.com">Contacto</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll para los enlaces internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Añadir animación de entrada a las secciones
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '0';
+                    entry.target.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        entry.target.style.transition = 'all 0.6s ease';
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.privacy-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
