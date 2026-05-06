@@ -18,6 +18,48 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="xpenbox.firstcode.online" 
+                    android:pathPrefix="/login" />
+
+                <data
+                    android:scheme="https"
+                    android:host="xpenbox.firstcode.online" 
+                    android:pathPrefix="/verify-email" />
+                
+                <data
+                    android:scheme="https"
+                    android:host="xpenbox.firstcode.online" 
+                    android:pathPrefix="/forgot-password" />
+
+                <data
+                    android:scheme="https"
+                    android:host="xpenbox.firstcode.online" 
+                    android:pathPrefix="/reset-password" />
+
+                <data
+                    android:scheme="https"
+                    android:host="xpenbox.firstcode.online" 
+                    android:pathPrefix="/register" />
+
+                <data
+                    android:scheme="https"
+                    android:host="xpenbox.firstcode.online" 
+                    android:pathPrefix="/landing" />
+
+                <data
+                    android:scheme="https"
+                    android:host="xpenbox.firstcode.online" 
+                    android:pathPrefix="/success" />
+            </intent-filter>
         </activity>
 
         <provider
