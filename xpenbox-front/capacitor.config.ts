@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.firstcode.xpenbox',
-  appName: 'xpenbox',
+  appName: 'XpenBox',
   webDir: 'dist/xpenbox-front/browser',
   android: {
     backgroundColor: '#2b2b2b'
