@@ -67,5 +67,5 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.firstcode.xpenbox
           releaseFiles: xpenbox-front/android/app/build/outputs/bundle/release/app-release.aab
-          tracks: internal
+          tracks: internal,alpha
           status: draft

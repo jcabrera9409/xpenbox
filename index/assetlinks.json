@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.firstcode.xpenbox",
+      "sha256_cert_fingerprints":
+        ["DB:B6:C1:76:80:E9:A1:31:EC:80:90:B0:B1:DD:6D:DA:13:67:7E:F1:4C:56:E0:39:2C:E9:28:0F:7C:CA:AE:A3",
+         "49:25:8C:7E:7F:28:71:2F:26:BA:CC:72:9F:95:15:AF:B0:7C:67:3A:68:F9:51:FA:AB:87:AB:8A:3A:E7:AB:2F"]
+    }
+  }
+]
