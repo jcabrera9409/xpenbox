@@ -33,4 +33,10 @@ export class CapacitorService {
     async hideSplashScreen(): Promise<void> {
         await SplashScreen.hide();
     }
+
+    async showSplashScreen(): Promise<void> {
+        await SplashScreen.show({
+            autoHide: false,
+        });
+    }
 }

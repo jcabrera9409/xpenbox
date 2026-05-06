@@ -17,7 +17,12 @@ export class App implements OnInit {
 
   async ngOnInit() {
     if (this.capacitorService.isNativePlatform()) {
-      await this.capacitorService.hideSplashScreen();
+      await this.capacitorService.showSplashScreen();
+
+      setTimeout(async () => {
+        await this.capacitorService.hideSplashScreen();
+      }, 1000);
+
     }
   }
 }
