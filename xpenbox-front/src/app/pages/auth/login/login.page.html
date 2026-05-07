@@ -16,15 +16,15 @@
             Correo Electrónico
           </label>
           <div class="relative">
-            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-              email
-            </span>
+            <svg class="w-5 h-5 xpb-text-secondary absolute left-3 top-1/2 -translate-y-1/2" fill="currentColor">
+              <use href="sprite.svg#email"></use>
+            </svg>
             <input
               id="email"
               type="email"
               formControlName="email"
               placeholder="tu@ejemplo.com"
-              class="w-full pl-11 pr-4 py-2.5 border xpb-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent xpb-text-primary placeholder:xpb-text-disabled"
+              class="w-full pl-10 pr-4 py-2.5 border xpb-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent xpb-text-primary placeholder:xpb-text-disabled"
               [class.border-[var(--xpb-expense)]]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
             />
           </div>
@@ -46,9 +46,9 @@
             Contraseña
           </label>
           <div class="relative">
-            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-              lock
-            </span>
+            <svg class="w-5 h-5 xpb-text-secondary absolute left-3 top-1/2 -translate-y-1/2" fill="currentColor">
+              <use href="sprite.svg#lock"></use>
+            </svg>
             <input
               id="password"
               [type]="showPassword() ? 'text' : 'password'"
@@ -63,7 +63,9 @@
               class="material-icons absolute right-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl hover:xpb-text-primary cursor-pointer transition-colors"
               aria-label="Mostrar/ocultar contraseña"
             >
-              {{ showPassword() ? 'visibility_off' : 'visibility' }}
+              <svg class="w-5 h-5 xpb-text-secondary" fill="currentColor">
+                <use [attr.href]="'sprite.svg#' + (showPassword() ? 'visibility_off' : 'visibility')"></use>
+              </svg>
             </button>
           </div>
           @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
