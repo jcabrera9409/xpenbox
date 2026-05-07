@@ -2,11 +2,12 @@ import { Component, signal, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../../feature/auth/service/auth.service';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-reset-password-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, IconComponent],
   templateUrl: './reset-password.page.html',
   styleUrl: './reset-password.page.css',
 })
