@@ -68,4 +68,4 @@ jobs:
           packageName: com.firstcode.xpenbox
           releaseFiles: xpenbox-front/android/app/build/outputs/bundle/release/app-release.aab
           tracks: internal,alpha
-          status: draft
+          status: completed
