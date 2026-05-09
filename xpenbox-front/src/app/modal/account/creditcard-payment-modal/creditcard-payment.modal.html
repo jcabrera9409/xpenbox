@@ -6,7 +6,11 @@
             <div class="flex items-center gap-4">
                 <!-- Icon -->
                 <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-                    <span class="material-icons text-[var(--xpb-income)] text-2xl">payment</span>
+                    <app-icon-component
+                        [icon]="'payment'"
+                        [size]="'8'"
+                        [class]="'text-[var(--xpb-income)]'">
+                    </app-icon-component>
                 </div>
                 <!-- Title and subtitle -->
                 <div class="flex-1">
@@ -16,7 +20,10 @@
                 <!-- Close button -->
                 <button (click)="onClose()" 
                     class="text-gray-400 hover:text-gray-600 transition-colors -mt-1">
-                    <span class="material-icons text-lg">close</span>
+                    <app-icon-component
+                        [icon]="'close'"
+                        [size]="'5'">
+                    </app-icon-component>
                 </button>
             </div>
         </div>
@@ -43,7 +50,11 @@
                         Descripción <span class="text-xs xpb-text-secondary">(opcional)</span>
                     </label>
                     <div class="relative">
-                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">description</span>
+                        <app-icon-component
+                            [icon]="'description'"
+                            [size]="'5'"
+                            [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                        </app-icon-component>
                         <input 
                             type="text"
                             maxlength="250"
@@ -61,7 +72,11 @@
                             Tarjeta de Crédito
                         </label>
                         <div class="relative">
-                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-lg">payment</span>
+                            <app-icon-component
+                                [icon]="'payment'"
+                                [size]="'5'"
+                                [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                            </app-icon-component>
                             <input 
                                 type="text"
                                 [value]="creditCardData()?.name + ' - ' + userLogged()?.currency + ' ' + (creditCardData()?.balance | number:'1.2-2')"
@@ -111,7 +126,11 @@
                                 (change)="assignToCategory.set(!assignToCategory())"
                                 class="peer sr-only" />
                             <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
-                                <span class="material-icons text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+                                <app-icon-component
+                                    [icon]="'check'"
+                                    [size]="'5'"
+                                    [class]="'text-white opacity-0 peer-checked:opacity-100 transition-opacity'">
+                                </app-icon-component>
                             </div>
                         </div>
                         <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
@@ -128,7 +147,11 @@
 
                 @if (this.transactionState.errorSendingTransaction()) {
                     <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                        <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                        <app-icon-component
+                            [icon]="'error_outline'"
+                            [size]="'5'"
+                            [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                        </app-icon-component>
                         <div class="text-sm text-[var(--xpb-expense)] flex-1">
                             {{ this.transactionState.errorSendingTransaction() }}
                         </div>

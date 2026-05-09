@@ -31,7 +31,7 @@
                     class="w-full xpb-btn-primary inline-flex items-center justify-center gap-2 py-3 rounded-lg"
                     (click)="closeModal()">
                     @if (buttonIcon) {
-                        <span class="material-icons text-xl">{{ buttonIcon || '' }}</span>
+                        <app-icon-component [icon]="buttonIcon" [size]="'5'"></app-icon-component>
                     }
                     <span>{{ buttonText || 'Entendido' }}</span>
                 </button>

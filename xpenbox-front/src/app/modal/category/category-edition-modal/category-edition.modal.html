@@ -6,28 +6,18 @@
             <div class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-                        <span class="material-icons text-[var(--xpb-primary)] text-2xl">
-                            @if (isEditMode) {
-                                edit
-                            } @else {
-                                category
-                            }
-                        </span>
+                        <app-icon-component
+                            [icon]="isEditMode ? 'edit' : 'category'"
+                            [size]="'8'"
+                            [class]="'text-[var(--xpb-primary)]'">
+                        </app-icon-component>
                     </div>
                     <div>
                         <h2 class="text-xl font-semibold xpb-text-primary">
-                            @if (isEditMode) {
-                                Modificar Categoría
-                            } @else {
-                                Nueva Categoría
-                            }
+                            {{ isEditMode ? 'Modificar Categoría' : 'Nueva Categoría' }}
                         </h2>
                         <p class="text-sm xpb-text-secondary">
-                            @if (isEditMode) {
-                                Actualiza la información de tu categoría
-                            } @else {
-                                Registra una nueva categoría para tus transacciones
-                            }
+                            {{ isEditMode ? 'Actualiza la información de tu categoría' : 'Registra una nueva categoría para tus transacciones' }}
                         </p>
                     </div>
                 </div>
@@ -37,7 +27,10 @@
                     class="xpb-text-secondary hover:xpb-text-primary hover:bg-[var(--xpb-main)] rounded-lg p-2 transition-colors"
                     aria-label="Cerrar modal"
                 >
-                    <span class="material-icons text-2xl">close</span>
+                    <app-icon-component
+                        [icon]="'close'"
+                        [size]="'5'">
+                    </app-icon-component>
                 </button>
             </div>
         </div>
@@ -59,9 +52,11 @@
                             Nombre de la categoría
                         </label>
                         <div class="relative">
-                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-                                category
-                            </span>
+                            <app-icon-component
+                                [icon]="'category'"
+                                [size]="'5'"
+                                [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                            </app-icon-component>
                             <input 
                                 id="name" 
                                 type="text" 
@@ -76,7 +71,11 @@
                         </div>
                         @if (formCategory.get('name')?.touched && formCategory.get('name')?.invalid) {
                             <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                                <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                <app-icon-component
+                                    [icon]="'info'"
+                                    [size]="'5'"
+                                    [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                                </app-icon-component>
                                 <div class="text-sm text-[var(--xpb-expense)] flex-1">
                                     @if (formCategory.get('name')?.errors?.['required']) {
                                         <p>El nombre es obligatorio.</p>
@@ -109,9 +108,6 @@
                             <!-- Input y valor hex -->
                             <div class="flex-1">
                                 <div class="relative">
-                                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-                                        color_lens
-                                    </span>
                                     <input 
                                         #colorInput
                                         id="color" 
@@ -126,7 +122,7 @@
                                         [value]="formCategory.get('color')?.value"
                                         readonly
                                         (click)="colorInput.click()"
-                                        class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all cursor-pointer uppercase font-mono text-sm relative"
+                                        class="xpb-bg-main border xpb-border rounded-lg pl-4 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all cursor-pointer uppercase font-mono text-sm relative"
                                         placeholder="#000000"
                                     />
                                 </div>
@@ -137,7 +133,11 @@
                         </div>
                         @if (formCategory.get('color')?.touched && formCategory.get('color')?.invalid) {
                             <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                                <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                <app-icon-component
+                                    [icon]="'info'"
+                                    [size]="'5'"
+                                    [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                                </app-icon-component>
                                 <div class="text-sm text-[var(--xpb-expense)] flex-1">
                                     @if (formCategory.get('color')?.errors?.['required']) {
                                         <p>El color es obligatorio.</p>
@@ -153,7 +153,11 @@
                     <!-- Mensaje de error al enviar -->
                     @if (this.categoryState.errorSendingCategory()) {
                         <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                            <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                            <app-icon-component
+                                [icon]="'error_outline'"
+                                [size]="'5'"
+                                [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                            </app-icon-component>
                             <div class="text-sm text-[var(--xpb-expense)] flex-1">
                                 {{ this.categoryState.errorSendingCategory() }}
                             </div>

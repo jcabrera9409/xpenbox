@@ -17,10 +17,11 @@ import { AccountsCarouselComponent } from '../../../shared/components/accounts-c
 import { genericState } from '../../../feature/common/service/generic.state';
 import { AccountDeactivateRequestDTO } from '../../../feature/account/model/account.deactivate.request.dto';
 import { CreditCardDeactivateRequestDTO } from '../../../feature/creditcard/model/creditcard.deactivate.request.dto';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-disable-account-credit-modal',
-  imports: [CommonModule, LoadingUi, RetryComponent, AccountsCarouselComponent],
+  imports: [CommonModule, LoadingUi, RetryComponent, AccountsCarouselComponent, IconComponent],
   templateUrl: './disable-account-credit.modal.html',
   styleUrl: './disable-account-credit.modal.css',
 })

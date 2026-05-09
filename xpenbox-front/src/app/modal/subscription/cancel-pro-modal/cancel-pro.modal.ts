@@ -2,10 +2,11 @@ import { Component, computed, output, signal } from '@angular/core';
 import { subscriptionState } from '../../../feature/subscription/service/subscription.state';
 import { DateService } from '../../../shared/service/date.service';
 import { SubscriptionService } from '../../../feature/subscription/service/subscription.service';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-cancel-pro-modal',
-  imports: [],
+  imports: [IconComponent],
   templateUrl: './cancel-pro.modal.html',
   styleUrl: './cancel-pro.modal.css',
 })

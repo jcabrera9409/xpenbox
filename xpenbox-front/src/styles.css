@@ -69,11 +69,6 @@ a:disabled, button:disabled {
   cursor: none;
 }
 
-/* Material Icons - Force inherit font-size from Tailwind classes */
-.material-icons {
-  font-size: inherit !important;
-}
-
 /* =============================================================================
    Utility Classes - Backgrounds
    ============================================================================= */

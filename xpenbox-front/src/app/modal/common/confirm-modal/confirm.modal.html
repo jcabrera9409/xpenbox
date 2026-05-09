@@ -9,7 +9,11 @@
                     @if (iconTitle()) {
                         <!-- Icon container -->
                         <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-                            <span class="material-icons text-[var(--xpb-expense)] text-2xl">{{ iconTitle() }}</span>
+                            <app-icon-component
+                                [icon]="iconTitle() || 'info'"
+                                [size]="'8'"
+                                [class]="'text-[var(--xpb-expense)]'">
+                            </app-icon-component>
                         </div>
                     }
                     <!-- Title and subtitle -->
@@ -24,7 +28,10 @@
                     (click)="onCancel()"
                     class="xpb-text-secondary hover:xpb-text-primary transition-colors rounded-lg p-1 hover:xpb-bg-main"
                     aria-label="Cerrar modal">
-                <span class="material-icons text-2xl">close</span>
+                <app-icon-component
+                    [icon]="'close'"
+                    [size]="'5'">
+                </app-icon-component>
                 </button>
             </div>
         </div>
@@ -42,9 +49,11 @@
                 <div 
                     [class]="'border-[' + onColorTypeMessage + ']'"
                     class="mb-5 flex items-start gap-3 xpb-bg-main rounded-lg p-4 border-l-4">
-                    <span 
-                    [class]="'text-[' + onColorTypeMessage + ']'"
-                    class="material-icons text-2xl mt-0.5">{{ typeMessage() }}</span>
+                    <app-icon-component
+                        [icon]="typeMessage()"
+                        [size]="'8'"
+                        [class]="'text-[' + onColorTypeMessage + ']'">
+                    </app-icon-component>
                     <div class="flex-1">
                         <p class="text-sm xpb-text-secondary">
                             <!-- Insert message as inner html -->
@@ -56,7 +65,11 @@
                 <!-- Mensaje de error al enviar -->
                 @if (isErrorSending()) {
                     <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                        <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                        <app-icon-component
+                            [icon]="'error_outline'"
+                            [size]="'5'"
+                            [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                        </app-icon-component>
                         <div class="text-sm text-[var(--xpb-expense)] flex-1">
                             {{ isErrorSending() }}
                         </div>

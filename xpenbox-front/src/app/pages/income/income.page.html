@@ -25,13 +25,15 @@
         class="md:hidden w-full p-4 flex items-center justify-between xpb-text-primary hover:xpb-bg-sidebar transition-colors"
         type="button">
         <div class="flex items-center gap-3">
-          <span class="material-icons">date_range</span>
-          <app-icon-component [icon]="'date_range'" [size]="'4'"></app-icon-component>
+          <app-icon-component [icon]="'date_range'" [size]="'5'"></app-icon-component>
           <span class="text-sm font-medium">Filtrar por rango de fechas</span>
         </div>
-        <span class="material-icons transition-transform" [class.rotate-180]="filterExpanded()">
-          expand_more
-        </span>
+        <app-icon-component 
+          [icon]="'expand_more'" 
+          [size]="'5'" 
+          [class]="'transition-transform'"
+          [class.rotate-180]="filterExpanded()">
+        </app-icon-component>
       </button>
       
       <!-- Content of the filter -->
@@ -80,7 +82,7 @@
   </div>
 
   <!-- Summary Cards -->
-  <div class="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-3 mb-3 md:mb-4 flex-shrink-0">
+  <div class="grid grid-cols-2 gap-2 md:gap-3 mb-3 md:mb-4 flex-shrink-0">
     <!-- Total Income -->
     <app-summary-card
       [isLoading]="this.incomeState.isLoadingGetList()"
@@ -99,16 +101,6 @@
       [subtitleCard]="'A cuentas'"
       [iconCard]="'account_balance_wallet'"
       [contentClassCard]="'text-[var(--xpb-transfer)]'"
-    ></app-summary-card>
-
-    <!-- Pending Allocation -->
-    <app-summary-card
-      [isLoading]="this.incomeState.isLoadingGetList()"
-      [titleCard]="'Pendiente'"
-      [contentCard]="totalPending() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'"
-      [subtitleCard]="'Sin asignar'"
-      [iconCard]="'hourglass_empty'"
-      [contentClassCard]="'xpb-text-secondary'"
     ></app-summary-card>
   </div>
 

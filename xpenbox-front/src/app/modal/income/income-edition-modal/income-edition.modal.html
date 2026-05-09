@@ -7,13 +7,11 @@
         <div class="flex items-center gap-4">
           <!-- Icon container -->
           <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-            <span class="material-icons text-[var(--xpb-income)] text-2xl">
-              @if (isEditMode) {
-                    edit
-                } @else {
-                    trending_up
-                }
-            </span>
+            <app-icon-component
+                [icon]="isEditMode ? 'edit' : 'trending_up'"
+                [size]="'8'"
+                [class]="'text-[var(--xpb-income)]'">
+            </app-icon-component>
           </div>
           <div>
             <h2 class="text-xl font-semibold xpb-text-primary">
@@ -39,7 +37,10 @@
           class="xpb-text-secondary hover:xpb-text-primary transition-colors p-1"
           aria-label="Cerrar modal"
         >
-          <span class="material-icons text-2xl">close</span>
+          <app-icon-component
+            [icon]="'close'"
+            [size]="'5'">
+          </app-icon-component>
         </button>
       </div>
     </div>
@@ -61,9 +62,11 @@
                     Monto
                     </label>
                     <div class="relative">
-                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-                        payments
-                    </span>
+                    <app-icon-component
+                        [icon]="'payment'"
+                        [size]="'5'"
+                        [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                    </app-icon-component>
                     <input
                         id="amount"
                         type="number"
@@ -76,7 +79,11 @@
                     </div>
                     @if (amountControl?.invalid && amountControl?.touched) {
                     <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                        <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                        <app-icon-component
+                            [icon]="'info'"
+                            [size]="'5'"
+                            [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                        </app-icon-component>
                         <div class="text-sm text-[var(--xpb-expense)] flex-1">
                         <p>{{ getErrorMessage('amount') }}</p>
                         </div>
@@ -91,9 +98,11 @@
                             Concepto
                         </label>
                         <div class="relative">
-                            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-                            description
-                            </span>
+                            <app-icon-component
+                                [icon]="'description'"
+                                [size]="'5'"
+                                [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                            </app-icon-component>
                             <input
                             id="concept"
                             type="text"
@@ -104,7 +113,11 @@
                         </div>
                         @if (conceptControl?.invalid && conceptControl?.touched) {
                             <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                                <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                <app-icon-component
+                                    [icon]="'info'"
+                                    [size]="'5'"
+                                    [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                                </app-icon-component>
                                 <div class="text-sm text-[var(--xpb-expense)] flex-1">
                                     <p>{{ getErrorMessage('concept') }}</p>
                                 </div>
@@ -118,9 +131,11 @@
                         Fecha de ingreso
                         </label>
                         <div class="relative">
-                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-                            event
-                        </span>
+                        <app-icon-component
+                            [icon]="'event'"
+                            [size]="'5'"
+                            [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                        </app-icon-component>
                         <input
                             id="incomeDate"
                             type="date"
@@ -131,7 +146,11 @@
                         </div>
                         @if (incomeDateControl?.invalid && incomeDateControl?.touched) {
                         <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                            <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                            <app-icon-component
+                                [icon]="'info'"
+                                [size]="'5'"
+                                [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                            </app-icon-component>
                             <div class="text-sm text-[var(--xpb-expense)] flex-1">
                             <p>{{ getErrorMessage('incomeDate') }}</p>
                             </div>
@@ -160,7 +179,11 @@
                 <!-- Mensaje de error al enviar -->
                 @if (this.incomeState.errorSendingIncome()) {
                     <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                        <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                        <app-icon-component
+                            [icon]="'error_outline'"
+                            [size]="'5'"
+                            [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                        </app-icon-component>
                         <div class="text-sm text-[var(--xpb-expense)] flex-1">
                             {{ this.incomeState.errorSendingIncome() }}
                         </div>

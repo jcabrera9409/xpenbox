@@ -8,7 +8,11 @@
         <div class="flex items-center gap-4">
           <!-- Icon container -->
           <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-            <span class="material-icons text-[var(--xpb-primary)] text-2xl">workspace_premium</span>
+            <app-icon-component
+              [icon]="'workspace_premium'"
+              [size]="'8'"
+              [class]="'text-[var(--xpb-primary)]'">
+            </app-icon-component>
           </div>
           <div class="flex-1">
             <h3 class="text-xl font-semibold xpb-text-primary">{{ title() }}</h3>
@@ -16,7 +20,10 @@
         </div>
         <!-- Close button -->
         <button type="button" (click)="onClose()" class="xpb-text-secondary hover:xpb-text-primary transition-colors">
-          <span class="material-icons text-2xl">close</span>
+          <app-icon-component
+            [icon]="'close'"
+            [size]="'5'">
+          </app-icon-component>
         </button>
       </div>
     </div>
@@ -26,7 +33,11 @@
       <!-- Message -->
       <div class="xpb-bg-main rounded-lg p-4 border xpb-border mb-6">
         <div class="flex items-start gap-3">
-          <span class="material-icons text-[var(--xpb-primary)] text-2xl">info</span>
+          <app-icon-component
+            [icon]="'info'"
+            [size]="'8'"
+            [class]="'text-[var(--xpb-primary)]'">
+          </app-icon-component>
           <div class="flex-1">
             <p class="xpb-text-primary text-sm leading-relaxed" [innerHTML]="htmlMessage()"></p>
           </div>
@@ -38,17 +49,29 @@
         <h3 class="text-sm font-semibold xpb-text-primary mb-3">Beneficios del Plan Pro:</h3>
 
         <div class="flex items-start gap-3">
-          <span class="material-icons text-[var(--xpb-income)] text-xl">check_circle</span>
+          <app-icon-component
+            [icon]="'check_circle'"
+            [size]="'5'"
+            [class]="'text-[var(--xpb-income)] mt-0.5'">
+          </app-icon-component>
           <p class="xpb-text-secondary text-sm flex-1">Transacciones ilimitadas</p>
         </div>
 
         <div class="flex items-start gap-3">
-          <span class="material-icons text-[var(--xpb-income)] text-xl">check_circle</span>
+          <app-icon-component
+            [icon]="'check_circle'"
+            [size]="'5'"
+            [class]="'text-[var(--xpb-income)] mt-0.5'">
+          </app-icon-component>
           <p class="xpb-text-secondary text-sm flex-1">Cuentas y tarjetas sin límite</p>
         </div>
 
         <div class="flex items-start gap-3">
-          <span class="material-icons text-[var(--xpb-income)] text-xl">check_circle</span>
+          <app-icon-component
+            [icon]="'check_circle'"
+            [size]="'5'"
+            [class]="'text-[var(--xpb-income)] mt-0.5'">
+          </app-icon-component>
           <p class="xpb-text-secondary text-sm flex-1">Reportes y análisis avanzados</p>
         </div>
       </div>

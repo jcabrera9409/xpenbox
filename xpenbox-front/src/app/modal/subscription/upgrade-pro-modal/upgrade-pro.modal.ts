@@ -7,10 +7,11 @@ import { SubscriptionService } from '../../../feature/subscription/service/subsc
 import { PreApprovalSubscriptionRequestDTO } from '../../../feature/subscription/model/pre-approval-subscription.request.dto';
 import { PreApprovalSubscriptionResponseDTO } from '../../../feature/subscription/model/pre-approval-subscription.response.dto';
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-upgrade-pro-modal',
-  imports: [ModalButtonsUi],
+  imports: [ModalButtonsUi, IconComponent],
   templateUrl: './upgrade-pro.modal.html',
   styleUrl: './upgrade-pro.modal.css',
 })

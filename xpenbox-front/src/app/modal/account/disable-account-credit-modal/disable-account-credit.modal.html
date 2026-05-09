@@ -9,7 +9,11 @@
         <div class="flex items-start gap-4 flex-1">
           <!-- Icon container -->
           <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-            <span class="material-icons text-[var(--xpb-expense)] text-2xl">block</span>
+            <app-icon-component
+                [icon]="'delete'"
+                [size]="'8'"
+                [class]="'text-[var(--xpb-expense)]'">
+            </app-icon-component>
           </div>
           
           <!-- Title y subtitle -->
@@ -31,7 +35,10 @@
           (click)="onClose()"
           class="xpb-text-secondary hover:xpb-text-primary transition-colors ml-2"
           [disabled]="this.accountState.isLoadingSendingAccount() || this.creditCardState.isLoadingSendingCreditCard()">
-          <span class="material-icons">close</span>
+          <app-icon-component
+              [icon]="'close'"
+              [size]="'5'">
+          </app-icon-component>
         </button>
       </div>
     </div>
@@ -50,7 +57,11 @@
             <!-- Advertencia de saldo si existe -->
             @if (hasBalance) {
                 <div class="mb-5 flex items-start gap-3 xpb-bg-main rounded-lg p-4 border-l-4 border-[var(--xpb-expense)]">
-                    <span class="material-icons text-[var(--xpb-expense)] text-2xl mt-0.5">warning</span>
+                    <app-icon-component
+                        [icon]="'warning'"
+                        [size]="'5'"
+                        [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                    </app-icon-component>
                     <div class="flex-1">
                         <p class="font-semibold xpb-text-primary mb-1">
                             @if (isCreditCard) {
@@ -78,7 +89,11 @@
                 </app-accounts-carousel-component>
             } @else {
                 <div class="mb-5 flex items-start gap-3 xpb-bg-main rounded-lg p-4 border-l-4 border-[var(--xpb-primary)]">
-                    <span class="material-icons text-[var(--xpb-primary)] text-2xl mt-0.5">info</span>
+                    <app-icon-component
+                        [icon]="'info'"
+                        [size]="'5'"
+                        [class]="'text-[var(--xpb-primary)] mt-0.5'">
+                    </app-icon-component>
                     <div class="flex-1">
                         <p class="font-semibold xpb-text-primary mb-1">¿Está seguro?</p>
                         <p class="text-sm xpb-text-secondary">
@@ -112,7 +127,11 @@
 
             @if (this.accountState.errorSendingAccount() || this.creditCardState.errorSendingCreditCard()) {
                 <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)] mt-2">
-                    <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                    <app-icon-component
+                        [icon]="'error_outline'"
+                        [size]="'5'"
+                        [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                    </app-icon-component>
                     <div class="text-sm text-[var(--xpb-expense)] flex-1">
                         {{ this.accountState.errorSendingAccount() || this.creditCardState.errorSendingCreditCard() }}
                     </div>
@@ -127,7 +146,10 @@
                     (click)="onClose()"
                     [disabled]="this.accountState.isLoadingSendingAccount() || this.creditCardState.isLoadingSendingCreditCard()"
                     class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span class="material-icons text-xl">close</span>
+                    <app-icon-component
+                        [icon]="'close'"
+                        [size]="'5'">
+                    </app-icon-component>
                     <span>Cancelar</span>
                 </button>
 
@@ -140,10 +162,17 @@
                             transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     [class]="!isFormValid ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-[var(--xpb-expense)] text-white hover:bg-[var(--xpb-expense)]/90'">
                     @if (this.accountState.isLoadingSendingAccount() || this.creditCardState.isLoadingSendingCreditCard()) {
-                        <span class="material-icons text-xl animate-spin">autorenew</span>
+                        <app-icon-component
+                            [icon]="'autorenew'"
+                            [size]="'5'"
+                            [class]="'animate-spin'">
+                        </app-icon-component>
                         <span>Desactivando...</span>
                     } @else {
-                        <span class="material-icons text-xl">block</span>
+                        <app-icon-component
+                            [icon]="'delete'"
+                            [size]="'5'">
+                        </app-icon-component>
                         <span>Desactivar</span>
                     }
                 </button>
