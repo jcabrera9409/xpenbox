@@ -5,13 +5,14 @@ import { SubscriptionService } from '../../../feature/subscription/service/subsc
 import { subscriptionState } from '../../../feature/subscription/service/subscription.state';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { SubscriptionResponseDTO, SubscriptionStatus } from '../../../feature/subscription/model/subscription.response.dto';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 type PaymentStatus = 'confirmed' | 'pending' | 'loading';
 
 @Component({
   selector: 'app-success-page',
   standalone: true,
-  imports: [CommonModule, LoadingUi],
+  imports: [CommonModule, LoadingUi, IconComponent],
   templateUrl: './success.page.html',
   styleUrl: './success.page.css',
 })

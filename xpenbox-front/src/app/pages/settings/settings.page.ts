@@ -8,10 +8,11 @@ import { SubscriptionResponseDTO } from '../../feature/subscription/model/subscr
 import { upgradeProModalState } from '../../modal/subscription/state/upgrade-pro.modal.state';
 import { DateService } from '../../shared/service/date.service';
 import { CancelProModal } from '../../modal/subscription/cancel-pro-modal/cancel-pro.modal';
+import { IconComponent } from '../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-settings-page',
-  imports: [CommonModule, CancelProModal],
+  imports: [CommonModule, CancelProModal, IconComponent],
   templateUrl: './settings.page.html',
   styleUrl: './settings.page.css',
 })

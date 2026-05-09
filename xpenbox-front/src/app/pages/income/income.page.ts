@@ -12,10 +12,11 @@ import { Router } from '@angular/router';
 import { DateService } from '../../shared/service/date.service';
 import { userState } from '../../feature/user/service/user.state';
 import { NotificationService } from '../../feature/common/service/notification.service';
+import { IconComponent } from '../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-income-page',
-  imports: [CommonModule, FormsModule, SummaryCard, LoadingUi, IncomeEditionModal, RetryComponent, CreateFirstComponent],
+  imports: [CommonModule, FormsModule, SummaryCard, LoadingUi, IncomeEditionModal, RetryComponent, CreateFirstComponent, IconComponent],
   templateUrl: './income.page.html',
   styleUrl: './income.page.css',
 })

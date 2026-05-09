@@ -8,7 +8,7 @@
       @if (!isPremiumUser) {
         <!-- Premium CTA Button -->
         <button (click)="onClickPremium()" class="w-full inline-flex items-center gap-2 bg-gradient-to-r from-[var(--xpb-primary)] to-[var(--xpb-income)] text-white font-semibold py-2.5 px-5 rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200">
-          <span class="material-icons text-xl">workspace_premium</span>
+          <app-icon-component [icon]="'workspace_premium'" [size]="'5'"></app-icon-component>
           <span>Obtener Premium</span>
         </button>
       }
@@ -17,7 +17,7 @@
     <!-- User Information Card -->
     <div class="xpb-bg-card rounded-xl shadow-sm p-6 mb-6 border xpb-border">
       <h2 class="text-lg font-semibold xpb-text-primary mb-6 flex items-center gap-2">
-        <span class="material-icons text-[var(--xpb-primary)]">person</span>
+        <app-icon-component [icon]="'person'" [size]="'5'" [class]="'text-[var(--xpb-primary)]'"></app-icon-component>
         Información del Usuario
       </h2>
 
@@ -33,7 +33,7 @@
               />
             } @else {
               <div class="w-24 h-24 rounded-full xpb-bg-main border-2 xpb-border flex items-center justify-center">
-                <span class="material-icons text-5xl xpb-text-secondary">person</span>
+                <app-icon-component [icon]="'person'" [size]="'20'" [class]="'text-[var(--xpb-secondary)]'"></app-icon-component>
               </div>
             }
           </div>
@@ -41,7 +41,7 @@
           <!-- Email -->
           <div class="flex items-start gap-4">
             <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
-              <span class="material-icons text-[var(--xpb-primary)] text-2xl">email</span>
+              <app-icon-component [icon]="'email'" [size]="'5'" [class]="'text-[var(--xpb-primary)]'"></app-icon-component>
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm xpb-text-secondary mb-1">Correo Electrónico</p>
@@ -52,7 +52,7 @@
           <!-- Currency -->
           <div class="flex items-start gap-4">
             <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
-              <span class="material-icons text-[var(--xpb-primary)] text-2xl">payments</span>
+              <app-icon-component [icon]="'payment'" [size]="'5'" [class]="'text-[var(--xpb-primary)]'"></app-icon-component>
             </div>
             <div class="flex-1">
               <p class="text-sm xpb-text-secondary mb-1">Divisa por Defecto</p>
@@ -63,9 +63,11 @@
           <!-- Verification Status -->
           <div class="flex items-start gap-4">
             <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
-              <span class="material-icons text-[var(--xpb-primary)] text-2xl">
-                {{ userState.userLogged()?.verified ? 'verified' : 'pending' }}
-              </span>
+              <app-icon-component 
+                [icon]="userState.userLogged()?.verified ? 'verified' : 'pending'" 
+                [size]="'5'" 
+                [class]="'text-[var(--xpb-primary)]'"
+              ></app-icon-component>
             </div>
             <div class="flex-1">
               <p class="text-sm xpb-text-secondary mb-1">Estado de Verificación</p>
@@ -74,7 +76,7 @@
                   {{ userState.userLogged()?.verified ? 'Verificado' : 'Pendiente de verificación' }}
                 </p>
                 @if (userState.userLogged()?.verified) {
-                  <span class="material-icons text-[var(--xpb-income)] text-sm">check_circle</span>
+                  <app-icon-component [icon]="'check_circle'" [size]="'4'" [class]="'text-[var(--xpb-income)]'"></app-icon-component>
                 }
               </div>
             </div>
@@ -93,7 +95,7 @@
     @if (isPremiumUser && subscriptionState.subscription()) {
       <div class="xpb-bg-card rounded-xl shadow-sm p-6 mb-6 border xpb-border">
         <h2 class="text-lg font-semibold xpb-text-primary mb-6 flex items-center gap-2">
-          <span class="material-icons text-[var(--xpb-primary)]">workspace_premium</span>
+          <app-icon-component [icon]="'workspace_premium'" [size]="'5'" [class]="'text-[var(--xpb-primary)]'"></app-icon-component>
           Suscripción Premium
         </h2>
 
@@ -101,7 +103,7 @@
           <!-- Plan Name -->
           <div class="flex items-start gap-4">
             <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
-              <span class="material-icons text-[var(--xpb-primary)] text-2xl">card_membership</span>
+              <app-icon-component [icon]="'card_membership'" [size]="'5'" [class]="'text-[var(--xpb-primary)]'"></app-icon-component>
             </div>
             <div class="flex-1">
               <p class="text-sm xpb-text-secondary mb-1">Plan Actual</p>
@@ -112,7 +114,9 @@
           <!-- Subscription Status -->
           <div class="flex items-start gap-4">
             <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
-              <span class="material-icons text-[var(--xpb-primary)] text-2xl">{{ subscriptionState.subscription()?.status === 'ACTIVE' ? 'check_circle' : 'schedule' }}</span>
+              <app-icon-component 
+                [icon]="subscriptionState.subscription()?.status === 'ACTIVE' ? 'check_circle' : 'schedule'"
+                [size]="'5'" [class]="'text-[var(--xpb-primary)]'"></app-icon-component>
             </div>
             <div class="flex-1">
               <p class="text-sm xpb-text-secondary mb-1">Estado</p>
@@ -137,7 +141,7 @@
           @if (subscriptionState.subscription()?.renew) {
             <div class="flex items-start gap-4">
               <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
-                <span class="material-icons text-[var(--xpb-primary)] text-2xl">event_repeat</span>
+                <app-icon-component [icon]="'event_repeat'" [size]="'5'" [class]="'text-[var(--xpb-primary)]'"></app-icon-component>
               </div>
               <div class="flex-1">
                 <p class="text-sm xpb-text-secondary mb-1">Próxima Renovación</p>
@@ -147,7 +151,7 @@
           } @else {
             <div class="flex items-start gap-4">
               <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
-                <span class="material-icons text-[var(--xpb-expense)] text-2xl">event_busy</span>
+                <app-icon-component [icon]="'event_busy'" [size]="'5'" [class]="'text-[var(--xpb-expense)]'"></app-icon-component>
               </div>
               <div class="flex-1">
                 <p class="text-sm xpb-text-secondary mb-1">Finaliza el</p>
@@ -160,7 +164,7 @@
           <!-- Price -->
           <div class="flex items-start gap-4">
             <div class="xpb-bg-main rounded-lg p-3 flex-shrink-0">
-              <span class="material-icons text-[var(--xpb-primary)] text-2xl">payments</span>
+              <app-icon-component [icon]="'payment'" [size]="'5'" [class]="'text-[var(--xpb-primary)]'"></app-icon-component>
             </div>
             <div class="flex-1">
               <p class="text-sm xpb-text-secondary mb-1">Precio</p>
@@ -175,7 +179,7 @@
                 (click)="openCancelModal()"
                 class="w-full sm:w-auto xpb-btn-secondary inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-[var(--xpb-expense)] hover:bg-[var(--xpb-expense)] hover:text-white transition-all duration-200 border-2 border-[var(--xpb-expense)] font-medium"
               >
-                <span class="material-icons">cancel</span>
+                <app-icon-component [icon]="'cancel'" [size]="'4'" [class]="'text-[var(--xpb-expense)]'"></app-icon-component>
                 <span>Cancelar Suscripción</span>
               </button>
             </div>
@@ -187,7 +191,7 @@
     <!-- Logout Section -->
     <div class="xpb-bg-card rounded-xl shadow-sm p-6 border xpb-border">
       <h2 class="text-lg font-semibold xpb-text-primary mb-4 flex items-center gap-2">
-        <span class="material-icons text-[var(--xpb-expense)]">logout</span>
+        <app-icon-component [icon]="'logout'" [size]="'5'" [class]="'text-[var(--xpb-expense)]'"></app-icon-component>
         Sesión
       </h2>
       
@@ -202,7 +206,7 @@
         (click)="logout()"
         class="w-full sm:w-auto xpb-btn-secondary inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-[var(--xpb-expense)] hover:bg-[var(--xpb-expense)] hover:text-white transition-all duration-200 border-2 border-[var(--xpb-expense)] font-medium"
       >
-        <span class="material-icons">logout</span>
+        <app-icon-component [icon]="'logout'" [size]="'4'"></app-icon-component>
         <span>Cerrar Sesión</span>
       </button>
     </div>
