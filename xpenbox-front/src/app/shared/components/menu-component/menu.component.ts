@@ -2,6 +2,7 @@ import { Component, output, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { userState } from '../../../feature/user/service/user.state';
 import { CommonModule } from '@angular/common';
+import { IconComponent } from '../icon.component/icon.component';
 
 interface MenuItem {
   label: string;
@@ -12,7 +13,7 @@ interface MenuItem {
 
 @Component({
   selector: 'app-menu-component',
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, IconComponent],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css',
 })

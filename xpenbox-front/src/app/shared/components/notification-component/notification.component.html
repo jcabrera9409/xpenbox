@@ -7,15 +7,14 @@
     >
       <!-- Contenedor de la notificación -->
       <div class="xpb-bg-card rounded-lg shadow-lg overflow-hidden animate-slide-in">
-        <div class="flex items-start gap-1 p-2">
+        <div style="align-items: center;" class="flex items-start gap-1 p-2">
           <!-- Icono -->
           <div class="flex-shrink-0">
-            <span 
-              class="material-icons text-2xl"
-              [ngClass]="getIconColor(notification.type)"
-            >
-              {{ getNotificationIcon(notification.type) }}
-            </span>
+            <app-icon-component
+              [icon]="getNotificationIcon(notification.type)"
+              [size]="'4'"
+              [ngClass]="getIconColor(notification.type)">
+            </app-icon-component>
           </div>
           
           <!-- Mensaje -->
@@ -32,7 +31,10 @@
             class="flex-shrink-0 xpb-text-secondary hover:xpb-text-primary transition-colors rounded-lg p-1 hover:bg-black/5"
             aria-label="Cerrar notificación"
           >
-            <span class="material-icons text-xl">close</span>
+            <app-icon-component
+              [icon]="'close'"
+              [size]="'5'">
+            </app-icon-component>
           </button>
         </div>
         

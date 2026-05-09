@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../../feature/common/service/notification.service';
 import { NotificationDTO, NotificationType } from '../../../feature/common/model/notification.dto';
+import { IconComponent } from '../icon.component/icon.component';
 
 /**
  * Component to display notifications to the user.
@@ -11,7 +12,7 @@ import { NotificationDTO, NotificationType } from '../../../feature/common/model
  */
 @Component({
   selector: 'app-notification-component',
-  imports: [CommonModule],
+  imports: [CommonModule, IconComponent],
   templateUrl: './notification.component.html',
   styleUrl: './notification.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
