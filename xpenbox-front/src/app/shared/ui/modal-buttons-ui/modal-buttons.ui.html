@@ -2,7 +2,10 @@
     <button type="button"
         (click)="onCancel()"
         class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-colors">
-        <span class="material-icons text-lg">{{ cancelIcon() }}</span>
+        <app-icon-component
+            [icon]="cancelIcon()"
+            [size]="'5'">
+        </app-icon-component>
         <span>{{ cancelText() }}</span>
     </button>
     <button type="submit"
@@ -11,13 +14,10 @@
         class="flex-1 text-white inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         [disabled]="!isValidForm() || isLoading()">
         @if (!isLoading()) {
-            <span class="material-icons text-lg">
-                @if (isEditMode()) {
-                    {{ confirmEditIcon() }}
-                } @else {
-                    {{ confirmIcon() }}
-                }
-            </span>
+            <app-icon-component
+                [icon]="isEditMode() ? confirmEditIcon() : confirmIcon()"
+                [size]="'5'">
+            </app-icon-component>
             <span>
                 @if (isEditMode()) {
                     {{ confirmEditText() }}
@@ -26,7 +26,11 @@
                 }
             </span>
         } @else {
-            <span class="material-icons animate-spin">{{ loadingIcon() }}</span>
+            <app-icon-component
+                [icon]="loadingIcon()"
+                [size]="'5'"
+                [class]="'animate-spin'">
+            </app-icon-component>
             <span>{{ loadingText() }}</span>
         }
     </button>
