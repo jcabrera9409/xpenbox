@@ -3,8 +3,7 @@ name: Deploy Capacitor App to Play Store
 on:
   push:
     branches: [dev, main]
-    paths:
-      - 'xpenbox-front/**'
+    paths: ['xpenbox-front/**', '.github/workflows/android-workflow.yml']
   workflow_dispatch:
 
 jobs:
