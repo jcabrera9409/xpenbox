@@ -2,10 +2,11 @@ import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { userState } from '../../../feature/user/service/user.state';
+import { IconComponent } from '../../components/icon.component/icon.component';
 
 @Component({
   selector: 'app-account-card',
-  imports: [CommonModule],
+  imports: [CommonModule, IconComponent],
   templateUrl: './account.card.html',
   styleUrl: './account.card.css',
   host: {

@@ -22,11 +22,12 @@ import { ConfirmModal } from '../../modal/common/confirm-modal/confirm.modal';
 import { genericState } from '../../feature/common/service/generic.state';
 import { TransactionDetailModal } from '../../modal/transaction/transaction-detail-modal/transaction-detail.modal';
 import { upgradeProModalState } from '../../modal/subscription/state/upgrade-pro.modal.state';
+import { IconComponent } from '../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-transaction-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent, TransactionEditionModal, ConfirmModal, TransactionDetailModal],
+  imports: [CommonModule, FormsModule, TransactionCard, RetryComponent, LoadingUi, CreateFirstComponent, TransactionEditionModal, ConfirmModal, TransactionDetailModal, IconComponent],
   templateUrl: './transaction.page.html',
   styleUrl: './transaction.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush

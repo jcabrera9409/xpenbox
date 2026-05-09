@@ -32,7 +32,10 @@
                         class="flex-shrink-0 flex flex-col items-start bg-white rounded-lg px-3 py-2 w-[130px] hover:border-[var(--xpb-primary)] transition-all cursor-pointer active:scale-95" 
                         style="box-shadow: 0 0 8px rgba(0, 0, 0, 0.1)">
                         <div class="flex items-center gap-2 w-full">
-                            <span class="material-icons text-base">{{account.icon}}</span>
+                            <app-icon-component
+                                [icon]="account.icon"
+                                [size]="'4'">
+                            </app-icon-component>
                             <span class="text-xs font-medium truncate flex-1 text-left">{{ account.name }}</span>
                         </div>
                         <span class="text-xs font-semibold w-full truncate" [class.xpb-text-secondary]="!isSelectedAccount(account.resourceCode)">

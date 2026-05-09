@@ -6,7 +6,11 @@
             <div class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-                        <span class="material-icons text-[var(--xpb-primary)] text-2xl">edit</span>
+                        <app-icon-component
+                            [icon]="'edit'"
+                            [size]="'8'"
+                            [class]="'text-[var(--xpb-primary)]'">
+                        </app-icon-component>
                     </div>
                     <div>
                         <h2 class="text-xl font-semibold xpb-text-primary">Modificar Transacción</h2>
@@ -18,7 +22,10 @@
                     (click)="onClose()"
                     class="xpb-text-secondary hover:xpb-text-primary hover:bg-[var(--xpb-main)] rounded-lg p-2 transition-colors"
                     aria-label="Cerrar modal">
-                    <span class="material-icons text-2xl">close</span>
+                    <app-icon-component
+                        [icon]="'close'"
+                        [size]="'5'">
+                    </app-icon-component>
                 </button>
             </div>
         </div>
@@ -36,7 +43,10 @@
                 <!-- Detalles no editables de la transacción -->
                 <div class="mb-6 xpb-bg-main rounded-lg p-4 border xpb-border">
                     <h3 class="text-sm font-semibold xpb-text-primary mb-3 flex items-center gap-2">
-                        <span class="material-icons text-lg">info</span>
+                        <app-icon-component
+                            [icon]="'info'"
+                            [size]="'5'">
+                        </app-icon-component>
                         Información de la transacción
                     </h3>
                     
@@ -44,39 +54,57 @@
                         <!-- Tipo de transacción -->
                         <div class="flex items-center justify-between">
                             <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                <span class="material-icons text-base">swap_horiz</span>
+                                <app-icon-component
+                                    [icon]="'view_object_track'"
+                                    [size]="'5'">
+                                </app-icon-component>
                                 Tipo
                             </span>
                             <span class="text-sm font-medium xpb-text-primary">
                                 @switch (transactionData()!.transactionType) {
                                     @case ('INCOME') {
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-income)]/10 text-[var(--xpb-income)] dark:text-[var(--xpb-income)] rounded-lg">
-                                            <span class="material-icons text-sm">trending_up</span>
+                                            <app-icon-component
+                                                [icon]="'trending_up'"
+                                                [size]="'5'">
+                                            </app-icon-component>
                                             Ingreso
                                         </span>
                                     }
                                     @case ('EXPENSE') {
                                         @if (transactionData()!.creditCard) {
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-expense)]/10 text-[var(--xpb-expense)] dark:text-[var(--xpb-expense)] rounded-lg">
-                                                <span class="material-icons text-sm">credit_card</span>
+                                                <app-icon-component
+                                                    [icon]="'credit_card'"
+                                                    [size]="'5'">
+                                                </app-icon-component>
                                                 Gasto (Tarjeta)
                                             </span>
                                         } @else {
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-expense)]/10 text-[var(--xpb-expense)] dark:text-[var(--xpb-expense)] rounded-lg">
-                                                <span class="material-icons text-sm">trending_down</span>
+                                                <app-icon-component
+                                                    [icon]="'trending_down'"
+                                                    [size]="'5'">
+                                                </app-icon-component>
                                                 Gasto (Cuenta)
                                             </span>
                                         }
                                     }
                                     @case ('TRANSFER') {
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-transfer)]/10 text-[var(--xpb-transfer)] dark:text-[var(--xpb-transfer)] rounded-lg">
-                                            <span class="material-icons text-sm">sync_alt</span>
+                                            <app-icon-component
+                                                [icon]="'swap_horiz'"
+                                                [size]="'5'">
+                                            </app-icon-component>
                                             Transferencia
                                         </span>
                                     }
                                     @case ('CREDIT_PAYMENT') {
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-credit)]/10 text-[var(--xpb-credit)] dark:text-[var(--xpb-credit)] rounded-lg">
-                                            <span class="material-icons text-sm">payment</span>
+                                            <app-icon-component
+                                                [icon]="'payment'"
+                                                [size]="'5'">
+                                            </app-icon-component>
                                             Pago de Crédito
                                         </span>
                                     }
@@ -87,7 +115,10 @@
                         <!-- Monto -->
                         <div class="flex items-center justify-between">
                             <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                <span class="material-icons text-base">attach_money</span>
+                                <app-icon-component
+                                    [icon]="'attach_money'"
+                                    [size]="'5'">
+                                </app-icon-component>
                                 Monto
                             </span>
                             <span class="text-lg font-bold xpb-text-primary">
@@ -99,7 +130,10 @@
                         @if (transactionData()!.income) {
                             <div class="flex items-center justify-between gap-5">
                                 <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <span class="material-icons text-base">savings</span>
+                                    <app-icon-component
+                                        [icon]="'savings'"
+                                        [size]="'5'">
+                                    </app-icon-component>
                                     Fuente de ingreso
                                 </span>
                                 <span class="text-sm font-medium xpb-text-primary truncate">
@@ -112,7 +146,10 @@
                         @if (transactionData()!.account) {
                             <div class="flex items-center justify-between gap-5">
                                 <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <span class="material-icons text-base">account_balance_wallet</span>
+                                    <app-icon-component
+                                        [icon]="'account_balance_wallet'"
+                                        [size]="'5'">
+                                    </app-icon-component>
                                     Cuenta
                                 </span>
                                 <span class="text-sm font-medium xpb-text-primary truncate">
@@ -125,7 +162,10 @@
                         @if (transactionData()!.creditCard) {
                             <div class="flex items-center justify-between gap-5">
                                 <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <span class="material-icons text-base">credit_card</span>
+                                    <app-icon-component
+                                        [icon]="'credit_card'"
+                                        [size]="'5'">
+                                    </app-icon-component>
                                     Tarjeta
                                 </span>
                                 <span class="text-sm font-medium xpb-text-primary truncate">
@@ -138,7 +178,10 @@
                         @if (transactionData()!.destinationAccount) {
                             <div class="flex items-center justify-between gap-5">
                                 <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <span class="material-icons text-base">account_balance</span>
+                                    <app-icon-component
+                                        [icon]="'account_balance'"
+                                        [size]="'5'">
+                                    </app-icon-component>
                                     Cuenta destino
                                 </span>
                                 <span class="text-sm font-medium xpb-text-primary truncate">
@@ -158,9 +201,11 @@
                                 Descripción (opcional)
                             </label>
                             <div class="relative">
-                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-                                    description
-                                </span>
+                                <app-icon-component
+                                    [icon]="'description'"
+                                    [size]="'5'"
+                                    [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                                </app-icon-component>
                                 <input
                                     id="description"
                                     type="text"
@@ -171,7 +216,11 @@
                             </div>
                             @if (descriptionControl?.invalid && descriptionControl?.touched) {
                                 <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                                    <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                    <app-icon-component
+                                        [icon]="'info'"
+                                        [size]="'5'"
+                                        [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                                    </app-icon-component>
                                     <div class="text-sm text-[var(--xpb-expense)] flex-1">
                                         <p>{{ getErrorMessage('description') }}</p>
                                     </div>
@@ -185,9 +234,11 @@
                                 Fecha de la transacción
                             </label>
                             <div class="relative">
-                                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-                                    event
-                                </span>
+                                <app-icon-component
+                                    [icon]="'event'"
+                                    [size]="'5'"
+                                    [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                                </app-icon-component>
                                 <input
                                     id="transactionDate"
                                     type="datetime-local"
@@ -198,7 +249,11 @@
                             </div>
                             @if (transactionDateControl?.invalid && transactionDateControl?.touched) {
                                 <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                                    <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">info</span>
+                                    <app-icon-component
+                                        [icon]="'info'"
+                                        [size]="'5'"
+                                        [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                                    </app-icon-component>
                                     <div class="text-sm text-[var(--xpb-expense)] flex-1">
                                         <p>{{ getErrorMessage('transactionDate') }}</p>
                                     </div>
@@ -216,7 +271,11 @@
                                         (change)="assignToCategory.set(!assignToCategory())"
                                         class="peer sr-only" />
                                     <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
-                                        <span class="material-icons text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+                                        <app-icon-component
+                                            [icon]="'check'"
+                                            [size]="'5'"
+                                            [class]="'text-white opacity-0 peer-checked:opacity-100 transition-opacity'">
+                                        </app-icon-component>
                                     </div>
                                 </div>
                                 <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
@@ -237,7 +296,11 @@
                     <!-- Mensaje de error al enviar -->
                     @if (this.transactionState.errorSendingTransaction()) {
                         <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                            <span class="material-icons text-[var(--xpb-expense)] text-lg mt-0.5">error_outline</span>
+                            <app-icon-component
+                                [icon]="'error_outline'"
+                                [size]="'5'"
+                                [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                            </app-icon-component>
                             <div class="text-sm text-[var(--xpb-expense)] flex-1">
                                 {{ this.transactionState.errorSendingTransaction() }}
                             </div>

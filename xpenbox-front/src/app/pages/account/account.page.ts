@@ -18,10 +18,11 @@ import { CreditcardPaymentModal } from '../../modal/account/creditcard-payment-m
 import { userState } from '../../feature/user/service/user.state';
 import { DisableAccountCreditModal } from '../../modal/account/disable-account-credit-modal/disable-account-credit.modal';
 import { AccountCreditType } from '../../shared/dto/account-credit.dto';
+import { IconComponent } from '../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-account-page',
-  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent, TransferModal, CreditcardPaymentModal, DisableAccountCreditModal],
+  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent, TransferModal, CreditcardPaymentModal, DisableAccountCreditModal, IconComponent],
   templateUrl: './account.page.html',
   styleUrl: './account.page.css',
 })

@@ -17,10 +17,11 @@ import { RetryComponent } from '../../shared/components/retry-component/retry.co
 import { TooltipUi } from '../../shared/ui/tooltip-ui/tooltip.ui';
 import { EntitlementService } from '../../feature/subscription/service/entitlement.service';
 import { upgradeProModalState } from '../../modal/subscription/state/upgrade-pro.modal.state';
+import { IconComponent } from '../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [CommonModule, RouterLink, LoadingUi, RetryComponent, TooltipUi],
+  imports: [CommonModule, RouterLink, LoadingUi, RetryComponent, TooltipUi, IconComponent],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.css',
 })

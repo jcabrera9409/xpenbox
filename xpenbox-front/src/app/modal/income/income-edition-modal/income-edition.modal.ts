@@ -19,10 +19,11 @@ import { DateService } from '../../../shared/service/date.service';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
 import { userState } from '../../../feature/user/service/user.state';
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-income-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, AccountsCarouselComponent, RetryComponent, ModalButtonsUi],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, AccountsCarouselComponent, RetryComponent, ModalButtonsUi, IconComponent],
   templateUrl: './income-edition.modal.html',
   styleUrl: './income-edition.modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush

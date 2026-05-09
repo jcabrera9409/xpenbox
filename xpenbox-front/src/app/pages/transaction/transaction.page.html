@@ -13,7 +13,7 @@
         (click)="toggleFilters()"
         class="w-full p-4 sm:p-6 flex items-center justify-between hover:xpb-bg-sidebar transition-colors">
         <div class="flex items-center gap-3">
-          <span class="material-icons text-xl text-[var(--xpb-primary)]">filter_alt</span>
+          <app-icon-component [icon]="'filter_alt'" [size]="'4'" [class]="'text-[var(--xpb-primary)]'"></app-icon-component>
           <h2 class="text-lg font-semibold xpb-text-primary">Filtros</h2>
           <span class="text-sm xpb-text-secondary">
             @if (!transactionState.isLoadingFilteredList() && !transactionState.errorFilteredList()) {
@@ -21,10 +21,12 @@
             }
           </span>
         </div>
-        <span class="material-icons text-[var(--xpb-primary)] transition-transform duration-300"
-              [class.rotate-180]="filtersExpanded()">
-          expand_more
-        </span>
+        <app-icon-component 
+          [icon]="'expand_more'" 
+          [size]="'5'" 
+          [class]="'text-[var(--xpb-primary)] transition-transform duration-300'"
+          [ngClass]="{'rotate-180': filtersExpanded()}">
+        </app-icon-component>
       </button>
 
       <!-- Contenido colapsable -->
@@ -52,7 +54,11 @@
             <div>
               <label class="block text-sm font-medium xpb-text-secondary mb-2">Descripción</label>
               <div class="relative">
-                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-[var(--xpb-primary)] text-xl pointer-events-none">search</span>
+                <app-icon-component 
+                  [icon]="'search'" 
+                  [size]="'5'" 
+                  [class]="'absolute left-3 top-1/2 -translate-y-1/2 text-[var(--xpb-primary)] pointer-events-none'">
+                </app-icon-component>
                 <input 
                   type="text"
                   [ngModel]="filterDescription()"
@@ -80,7 +86,11 @@
             <div>
               <label class="block text-sm font-medium xpb-text-secondary mb-2">Fecha inicio</label>
               <div class="relative">
-                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-[var(--xpb-primary)] text-xl pointer-events-none">calendar_today</span>
+                <app-icon-component 
+                  [icon]="'calendar_today'" 
+                  [size]="'5'" 
+                  [class]="'absolute left-3 top-1/2 -translate-y-1/2 text-[var(--xpb-primary)] pointer-events-none'">
+                </app-icon-component>
                 <input 
                   type="date"
                   [ngModel]="filterStartDate()"
@@ -94,7 +104,11 @@
             <div>
               <label class="block text-sm font-medium xpb-text-secondary mb-2">Fecha fin</label>
               <div class="relative">
-                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-[var(--xpb-primary)] text-xl pointer-events-none">event</span>
+                <app-icon-component 
+                  [icon]="'event'" 
+                  [size]="'5'" 
+                  [class]="'absolute left-3 top-1/2 -translate-y-1/2 text-[var(--xpb-primary)] pointer-events-none'">
+                </app-icon-component>
                 <input 
                   type="date"
                   [ngModel]="filterEndDate()"
@@ -109,13 +123,19 @@
               <button 
                 (click)="resetFilters()"
                 class="flex-1 xpb-btn-secondary inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg">
-                <span class="material-icons text-lg">refresh</span>
+                <app-icon-component 
+                  [icon]="'refresh'" 
+                  [size]="'5'">
+                </app-icon-component>
                 <span class="hidden sm:inline">Limpiar</span>
               </button>
               <button 
                 (click)="applyFilters()"
                 class="flex-1 xpb-btn-primary inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg">
-                <span class="material-icons text-lg">check</span>
+                <app-icon-component 
+                  [icon]="'check'" 
+                  [size]="'5'">
+                </app-icon-component>
                 <span>Aplicar</span>
               </button>
             </div>
@@ -167,10 +187,17 @@
                   [disabled]="transactionState.isLoadingFilteredList()"
                   class="xpb-btn-secondary inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed">
                   @if (transactionState.isLoadingFilteredList()) {
-                    <span class="material-icons animate-spin text-xl">autorenew</span>
+                    <app-icon-component 
+                      [icon]="'autorenew'" 
+                      [size]="'5'" 
+                      [class]="'animate-spin'">
+                    </app-icon-component>
                     <span>Cargando...</span>
                   } @else {
-                    <span class="material-icons text-xl">expand_more</span>
+                    <app-icon-component 
+                      [icon]="'expand_more'" 
+                      [size]="'5'">
+                    </app-icon-component>
                     <span>Cargar más</span>
                   }
                 </button>

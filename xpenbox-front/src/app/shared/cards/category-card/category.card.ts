@@ -1,10 +1,11 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { categoryState } from '../../../feature/category/service/category.state';
+import { IconComponent } from '../../components/icon.component/icon.component';
 
 @Component({
   selector: 'app-category-card',
-  imports: [CommonModule],
+  imports: [CommonModule, IconComponent],
   templateUrl: './category.card.html',
   styleUrl: './category.card.css',
   host: {

@@ -30,7 +30,7 @@
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs xpb-text-secondary mb-2">
                 <!-- Fecha con hora -->
                 <div class="flex items-center gap-1">
-                    <span class="material-icons text-xs">schedule</span>
+                    <app-icon-component [icon]="'schedule'" [size]="'4'"></app-icon-component>
                     <span>{{ getFormatDate(transaction()?.transactionDateTimestamp) }}</span>
                 </div>
 
@@ -38,19 +38,19 @@
                 @if (transaction()?.transactionType === transactionType.EXPENSE) {
                     @if (transaction()?.category) {
                         <div class="flex items-center gap-1">
-                            <span class="material-icons text-xs">label</span>
+                            <app-icon-component [icon]="'category'" [size]="'4'"></app-icon-component>
                             <span>{{ transaction()?.category?.name }}</span>
                         </div>
                     }
                     @if (transaction()?.account) {
                         <div class="flex items-center gap-1">
-                            <span class="material-icons text-xs">account_balance</span>
+                            <app-icon-component [icon]="'account_balance'" [size]="'4'"></app-icon-component>
                             <span>{{ transaction()?.account?.name }}</span>
                         </div>
                     }
                     @if (transaction()?.creditCard) {
                         <div class="flex items-center gap-1">
-                            <span class="material-icons text-xs">credit_card</span>
+                            <app-icon-component [icon]="'credit_card'" [size]="'4'"></app-icon-component>
                             <span>{{ transaction()?.creditCard?.name }}</span>
                         </div>
                     }
@@ -59,13 +59,13 @@
                 @if (transaction()?.transactionType === transactionType.INCOME) {
                     @if (transaction()?.category) {
                         <div class="flex items-center gap-1">
-                            <span class="material-icons text-xs">label</span>
+                            <app-icon-component [icon]="'category'" [size]="'4'"></app-icon-component>
                             <span>{{ transaction()?.category?.name }}</span>
                         </div>
                     }
                     @if (transaction()?.account) {
                         <div class="flex items-center gap-1">
-                            <span class="material-icons text-xs">account_balance</span>
+                            <app-icon-component [icon]="'account_balance'" [size]="'4'"></app-icon-component>
                             <span>{{ transaction()?.account?.name }}</span>
                         </div>
                     }
@@ -74,7 +74,7 @@
                 @if (transaction()?.transactionType === transactionType.CREDIT_PAYMENT) {
                     @if (transaction()?.category) {
                         <div class="flex items-center gap-1">
-                            <span class="material-icons text-xs">label</span>
+                            <app-icon-component [icon]="'category'" [size]="'4'"></app-icon-component>
                             <span>{{ transaction()?.category?.name }}</span>
                         </div>
                     }
@@ -88,7 +88,7 @@
                 @if (transaction()?.transactionType === transactionType.TRANSFER) {
                     @if (transaction()?.category) {
                         <div class="flex items-center gap-1">
-                            <span class="material-icons text-xs">label</span>
+                            <app-icon-component [icon]="'category'" [size]="'4'"></app-icon-component>
                             <span>{{ transaction()?.category?.name }}</span>
                         </div>
                     }
@@ -106,21 +106,21 @@
                 <button 
                     (click)="sendDetailView()"
                     class="flex items-center gap-1 px-2 py-1 rounded hover:bg-[var(--xpb-neutral)]/30 transition-colors text-xs text-[var(--xpb-text-primary)]/70 hover:text-[var(--xpb-secondary)]">
-                    <span class="material-icons text-sm">visibility</span>
+                    <app-icon-component [icon]="'visibility'" [size]="'4'"></app-icon-component>
                     <span class="hidden sm:inline">Detalle</span>
                 </button>
                 <!-- Editar - Primary suave -->
                 <button 
                     (click)="sendEditView()"
                     class="flex items-center gap-1 px-2 py-1 rounded hover:bg-[var(--xpb-primary)]/10 transition-colors text-xs text-[var(--xpb-primary)]/70 hover:text-[var(--xpb-primary)]">
-                    <span class="material-icons text-sm">edit</span>
+                    <app-icon-component [icon]="'edit'" [size]="'4'"></app-icon-component>
                     <span class="hidden sm:inline">Editar</span>
                 </button>
                 <!-- Eliminar - Rojo -->
                 <button 
                     (click)="sendDeleteView()"
                     class="flex items-center gap-1 px-2 py-1 rounded hover:bg-[var(--xpb-expense)]/10 transition-colors text-xs text-[var(--xpb-expense)]/70 hover:text-[var(--xpb-expense)]">
-                    <span class="material-icons text-sm">delete</span>
+                    <app-icon-component [icon]="'delete'" [size]="'4'"></app-icon-component>
                     <span class="hidden sm:inline">Eliminar</span>
                 </button>
             </div>

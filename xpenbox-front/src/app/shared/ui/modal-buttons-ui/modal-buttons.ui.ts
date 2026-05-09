@@ -1,8 +1,9 @@
 import { Component, input, output } from '@angular/core';
+import { IconComponent } from '../../components/icon.component/icon.component';
 
 @Component({
   selector: 'app-modal-buttons-ui',
-  imports: [],
+  imports: [IconComponent],
   templateUrl: './modal-buttons.ui.html',
   styleUrl: './modal-buttons.ui.css',
 })

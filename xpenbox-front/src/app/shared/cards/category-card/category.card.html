@@ -22,12 +22,12 @@
         <div class="flex-shrink-0">
             @if (categoryCardState()) {
             <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--xpb-income)]/10 text-[var(--xpb-income)] text-xs font-medium">
-                <span class="material-icons" style="font-size: 14px;">check_circle</span>
+                <app-icon-component [icon]="'check_circle'" [size]="'4'"></app-icon-component>
                 Activa
             </span>
             } @else {
             <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md xpb-bg-main xpb-text-secondary text-xs font-medium">
-                <span class="material-icons" style="font-size: 14px;">cancel</span>
+                <app-icon-component [icon]="'cancel'" [size]="'4'"></app-icon-component>
                 Inactiva
             </span>
             }
@@ -41,7 +41,7 @@
         class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 xpb-bg-main hover:bg-[var(--xpb-border)] xpb-text-primary rounded-lg font-medium transition-colors text-sm"
         type="button"
         [attr.aria-label]="'Editar categoría ' + categoryCardName()">
-        <span class="material-icons text-lg">edit</span>
+        <app-icon-component [icon]="'edit'" [size]="'4'"></app-icon-component>
         <span>Editar</span>
     </button>
     <button 
@@ -52,13 +52,7 @@
         : 'bg-[var(--xpb-income)]/10 hover:bg-[var(--xpb-income)]/20 text-[var(--xpb-income)]'"
         type="button"
         [attr.aria-label]="(categoryCardState() ? 'Desactivar' : 'Activar') + ' categoría ' + categoryCardName()">
-        <span class="material-icons text-lg">
-        @if (categoryCardState()) {
-            block
-        } @else {
-            check_circle
-        }
-        </span>
+        <app-icon-component [icon]="categoryCardState() ? 'block' : 'check_circle'" [size]="'4'"></app-icon-component>
         <span>
         @if (categoryCardState()) {
             Desactivar

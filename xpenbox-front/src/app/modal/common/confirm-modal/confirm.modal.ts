@@ -2,10 +2,11 @@ import { Component, input, OnInit, output, signal } from '@angular/core';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-confirm-modal',
-  imports: [ModalButtonsUi, LoadingUi, RetryComponent],
+  imports: [ModalButtonsUi, LoadingUi, RetryComponent, IconComponent],
   templateUrl: './confirm.modal.html',
   styleUrl: './confirm.modal.css',
 })

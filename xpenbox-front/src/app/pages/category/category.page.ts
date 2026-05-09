@@ -13,10 +13,11 @@ import { CategoryResponseDTO } from '../../feature/category/model/category.respo
 import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
 import { CategoryRequestDTO } from '../../feature/category/model/category.request.dto';
 import { NotificationService } from '../../feature/common/service/notification.service';
+import { IconComponent } from '../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-category-page',
-  imports: [CommonModule, CategoryCard, CategoryEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent, ConfirmModal],
+  imports: [CommonModule, CategoryCard, CategoryEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent, ConfirmModal, IconComponent],
   templateUrl: './category.page.html',
   styleUrl: './category.page.css',
 })

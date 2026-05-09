@@ -1,8 +1,9 @@
 import { Component, input, OnInit, output, signal } from '@angular/core';
+import { IconComponent } from '../../components/icon.component/icon.component';
 
 @Component({
   selector: 'app-virtual-keyboard-ui',
-  imports: [],
+  imports: [IconComponent],
   templateUrl: './virtual-keyboard.ui.html',
   styleUrl: './virtual-keyboard.ui.css',
 })

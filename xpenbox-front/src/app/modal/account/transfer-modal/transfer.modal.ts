@@ -14,13 +14,13 @@ import { AccountCreditDTO, AccountCreditType } from '../../../shared/dto/account
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
-import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 import { DateService } from '../../../shared/service/date.service';
 import { userState } from '../../../feature/user/service/user.state';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-transfer-modal',
-  imports: [CommonModule, LoadingUi, RetryComponent, VirtualKeyboardUi, ModalButtonsUi, AccountsCarouselComponent],
+  imports: [CommonModule, LoadingUi, RetryComponent, VirtualKeyboardUi, ModalButtonsUi, AccountsCarouselComponent, IconComponent],
   templateUrl: './transfer.modal.html',
   styleUrl: './transfer.modal.css',
 })

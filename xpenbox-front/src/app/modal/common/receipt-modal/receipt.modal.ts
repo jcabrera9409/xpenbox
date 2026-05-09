@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { genericState } from '../../../feature/common/service/generic.state';
 import { CommonModule } from '@angular/common';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-receipt-modal',
-  imports: [CommonModule],
+  imports: [CommonModule, IconComponent],
   templateUrl: './receipt.modal.html',
   styleUrl: './receipt.modal.css',
 })

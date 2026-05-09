@@ -9,10 +9,11 @@ import { DateService } from '../../../shared/service/date.service';
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { userState } from '../../../feature/user/service/user.state';
 import { Router } from '@angular/router';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-transaction-detail-modal',
-  imports: [CommonModule, LoadingUi, RetryComponent],
+  imports: [CommonModule, LoadingUi, RetryComponent, IconComponent],
   templateUrl: './transaction-detail.modal.html',
   styleUrl: './transaction-detail.modal.css',
 })
