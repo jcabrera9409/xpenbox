@@ -1,8 +1,9 @@
 import { Component, input } from '@angular/core';
+import { IconComponent } from '../../components/icon.component/icon.component';
 
 @Component({
   selector: 'app-summary-card',
-  imports: [],
+  imports: [IconComponent],
   templateUrl: './summary.card.html',
   styleUrl: './summary.card.css',
 })

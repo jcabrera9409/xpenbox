@@ -3,7 +3,11 @@
         <div class="flex items-start justify-between gap-3 mb-3">
         <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 mb-1">
-            <span class="material-icons xpb-text-primary text-xl">credit_card</span>
+            <app-icon-component
+                [icon]="'credit_card'"
+                [size]="'5'"
+                [class]="'xpb-text-primary'">
+            </app-icon-component>
             <h3 class="font-semibold xpb-text-primary text-sm sm:text-base truncate">{{creditCardName()}}</h3>
             </div>
             <div class="flex items-center gap-3 flex-wrap text-xs xpb-text-secondary">
@@ -30,7 +34,11 @@
         <!-- Payment Dates -->
         <div class="flex items-center justify-between mb-3 text-xs">
         <div class="flex items-center gap-1.5">
-            <span class="material-icons xpb-text-secondary" style="font-size: 16px;">event</span>
+            <app-icon-component
+                [icon]="'event'"
+                [size]="'4'"
+                [class]="'xpb-text-secondary'">
+            </app-icon-component>
             <span class="xpb-text-secondary text-[0.70rem]">Facturación: 
                 <strong class="xpb-text-primary">
                     {{creditCardBillingDate | date:'dd MMM'}}
@@ -38,7 +46,11 @@
             </span>
         </div>
         <div class="flex items-center gap-1.5">
-            <span class="material-icons xpb-text-secondary" style="font-size: 16px;">alarm</span>
+            <app-icon-component
+                [icon]="'alarm'"
+                [size]="'4'"
+                [class]="'xpb-text-secondary'">
+            </app-icon-component>
             <span class="xpb-text-secondary text-[0.70rem]">Límite pago: 
                 <strong class="{{creditCardBalancePercentage > 20 ? 'xpb-text-expense' : 'xpb-text-primary'}}">
                 {{creditCardPaymentDate | date:'dd MMM'}}
@@ -53,14 +65,20 @@
             class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary rounded-lg transition-colors text-sm font-medium"
             type="button"
             title="Ver movimientos">
-            <span class="material-icons text-lg">receipt_long</span>
+            <app-icon-component
+                [icon]="'receipt_long'"
+                [size]="'4'">
+            </app-icon-component>
             <span class="hidden lg:inline">Movimientos</span>
         </button>
         <button (click)="onEditCreditCard()"
             class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-primary-accent rounded-lg transition-colors text-sm font-medium"
             type="button"
             title="Editar">
-            <span class="material-icons text-lg">edit</span>
+            <app-icon-component
+                [icon]="'edit'"
+                [size]="'4'">
+            </app-icon-component>
             <span class="hidden lg:inline">Editar</span>
         </button>
         @if ((creditCardBalance() || 0) > 0) {
@@ -68,7 +86,10 @@
                 class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-income rounded-lg transition-colors text-sm font-medium"
                 type="button"
                 title="Pagar">
-                <span class="material-icons text-lg">payment</span>
+                <app-icon-component
+                    [icon]="'payment'"
+                    [size]="'4'">
+                </app-icon-component>
                 <span class="hidden lg:inline">Pagar</span>
             </button>
         }
@@ -76,7 +97,10 @@
             class="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 border border-[var(--xpb-border)] hover:bg-[var(--xpb-bg-sidebar)] xpb-text-expense rounded-lg transition-colors text-sm font-medium"
             type="button"
             title="Desactivar">
-            <span class="material-icons text-lg">block</span>
+            <app-icon-component
+                [icon]="'delete'"
+                [size]="'4'">
+            </app-icon-component>
             <span class="hidden lg:inline">Desactivar</span>
         </button>
         </div>
