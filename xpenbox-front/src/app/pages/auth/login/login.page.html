@@ -16,7 +16,7 @@
             Correo Electrónico
           </label>
           <div class="relative">
-            <app-icon-component [icon]="'email'" [size]="4" [class]="'xpb-text-secondary absolute left-3 top-1/2 -translate-y-1/2'"></app-icon-component>
+            <app-icon-component [icon]="'email'" [size]="'4'" [class]="'xpb-text-secondary absolute left-3 top-1/2 -translate-y-1/2'"></app-icon-component>
             <input
               id="email"
               type="email"
@@ -44,7 +44,7 @@
             Contraseña
           </label>
           <div class="relative">
-            <app-icon-component [icon]="'lock'" [size]="4" [class]="'xpb-text-secondary absolute left-3 top-1/2 -translate-y-1/2'"></app-icon-component>
+            <app-icon-component [icon]="'lock'" [size]="'4'" [class]="'xpb-text-secondary absolute left-3 top-1/2 -translate-y-1/2'"></app-icon-component>
             <input
               id="password"
               [type]="showPassword() ? 'text' : 'password'"
@@ -59,7 +59,7 @@
               class="absolute right-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl hover:xpb-text-primary cursor-pointer transition-colors"
               aria-label="Mostrar/ocultar contraseña"
             >
-              <app-icon-component [icon]="(showPassword() ? 'visibility_off' : 'visibility')" [size]="4" [class]="'xpb-text-secondary'"></app-icon-component>
+              <app-icon-component [icon]="(showPassword() ? 'visibility_off' : 'visibility')" [size]="'4'" [class]="'xpb-text-secondary'"></app-icon-component>
             </button>
           </div>
           @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
@@ -99,7 +99,7 @@
           <app-loading-ui [cssClasses]="'pb-5'"></app-loading-ui>
         } @else if (errorMessage() && !showResendVerification()) {
           <div class="p-4 rounded-lg bg-[var(--xpb-expense)]/10 border border-[var(--xpb-expense)]/20 flex items-start gap-3">
-            <app-icon-component [icon]="'error'" [size]="4" [class]="'xpb-text-expense text-xl mt-0.5'"></app-icon-component>
+            <app-icon-component [icon]="'error'" [size]="'4'" [class]="'xpb-text-expense text-xl mt-0.5'"></app-icon-component>
             <div class="flex-1">
               <p class="text-sm xpb-text-expense font-medium">{{ errorMessage() }}</p>
               @if (errorStatus() === 428) {
@@ -112,7 +112,7 @@
                     type="button"
                     class="inline-flex items-center gap-2 text-sm font-medium text-[var(--xpb-primary)] hover:text-[var(--xpb-primary-hover)] transition-colors"
                   >
-                    <app-icon-component [icon]="'mark_email_read'" [size]="4" [class]="'text-base'"></app-icon-component>
+                    <app-icon-component [icon]="'mark_email_read'" [size]="'4'" [class]="'text-base'"></app-icon-component>
                     <span class="hover:underline">Reenviar código de verificación</span>
                   </button>
                 </div>
@@ -123,7 +123,7 @@
 
         @if (showResendVerification()) {
           <div class="p-4 rounded-lg bg-[var(--xpb-income)]/10 border border-[var(--xpb-income)]/20 flex items-start gap-3">
-            <app-icon-component [icon]="'check_circle'" [size]="4" [class]="'text-[var(--xpb-income)] text-xl mt-0.5'"></app-icon-component>
+            <app-icon-component [icon]="'check_circle'" [size]="'4'" [class]="'text-[var(--xpb-income)] text-xl mt-0.5'"></app-icon-component>
             <div class="flex-1">
               <p class="text-sm text-[var(--xpb-income)] font-medium">
                 Se ha enviado un nuevo enlace de verificación a tu correo electrónico.
@@ -142,7 +142,7 @@
             <span>Iniciar Sesión</span>
           } @else {
             <span class="flex items-center gap-2">
-              <app-icon-component [icon]="'refresh'" [size]="4" [class]="'text-base animate-spin'"></app-icon-component>
+              <app-icon-component [icon]="'refresh'" [size]="'4'" [class]="'text-base animate-spin'"></app-icon-component>
               Iniciando...
             </span>
           }
