@@ -7,7 +7,6 @@ import org.jboss.logging.Logger;
 import org.xpenbox.notifications.entity.DeviceToken;
 import org.xpenbox.notifications.entity.DeviceToken.Platform;
 import org.xpenbox.notifications.repository.DeviceTokenRepository;
-import org.xpenbox.notifications.service.IDeviceTokenService;
 import org.xpenbox.notifications.service.IPushNotificationService;
 
 import io.quarkus.scheduler.Scheduled;
