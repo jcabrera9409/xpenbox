@@ -15,6 +15,8 @@ import { SubscriptionService } from '../../feature/subscription/service/subscrip
 import { subscriptionState } from '../../feature/subscription/service/subscription.state';
 import { UpgradeProModal } from '../../modal/subscription/upgrade-pro-modal/upgrade-pro.modal';
 import { upgradeProModalState } from '../../modal/subscription/state/upgrade-pro.modal.state';
+import { PushService } from '../../feature/common/service/push.service';
+import { CapacitorService } from '../../feature/common/service/capacitor.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -36,8 +38,16 @@ export class LandingPage implements OnInit {
 
   constructor(
     private userService: UserService,
-    private subscriptionService: SubscriptionService
-  ) {}
+    private subscriptionService: SubscriptionService,
+    private pushService: PushService,
+    private capacitorService: CapacitorService
+  ) {
+    this.initializePushService();
+  }
+
+  private async initializePushService() {
+    await this.pushService.initialize();
+  }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -47,6 +57,10 @@ export class LandingPage implements OnInit {
       if(!this.subscriptionState.subscription()) {
         this.subscriptionService.loadUserSubscription();
       }
+    }
+
+    if (this.capacitorService.isNativePlatform()) {
+      this.initializePushService();
     }
   }
 
