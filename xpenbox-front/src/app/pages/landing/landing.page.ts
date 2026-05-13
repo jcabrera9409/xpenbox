@@ -41,9 +41,7 @@ export class LandingPage implements OnInit {
     private subscriptionService: SubscriptionService,
     private pushService: PushService,
     private capacitorService: CapacitorService
-  ) {
-    this.initializePushService();
-  }
+  ) { }
 
   private async initializePushService() {
     await this.pushService.initialize();
