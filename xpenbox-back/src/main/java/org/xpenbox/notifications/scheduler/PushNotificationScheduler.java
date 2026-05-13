@@ -11,6 +11,7 @@ import org.xpenbox.notifications.service.IPushNotificationService;
 
 import io.quarkus.scheduler.Scheduled;
 import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 
 /**
  * Scheduler class for managing push notification-related tasks. This class is responsible for scheduling and executing tasks related to push notifications, such as sending notifications to users at specified intervals. It uses the Quarkus Scheduler to run tasks at specified intervals, allowing for automated management of push notification delivery based on defined schedules.
@@ -34,6 +35,7 @@ public class PushNotificationScheduler {
     }
 
     @Scheduled(cron = "{firebase.push.notification.cron}")
+    @Transactional
     void schedulePushNotificationTask() {
         LOG.info("Running scheduled push notification task");
 

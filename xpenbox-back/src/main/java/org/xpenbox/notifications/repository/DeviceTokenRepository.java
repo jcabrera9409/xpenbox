@@ -1,6 +1,7 @@
 package org.xpenbox.notifications.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.common.repository.GenericRepository;
@@ -17,10 +18,29 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class DeviceTokenRepository extends GenericRepository<DeviceToken> {
     private static final Logger LOG = Logger.getLogger(DeviceTokenRepository.class.getName());
 
+    /**
+     * Finds all device tokens with state true and the specified platform.
+     * @param platform The platform to filter device tokens by (e.g., ANDROID, IOS). Only tokens with state true will be returned.
+     * @return A list of DeviceToken entities that match the specified criteria.
+     */
     public List<DeviceToken> findAllByStateTrueAndPlatform(Platform platform) {
         LOG.info("Fetching all device tokens with state true and platform " + platform + " from the database");
         return find("state = :state and platform = :platform", 
             Parameters.with("state", true).and("platform", platform)
         ).list();
+    }
+
+    public Optional<DeviceToken> findByToken(String token) {
+        LOG.infof("Finding device token with token: %s", token);
+        return find("token", token).firstResultOptional();
+    }
+
+    /**
+     * Deletes a device token by its token value.
+     * @param token The token value of the device token to be deleted. The method will delete the device token with the specified token value from the database.
+     */
+    public void deleteByToken(String token) {
+        LOG.infof("Deleting device token with token: %s", token);
+        delete("token", token);
     }
 }

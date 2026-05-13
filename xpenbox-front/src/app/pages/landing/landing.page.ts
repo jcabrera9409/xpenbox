@@ -49,7 +49,7 @@ export class LandingPage implements OnInit {
     await this.pushService.initialize();
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (isPlatformBrowser(this.platformId)) {
       if (!this.userState.userLogged()) {
         this.userService.loadUserLoggedIn();
@@ -60,7 +60,7 @@ export class LandingPage implements OnInit {
     }
 
     if (this.capacitorService.isNativePlatform()) {
-      this.initializePushService();
+      await this.initializePushService();
     }
   }
 

@@ -18,7 +18,7 @@ public class DeviceTokenMapper implements GenericMapper<DeviceToken, DeviceToken
     @Override
     @Deprecated
     public DeviceTokenCreateDTO toDTO(DeviceToken entity) {
-        throw new UnsupportedOperationException("Unimplemented method 'toDTO'");
+        return new DeviceTokenCreateDTO(entity.getToken(), entity.getPlatform());
     }
 
     @Override

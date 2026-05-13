@@ -8,5 +8,5 @@ import org.xpenbox.notifications.entity.DeviceToken;
  * Service interface for DeviceToken entity operations.
  */
 public interface IDeviceTokenService extends IGenericService<DeviceToken, DeviceTokenCreateDTO, DeviceTokenCreateDTO, DeviceTokenCreateDTO> {
-    
+    void removeDeviceToken(String token);
 }

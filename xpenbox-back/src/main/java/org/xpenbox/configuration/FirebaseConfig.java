@@ -9,9 +9,11 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
+import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 
+@Startup
 @ApplicationScoped
 public class FirebaseConfig {
     private static final Logger LOG = Logger.getLogger(FirebaseConfig.class);
@@ -23,6 +25,7 @@ public class FirebaseConfig {
     public void init() {
         LOG.info("Firebase Admin SDK JSON Path: " + firebaseAdminSdkJsonPath);
         try {
+            LOG.info("Initializing Firebase Admin SDK with service account JSON file...");
             FileInputStream serviceAccount = new FileInputStream(firebaseAdminSdkJsonPath);
 
             FirebaseOptions options = FirebaseOptions.builder()

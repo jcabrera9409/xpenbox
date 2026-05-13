@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "368165304922",
+    "project_id": "xpenbox-app",
+    "storage_bucket": "xpenbox-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:368165304922:android:cd03f55800ec09be53b663",
+        "android_client_info": {
+          "package_name": "com.firstcode.xpenbox"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEvAdzM5WviVIKxXuaEmhsOgZ9ihpYxo0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

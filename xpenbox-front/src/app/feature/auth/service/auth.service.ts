@@ -9,6 +9,7 @@ import { UserRequestDTO } from '../../user/model/user.request.dto';
 import { StorageService } from '../../../shared/service/storage.service';
 import { CapacitorService } from '../../common/service/capacitor.service';
 import { AuthenticationResponseDTO } from '../model/authentication.response.dto';
+import { LogoutRequestDTO } from '../model/logout.request.dto';
 
 /**
  * Service for handling authentication-related operations
@@ -143,16 +144,35 @@ export class AuthService {
    * @returns Observable that completes when logout is successful
    */
   logout(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/logout`, {}, { 
-      withCredentials: true 
-    }).pipe(
+    const fcmToken$ = this.capacitorService.isNativePlatform()
+      ? from(this.capacitorService.getFcmToken())
+      : of(null);
+
+    return fcmToken$.pipe(
+      switchMap((fcmToken) => {
+        const logoutRequest = new LogoutRequestDTO(fcmToken);
+        return this.http.post<void>(`${this.apiUrl}/logout`, logoutRequest, { 
+          withCredentials: true 
+        });
+      }),
       tap(() => {
         authState.isAuthenticated.set(false);
         this.storageService.clearStorage();
         authState.accessToken.set(null);
         if (this.capacitorService.isNativePlatform()) {
           this.capacitorService.clearRefreshToken();
+          this.capacitorService.clearFcmToken();
         }
+      }),
+      map(() => void 0),
+      catchError((error) => {
+        authState.isAuthenticated.set(false);
+        authState.error.set('Sesión expirada');
+        if (this.capacitorService.isNativePlatform()) {
+          this.capacitorService.clearRefreshToken();
+          this.capacitorService.clearFcmToken();
+        }
+        return throwError(() => error);
       })
     );
   }
