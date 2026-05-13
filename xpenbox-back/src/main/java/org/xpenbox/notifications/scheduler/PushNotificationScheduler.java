@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.jboss.logging.Logger;
 import org.xpenbox.common.DateFunctions;
+import org.xpenbox.creditcard.entity.CreditCard;
+import org.xpenbox.creditcard.repository.CreditCardRepository;
 import org.xpenbox.notifications.entity.DeviceToken;
 import org.xpenbox.notifications.entity.DeviceToken.Platform;
 import org.xpenbox.notifications.repository.DeviceTokenRepository;
@@ -26,15 +28,19 @@ public class PushNotificationScheduler {
     private final DeviceTokenRepository deviceTokenRepository;
     private final IPushNotificationService pushNotificationService;
     private final UserRepository userRepository;
+    private final CreditCardRepository creditCardRepository;
+
 
     public PushNotificationScheduler(
         IPushNotificationService pushNotificationService,
         DeviceTokenRepository deviceTokenRepository,
-        UserRepository userRepository
+        UserRepository userRepository,
+        CreditCardRepository creditCardRepository
     ) {
         this.pushNotificationService = pushNotificationService;
         this.deviceTokenRepository = deviceTokenRepository;
         this.userRepository = userRepository;
+        this.creditCardRepository = creditCardRepository;
     }
 
     @Scheduled(cron = "{firebase.push.notification.activity.cron}")
@@ -62,13 +68,63 @@ public class PushNotificationScheduler {
                     "Registrar tus gastos diariamente te ayuda a tener un mejor control de tu dinero."
                 );
             } else {
-                LOG.warnf("No active Android device token found for user: %s (ID: %d)", user.getEmail(), user.id);
+                LOG.debugf("No active Android device token found for user: %s (ID: %d)", user.getEmail(), user.id);
             }
         }
 
     }
 
-   private List<User> findUsersWithoutTransactions() {
+    @Scheduled(cron = "{firebase.push.notification.creditcard.expiration.cron}")
+    @Transactional
+    void schedulePushNotificationCreditCardExpirationTask() {
+        LOG.info("Running scheduled push notification credit card expiration task");
+        LocalDateTime now = DateFunctions.currentLocalDateTime();
+        byte currentDay = (byte) now.getDayOfMonth();
+        byte nextDay = (byte) now.plusDays(1).getDayOfMonth();
+
+        List<CreditCard> creditCards = findActiveCreditCardsNotification(currentDay, nextDay);
+        List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByStateTrueAndPlatform(Platform.ANDROID);
+
+        for (CreditCard creditCard : creditCards) {
+            LOG.debugf("Active credit card: %s (ID: %d)", creditCard.getName(), creditCard.id);
+            DeviceToken deviceToken = deviceTokens.stream()
+                .filter(dt -> dt.getUser().id.equals(creditCard.getUser().id))
+                .findFirst()
+                .orElse(null);
+            if (deviceToken != null) {
+                String creditCardName = creditCard.getName();
+                if (creditCard.getPaymentDay() == currentDay) {
+                    pushNotificationService.sendPushNotification(
+                        deviceToken.getToken(),
+                        "Tu " + creditCardName + " vence hoy 💳",
+                        "Realiza tu pago a tiempo para evitar intereses y cargos adicionales."
+                    );
+                } else if(creditCard.getPaymentDay() == nextDay) {
+                    pushNotificationService.sendPushNotification(
+                        deviceToken.getToken(),
+                        "Tu " + creditCardName + " vence mañana 💳",
+                        "Recuerda pagar tu " + creditCardName + " antes de la fecha límite para evitar intereses."
+                    );
+                } else if(creditCard.getBillingDay() == currentDay) {
+                    pushNotificationService.sendPushNotification(
+                        deviceToken.getToken(),
+                        "Hoy cierra tu " + creditCardName + " 📅",
+                        "Revisa tus consumos y prepárate para un nuevo ciclo."
+                    );
+                } else if(creditCard.getBillingDay() == nextDay) {
+                    pushNotificationService.sendPushNotification(
+                        deviceToken.getToken(),
+                        "Tu " + creditCardName + " cierra mañana 📅",
+                        "Consulta tus consumos y organiza tus próximos pagos."
+                    );
+                }
+            } else {
+                LOG.debugf("No active Android device token found for user: %s (ID: %d)", creditCard.getUser().getEmail(), creditCard.getUser().id);
+            }
+        }
+    }
+
+    private List<User> findUsersWithoutTransactions() {
         LOG.info("Finding all users without transactions");
         LocalDateTime now = DateFunctions.currentLocalDateTime();
         LocalDateTime startDay = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
@@ -76,5 +132,12 @@ public class PushNotificationScheduler {
         return userRepository.findAllUsersWithoutTransactionsAndDates(startDay, endDay);
     }
 
+    private List<CreditCard> findActiveCreditCardsNotification(byte currentDay, byte nextDay) {
+        LOG.infof("Finding all active credit cards with billing day in [%d, %d] or payment day in [%d, %d]", currentDay, nextDay, currentDay, nextDay);
+        return creditCardRepository.findAllActiveByBillingDayOrPaymentDay(
+            List.of(currentDay, nextDay), 
+            List.of(currentDay, nextDay)
+        );
+    }
     
 }
