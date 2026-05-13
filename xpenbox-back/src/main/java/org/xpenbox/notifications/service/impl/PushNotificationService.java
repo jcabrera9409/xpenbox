@@ -25,6 +25,12 @@ public class PushNotificationService implements IPushNotificationService {
     public void sendPushNotification(String token, String title, String body) {
         LOG.infof("Sending push notification to token: %s, title: %s, message: %s", token, title, body);
 
+        // Validate token before attempting to send
+        if (token == null || token.trim().isEmpty()) {
+            LOG.warnf("Cannot send push notification: token is null or empty. Title: %s", title);
+            return;
+        }
+
         try {
             Message message = Message.builder()
                 .setToken(token)
