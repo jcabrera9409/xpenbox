@@ -10,11 +10,13 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
 import io.quarkus.runtime.Startup;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @Startup
 @ApplicationScoped
+@RegisterForReflection
 public class FirebaseConfig {
     private static final Logger LOG = Logger.getLogger(FirebaseConfig.class);
 
