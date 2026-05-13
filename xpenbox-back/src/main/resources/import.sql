@@ -229,6 +229,18 @@ CREATE TABLE IF NOT EXISTS tbl_subscription_payment (
     CONSTRAINT fk_subs_pay_subscription FOREIGN KEY (subscription_id) REFERENCES tbl_subscription(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS tbl_device_token (
+    `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT NOT NULL,
+    `token` VARCHAR(500) NOT NULL,
+    `platform` ENUM('ANDROID', 'IOS') NOT NULL,
+    `state` TINYINT(1) NOT NULL DEFAULT 1,
+    `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    UNIQUE KEY uk_device_token (user_id, token),
+    CONSTRAINT fk_device_token_user FOREIGN KEY (user_id) REFERENCES tbl_user(id) ON DELETE CASCADE
+);
+
 CREATE INDEX idx_token_user ON tbl_token(user_id);
 CREATE INDEX idx_token_validON tbl_token(user_id, revoked, refresh_token_expires_at);
 

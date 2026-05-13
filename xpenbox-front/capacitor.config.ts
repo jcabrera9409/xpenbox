@@ -18,6 +18,13 @@ const config: CapacitorConfig = {
       backgroundColor: '#000000',
       androidScaleType: 'CENTER_INSIDE',
       splashFullScreen: true
+    },
+    LocalNotifications: {
+      smallIcon: 'ic_stat_notification',
+      iconColor: '#2b2b2b'
+    },
+    PushNotifications: {
+      presentationOptions: ['badge', 'sound', 'alert']
     }
   }
 };

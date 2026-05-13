@@ -1,0 +1,22 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": ".*\\.json$"
+      },
+      {
+        "pattern": ".*\\.properties$"
+      },
+      {
+        "pattern": "com/google/.*"
+      },
+      {
+        "pattern": "google/.*"
+      },
+      {
+        "pattern": "META-INF/services/.*"
+      }
+    ]
+  },
+  "bundles": []
+}
