@@ -105,12 +105,6 @@ public class PushNotificationScheduler {
                         "Tu " + creditCardName + " vence mañana 💳",
                         "Recuerda pagar tu " + creditCardName + " antes de la fecha límite para evitar intereses."
                     );
-                } else if(creditCard.getBillingDay() == currentDay) {
-                    pushNotificationService.sendPushNotification(
-                        deviceToken.getToken(),
-                        "Hoy cierra tu " + creditCardName + " 📅",
-                        "Revisa tus consumos y prepárate para un nuevo ciclo."
-                    );
                 } else if(creditCard.getBillingDay() == nextDay) {
                     pushNotificationService.sendPushNotification(
                         deviceToken.getToken(),

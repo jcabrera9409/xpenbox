@@ -5,7 +5,6 @@ import {
   PushNotificationSchema,
   ActionPerformed
 } from '@capacitor/push-notifications';
-import { LocalNotifications } from '@capacitor/local-notifications';
 import { DevicetokenService } from '../../device/service/devicetoken.service';
 import { CapacitorService } from './capacitor.service';
 
@@ -29,8 +28,6 @@ export class PushService {
       return;
     }
 
-    await LocalNotifications.requestPermissions();
-
     await PushNotifications.register();
     await PushNotifications.removeAllListeners();
 
@@ -51,16 +48,13 @@ export class PushService {
     });
 
     PushNotifications.addListener('pushNotificationReceived', async (notification: PushNotificationSchema) => {
-      await LocalNotifications.schedule({
-        notifications: [
-          {
-            id: Math.floor(Math.random() * 100000),
-            title: notification.title || 'Notificación',
-            body: notification.body || '',
-            schedule: { at: new Date(Date.now() + 150) }
-          }
-        ]
-      });
+      // Cuando la notificación llega:
+      // - En segundo plano: Firebase ya la muestra automáticamente
+      // - En primer plano: No mostramos nada, el usuario ya está usando la app
+      console.log('Push notification received:', notification.title);
+      
+      // Si necesitas manejar la notificación en primer plano (actualizar UI, etc.)
+      // puedes agregar lógica aquí sin crear notificaciones locales
     });
 
     PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
