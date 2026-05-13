@@ -10,7 +10,6 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class PushNotificationService implements IPushNotificationService {
