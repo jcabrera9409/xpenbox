@@ -23,40 +23,35 @@ public class PushNotificationService implements IPushNotificationService {
 
     @Override
     public void sendPushNotification(String token, String title, String body) {
-        LOG.infof("Sending push notification to token: %s, title: %s, message: %s", token, title, body);
-
-        // Validate token before attempting to send
         if (token == null || token.trim().isEmpty()) {
-            LOG.warnf("Cannot send push notification: token is null or empty. Title: %s", title);
+            LOG.warnf("Cannot send push notification: token is null or empty");
             return;
         }
 
+        String cleanToken = token.trim();
+
         try {
+            LOG.debugf("Sending push notification to token: %s", cleanToken);
+            LOG.debugf("Notification title: %s", title);
+            LOG.debugf("Notification body: %s", body);
             Message message = Message.builder()
-                .setToken(token)
-                .setNotification(
-                        Notification.builder()
-                                .setTitle(title)
-                                .setBody(body)
-                                .build()
-                )
+                .setToken(cleanToken)
+                .setNotification(Notification.builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .build())
                 .build();
 
-            String response = FirebaseMessaging.getInstance()
-                .send(message);
-
-            LOG.infof("Successfully sent push notification: %s", response );
+            String response = FirebaseMessaging.getInstance().send(message);
+            LOG.infof("Push notification sent successfully: %s", response);
         } catch (FirebaseMessagingException e) {
-            String errorCode = e.getMessagingErrorCode() != null ? e.getMessagingErrorCode().name() : "Unknown error code";
-
-            LOG.debugf("FCM Error: %s", errorCode);
-
-            if ("UNREGISTERED".equals(errorCode) || "INVALID_ARGUMENT".equals(errorCode)) {
+            LOG.errorf("Firebase error [%s]: %s", 
+                e.getMessagingErrorCode() != null ? e.getMessagingErrorCode().name() : "UNKNOWN", 
+                e.getMessage());
+            
+            if ("UNREGISTERED".equals(e.getMessagingErrorCode() != null ? e.getMessagingErrorCode().name() : null)) {
                 deviceTokenService.removeDeviceToken(token);
-            } else {
-                LOG.errorf("Error sending push notification: %s", e.getMessage());
             }
-
         } catch (Exception e) {
             LOG.errorf("Error sending push notification: %s", e.getMessage());
         }

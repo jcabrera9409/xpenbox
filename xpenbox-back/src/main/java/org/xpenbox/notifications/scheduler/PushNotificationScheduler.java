@@ -62,16 +62,11 @@ public class PushNotificationScheduler {
                 .orElse(null);
             
             if (deviceToken != null) {
-                String token = deviceToken.getToken();
-                if (token != null && !token.trim().isEmpty()) {
-                    pushNotificationService.sendPushNotification(
-                        token,
-                        "Un minuto para tus finanzas",
-                        "Registrar tus gastos diariamente te ayuda a tener un mejor control de tu dinero."
-                    );
-                } else {
-                    LOG.warnf("Device token found but token value is null or empty for user: %s (ID: %d)", user.getEmail(), user.id);
-                }
+                pushNotificationService.sendPushNotification(
+                    deviceToken.getToken(),
+                    "Un minuto para tus finanzas",
+                    "Registrar tus gastos diariamente te ayuda a tener un mejor control de tu dinero."
+                );
             } else {
                 LOG.debugf("No active Android device token found for user: %s (ID: %d)", user.getEmail(), user.id);
             }
@@ -97,30 +92,25 @@ public class PushNotificationScheduler {
                 .findFirst()
                 .orElse(null);
             if (deviceToken != null) {
-                String token = deviceToken.getToken();
-                if (token != null && !token.trim().isEmpty()) {
-                    String creditCardName = creditCard.getName();
-                    if (creditCard.getPaymentDay() == currentDay) {
-                        pushNotificationService.sendPushNotification(
-                            token,
-                            "Tu " + creditCardName + " vence hoy 💳",
-                            "Realiza tu pago a tiempo para evitar intereses y cargos adicionales."
-                        );
-                    } else if(creditCard.getPaymentDay() == nextDay) {
-                        pushNotificationService.sendPushNotification(
-                            token,
-                            "Tu " + creditCardName + " vence mañana 💳",
-                            "Recuerda pagar tu " + creditCardName + " antes de la fecha límite para evitar intereses."
-                        );
-                    } else if(creditCard.getBillingDay() == nextDay) {
-                        pushNotificationService.sendPushNotification(
-                            token,
-                            "Tu " + creditCardName + " cierra mañana 📅",
-                            "Consulta tus consumos y organiza tus próximos pagos."
-                        );
-                    }
-                } else {
-                    LOG.warnf("Device token found but token value is null or empty for user: %s (ID: %d)", creditCard.getUser().getEmail(), creditCard.getUser().id);
+                String creditCardName = creditCard.getName();
+                if (creditCard.getPaymentDay() == currentDay) {
+                    pushNotificationService.sendPushNotification(
+                        deviceToken.getToken(),
+                        "Tu " + creditCardName + " vence hoy 💳",
+                        "Realiza tu pago a tiempo para evitar intereses y cargos adicionales."
+                    );
+                } else if(creditCard.getPaymentDay() == nextDay) {
+                    pushNotificationService.sendPushNotification(
+                        deviceToken.getToken(),
+                        "Tu " + creditCardName + " vence mañana 💳",
+                        "Recuerda pagar tu " + creditCardName + " antes de la fecha límite para evitar intereses."
+                    );
+                } else if(creditCard.getBillingDay() == nextDay) {
+                    pushNotificationService.sendPushNotification(
+                        deviceToken.getToken(),
+                        "Tu " + creditCardName + " cierra mañana 📅",
+                        "Consulta tus consumos y organiza tus próximos pagos."
+                    );
                 }
             } else {
                 LOG.debugf("No active Android device token found for user: %s (ID: %d)", creditCard.getUser().getEmail(), creditCard.getUser().id);
