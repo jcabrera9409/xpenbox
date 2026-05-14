@@ -27,22 +27,6 @@ public class PushNotificationService implements IPushNotificationService {
     }
 
     @Override
-    public void sendPushNotification(List<Message> messages) {
-        LOG.infof("Sending batch push notification to %d messages", messages.size());
-        try {
-            BatchResponse response = FirebaseMessaging.getInstance().sendEach(messages);
-            LOG.infof("Batch push notification sent successfully: %d successful, %d failed", 
-                response.getSuccessCount(), response.getFailureCount());
-        } catch (FirebaseMessagingException e) {
-            LOG.errorf("Firebase error [%s]: %s", 
-                e.getMessagingErrorCode() != null ? e.getMessagingErrorCode().name() : "UNKNOWN", 
-                e.getMessage());
-        } catch (Exception e) {
-            LOG.error("Error sending batch push notifications", e);
-        }
-    }
-
-    @Override
     public void sendPushNotification(String token, String title, String body) {
         if (token == null || token.trim().isEmpty()) {
             LOG.warnf("Cannot send push notification: token is null or empty");
