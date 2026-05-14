@@ -48,12 +48,16 @@ public class PushNotificationService implements IPushNotificationService {
                     .build())
                 .build();
             
+            // Add data payload to ensure notifications work on Samsung devices when app is in background
             Message message = Message.builder()
                 .setToken(cleanToken)
                 .setNotification(Notification.builder()
                     .setTitle(title)
                     .setBody(body)
                     .build())
+                .putData("title", title)
+                .putData("body", body)
+                .putData("click_action", "FLUTTER_NOTIFICATION_CLICK")
                 .setAndroidConfig(androidConfig)
                 .build();
 

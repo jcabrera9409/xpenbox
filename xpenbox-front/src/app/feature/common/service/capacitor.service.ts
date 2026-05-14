@@ -15,6 +15,10 @@ export class CapacitorService {
         return Capacitor.isNativePlatform();
     }
 
+    getPlatform(): string {
+        return Capacitor.getPlatform().toUpperCase();
+    }
+
     async setRefreshToken(value: string): Promise<void> {
         await Preferences.set({ 
             key: this.REFRESH_TOKEN_KEY, 

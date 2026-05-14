@@ -36,10 +36,12 @@ export class PushService {
       
       await this.capacitorService.setFcmToken(token.value);
       
+      const platform = this.capacitorService.getPlatform();
+      
       // Save the device token using the DevicetokenService
-      this.deviceTokenService.create({ token: token.value, platform: 'ANDROID' }).subscribe({
+      this.deviceTokenService.create({ token: token.value, platform: platform }).subscribe({
         next: async () => {
-          console.log('Device token saved successfully');
+          console.log('Device token saved successfully for platform: ' + platform);
         },
         error: (error) => {
           console.error('Error saving device token:', error);
