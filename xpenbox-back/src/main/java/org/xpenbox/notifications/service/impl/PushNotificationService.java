@@ -1,14 +1,11 @@
 package org.xpenbox.notifications.service.impl;
 
-import java.util.List;
-
 import org.jboss.logging.Logger;
 import org.xpenbox.notifications.service.IDeviceTokenService;
 import org.xpenbox.notifications.service.IPushNotificationService;
 
 import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.AndroidNotification;
-import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -24,22 +21,6 @@ public class PushNotificationService implements IPushNotificationService {
 
     public PushNotificationService(IDeviceTokenService deviceTokenService) {
         this.deviceTokenService = deviceTokenService;
-    }
-
-    @Override
-    public void sendPushNotification(List<Message> messages) {
-        LOG.infof("Sending batch push notification to %d messages", messages.size());
-        try {
-            BatchResponse response = FirebaseMessaging.getInstance().sendEach(messages);
-            LOG.infof("Batch push notification sent successfully: %d successful, %d failed", 
-                response.getSuccessCount(), response.getFailureCount());
-        } catch (FirebaseMessagingException e) {
-            LOG.errorf("Firebase error [%s]: %s", 
-                e.getMessagingErrorCode() != null ? e.getMessagingErrorCode().name() : "UNKNOWN", 
-                e.getMessage());
-        } catch (Exception e) {
-            LOG.error("Error sending batch push notifications", e);
-        }
     }
 
     @Override
