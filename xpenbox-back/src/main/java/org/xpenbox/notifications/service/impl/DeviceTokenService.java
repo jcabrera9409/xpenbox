@@ -1,5 +1,7 @@
 package org.xpenbox.notifications.service.impl;
 
+import java.util.List;
+
 import org.jboss.logging.Logger;
 import org.xpenbox.common.mapper.GenericMapper;
 import org.xpenbox.common.repository.GenericRepository;
@@ -9,6 +11,7 @@ import org.xpenbox.notifications.entity.DeviceToken;
 import org.xpenbox.notifications.mapper.DeviceTokenMapper;
 import org.xpenbox.notifications.repository.DeviceTokenRepository;
 import org.xpenbox.notifications.service.IDeviceTokenService;
+import org.xpenbox.notifications.service.IPushNotificationService;
 import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
 
@@ -24,15 +27,18 @@ public class DeviceTokenService extends GenericServiceImpl<DeviceToken, DeviceTo
     private final UserRepository userRepository;
     private final DeviceTokenRepository deviceTokenRepository;
     private final DeviceTokenMapper deviceTokenMapper;
+    private final IPushNotificationService pushNotificationService;
 
     public DeviceTokenService(
         UserRepository userRepository,
         DeviceTokenRepository deviceTokenRepository,
-        DeviceTokenMapper deviceTokenMapper
+        DeviceTokenMapper deviceTokenMapper,
+        IPushNotificationService pushNotificationService
     ) {
         this.userRepository = userRepository;
         this.deviceTokenRepository = deviceTokenRepository;
         this.deviceTokenMapper = deviceTokenMapper;
+        this.pushNotificationService = pushNotificationService;
     }
 
     @Override
@@ -86,5 +92,20 @@ public class DeviceTokenService extends GenericServiceImpl<DeviceToken, DeviceTo
         LOG.infof("Removing device token: %s", token);
         deviceTokenRepository.deleteByToken(token);
         LOG.infof("Device token removed successfully");
+    }
+
+    @Override
+    public void sendTestNotification(String userEmail) {
+        LOG.infof("Sending test notification to user: %s", userEmail);
+        User user = validateAndGetUser(userEmail);
+        List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByUserId(user.id);
+        for (DeviceToken deviceToken : deviceTokens) {
+            LOG.infof("Sending test notification to device token: %s", deviceToken.getToken());
+            pushNotificationService.sendPushNotification(
+                deviceToken.getToken(), 
+                "Test Notification", 
+                "This is a test notification from Xpenbox."
+            );
+        }
     }
 }

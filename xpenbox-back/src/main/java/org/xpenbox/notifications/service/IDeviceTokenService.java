@@ -9,4 +9,5 @@ import org.xpenbox.notifications.entity.DeviceToken;
  */
 public interface IDeviceTokenService extends IGenericService<DeviceToken, DeviceTokenCreateDTO, DeviceTokenCreateDTO, DeviceTokenCreateDTO> {
     void removeDeviceToken(String token);
+    void sendTestNotification(String userEmail);
 }

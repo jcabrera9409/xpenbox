@@ -39,4 +39,13 @@ public class DeviceTokenController {
         deviceTokenService.create(dto, userEmail);
         return Response.status(Response.Status.CREATED).build();
     }
+
+    @POST
+    @Path("/test")
+    public Response testNotification(@Context SecurityContext securityContext) {
+        String userEmail = securityContext.getUserPrincipal().getName();
+        LOG.infof("Test notification request received for user: %s", userEmail);
+        deviceTokenService.sendTestNotification(userEmail);
+        return Response.ok().build();
+    }
 }
