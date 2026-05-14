@@ -104,11 +104,11 @@ public class PushNotificationScheduler {
 
         for (CreditCard creditCard : creditCards) {
             LOG.debugf("Active credit card: %s (ID: %d)", creditCard.getName(), creditCard.id);
-            DeviceToken deviceToken = deviceTokens.stream()
+            List<DeviceToken> userDeviceTokens = deviceTokens.stream()
                 .filter(dt -> dt.getUser().id.equals(creditCard.getUser().id))
-                .findFirst()
-                .orElse(null);
-            if (deviceToken != null) {
+                .toList();
+            for (DeviceToken deviceToken : userDeviceTokens) {
+                LOG.debugf("User device token: %s (ID: %d)", deviceToken.getToken(), deviceToken.id);
                 String creditCardName = creditCard.getName();
                 if (creditCard.getPaymentDay() == currentDay) {
                     Message message = Message.builder()
@@ -150,9 +150,7 @@ public class PushNotificationScheduler {
                         .build();
                     messages.add(message);
                 }
-            } else {
-                LOG.debugf("No active Android device token found for user: %s (ID: %d)", creditCard.getUser().getEmail(), creditCard.getUser().id);
-            }
+            } 
         }
         pushNotificationService.sendPushNotification(messages);
     }
