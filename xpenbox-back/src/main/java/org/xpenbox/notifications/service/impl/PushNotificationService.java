@@ -42,8 +42,8 @@ public class PushNotificationService implements IPushNotificationService {
                     .build())
                 .build();
 
-            String response = FirebaseMessaging.getInstance().send(message);
-            LOG.infof("Push notification sent successfully: %s", response);
+            FirebaseMessaging.getInstance().send(message);
+            LOG.infof("Push notification sent successfully");
         } catch (FirebaseMessagingException e) {
             LOG.errorf("Firebase error [%s]: %s", 
                 e.getMessagingErrorCode() != null ? e.getMessagingErrorCode().name() : "UNKNOWN", 
