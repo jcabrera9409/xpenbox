@@ -3,10 +3,11 @@ import { CommonModule, isPlatformServer } from '@angular/common';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../../feature/auth/service/auth.service';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-verify-email-page',
-  imports: [CommonModule, LoadingUi, RouterLink],
+  imports: [CommonModule, LoadingUi, RouterLink, IconComponent],
   templateUrl: './verify-email.page.html',
   styleUrl: './verify-email.page.css',
 })

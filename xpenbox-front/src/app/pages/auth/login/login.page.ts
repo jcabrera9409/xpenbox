@@ -8,10 +8,11 @@ import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { StorageService } from '../../../shared/service/storage.service';
 import { subscriptionState } from '../../../feature/subscription/service/subscription.state';
 import { userState } from '../../../feature/user/service/user.state';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-login-page',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LoadingUi],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LoadingUi, IconComponent],
   templateUrl: './login.page.html',
   styleUrl: './login.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

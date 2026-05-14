@@ -1,8 +1,9 @@
 import { Component, input, output } from '@angular/core';
+import { IconComponent } from '../icon.component/icon.component';
 
 @Component({
   selector: 'app-retry-component',
-  imports: [],
+  imports: [IconComponent],
   templateUrl: './retry.component.html',
   styleUrl: './retry.component.css',
 })

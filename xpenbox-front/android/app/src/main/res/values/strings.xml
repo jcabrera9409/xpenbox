@@ -4,4 +4,5 @@
     <string name="title_activity_main">XpenBox</string>
     <string name="package_name">com.firstcode</string>
     <string name="custom_url_scheme">com.firstcode</string>
+    <string name="default_notification_channel_id">xpenbox_default_channel</string>
 </resources>

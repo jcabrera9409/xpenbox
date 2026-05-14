@@ -2,10 +2,11 @@ import { Component, effect, input, output, signal } from '@angular/core';
 import { AccountCreditDTO } from '../../dto/account-credit.dto';
 import { CommonModule } from '@angular/common';
 import { LoadingUi } from '../../ui/loading-ui/loading.ui';
+import { IconComponent } from '../icon.component/icon.component';
 
 @Component({
   selector: 'app-accounts-carousel-component',
-  imports: [CommonModule, LoadingUi],
+  imports: [CommonModule, LoadingUi, IconComponent],
   templateUrl: './accounts-carousel.component.html',
   styleUrl: './accounts-carousel.component.css',
   host: {

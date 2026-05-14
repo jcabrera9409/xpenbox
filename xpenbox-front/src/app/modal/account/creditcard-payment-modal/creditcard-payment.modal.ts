@@ -9,7 +9,6 @@ import { CreditCardService } from '../../../feature/creditcard/service/creditcar
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { CreditCardResponseDTO } from '../../../feature/creditcard/model/creditcard.response.dto';
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
-import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 import { CommonModule } from '@angular/common';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
@@ -21,10 +20,11 @@ import { DateService } from '../../../shared/service/date.service';
 import { CategoriesCarouselComponent } from '../../../shared/components/categories-carousel-component/categories-carousel.component';
 import { CategoryResponseDTO } from '../../../feature/category/model/category.response.dto';
 import { userState } from '../../../feature/user/service/user.state';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-creditcard-payment-modal',
-  imports: [CommonModule, LoadingUi, RetryComponent, VirtualKeyboardUi, ModalButtonsUi, AccountsCarouselComponent, CategoriesCarouselComponent],
+  imports: [CommonModule, LoadingUi, RetryComponent, VirtualKeyboardUi, ModalButtonsUi, AccountsCarouselComponent, CategoriesCarouselComponent, IconComponent],
   templateUrl: './creditcard-payment.modal.html',
   styleUrl: './creditcard-payment.modal.css',
 })

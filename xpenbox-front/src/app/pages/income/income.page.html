@@ -10,7 +10,7 @@
         (click)="openCreateIncomeModal()"
         class="flex items-center gap-1.5 px-3 py-2 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors text-sm"
         type="button">
-        <span class="material-icons text-lg">add</span>
+        <app-icon-component [icon]="'add'" [size]="'4'"></app-icon-component>
         <span class="hidden sm:inline">Nuevo Ingreso</span>
       </button>
     </div>
@@ -25,18 +25,21 @@
         class="md:hidden w-full p-4 flex items-center justify-between xpb-text-primary hover:xpb-bg-sidebar transition-colors"
         type="button">
         <div class="flex items-center gap-3">
-          <span class="material-icons">date_range</span>
+          <app-icon-component [icon]="'date_range'" [size]="'5'"></app-icon-component>
           <span class="text-sm font-medium">Filtrar por rango de fechas</span>
         </div>
-        <span class="material-icons transition-transform" [class.rotate-180]="filterExpanded()">
-          expand_more
-        </span>
+        <app-icon-component 
+          [icon]="'expand_more'" 
+          [size]="'5'" 
+          [class]="'transition-transform'"
+          [class.rotate-180]="filterExpanded()">
+        </app-icon-component>
       </button>
       
       <!-- Content of the filter -->
       <div [class.hidden]="!filterExpanded()" class="md:!block p-4">
         <div class="flex items-start gap-3">
-          <span class="material-icons xpb-text-primary mt-1 hidden md:block">date_range</span>
+          <app-icon-component [icon]="'date_range'" [size]="'4'" [class]="'xpb-text-primary mt-1 hidden md:block'"></app-icon-component>
           <div class="flex-1">
             <label class="hidden md:block text-sm font-medium xpb-text-primary mb-2">Filtrar por rango de fechas</label>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -67,7 +70,7 @@
                   (click)="applyFilter()"
                   class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors text-sm"
                   type="button">
-                  <span class="material-icons text-lg">search</span>
+                  <app-icon-component [icon]="'search'" [size]="'4'"></app-icon-component>
                   <span>Filtrar</span>
                 </button>
               </div>
@@ -79,7 +82,7 @@
   </div>
 
   <!-- Summary Cards -->
-  <div class="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-3 mb-3 md:mb-4 flex-shrink-0">
+  <div class="grid grid-cols-2 gap-2 md:gap-3 mb-3 md:mb-4 flex-shrink-0">
     <!-- Total Income -->
     <app-summary-card
       [isLoading]="this.incomeState.isLoadingGetList()"
@@ -99,16 +102,6 @@
       [iconCard]="'account_balance_wallet'"
       [contentClassCard]="'text-[var(--xpb-transfer)]'"
     ></app-summary-card>
-
-    <!-- Pending Allocation -->
-    <app-summary-card
-      [isLoading]="this.incomeState.isLoadingGetList()"
-      [titleCard]="'Pendiente'"
-      [contentCard]="totalPending() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'"
-      [subtitleCard]="'Sin asignar'"
-      [iconCard]="'hourglass_empty'"
-      [contentClassCard]="'xpb-text-secondary'"
-    ></app-summary-card>
   </div>
 
   <!-- Income List -->
@@ -118,7 +111,7 @@
       <div class="px-4 py-3 border-b xpb-border flex-shrink-0">
         <div class="flex items-center justify-between">
           <h2 class="text-xs lg:text-xl font-semibold xpb-text-primary flex items-center gap-2">
-            <span class="material-icons">receipt_long</span>
+            <app-icon-component [icon]="'receipt_long'" [size]="'4'"></app-icon-component>
             Historial de Ingresos {{
               formattedStartDateDisplay() && formattedEndDateDisplay() 
                 ? 'de ' + formattedStartDateDisplay() + ' a ' + formattedEndDateDisplay() 
@@ -163,7 +156,7 @@
                   <tr class="hover:xpb-bg-sidebar transition-colors">
                     <td class="px-4 py-3">
                       <div class="flex items-center gap-2">
-                        <span class="material-icons xpb-text-income text-lg">payments</span>
+                        <app-icon-component [icon]="'payment'" [size]="'4'" [class]="'xpb-text-income'"></app-icon-component>
                         <span class="font-medium xpb-text-primary">{{ income.concept }}</span>
                       </div>
                     </td>
@@ -192,7 +185,7 @@
                 <!-- Título y fecha centrados -->
                 <div class="text-center mb-4">
                   <div class="flex items-center justify-center gap-2 mb-1">
-                    <span class="material-icons xpb-text-income text-xl">payments</span>
+                    <app-icon-component [icon]="'payment'" [size]="'4'" [class]="'xpb-text-income'"></app-icon-component>
                     <p class="font-semibold xpb-text-primary">{{ income.concept }}</p>
                   </div>
                   <p class="text-xs xpb-text-secondary">{{ formatDate(income.incomeDateTimestamp) }}</p>

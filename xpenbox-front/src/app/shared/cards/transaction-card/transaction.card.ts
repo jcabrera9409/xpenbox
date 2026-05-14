@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 import { TransactionType } from '../../../feature/transaction/model/transaction.request.dto';
 import { DateService } from '../../service/date.service';
+import { IconComponent } from '../../components/icon.component/icon.component';
 
 @Component({
   selector: 'app-transaction-card',
-  imports: [CommonModule],
+  imports: [CommonModule, IconComponent],
   templateUrl: './transaction.card.html',
   styleUrl: './transaction.card.css',
 })

@@ -12,9 +12,11 @@
       class="lg:hidden p-2 rounded-lg hover:xpb-bg-sidebar transition-colors ml-4"
       aria-label="Toggle menu"
     >
-      <span class="material-icons xpb-text-primary text-2xl">
-        {{ isMobileMenuOpen() ? 'close' : 'menu' }}
-      </span>
+      <app-icon-component
+        [icon]="isMobileMenuOpen() ? 'close' : 'menu'"
+        [size]="'5'"
+        [class]="'xpb-text-primary'">
+      </app-icon-component>
     </button>
 
     <!-- User Profile (Mobile only) -->
@@ -62,7 +64,11 @@
         class="relative p-2 rounded-lg hover:xpb-bg-sidebar transition-colors"
         aria-label="Notificaciones"
       >
-        <span class="material-icons xpb-text-secondary">notifications</span>
+        <app-icon-component
+          [icon]="'notifications'"
+          [size]="'8'"
+          [class]="'xpb-text-secondary'">
+        </app-icon-component>
         @if (notificationCount() > 0) {
           <span
             class="absolute top-1 right-1 w-5 h-5 bg-[var(--xpb-expense)] text-white text-xs font-bold rounded-full flex items-center justify-center"
@@ -98,7 +104,11 @@
           [routerLinkActiveOptions]="{ exact: true }"
         class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:xpb-bg-card hover:shadow-sm text-sm lg:text-base"
       >
-        <span class="material-icons xpb-text-secondary">{{ item.icon }}</span>
+        <app-icon-component
+          [icon]="item.icon"
+          [size]="'5'"
+          [class]="'xpb-text-secondary'">
+        </app-icon-component>
         <span class="font-medium xpb-text-primary">{{ item.label }}</span>
       </a>
     }
@@ -110,7 +120,11 @@
       (click)="onQuickExpense()"
       class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white font-medium transition-colors shadow-md text-xs lg:text-base"
     >
-      <span class="material-icons">add</span>
+      <app-icon-component
+        [icon]="'add'"
+        [size]="'4'"
+        [class]="'text-white'">
+      </app-icon-component>
       <span>Registrar Gasto</span>
     </button>
   </div>
@@ -137,7 +151,11 @@
       [style.animation-delay]="isSpeedDialClosing() ? '150ms' : '0ms'"
     >
       <div class="w-10 h-10 rounded-full bg-[var(--xpb-expense)] flex items-center justify-center">
-        <span class="material-icons text-white text-xl">receipt_long</span>
+        <app-icon-component
+          [icon]="'receipt_long'"
+          [size]="'5'"
+          [class]="'text-white'">
+        </app-icon-component>
       </div>
       <span class="font-medium xpb-text-primary whitespace-nowrap">Registrar Gasto</span>
     </button>
@@ -151,7 +169,11 @@
       [style.animation-delay]="isSpeedDialClosing() ? '100ms' : '50ms'"
     >
       <div class="w-10 h-10 rounded-full bg-[var(--xpb-income)] flex items-center justify-center">
-        <span class="material-icons text-white text-xl">trending_up</span>
+        <app-icon-component
+          [icon]="'trending_up'"
+          [size]="'5'"
+          [class]="'text-white'">
+        </app-icon-component>
       </div>
       <span class="font-medium xpb-text-primary whitespace-nowrap">Nuevo Ingreso</span>
     </button>
@@ -165,7 +187,11 @@
       [style.animation-delay]="isSpeedDialClosing() ? '50ms' : '100ms'"
     >
       <div class="w-10 h-10 rounded-full bg-[var(--xpb-transfer)] flex items-center justify-center">
-        <span class="material-icons text-white text-xl">swap_horiz</span>
+        <app-icon-component
+          [icon]="'swap_horiz'"
+          [size]="'5'"
+          [class]="'text-white'">
+        </app-icon-component>
       </div>
       <span class="font-medium xpb-text-primary whitespace-nowrap">Transferencia</span>
     </button>
@@ -179,7 +205,11 @@
       [style.animation-delay]="isSpeedDialClosing() ? '0ms' : '150ms'"
     >
       <div class="w-10 h-10 rounded-full bg-[var(--xpb-credit)] flex items-center justify-center">
-        <span class="material-icons text-white text-xl">payment</span>
+        <app-icon-component
+          [icon]="'payment'"
+          [size]="'5'"
+          [class]="'text-white'">
+        </app-icon-component>
       </div>
       <span class="font-medium xpb-text-primary whitespace-nowrap">Pago de Crédito</span>
     </button>
@@ -196,7 +226,11 @@
           [routerLinkActiveOptions]="{ exact: true }"
         class="flex flex-col items-center justify-center flex-1 h-full xpb-text-secondary transition-colors"
       >
-        <span class="material-icons text-2xl">{{ item.icon }}</span>
+        <app-icon-component
+          [icon]="item.icon"
+          [size]="'5'"
+          [class]="'xpb-text-secondary'">
+        </app-icon-component>
         <span class="text-xs mt-1">{{ item.label }}</span>
       </a>
     }
@@ -210,5 +244,9 @@
   class="lg:hidden fixed left-1/2 -translate-x-1/2 bottom-10 w-14 h-14 rounded-full bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] shadow-xl flex items-center justify-center text-white transition-all duration-300 z-[51]"
   aria-label="Acciones rápidas"
 >
-  <span class="material-icons text-3xl">add</span>
+  <app-icon-component
+    [icon]="'add'"
+    [size]="'8'"
+    [class]="'text-white'">
+  </app-icon-component>
 </button>

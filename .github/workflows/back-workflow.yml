@@ -21,13 +21,17 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           cd xpenbox-back
-          mvn package -Dnative -Dquarkus.native.container-build=true -DskipTests
+          mvn package -Dnative -Dquarkus.native.container-build=true -DskipTests -Dquarkus.native.native-image-xmx=6g
+        env:
+          MAVEN_OPTS: "-Xmx7g"
 
       - name: Build Native Binary for Non-Production
         if: github.ref != 'refs/heads/main'
         run: |
           cd xpenbox-back
-          mvn package -Dnative -Dquarkus.native.container-build=true -Dquarkus.profile=dev -DskipTests
+          mvn package -Dnative -Dquarkus.native.container-build=true -Dquarkus.profile=dev -DskipTests -Dquarkus.native.native-image-xmx=6g
+        env:
+          MAVEN_OPTS: "-Xmx7g"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

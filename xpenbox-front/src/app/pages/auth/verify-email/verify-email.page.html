@@ -6,9 +6,7 @@
         <div class="xpb-bg-card rounded-2xl shadow-xl w-full max-w-md p-8 sm:p-10 text-center">
             <!-- Error Icon -->
             <div class="xpb-bg-main rounded-full w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mx-auto mb-6">
-                <span style="font-size: 5rem!important;" class="material-icons text-5xl sm:text-6xl text-[var(--xpb-expense)]">
-                    error_outline
-                </span>
+                <app-icon-component [icon]="'error_outline'" [size]="'20'" [class]="'text-[var(--xpb-expense)]'"></app-icon-component>
             </div>
             
             <!-- Title -->
@@ -24,9 +22,7 @@
             <!-- Error Details Alert -->
             <div class="xpb-bg-main rounded-lg p-4 border-l-4 border-[var(--xpb-expense)] mb-8 text-left">
                 <div class="flex items-start gap-3">
-                    <span class="material-icons text-[var(--xpb-expense)] text-xl mt-0.5">
-                        info
-                    </span>
+                    <app-icon-component [icon]="'info'" [size]="'4'" [class]="'text-[var(--xpb-expense)] mt-0.5'"></app-icon-component>
                     <div class="flex-1">
                         <p class="text-sm text-[var(--xpb-expense)] font-medium mb-1">
                             {{ errorVerifyEmail() || 'El enlace de verificación es inválido o ha expirado.' }}
@@ -42,10 +38,8 @@
             <div class="flex flex-col gap-3">
                 <a 
                     [routerLink]="'/login'" 
-                    class="w-full xpb-btn-primary inline-flex items-center justify-center gap-2 py-3">
-                    <span class="material-icons text-lg">
-                        login
-                    </span>
+                    class="w-full xpb-btn-primary font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                    <app-icon-component [icon]="'login'" [size]="'4'"></app-icon-component>
                     <span>Inicia sesión para solicitar un nuevo enlace</span>
                 </a>
             </div>
@@ -57,9 +51,7 @@
         <div class="xpb-bg-card rounded-2xl shadow-xl w-full max-w-md p-8 sm:p-10 text-center">
             <!-- Success Icon -->
             <div class="xpb-bg-main rounded-full w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mx-auto mb-6">
-                <span style="font-size: 5rem!important;" class="material-icons text-5xl sm:text-6xl text-[var(--xpb-income)]">
-                    check_circle
-                </span>
+                <app-icon-component [icon]="'check_circle'" [size]="'20'" [class]="'text-[var(--xpb-income)]'"></app-icon-component>
             </div>
             
             <!-- Title -->
@@ -75,9 +67,7 @@
             <!-- Success Details Alert -->
             <div class="xpb-bg-main rounded-lg p-4 border-l-4 border-[var(--xpb-income)] mb-8 text-left">
                 <div class="flex items-start gap-3">
-                    <span class="material-icons text-[var(--xpb-income)] text-xl mt-0.5">
-                        verified
-                    </span>
+                    <app-icon-component [icon]="'verified'" [size]="'4'" [class]="'text-[var(--xpb-income)] mt-0.5'"></app-icon-component>
                     <div class="flex-1">
                         <p class="text-sm xpb-text-secondary">
                             Tu cuenta está completamente activa. Ahora puedes iniciar sesión y comenzar a gestionar tus finanzas personales.
@@ -89,10 +79,8 @@
             <!-- Action Button -->
             <a 
                 [routerLink]="'/login'" 
-                class="w-full xpb-btn-primary inline-flex items-center justify-center gap-2 py-3">
-                <span class="material-icons text-lg">
-                    login
-                </span>
+                class="w-full xpb-btn-primary font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                <app-icon-component [icon]="'login'" [size]="'4'"></app-icon-component>
                 <span>Iniciar sesión ahora</span>
             </a>
         </div>

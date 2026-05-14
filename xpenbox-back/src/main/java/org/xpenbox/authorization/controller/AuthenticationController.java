@@ -3,6 +3,7 @@ package org.xpenbox.authorization.controller;
 import org.jboss.logging.Logger;
 import org.xpenbox.authorization.dto.AuthenticationResponseDTO;
 import org.xpenbox.authorization.dto.LoginRequestDTO;
+import org.xpenbox.authorization.dto.LogoutRequestDTO;
 import org.xpenbox.authorization.dto.RefreshTokenRequestDTO;
 import org.xpenbox.authorization.dto.ResetPasswordRequestDTO;
 import org.xpenbox.authorization.dto.TokenResponseDTO;
@@ -10,6 +11,7 @@ import org.xpenbox.authorization.dto.UserAuthRequestDTO;
 import org.xpenbox.authorization.service.IAuthenticationService;
 import org.xpenbox.authorization.service.ITokenService;
 import org.xpenbox.common.dto.APIResponseDTO;
+import org.xpenbox.notifications.service.IDeviceTokenService;
 import org.xpenbox.user.dto.UserCreateDTO;
 import org.xpenbox.user.service.IUserService;
 import org.xpenbox.user.service.IUserTokenService;
@@ -43,17 +45,20 @@ public class AuthenticationController {
     private final ITokenService tokenService;
     private final IAuthenticationService authenticationService;
     private final IUserTokenService userTokenService;
+    private final IDeviceTokenService deviceTokenService;
 
     public AuthenticationController(
         IUserService userService,
         ITokenService tokenService,
         IAuthenticationService authenticationService,
-        IUserTokenService userTokenService
+        IUserTokenService userTokenService,
+        IDeviceTokenService deviceTokenService
     ) {
         this.userService = userService;
         this.tokenService = tokenService;
         this.authenticationService = authenticationService;
         this.userTokenService = userTokenService;
+        this.deviceTokenService = deviceTokenService;
     }
 
     /**
@@ -169,7 +174,6 @@ public class AuthenticationController {
 
         LOG.infof("Login successful for email: %s", loginRequest.email());
         return Response.ok(response)
-            .cookie(accessCookie(token))
             .cookie(refreshCookie(token))
             .build();
     }
@@ -196,7 +200,6 @@ public class AuthenticationController {
         AuthenticationResponseDTO response = new AuthenticationResponseDTO(token.accessToken(), token.refreshToken());
         LOG.infof("Token refresh successful");
         return Response.ok(response)
-            .cookie(accessCookie(token))
             .cookie(refreshCookie(token))
             .build();
     }
@@ -210,12 +213,12 @@ public class AuthenticationController {
     @Path("/logout")
     @PermitAll
     @Transactional
-    public Response logout(@CookieParam("refresh_token") String refreshToken) {
+    public Response logout(@CookieParam("refresh_token") String refreshToken, @Valid LogoutRequestDTO logoutRequest) {
         LOG.infof("Logout request received");
         tokenService.revokeToken(refreshToken);
+        deviceTokenService.removeDeviceToken(logoutRequest.fcmToken());
         LOG.infof("Logout successful");
         return Response.ok()
-            .cookie(expire("access_token"))
             .cookie(expire("refresh_token"))
             .build();
     }
@@ -226,21 +229,6 @@ public class AuthenticationController {
     public Response check() {
         LOG.infof("Session check request received");
         return Response.ok().build();
-    }
-
-    @SuppressWarnings("deprecation")
-    private NewCookie accessCookie(TokenResponseDTO token) { 
-        LOG.infof("Creating access cookie with expiration: %d", token.accessTokenExpiresIn());
-        return new NewCookie(
-            "access_token", 
-            token.accessToken(), 
-            "/", // Cambiar a / para que sea accesible desde todas las rutas
-            null, 
-            null, 
-            (int) token.accessTokenExpiresIn().longValue(), 
-            false, // Secure=false para desarrollo (cambiar a true en producción con HTTPS)
-            true
-        );
     }
 
     @SuppressWarnings("deprecation")

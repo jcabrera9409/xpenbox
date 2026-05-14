@@ -2,8 +2,10 @@ package org.xpenbox.user.service.impl;
 
 import org.jboss.logging.Logger;
 import org.mindrot.jbcrypt.BCrypt;
+import org.xpenbox.authorization.constants.BlockedDomainsConst;
 import org.xpenbox.exception.ConflictException;
 import org.xpenbox.exception.ResourceNotFoundException;
+import org.xpenbox.exception.UnprocessableContentException;
 import org.xpenbox.user.dto.UserCreateDTO;
 import org.xpenbox.user.dto.UserResponseDTO;
 import org.xpenbox.user.entity.User;
@@ -36,6 +38,11 @@ public class UserServiceImpl implements IUserService {
     public UserResponseDTO register(UserCreateDTO userRequest) {
         LOG.infof("Registering user with email: %s", userRequest.email());
 
+        if (isEmailBlocked(userRequest.email())) {
+            LOG.infof("Login attempt with blocked email domain for email: %s", userRequest.email());
+            throw new UnprocessableContentException("Email domain is not allowed");
+        }
+
         User userExists = userRepository.findByEmail(userRequest.email()).orElse(null);
         if (userExists != null) {
             LOG.warnf("User with email %s already exists", userRequest.email());
@@ -66,6 +73,11 @@ public class UserServiceImpl implements IUserService {
 
         LOG.infof("User with email %s retrieved successfully", email);
         return UserMapper.toDTO(user);
+    }
+
+    private Boolean isEmailBlocked(String email) {
+        String domain = email.substring(email.indexOf("@") + 1).toLowerCase();
+        return BlockedDomainsConst.BLOCKED_DOMAINS.contains(domain);
     }
     
 }

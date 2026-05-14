@@ -9,8 +9,6 @@ import { CategoryResponseDTO } from '../../../feature/category/model/category.re
 import { AccountCreditDTO, AccountCreditType } from '../../../shared/dto/account-credit.dto';
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
-import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
-import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
 import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtual-keyboard.ui';
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
@@ -20,11 +18,12 @@ import { CategoryService } from '../../../feature/category/service/category.serv
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { DateService } from '../../../shared/service/date.service';
 import { userState } from '../../../feature/user/service/user.state';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-quick-expense-modal',
   standalone: true,
-  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, CategoriesCarouselComponent, ModalButtonsUi],
+  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, CategoriesCarouselComponent, ModalButtonsUi, IconComponent],
   templateUrl: './quick-expense.modal.html',
   styleUrl: './quick-expense.modal.css',
 })

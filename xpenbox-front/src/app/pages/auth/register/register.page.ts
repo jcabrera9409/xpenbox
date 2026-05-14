@@ -5,10 +5,11 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../feature/auth/service/auth.service';
 import { UserRequestDTO } from '../../../feature/user/model/user.request.dto';
 import { NotificationService } from '../../../feature/common/service/notification.service';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-register-page',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, IconComponent],
   templateUrl: './register.page.html',
   styleUrl: './register.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

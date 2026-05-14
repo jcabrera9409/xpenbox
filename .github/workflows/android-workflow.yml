@@ -2,16 +2,17 @@ name: Deploy Capacitor App to Play Store
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'xpenbox-front/**'
+    branches: [dev, main]
+    paths: ['xpenbox-front/**', '.github/workflows/android-workflow.yml']
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ 
+        github.ref == 'refs/heads/main' && 'production' ||
+        'development'
+      }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,11 +62,22 @@ jobs:
           ./gradlew bundleRelease
           ls app/build/outputs/bundle/release/
 
-      - name: Upload to Play Store
+      - name: Upload to Play Store (Internal)
+        if: github.ref == 'refs/heads/dev'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.firstcode.xpenbox
           releaseFiles: xpenbox-front/android/app/build/outputs/bundle/release/app-release.aab
-          tracks: internal,alpha
+          tracks: internal
+          status: completed
+
+      - name: Upload to Play Store (Alpha)
+        if: github.ref == 'refs/heads/main'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.firstcode.xpenbox
+          releaseFiles: xpenbox-front/android/app/build/outputs/bundle/release/app-release.aab
+          tracks: alpha
           status: completed

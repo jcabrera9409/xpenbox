@@ -30,7 +30,8 @@ export function authInterceptor(
     if (accessToken) {
         req = req.clone({
             setHeaders: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${accessToken}`,
+                'ngrok-skip-browser-warning': 'true'
             },
             withCredentials: true
         });

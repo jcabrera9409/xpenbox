@@ -12,9 +12,11 @@
         <div class="bg-gradient-to-r from-[var(--xpb-primary)] to-[var(--xpb-primary-hover)] px-6 sm:px-8 py-8 sm:py-12 text-center">
           <div class="flex justify-center mb-4">
             <div>
-              <span style="font-size: 4rem !important" class="material-icons text-[var(--xpb-income)] text-5xl sm:text-6xl rounded-full xpb-bg-card shadow-lg">
-                check_circle
-              </span>
+              <app-icon-component
+                [icon]="'check_circle'"
+                [size]="'20'"
+                [class]="'text-[var(--xpb-income)] rounded-full xpb-bg-card shadow-lg'">
+              </app-icon-component>
             </div>
           </div>
           <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
@@ -31,9 +33,11 @@
           <div class="xpb-bg-sidebar rounded-xl p-5 sm:p-6 mb-6">
             <div class="flex items-start gap-4 mb-4">
               <div class="xpb-bg-card rounded-lg p-2.5 shadow-sm">
-                <span class="material-icons text-[var(--xpb-primary)] text-2xl">
-                  workspace_premium
-                </span>
+                <app-icon-component
+                  [icon]="'workspace_premium'"
+                  [size]="'5'"
+                  [class]="'text-[var(--xpb-primary)]'">
+                </app-icon-component>
               </div>
               <div class="flex-1">
                 <h2 class="text-lg sm:text-xl font-semibold xpb-text-primary mb-1">
@@ -48,25 +52,31 @@
             <!-- Benefits List -->
             <div class="space-y-3 mt-4">
               <div class="flex items-center gap-3">
-                <span class="material-icons text-[var(--xpb-income)] text-xl">
-                  done
-                </span>
+                <app-icon-component
+                  [icon]="'check'"
+                  [size]="'4'"
+                  [class]="'text-[var(--xpb-income)]'">
+                </app-icon-component>
                 <span class="xpb-text-primary text-sm sm:text-base">
                   Acceso completo a todas las funciones
                 </span>
               </div>
               <div class="flex items-center gap-3">
-                <span class="material-icons text-[var(--xpb-income)] text-xl">
-                  done
-                </span>
+                <app-icon-component
+                  [icon]="'check'"
+                  [size]="'4'"
+                  [class]="'text-[var(--xpb-income)]'">
+                </app-icon-component>
                 <span class="xpb-text-primary text-sm sm:text-base">
                   Reportes avanzados y análisis detallados
                 </span>
               </div>
               <div class="flex items-center gap-3">
-                <span class="material-icons text-[var(--xpb-income)] text-xl">
-                  done
-                </span>
+                <app-icon-component
+                  [icon]="'check'"
+                  [size]="'4'"
+                  [class]="'text-[var(--xpb-income)]'">
+                </app-icon-component>
                 <span class="xpb-text-primary text-sm sm:text-base">
                   Soporte prioritario
                 </span>
@@ -77,9 +87,11 @@
           <!-- Redirect Notice -->
           <div class="xpb-bg-main rounded-xl p-5 border-l-4 border-[var(--xpb-primary)] mb-6">
             <div class="flex items-start gap-3">
-              <span class="material-icons text-[var(--xpb-primary)] text-2xl mt-0.5">
-                info
-              </span>
+              <app-icon-component
+                [icon]="'info'"
+                [size]="'5'"
+                [class]="'text-[var(--xpb-primary)] mt-0.5'">
+              </app-icon-component>
               <div class="flex-1">
                 <p class="xpb-text-primary text-sm sm:text-base mb-1">
                   <strong>Redirigiendo automáticamente...</strong>
@@ -96,7 +108,11 @@
             (click)="redirectToHome()"
             class="w-full xpb-btn-primary rounded-xl py-3.5 font-semibold inline-flex items-center justify-center gap-2 text-base sm:text-lg shadow-lg hover:shadow-xl transition-all"
           >
-            <span class="material-icons text-2xl">home</span>
+            <app-icon-component
+              [icon]="'home'"
+              [size]="'4'"
+              [class]="'text-white'">
+            </app-icon-component>
             <span>Ir al Inicio Ahora</span>
           </button>
         </div>
@@ -110,9 +126,11 @@
         <div class="xpb-bg-sidebar px-6 sm:px-8 py-8 sm:py-12 text-center border-b xpb-border">
           <div class="flex justify-center mb-4">
             <div>
-              <span style="font-size: 4rem !important" class="material-icons text-[var(--xpb-transfer)] text-5xl sm:text-6xl rounded-full xpb-bg-card shadow-lg">
-                schedule
-              </span>
+              <app-icon-component
+                [icon]="'schedule'"
+                [size]="'20'"
+                [class]="'text-[var(--xpb-transfer)] rounded-full xpb-bg-card shadow-lg'">
+              </app-icon-component>
             </div>
           </div>
           <h1 class="text-2xl sm:text-3xl font-bold xpb-text-primary mb-2">
@@ -141,30 +159,39 @@
           <!-- Instructions Card -->
           <div class="xpb-bg-sidebar rounded-xl p-5 sm:p-6 mb-6">
             <h3 class="font-semibold xpb-text-primary mb-3 flex items-center gap-2">
-              <span class="material-icons text-xl">lightbulb</span>
+              <app-icon-component
+                [icon]="'lightbulb'"
+                [size]="'4'">
+              </app-icon-component>
               <span>¿Qué puedes hacer?</span>
             </h3>
             <div class="space-y-3">
               <div class="flex items-start gap-3">
-                <span class="material-icons xpb-text-secondary text-lg mt-0.5">
-                  radio_button_checked
-                </span>
+                <app-icon-component
+                  [icon]="'radio_button_checked'"
+                  [size]="'4'"
+                  [class]="'xpb-text-secondary mt-0.5'">
+                </app-icon-component>
                 <p class="xpb-text-secondary text-sm sm:text-base flex-1">
                   Espera unos minutos y actualiza el estado del pago
                 </p>
               </div>
               <div class="flex items-start gap-3">
-                <span class="material-icons xpb-text-secondary text-lg mt-0.5">
-                  radio_button_checked
-                </span>
+                <app-icon-component
+                  [icon]="'radio_button_checked'"
+                  [size]="'4'"
+                  [class]="'xpb-text-secondary mt-0.5'">
+                </app-icon-component>
                 <p class="xpb-text-secondary text-sm sm:text-base flex-1">
                   Regresa al inicio y verifica tu suscripción en la sección de perfil
                 </p>
               </div>
               <div class="flex items-start gap-3">
-                <span class="material-icons xpb-text-secondary text-lg mt-0.5">
-                  radio_button_checked
-                </span>
+                <app-icon-component
+                  [icon]="'radio_button_checked'"
+                  [size]="'4'"
+                  [class]="'xpb-text-secondary mt-0.5'">
+                </app-icon-component>
                 <p class="xpb-text-secondary text-sm sm:text-base flex-1">
                   El proceso puede tardar hasta 10 minutos
                 </p>
@@ -176,7 +203,11 @@
           @if (preapprovalId()) {
             <div class="xpb-bg-main rounded-lg p-4 mb-6 border xpb-border">
               <div class="flex items-center gap-2 mb-1">
-                <span class="material-icons xpb-text-secondary text-lg">receipt</span>
+                <app-icon-component
+                  [icon]="'receipt'"
+                  [size]="'4'"
+                  [class]="'xpb-text-secondary'">
+                </app-icon-component>
                 <span class="text-xs font-semibold xpb-text-secondary uppercase tracking-wide">
                   ID de Referencia
                 </span>
@@ -195,10 +226,17 @@
               class="flex-1 xpb-bg-sidebar border xpb-border rounded-xl py-3.5 font-semibold inline-flex items-center justify-center gap-2 text-base hover:xpb-bg-main transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               @if (isLoading()) {
-                <span class="material-icons text-xl animate-spin">autorenew</span>
+                <app-icon-component
+                  [icon]="'autorenew'"
+                  [size]="'4'"
+                  [class]="'animate-spin'">
+                </app-icon-component>
                 <span class="xpb-text-primary">Verificando...</span>
               } @else {
-                <span class="material-icons text-xl">refresh</span>
+                <app-icon-component
+                  [icon]="'refresh'"
+                  [size]="'4'">
+                </app-icon-component>
                 <span class="xpb-text-primary">Actualizar Estado</span>
               }
             </button>
@@ -207,7 +245,10 @@
               [disabled]="isLoading()"
               class="flex-1 xpb-btn-primary rounded-xl py-3.5 font-semibold inline-flex items-center justify-center gap-2 text-base shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span class="material-icons text-xl">home</span>
+              <app-icon-component
+                [icon]="'home'"
+                [size]="'4'">
+              </app-icon-component>
               <span>Ir al Inicio</span>
             </button>
           </div>

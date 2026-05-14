@@ -16,9 +16,7 @@
             Email
           </label>
           <div class="relative">
-            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-              email
-            </span>
+            <app-icon-component [icon]="'email'" [size]="'4'" [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'"></app-icon-component>
             <input
               type="email"
               id="email"
@@ -35,7 +33,7 @@
           </div>
           @if (hasError('email')) {
             <p class="mt-1 text-sm xpb-text-expense flex items-center gap-1">
-              <span class="material-icons text-base">error</span>
+              <app-icon-component [icon]="'error'" [size]="'4'"></app-icon-component>
               {{ getErrorMessage('email') }}
             </p>
           }
@@ -47,9 +45,7 @@
             Contraseña
           </label>
           <div class="relative">
-            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-              lock
-            </span>
+            <app-icon-component [icon]="'lock'" [size]="'4'" [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'"></app-icon-component>
             <input
               [type]="showPassword() ? 'text' : 'password'"
               id="password"
@@ -69,14 +65,12 @@
               class="absolute right-3 top-1/2 -translate-y-1/2 xpb-text-secondary hover:xpb-text-primary transition-colors"
               [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
             >
-              <span class="material-icons text-xl">
-                {{ showPassword() ? 'visibility_off' : 'visibility' }}
-              </span>
+              <app-icon-component [icon]="showPassword() ? 'visibility_off' : 'visibility'" [size]="'4'"></app-icon-component>
             </button>
           </div>
           @if (hasError('password')) {
             <p class="mt-1 text-sm xpb-text-expense flex items-center gap-1">
-              <span class="material-icons text-base">error</span>
+              <app-icon-component [icon]="'error'" [size]="'4'"></app-icon-component>
               {{ getErrorMessage('password') }}
             </p>
           }
@@ -88,9 +82,7 @@
             Moneda por defecto
           </label>
           <div class="relative">
-            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl">
-              account_balance_wallet
-            </span>
+            <app-icon-component [icon]="'account_balance_wallet'" [size]="'4'" [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'"></app-icon-component>
             <select
               id="currency"
               formControlName="defaultCurrency"
@@ -100,16 +92,14 @@
                 <option [value]="currency.value">{{ currency.label }}</option>
               }
             </select>
-            <span class="material-icons absolute right-3 top-1/2 -translate-y-1/2 xpb-text-secondary text-xl pointer-events-none">
-              expand_more
-            </span>
+            <app-icon-component [icon]="'expand_more'" [size]="'4'" [class]="'absolute right-3 top-1/2 -translate-y-1/2 xpb-text-secondary pointer-events-none'"></app-icon-component>
           </div>
         </div>
 
         <!-- Error Message -->
         @if (errorMessage()) {
           <div class="p-4 rounded-lg bg-[var(--xpb-expense)]/10 border border-[var(--xpb-expense)]/20 flex items-start gap-3">
-            <span class="material-icons xpb-text-expense text-xl mt-0.5">error</span>
+            <app-icon-component [icon]="'error'" [size]="'4'" [class]="'xpb-text-expense mt-0.5'"></app-icon-component>
             <div class="flex-1">
               <p class="text-sm xpb-text-expense font-medium">{{ errorMessage() }}</p>
             </div>
@@ -123,10 +113,10 @@
           class="w-full py-3 px-4 xpb-btn-primary font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           @if (isSubmitting()) {
-            <span class="material-icons animate-spin text-xl">refresh</span>
+            <app-icon-component [icon]="'refresh'" [size]="'4'" [class]="'animate-spin'"></app-icon-component>
             <span>Creando cuenta...</span>
           } @else {
-            <span class="material-icons text-xl">person_add</span>
+            <app-icon-component [icon]="'person_add'" [size]="'4'"></app-icon-component>
             <span>Crear cuenta</span>
           }
         </button>

@@ -15,10 +15,11 @@ import { CategoryResponseDTO } from '../../../feature/category/model/category.re
 import { CategoriesCarouselComponent } from '../../../shared/components/categories-carousel-component/categories-carousel.component';
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { userState } from '../../../feature/user/service/user.state';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-transaction-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, CategoriesCarouselComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, CategoriesCarouselComponent, IconComponent],
   templateUrl: './transaction-edition.modal.html',
   styleUrl: './transaction-edition.modal.css',
 })

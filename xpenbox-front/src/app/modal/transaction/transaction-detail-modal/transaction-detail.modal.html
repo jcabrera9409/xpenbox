@@ -6,7 +6,11 @@
             <div class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-                        <span class="material-icons text-[var(--xpb-primary)] text-2xl">receipt_long</span>
+                        <app-icon-component
+                            [icon]="'receipt_long'"
+                            [size]="'8'"
+                            [class]="'text-[var(--xpb-primary)]'">
+                        </app-icon-component>
                     </div>
                     <div>
                         <h2 class="text-xl font-semibold xpb-text-primary">Información de la transacción</h2>
@@ -18,7 +22,10 @@
                     (click)="onClose()"
                     class="xpb-text-secondary hover:xpb-text-primary hover:bg-[var(--xpb-main)] rounded-lg p-2 transition-colors"
                     aria-label="Cerrar modal">
-                    <span class="material-icons text-2xl">close</span>
+                    <app-icon-component
+                        [icon]="'close'"
+                        [size]="'5'">
+                    </app-icon-component>
                 </button>
             </div>
         </div>
@@ -37,39 +44,57 @@
                         <!-- Transaction Type -->
                         <div class="flex items-center justify-between">
                             <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                <span class="material-icons text-base">swap_horiz</span>
+                                <app-icon-component
+                                    [icon]="'view_object_track'"
+                                    [size]="'5'">
+                                </app-icon-component>
                                 Tipo
                             </span>
                             <span class="text-sm font-medium xpb-text-primary">
                                 @switch (transactionData()!.transactionType) {
                                     @case ('INCOME') {
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-income)]/10 text-[var(--xpb-income)] dark:text-[var(--xpb-income)] rounded-lg">
-                                            <span class="material-icons text-sm">trending_up</span>
+                                            <app-icon-component
+                                                [icon]="'trending_up'"
+                                                [size]="'5'">
+                                            </app-icon-component>
                                             Ingreso
                                         </span>
                                     }
                                     @case ('EXPENSE') {
                                         @if (transactionData()!.creditCard) {
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-expense)]/10 text-[var(--xpb-expense)] dark:text-[var(--xpb-expense)] rounded-lg">
-                                                <span class="material-icons text-sm">credit_card</span>
+                                                <app-icon-component
+                                                    [icon]="'credit_card'"
+                                                    [size]="'5'">
+                                                </app-icon-component>
                                                 Gasto (Tarjeta)
                                             </span>
                                         } @else {
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-expense)]/10 text-[var(--xpb-expense)] dark:text-[var(--xpb-expense)] rounded-lg">
-                                                <span class="material-icons text-sm">trending_down</span>
+                                                <app-icon-component
+                                                    [icon]="'trending_down'"
+                                                    [size]="'5'">
+                                                </app-icon-component>
                                                 Gasto (Cuenta)
                                             </span>
                                         }
                                     }
                                     @case ('TRANSFER') {
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-transfer)]/10 text-[var(--xpb-transfer)] dark:text-[var(--xpb-transfer)] rounded-lg">
-                                            <span class="material-icons text-sm">sync_alt</span>
+                                            <app-icon-component
+                                                [icon]="'swap_horiz'"
+                                                [size]="'5'">
+                                            </app-icon-component>
                                             Transferencia
                                         </span>
                                     }
                                     @case ('CREDIT_PAYMENT') {
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-credit)]/10 text-[var(--xpb-credit)] dark:text-[var(--xpb-credit)] rounded-lg">
-                                            <span class="material-icons text-sm">payment</span>
+                                            <app-icon-component
+                                                [icon]="'payment'"
+                                                [size]="'5'">
+                                            </app-icon-component>
                                             Pago de Crédito
                                         </span>
                                     }
@@ -80,7 +105,10 @@
                         <!-- Amount -->
                         <div class="flex items-center justify-between">
                             <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                <span class="material-icons text-base">attach_money</span>
+                                <app-icon-component
+                                    [icon]="'attach_money'"
+                                    [size]="'5'">
+                                </app-icon-component>
                                 Monto
                             </span>
                             <span class="text-lg font-bold xpb-text-primary">
@@ -92,7 +120,10 @@
                         @if (transactionData()!.income) {
                             <div class="flex items-center justify-between gap-5">
                                 <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <span class="material-icons text-base">savings</span>
+                                    <app-icon-component
+                                        [icon]="'savings'"
+                                        [size]="'5'">
+                                    </app-icon-component>
                                     Fuente de ingreso
                                 </span>
                                 <div class="flex items-center gap-2">
@@ -104,7 +135,10 @@
                                         (click)="onViewIncomeHistory()"
                                         class="text-[var(--xpb-primary)] hover:text-[var(--xpb-primary)]/80 transition-colors"
                                         title="Ver historial de la fuente de ingreso">
-                                        <span class="material-icons text-lg">history</span>
+                                        <app-icon-component
+                                            [icon]="'history'"
+                                            [size]="'5'">
+                                        </app-icon-component>
                                     </button>
                                 </div>
                             </div>
@@ -114,7 +148,10 @@
                         @if (transactionData()!.account) {
                             <div class="flex items-center justify-between gap-5">
                                 <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <span class="material-icons text-base">account_balance_wallet</span>
+                                    <app-icon-component
+                                        [icon]="'account_balance_wallet'"
+                                        [size]="'5'">
+                                    </app-icon-component>
                                     Cuenta
                                 </span>
                                 <div class="flex items-center gap-2">
@@ -126,7 +163,10 @@
                                         (click)="onViewAccountHistory()"
                                         class="text-[var(--xpb-primary)] hover:text-[var(--xpb-primary)]/80 transition-colors"
                                         title="Ver historial de la cuenta">
-                                        <span class="material-icons text-lg">history</span>
+                                        <app-icon-component
+                                            [icon]="'history'"
+                                            [size]="'5'">
+                                        </app-icon-component>
                                     </button>
                                 </div>
                             </div>
@@ -136,7 +176,10 @@
                         @if (transactionData()!.creditCard) {
                             <div class="flex items-center justify-between gap-5">
                                 <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <span class="material-icons text-base">credit_card</span>
+                                    <app-icon-component
+                                        [icon]="'credit_card'"
+                                        [size]="'5'">
+                                    </app-icon-component>
                                     Tarjeta
                                 </span>
                                 <div class="flex items-center gap-2">
@@ -148,7 +191,10 @@
                                         (click)="onViewCreditCardHistory()"
                                         class="text-[var(--xpb-primary)] hover:text-[var(--xpb-primary)]/80 transition-colors"
                                         title="Ver historial de la tarjeta">
-                                        <span class="material-icons text-lg">history</span>
+                                        <app-icon-component
+                                            [icon]="'history'"
+                                            [size]="'5'">
+                                        </app-icon-component>
                                     </button>
                                 </div>
                             </div>
@@ -158,7 +204,10 @@
                         @if (transactionData()!.destinationAccount) {
                             <div class="flex items-center justify-between gap-5">
                                 <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <span class="material-icons text-base">account_balance</span>
+                                    <app-icon-component
+                                        [icon]="'account_balance'"
+                                        [size]="'5'">
+                                    </app-icon-component>
                                     Cuenta destino
                                 </span>
                                 <div class="flex items-center gap-2">
@@ -170,7 +219,10 @@
                                         (click)="onViewDestinationAccountHistory()"
                                         class="text-[var(--xpb-primary)] hover:text-[var(--xpb-primary)]/80 transition-colors"
                                         title="Ver historial de la cuenta destino">
-                                        <span class="material-icons text-lg">history</span>
+                                        <app-icon-component
+                                            [icon]="'history'"
+                                            [size]="'5'">
+                                        </app-icon-component>
                                     </button>
                                 </div>
                             </div>
@@ -180,7 +232,10 @@
                         @if (transactionData()!.category) {
                             <div class="flex items-center justify-between gap-5">
                                 <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <span class="material-icons text-base">category</span>
+                                    <app-icon-component
+                                        [icon]="'category'"
+                                        [size]="'5'">
+                                    </app-icon-component>
                                     Categoría
                                 </span>
                                 <span class="text-sm font-medium xpb-text-primary truncate">
@@ -192,7 +247,10 @@
                         <!-- Date -->
                         <div class="flex items-center justify-between gap-5">
                             <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                <span class="material-icons text-base">calendar_today</span>
+                                <app-icon-component
+                                    [icon]="'calendar_today'"
+                                    [size]="'5'">
+                                </app-icon-component>
                                 Fecha
                             </span>
                             <span class="text-sm font-medium xpb-text-primary truncate">
@@ -204,7 +262,10 @@
                         @if (transactionData()!.description && transactionData()!.description.trim() !== '') {
                             <div class="flex items-center justify-between gap-5">
                                 <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <span class="material-icons text-base">description</span>
+                                    <app-icon-component
+                                        [icon]="'description'"
+                                        [size]="'5'">
+                                    </app-icon-component>
                                     Descripción
                                 </span>
                                 <span class="text-sm font-medium xpb-text-primary truncate">

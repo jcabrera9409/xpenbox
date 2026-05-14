@@ -9,6 +9,7 @@ import { SplashScreen } from "@capacitor/splash-screen";
 export class CapacitorService {
     
     private readonly REFRESH_TOKEN_KEY = 'refreshToken';
+    private readonly FCM_TOKEN_KEY = 'fcmToken';
 
     isNativePlatform(): boolean {
         return Capacitor.isNativePlatform();
@@ -21,13 +22,29 @@ export class CapacitorService {
         });
     }
 
+    async setFcmToken(value: string): Promise<void> {
+        await Preferences.set({ 
+            key: this.FCM_TOKEN_KEY, 
+            value: value 
+        });
+    }
+
     async getRefreshToken(): Promise<string | null> {
         const { value } = await Preferences.get({ key: this.REFRESH_TOKEN_KEY });
         return value;
     }
 
+    async getFcmToken(): Promise<string | null> {
+        const { value } = await Preferences.get({ key: this.FCM_TOKEN_KEY });
+        return value;
+    }
+
     async clearRefreshToken(): Promise<void> {
         await Preferences.remove({ key: this.REFRESH_TOKEN_KEY });
+    }
+
+    async clearFcmToken(): Promise<void> {
+        await Preferences.remove({ key: this.FCM_TOKEN_KEY });
     }
 
     async hideSplashScreen(): Promise<void> {

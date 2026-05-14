@@ -18,7 +18,11 @@
         </p>
     </div>
     <div class="hidden md:flex w-12 h-12 rounded-full bg-[var(--xpb-bg-sidebar)] items-center justify-center">
-        <span class="material-icons {{contentClassCard()}} text-2xl">{{ iconCard() }}</span>
+        <app-icon-component
+            [icon]="iconCard() || ''"
+            [size]="'8'"
+            [class]="contentClassCard() || ''">
+        </app-icon-component>
     </div>
     </div>
 </div>

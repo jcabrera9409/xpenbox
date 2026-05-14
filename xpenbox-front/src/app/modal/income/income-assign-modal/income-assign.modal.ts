@@ -18,11 +18,12 @@ import { RetryComponent } from '../../../shared/components/retry-component/retry
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { DateService } from '../../../shared/service/date.service';
 import { userState } from '../../../feature/user/service/user.state';
+import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 
 @Component({
   selector: 'app-income-assign-modal',
   standalone: true,
-  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, LoadingUi, RetryComponent, ModalButtonsUi],
+  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, LoadingUi, RetryComponent, ModalButtonsUi, IconComponent],
   templateUrl: './income-assign.modal.html',
   styleUrl: './income-assign.modal.css',
 })
