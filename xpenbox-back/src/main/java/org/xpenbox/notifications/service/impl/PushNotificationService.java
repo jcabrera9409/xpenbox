@@ -53,7 +53,7 @@ public class PushNotificationService implements IPushNotificationService {
                 deviceTokenService.removeDeviceToken(token);
             }
         } catch (Exception e) {
-            LOG.errorf("Error sending push notification: %s", e.getMessage());
+            LOG.error("Error sending push notification", e);
         }
     }
     
