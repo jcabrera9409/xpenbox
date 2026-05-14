@@ -1,14 +1,11 @@
 package org.xpenbox.notifications.service.impl;
 
-import java.util.List;
-
 import org.jboss.logging.Logger;
 import org.xpenbox.notifications.service.IDeviceTokenService;
 import org.xpenbox.notifications.service.IPushNotificationService;
 
 import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.AndroidNotification;
-import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
