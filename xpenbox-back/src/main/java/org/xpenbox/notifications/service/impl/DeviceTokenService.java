@@ -1,5 +1,6 @@
 package org.xpenbox.notifications.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.logging.Logger;
@@ -14,6 +15,11 @@ import org.xpenbox.notifications.service.IDeviceTokenService;
 import org.xpenbox.notifications.service.IPushNotificationService;
 import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
+
+import com.google.firebase.messaging.AndroidConfig;
+import com.google.firebase.messaging.AndroidNotification;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -99,13 +105,33 @@ public class DeviceTokenService extends GenericServiceImpl<DeviceToken, DeviceTo
         LOG.infof("Sending test notification to user: %s", userEmail);
         User user = validateAndGetUser(userEmail);
         List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByUserId(user.id);
+        List<Message> messages = new ArrayList<>();
         for (DeviceToken deviceToken : deviceTokens) {
             LOG.infof("Sending test notification to device token: %s", deviceToken.getToken());
-            pushNotificationService.sendPushNotification(
-                deviceToken.getToken(), 
-                "Test Notification: " + "Tu tarjeta vence hoy 💳" , 
-                "Realiza tu pago a tiempo para evitar intereses y cargos adicionales."
-            );
+            AndroidConfig androidConfig = AndroidConfig.builder()
+                .setPriority(AndroidConfig.Priority.HIGH)
+                .setNotification(AndroidNotification.builder()
+                    .setChannelId("xpenbox_default_channel")
+                    .setPriority(AndroidNotification.Priority.HIGH)
+                    .setDefaultSound(true)
+                    .setDefaultVibrateTimings(true)
+                    .build())
+                .build();
+                
+            Message message = Message.builder()
+                .setToken(deviceToken.getToken())
+                .setNotification(Notification.builder()
+                    .setTitle("Test Notification: " + "Tu tarjeta vence hoy 💳")
+                    .setBody("Realiza tu pago a tiempo para evitar intereses y cargos adicionales.")
+                    .build())
+                .putData("title", "Test Notification: " + "Tu tarjeta vence hoy 💳")
+                .putData("body", "Realiza tu pago a tiempo para evitar intereses y cargos adicionales.")
+                .putData("click_action", "FLUTTER_NOTIFICATION_CLICK")
+                .setAndroidConfig(androidConfig)
+                .build();
+
+            messages.add(message);
+            pushNotificationService.sendPushNotification(messages);
         }
     }
 }

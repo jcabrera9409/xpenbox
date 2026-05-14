@@ -14,6 +14,11 @@ import org.xpenbox.notifications.service.IPushNotificationService;
 import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
 
+import com.google.firebase.messaging.AndroidConfig;
+import com.google.firebase.messaging.AndroidNotification;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
+
 import io.quarkus.scheduler.Scheduled;
 import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
@@ -85,6 +90,18 @@ public class PushNotificationScheduler {
         List<CreditCard> creditCards = findActiveCreditCardsNotification(currentDay, nextDay);
         List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByStateTrueAndPlatform(Platform.ANDROID);
 
+        AndroidConfig androidConfig = AndroidConfig.builder()
+                .setPriority(AndroidConfig.Priority.HIGH)
+                .setNotification(AndroidNotification.builder()
+                    .setChannelId("xpenbox_default_channel")
+                    .setPriority(AndroidNotification.Priority.HIGH)
+                    .setDefaultSound(true)
+                    .setDefaultVibrateTimings(true)
+                    .build())
+                .build();
+
+        List<Message> messages = new java.util.ArrayList<>();
+
         for (CreditCard creditCard : creditCards) {
             LOG.debugf("Active credit card: %s (ID: %d)", creditCard.getName(), creditCard.id);
             DeviceToken deviceToken = deviceTokens.stream()
@@ -94,28 +111,50 @@ public class PushNotificationScheduler {
             if (deviceToken != null) {
                 String creditCardName = creditCard.getName();
                 if (creditCard.getPaymentDay() == currentDay) {
-                    pushNotificationService.sendPushNotification(
-                        deviceToken.getToken(),
-                        "Tu " + creditCardName + " vence hoy 💳",
-                        "Realiza tu pago a tiempo para evitar intereses y cargos adicionales."
-                    );
+                    Message message = Message.builder()
+                        .setToken(deviceToken.getToken())
+                        .setNotification(Notification.builder()
+                            .setTitle("Tu " + creditCardName + " vence hoy 💳")
+                            .setBody("Realiza tu pago a tiempo para evitar intereses y cargos adicionales.")
+                            .build())
+                        .putData("title", "Tu " + creditCardName + " vence hoy 💳")
+                        .putData("body", "Realiza tu pago a tiempo para evitar intereses y cargos adicionales.")
+                        .putData("click_action", "FLUTTER_NOTIFICATION_CLICK")
+                        .setAndroidConfig(androidConfig)
+                        .build();
+                    messages.add(message);
                 } else if(creditCard.getPaymentDay() == nextDay) {
-                    pushNotificationService.sendPushNotification(
-                        deviceToken.getToken(),
-                        "Tu " + creditCardName + " vence mañana 💳",
-                        "Recuerda pagar tu " + creditCardName + " antes de la fecha límite para evitar intereses."
-                    );
+                    Message message = Message.builder()
+                        .setToken(deviceToken.getToken())
+                        .setNotification(Notification.builder()
+                            .setTitle("Tu " + creditCardName + " vence mañana 💳")
+                            .setBody("Recuerda pagar tu " + creditCardName + " antes de la fecha límite para evitar intereses.")
+                            .build())
+                        .putData("title", "Tu " + creditCardName + " vence mañana 💳")
+                        .putData("body", "Recuerda pagar tu " + creditCardName + " antes de la fecha límite para evitar intereses.")
+                        .putData("click_action", "FLUTTER_NOTIFICATION_CLICK")
+                        .setAndroidConfig(androidConfig)
+                        .build();
+                    messages.add(message);
                 } else if(creditCard.getBillingDay() == nextDay) {
-                    pushNotificationService.sendPushNotification(
-                        deviceToken.getToken(),
-                        "Tu " + creditCardName + " cierra mañana 📅",
-                        "Consulta tus consumos y organiza tus próximos pagos."
-                    );
+                    Message message = Message.builder()
+                        .setToken(deviceToken.getToken())
+                        .setNotification(Notification.builder()
+                            .setTitle("Tu " + creditCardName + " cierra mañana 📅")
+                            .setBody("Consulta tus consumos y organiza tus próximos pagos.")
+                            .build())
+                        .putData("title", "Tu " + creditCardName + " cierra mañana 📅")
+                        .putData("body", "Consulta tus consumos y organiza tus próximos pagos.")
+                        .putData("click_action", "FLUTTER_NOTIFICATION_CLICK")
+                        .setAndroidConfig(androidConfig)
+                        .build();
+                    messages.add(message);
                 }
             } else {
                 LOG.debugf("No active Android device token found for user: %s (ID: %d)", creditCard.getUser().getEmail(), creditCard.getUser().id);
             }
         }
+        pushNotificationService.sendPushNotification(messages);
     }
 
     private List<User> findUsersWithoutTransactions() {
