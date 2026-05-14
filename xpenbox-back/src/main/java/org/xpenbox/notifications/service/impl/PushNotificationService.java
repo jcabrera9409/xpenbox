@@ -4,6 +4,8 @@ import org.jboss.logging.Logger;
 import org.xpenbox.notifications.service.IDeviceTokenService;
 import org.xpenbox.notifications.service.IPushNotificationService;
 
+import com.google.firebase.messaging.AndroidConfig;
+import com.google.firebase.messaging.AndroidNotification;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -34,12 +36,25 @@ public class PushNotificationService implements IPushNotificationService {
             LOG.debugf("Sending push notification to token: %s", cleanToken);
             LOG.debugf("Notification title: %s", title);
             LOG.debugf("Notification body: %s", body);
+            
+            // Configure Android-specific options with HIGH priority for Samsung devices
+            AndroidConfig androidConfig = AndroidConfig.builder()
+                .setPriority(AndroidConfig.Priority.HIGH)
+                .setNotification(AndroidNotification.builder()
+                    .setChannelId("xpenbox_default_channel")
+                    .setPriority(AndroidNotification.Priority.HIGH)
+                    .setDefaultSound(true)
+                    .setDefaultVibrateTimings(true)
+                    .build())
+                .build();
+            
             Message message = Message.builder()
                 .setToken(cleanToken)
                 .setNotification(Notification.builder()
                     .setTitle(title)
                     .setBody(body)
                     .build())
+                .setAndroidConfig(androidConfig)
                 .build();
 
             FirebaseMessaging.getInstance().send(message);
