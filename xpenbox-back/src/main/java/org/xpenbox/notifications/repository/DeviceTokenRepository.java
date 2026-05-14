@@ -43,4 +43,14 @@ public class DeviceTokenRepository extends GenericRepository<DeviceToken> {
         LOG.infof("Deleting device token with token: %s", token);
         delete("token", token);
     }
+
+    /**
+     * Finds all device tokens for a specific user ID.
+     * @param userId The ID of the user to find device tokens for. The method will return a list of device tokens associated with the specified user ID.
+     * @return A list of DeviceToken entities associated with the specified user ID. If no device tokens are found for the user ID, an empty list will be returned.
+     */
+    public List<DeviceToken> findAllByUserId(Long userId) {
+        LOG.infof("Finding all device tokens for user id: %s", userId);
+        return find("user.id", userId).list();
+    }
 }
