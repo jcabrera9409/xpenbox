@@ -11,6 +11,7 @@ import org.xpenbox.notifications.dto.DeviceTokenCreateDTO;
 import org.xpenbox.notifications.entity.DeviceToken;
 import org.xpenbox.notifications.mapper.DeviceTokenMapper;
 import org.xpenbox.notifications.repository.DeviceTokenRepository;
+import org.xpenbox.notifications.scheduler.PushNotificationScheduler;
 import org.xpenbox.notifications.service.IDeviceTokenService;
 import org.xpenbox.notifications.service.IPushNotificationService;
 import org.xpenbox.user.entity.User;
@@ -35,16 +36,22 @@ public class DeviceTokenService extends GenericServiceImpl<DeviceToken, DeviceTo
     private final DeviceTokenMapper deviceTokenMapper;
     private final IPushNotificationService pushNotificationService;
 
+    private final PushNotificationScheduler pushNotificationScheduler;
+
     public DeviceTokenService(
         UserRepository userRepository,
         DeviceTokenRepository deviceTokenRepository,
         DeviceTokenMapper deviceTokenMapper,
-        IPushNotificationService pushNotificationService
+        IPushNotificationService pushNotificationService,
+
+        PushNotificationScheduler pushNotificationScheduler
     ) {
         this.userRepository = userRepository;
         this.deviceTokenRepository = deviceTokenRepository;
         this.deviceTokenMapper = deviceTokenMapper;
         this.pushNotificationService = pushNotificationService;
+
+        this.pushNotificationScheduler = pushNotificationScheduler;
     }
 
     @Override
@@ -131,7 +138,9 @@ public class DeviceTokenService extends GenericServiceImpl<DeviceToken, DeviceTo
                 .build();
 
             messages.add(message);
-            pushNotificationService.sendPushNotification(messages);
         }
+        pushNotificationService.sendPushNotification(messages);
+
+        pushNotificationScheduler.schedulePushNotificationCreditCardExpirationTask();
     }
 }

@@ -81,7 +81,7 @@ public class PushNotificationScheduler {
 
     @Scheduled(cron = "{firebase.push.notification.creditcard.expiration.cron}")
     @Transactional
-    void schedulePushNotificationCreditCardExpirationTask() {
+    public void schedulePushNotificationCreditCardExpirationTask() {
         LOG.info("Running scheduled push notification credit card expiration task");
         LocalDateTime now = DateFunctions.currentLocalDateTime();
         byte currentDay = (byte) now.getDayOfMonth();
