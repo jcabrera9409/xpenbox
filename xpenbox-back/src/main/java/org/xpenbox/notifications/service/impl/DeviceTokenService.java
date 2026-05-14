@@ -103,8 +103,8 @@ public class DeviceTokenService extends GenericServiceImpl<DeviceToken, DeviceTo
             LOG.infof("Sending test notification to device token: %s", deviceToken.getToken());
             pushNotificationService.sendPushNotification(
                 deviceToken.getToken(), 
-                "Test Notification", 
-                "This is a test notification from Xpenbox."
+                "Test Notification: " + "Tu tarjeta vence hoy 💳" , 
+                "Realiza tu pago a tiempo para evitar intereses y cargos adicionales."
             );
         }
     }

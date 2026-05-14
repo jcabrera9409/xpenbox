@@ -1,0 +1,21 @@
+meta {
+  name: TestNotification
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{apiUrl}}/api/rest/v1/device/test
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJ4cGVuYm94LWJhY2siLCJzdWIiOiJqY2FicmVyYTk0MDlAZ21haWwuY29tIiwiZXhwIjoxNzc4Nzg4MDc0LCJpYXQiOjE3Nzg3ODcxNzQsImp0aSI6ImVmODU5MjdkLTdhZmQtNDBmYS04ODgzLTEwMDMwMzdkNjNmZCJ9.bAeFlh3dSqfl0ahaIgP4z5oPh6tdc1I7m_sBNZwbtwWRoGkMYh1OhcP0-eoF-LCmonMszZbtw8gde_wAdGKTvaPE_yEAONYx5eXMHR_kh8yHqaglMX2AmpEQrsZdfKFnf8kaFy_7PALfZMlfQXPJ8X1beM1WJCdWWMG_ec2Rtc4DA3j3V0EITlH9VBrerZR9TBFX41l_MrSKvKTNAxx0C0xVEsRsjmhs-8w5kc4tsJchgXKqOi6WpBEOcgVO7O2jO-zQMATusYSUBcQJ3woEuNI0KthC5cGxGFZ6hHmizAKeJlu6g241w_RTDbLzUexnm6HsQcDupxncHLMfRt4X6Q
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+​
