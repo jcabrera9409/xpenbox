@@ -110,24 +110,24 @@
         </div>
       } @else {
         <div class="col-span-3 rounded-xl px-3 py-3 lg:px-3 lg:py-6 shadow-md border xpb-border bg-[var(--xpb-neutral)]/20">
-          <div class="flex items-center justify-between mb-2 lg:mb-4">
-            <div class="flex items-center gap-2">
-              <div class="rounded-lg p-1 lg:p-2">
+          <div class="flex items-center justify-between gap-2 mb-2 lg:mb-4">
+            <div class="flex items-center gap-1.5 min-w-0 flex-shrink">
+              <div class="rounded-lg p-1 lg:p-2 flex-shrink-0">
                 <app-icon-component [icon]="'account_balance'" [size]="'5'" [class]="'text-black/60'"></app-icon-component>
               </div>
-              <p class="text-xs xpb-text-secondary uppercase tracking-wide whitespace-nowrap">Balance General</p>
+              <p class="text-[0.65rem] md:text-xs xpb-text-secondary uppercase tracking-wide truncate">Balance General</p>
             </div>
             @if (isCurrentMonthSelected) {
               <div
                 [class]="percentageChangeBalance() >= 0 ? 'text-[var(--xpb-income)]' : 'text-[var(--xpb-expense)]'"  
-                class="flex items-center gap-1 text-[0.85rem] lg:text-sm font-medium relative">
+                class="flex items-center gap-0.5 md:gap-1 text-[0.7rem] md:text-[0.85rem] lg:text-sm font-medium relative flex-shrink-0">
                   <app-icon-component 
                     [icon]="percentageChangeBalance() >= 0 ? 'arrow_upward' : 'arrow_downward'" 
                     [size]="'4'">
                   </app-icon-component>
                   <span
-                    class="font-medium">
-                    {{ percentageChangeBalance() >= 0 ? '+' : '-' }}{{ percentageChangeBalanceAbs() | number:'1.2-2' }}%
+                    class="font-medium whitespace-nowrap">
+                    {{ percentageChangeBalance() >= 0 ? '+' : '-' }}{{ percentageChangeBalanceAbs() | number:'1.0-0' }}%
                   </span>
                   <span 
                     (click)="this.showBalanceTooltip.set(!this.showBalanceTooltip())" 
@@ -282,9 +282,9 @@
 
             <div class="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 items-center">
               <!-- Gráfico de dona -->
-              <div class="flex justify-center items-center">
-                <div class="relative" style="width: 150px; height: 150px;">
-                  <canvas id="expenseChart" class="lg:!w-[200px] lg:!h-[200px]" width="150" height="150"></canvas>
+              <div class="flex justify-center items-center px-2">
+                <div class="relative w-full max-w-[150px] lg:max-w-[200px] aspect-square">
+                  <canvas id="expenseChart"></canvas>
                 </div>
               </div>
 
@@ -293,7 +293,7 @@
                 @for (category of categories(); track category.resourceCode) {
                   <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2 flex-1 min-w-0">
-                      <div class="w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0" [style.background-color]="category.color"></div>
+                      <div class="w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0" [style.background-color]="category.color" [style.border]="'0.1px solid black'"></div>
                       <span class="text-xs md:text-sm xpb-text-primary truncate">{{ category.name }}</span>
                     </div>
                     <div class="text-right flex-shrink-0">
@@ -320,9 +320,9 @@
 
             <div class="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 items-center">
               <!-- Gráfico de dona -->
-              <div class="flex justify-center items-center">
-                <div class="relative" style="width: 150px; height: 150px;">
-                  <canvas id="creditCardExpenseChart" class="lg:!w-[200px] lg:!h-[200px]" width="150" height="150"></canvas>
+              <div class="flex justify-center items-center px-2">
+                <div class="relative w-full max-w-[150px] lg:max-w-[200px] aspect-square">
+                  <canvas id="creditCardExpenseChart"></canvas>
                 </div>
               </div>
 
@@ -331,7 +331,7 @@
                 @for (category of categoriesCard(); track category.resourceCode) {
                   <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2 flex-1 min-w-0">
-                      <div class="w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0" [style.background-color]="category.color"></div>
+                      <div class="w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0" [style.background-color]="category.color" [style.border]="'0.1px solid black'"></div>
                       <span class="text-xs md:text-sm xpb-text-primary truncate">{{ category.name }}</span>
                     </div>
                     <div class="text-right flex-shrink-0">
@@ -445,7 +445,8 @@
                     @if (transaction.category) {
                       <span class="xpb-text-secondary w-2.5 h-2.5 rounded-full"
                         [ngStyle]="{
-                                  'background-color': 'color-mix(in srgb, ' + transaction.category.color + ' 100%, transparent)'
+                                  'background-color': 'color-mix(in srgb, ' + transaction.category.color + ' 100%, transparent)',
+                                  'border': '0.1px solid black'
                                 }">
                       </span>
                     } @else {

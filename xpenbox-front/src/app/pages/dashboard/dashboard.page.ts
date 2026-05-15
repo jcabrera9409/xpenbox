@@ -346,10 +346,14 @@ export class DashboardPage implements OnInit, AfterViewInit {
         options: {
           responsive: true,
           maintainAspectRatio: true,
+          aspectRatio: 1,
           cutout: '70%',
           animation: {
             duration: 500,
             easing: 'easeInOutQuart'
+          },
+          layout: {
+            padding: 0
           },
           plugins: {
             legend: {
