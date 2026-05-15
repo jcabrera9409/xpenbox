@@ -339,7 +339,8 @@ export class DashboardPage implements OnInit, AfterViewInit {
           datasets: [{
             data: categories.map(c => c.amount),
             backgroundColor: categories.map(c => c.color),
-            borderWidth: 0,
+            borderColor: '#000000', // Color de borde
+            borderWidth: 0.2,
             borderRadius: 4,
           }]
         },

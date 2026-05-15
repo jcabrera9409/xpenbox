@@ -78,6 +78,7 @@ public class DashboardServiceImpl implements IDashboardService {
         this.uncategorizedCategory.id = 0L; // Set a default ID for the uncategorized category
         this.uncategorizedCategory.setName("Sin categoría");
         this.uncategorizedCategory.setResourceCode("UNCATEGORIZED");
+        this.uncategorizedCategory.setColor("transparent"); // Set a default color for the uncategorized category (can be customized as needed)
     }
 
     @Override
