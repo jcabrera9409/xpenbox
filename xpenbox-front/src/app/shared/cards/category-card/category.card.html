@@ -19,7 +19,7 @@
         @if (hasBudget) {
             <div class="flex-shrink-0">
                 <span class="xpb-text-primary text-xs sm:text-sm font-semibold whitespace-nowrap">
-                    {{ currency }} {{ budgetLimit | number:'1.0-0' }}
+                    {{ currency }} {{ budgetLimit | number:'1.2-2' }}
                 </span>
             </div>
         }
@@ -86,7 +86,7 @@
             <div class="flex items-center gap-1 min-w-0">
                 <!-- Mobile: Solo monto -->
                 <span class="xpb-text-primary font-semibold sm:hidden whitespace-nowrap">
-                    {{ currency }} {{ availableBudget | number:'1.0-0' }} rest.
+                    {{ currency }} {{ availableBudget | number:'1.2-2' }} rest.
                 </span>
                 <!-- Desktop: Completo -->
                 <span class="hidden sm:inline xpb-text-secondary">Restante:</span>
