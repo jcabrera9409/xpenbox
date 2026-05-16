@@ -29,6 +29,8 @@ export class CategoryEditionModal implements OnInit {
 
   formCategory!: FormGroup;
 
+  hasBudget = signal<boolean>(false);
+
   constructor(
     private fb: FormBuilder,
     private categoryService: CategoryService,
@@ -89,6 +91,18 @@ export class CategoryEditionModal implements OnInit {
     this.close.emit();
   }
 
+  onChangeHasBudget(): void {
+    this.hasBudget.set(!this.hasBudget());
+
+    if (!this.hasBudget()) {
+      this.formCategory.get('budget')?.clearValidators();
+      this.formCategory.get('budget')?.updateValueAndValidity();
+    } else {
+      this.formCategory.get('budget')?.setValidators([Validators.required, Validators.min(1)]);
+      this.formCategory.get('budget')?.updateValueAndValidity();
+    }
+  }
+
   private showUpgradeProModal(): void {
     upgradeProModalState.title.set('Alcanzaste el límite de categorías');
     upgradeProModalState.htmlMessage.set('Tu plan Free permite hasta 3 categorías. ' +
@@ -100,8 +114,10 @@ export class CategoryEditionModal implements OnInit {
     const formValues = this.formCategory.value;
     const categoryName = formValues['name'];
     const categoryColor = formValues['color'];
+    const categoryHasBudget = this.hasBudget();
+    const categoryBudget = this.hasBudget() ? formValues['budget'] : 0;
 
-    return new CategoryRequestDTO(categoryName, categoryColor);
+    return new CategoryRequestDTO(categoryName, categoryColor, categoryHasBudget, categoryBudget);
   }
 
   retryLoadCategoryData(): void {
@@ -112,6 +128,7 @@ export class CategoryEditionModal implements OnInit {
     this.formCategory = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]],
       color: [this.generateRandomHexColor(), [Validators.required, Validators.pattern(/^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$/)]],
+      budget: [0]
     });
   }
 
@@ -124,9 +141,11 @@ export class CategoryEditionModal implements OnInit {
       next: (response: ApiResponseDTO<CategoryResponseDTO>) => {
         if (response.success && response.data) {
           this.categoryData.set(response.data);
+          this.hasBudget.set(response.data.hasBudget);
           this.formCategory.patchValue({
             name: response.data.name,
-            color: response.data.color
+            color: response.data.color,
+            budget: response.data.budget
           });
         } else {
           this.categoryState.errorGetCategory.set(response.message);

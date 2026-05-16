@@ -1,6 +1,12 @@
 package org.xpenbox.category.service.impl;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
 import org.jboss.logging.Logger;
+import org.xpenbox.category.dto.CategoryBudgetUsageDTO;
 import org.xpenbox.category.dto.CategoryCreateDTO;
 import org.xpenbox.category.dto.CategoryResponseDTO;
 import org.xpenbox.category.dto.CategoryUpdateDTO;
@@ -9,9 +15,13 @@ import org.xpenbox.category.mapper.CategoryMapper;
 import org.xpenbox.category.repository.CategoryRepository;
 import org.xpenbox.category.service.ICategoryService;
 import org.xpenbox.common.service.impl.GenericServiceImpl;
+import org.xpenbox.dashboard.dto.PeriodFilter;
 import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
 import org.xpenbox.enforcement.service.IPlanSnapshotService;
 import org.xpenbox.enforcement.service.IPlanValidatorService;
+import org.xpenbox.transaction.entity.Transaction;
+import org.xpenbox.transaction.repository.TransactionRepository;
+import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -28,19 +38,22 @@ public class CategoryServiceImpl extends GenericServiceImpl<Category, CategoryCr
     private final CategoryMapper categoryMapper;
     private final IPlanValidatorService planValidatorService;
     private final IPlanSnapshotService planSnapshotService;
+    private final TransactionRepository transactionRepository;
 
     public CategoryServiceImpl(
         UserRepository userRepository,
         CategoryRepository categoryRepository,
         CategoryMapper categoryMapper,
         IPlanValidatorService planValidatorService,
-        IPlanSnapshotService planSnapshotService
+        IPlanSnapshotService planSnapshotService,
+        TransactionRepository transactionRepository
     ) {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.categoryMapper =  categoryMapper;
         this.planValidatorService = planValidatorService;
         this.planSnapshotService = planSnapshotService;
+        this.transactionRepository = transactionRepository;
     }
 
     @Override
@@ -72,5 +85,41 @@ public class CategoryServiceImpl extends GenericServiceImpl<Category, CategoryCr
 
         return super.create(categoryCreateDTO, userEmail);
     }
-    
+
+    @Override
+    public List<CategoryBudgetUsageDTO> getCategoryBudgetUsageForUser(String userEmail) {
+        LOG.infof("Fetching category budget usage for user email: %s", userEmail);
+        User user = validateAndGetUser(userEmail);
+
+        Map<String, LocalDateTime> dateRange = PeriodFilter.getDateRange(PeriodFilter.CURRENT_MONTH);
+        List<Transaction> transactions = transactionRepository.findByUserIdAndPeriodRange(user.id, dateRange.get("from"), dateRange.get("to"));
+
+        List<CategoryResponseDTO> categories = extractCategoriesFromTransactions(transactions);
+
+        return categories.stream()
+            .map(category -> mapToCategoryBudgetUsageDTO(category, transactions))
+            .toList();
+
+    }
+
+    private List<CategoryResponseDTO> extractCategoriesFromTransactions(List<Transaction> transactions) {
+        return transactions.stream()
+            .filter(tx -> tx.getCategory() != null)
+            .map(tx -> categoryMapper.toDTO(tx.getCategory()))
+            .distinct()
+            .toList();
+    }
+
+    private CategoryBudgetUsageDTO mapToCategoryBudgetUsageDTO(CategoryResponseDTO category, List<Transaction> transactions) {
+        int usageCount = (int) transactions.stream()
+            .filter(tx -> tx.getCategory() != null && tx.getCategory().getResourceCode().equals(category.resourceCode()))
+            .count();
+
+        BigDecimal budgetUsed = transactions.stream()
+            .filter(tx -> tx.getCategory() != null && tx.getCategory().getResourceCode().equals(category.resourceCode()))
+            .map(Transaction::getAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return new CategoryBudgetUsageDTO(category, usageCount, budgetUsed);
+    }
 }

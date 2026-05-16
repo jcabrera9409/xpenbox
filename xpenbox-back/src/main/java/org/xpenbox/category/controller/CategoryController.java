@@ -1,6 +1,9 @@
 package org.xpenbox.category.controller;
 
+import java.util.List;
+
 import org.jboss.logging.Logger;
+import org.xpenbox.category.dto.CategoryBudgetUsageDTO;
 import org.xpenbox.category.dto.CategoryCreateDTO;
 import org.xpenbox.category.dto.CategoryResponseDTO;
 import org.xpenbox.category.dto.CategoryUpdateDTO;
@@ -121,4 +124,24 @@ public class CategoryController {
             APIResponseDTO.success("Category retrieved successfully", categoryResponse, Response.Status.OK.getStatusCode())
         ).build();
     }
+
+    /**
+     * Get category budget usage information for the authenticated user
+     * @param securityContext Security context of the authenticated user
+     * @return Response containing the list of category budget usage information
+     */
+    @GET
+    @Path("/budget-usage")
+    public Response getCategoryBudgetUsageForUser(@Context SecurityContext securityContext) {
+        String userEmail = securityContext.getUserPrincipal().getName();
+        LOG.infof("Get category budget usage request received for user: %s", userEmail);
+
+        List<CategoryBudgetUsageDTO> categoryBudgetUsageList = categoryService.getCategoryBudgetUsageForUser(userEmail);
+        LOG.infof("Category budget usage retrieved successfully for user: %s", userEmail);
+
+        return Response.status(Response.Status.OK).entity(
+            APIResponseDTO.success("Category budget usage retrieved successfully", categoryBudgetUsageList, Response.Status.OK.getStatusCode())
+        ).build();
+    }
+    
 }

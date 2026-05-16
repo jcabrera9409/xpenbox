@@ -94,7 +94,7 @@ public class DashboardServiceImpl implements IDashboardService {
         .orElseThrow(() -> {
             LOG.errorf("User not found with email: %s", userEmail);
             return new ResourceNotFoundException("User not found with email: " + userEmail);
-            });
+        });
 
         Map<String, LocalDateTime> dateRange = PeriodFilter.getDateRange(periodFilter);
         List<AccountResponseDTO> accounts = accountService.getAll(userEmail);

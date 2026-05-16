@@ -1,65 +1,136 @@
 <div class="xpb-bg-card rounded-lg border xpb-border p-4 hover:shadow-md transition-shadow">
-    <!-- Category Header -->
-    <div class="flex items-start justify-between mb-3">
-        <div class="flex items-center gap-3 flex-1 min-w-0">
-            <!-- Color Indicator -->
-            <div 
-            class="w-10 h-10 rounded-lg flex-shrink-0 shadow-sm border xpb-border"
-            [style.background-color]="categoryCardColor()">
-            </div>
-            <!-- Category Name -->
-            <div class="flex-1 min-w-0">
-            <h3 class="font-semibold xpb-text-primary text-base truncate">
-                {{ categoryCardName() }}
+    
+    <!-- Fila 1: Color + Nombre + Presupuesto -->
+    <div class="flex items-center gap-2 sm:gap-3 mb-3">
+        <!-- Color Indicator (Circular) -->
+        <div 
+            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex-shrink-0 shadow-sm border xpb-border"
+            [style.background-color]="category()?.color">
+        </div>
+        
+        <!-- Category Name -->
+        <div class="flex-1 min-w-0">
+            <h3 class="font-semibold xpb-text-primary text-sm sm:text-base truncate">
+                {{ name }}
             </h3>
-            <p class="xpb-text-secondary text-xs mt-1">
-                {{ categoryTotalUses() || 0 }} transaccion{{ (categoryTotalUses() || 0) === 1 ? '' : 'es' }}
-            </p>
         </div>
-        </div>
+        
+        <!-- Budget (si está configurado) -->
+        @if (hasBudget) {
+            <div class="flex-shrink-0">
+                <span class="xpb-text-primary text-xs sm:text-sm font-semibold whitespace-nowrap">
+                    {{ currency }} {{ budgetLimit | number:'1.0-0' }}
+                </span>
+            </div>
+        }
+    </div>
 
+    <!-- Fila 2: Estado + Cantidad de uso -->
+    <div class="flex items-center justify-between gap-2 mb-3">
         <!-- State Badge -->
         <div class="flex-shrink-0">
-            @if (categoryCardState()) {
-            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--xpb-income)]/10 text-[var(--xpb-income)] text-xs font-medium">
-                <app-icon-component [icon]="'check_circle'" [size]="'4'"></app-icon-component>
-                Activa
-            </span>
+            @if (state) {
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--xpb-income)]/10 text-[var(--xpb-income)] text-xs font-medium">
+                    <app-icon-component [icon]="'check_circle'" [size]="'4'"></app-icon-component>
+                    <span class="sm:inline">Activa</span>
+                </span>
             } @else {
-            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md xpb-bg-main xpb-text-secondary text-xs font-medium">
-                <app-icon-component [icon]="'cancel'" [size]="'4'"></app-icon-component>
-                Inactiva
-            </span>
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md xpb-bg-main xpb-text-secondary text-xs font-medium">
+                    <app-icon-component [icon]="'cancel'" [size]="'4'"></app-icon-component>
+                    <span class="sm:inline">Inactiva</span>
+                </span>
             }
+        </div>
+        
+        <!-- Usage Count -->
+        <div class="flex-shrink-0">
+            <p class="xpb-text-secondary text-xs whitespace-nowrap">
+                <span class="hidden sm:inline">{{ usageCount }} transaccion{{ usageCount === 1 ? '' : 'es' }}</span>
+                <span class="inline sm:hidden">{{ usageCount }} trx</span>
+            </p>
         </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="flex gap-2 mt-4">
-    <button 
-        (click)="onEditCategory()"
-        class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 xpb-bg-main hover:bg-[var(--xpb-border)] xpb-text-primary rounded-lg font-medium transition-colors text-sm"
-        type="button"
-        [attr.aria-label]="'Editar categoría ' + categoryCardName()">
-        <app-icon-component [icon]="'edit'" [size]="'4'"></app-icon-component>
-        <span>Editar</span>
-    </button>
-    <button 
-        (click)="onDisableCategory()"
-        class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg font-medium transition-colors text-sm"
-        [class]="categoryCardState()
-        ? 'bg-[var(--xpb-expense)]/10 hover:bg-[var(--xpb-expense)]/20 text-[var(--xpb-expense)]' 
-        : 'bg-[var(--xpb-income)]/10 hover:bg-[var(--xpb-income)]/20 text-[var(--xpb-income)]'"
-        type="button"
-        [attr.aria-label]="(categoryCardState() ? 'Desactivar' : 'Activar') + ' categoría ' + categoryCardName()">
-        <app-icon-component [icon]="categoryCardState() ? 'block' : 'check_circle'" [size]="'4'"></app-icon-component>
-        <span>
-        @if (categoryCardState()) {
-            Desactivar
+    <!-- Fila 3: Barra de progreso -->
+    <div class="mb-3">
+        @if (hasBudget) {
+            <div class="h-2 w-full xpb-bg-main rounded-full overflow-hidden">
+                <div 
+                    class="h-full" 
+                    [style.background-color]="barColor"
+                    [style.width.%]="percentajeBudgetUsed">
+                </div>
+            </div>
         } @else {
-            Activar
+            <div class="h-2 w-full xpb-bg-main rounded-full"></div>
         }
-        </span>
-    </button>
+    </div>
+
+    <!-- Fila 4: Monto gastado + % (izq) | Presupuesto disponible (der) -->
+    <div class="flex items-center justify-between gap-2 mb-3 text-xs min-h-[20px]">
+        @if (hasBudget) {
+            <!-- Monto gastado + porcentaje -->
+            <div class="flex items-center gap-1 min-w-0 truncate">
+                <!-- Mobile: Solo porcentaje -->
+                <span class="xpb-text-primary font-semibold sm:hidden whitespace-nowrap">
+                    Usado: {{ percentajeBudgetUsed | number:'1.0-1' }}%
+                </span>
+                <!-- Desktop: Completo -->
+                <span class="hidden sm:inline xpb-text-secondary">Usado:</span>
+                <span class="hidden sm:inline xpb-text-primary font-semibold whitespace-nowrap">
+                    {{ currency }} {{ budgetUsed | number:'1.2-2' }} ({{ percentajeBudgetUsed | number:'1.0-1' }}%)
+                </span>
+            </div>
+            
+            <!-- Presupuesto disponible -->
+            <div class="flex items-center gap-1 min-w-0">
+                <!-- Mobile: Solo monto -->
+                <span class="xpb-text-primary font-semibold sm:hidden whitespace-nowrap">
+                    {{ currency }} {{ availableBudget | number:'1.0-0' }} disp.
+                </span>
+                <!-- Desktop: Completo -->
+                <span class="hidden sm:inline xpb-text-secondary">Disponible:</span>
+                <span class="hidden sm:inline xpb-text-primary font-semibold whitespace-nowrap">
+                    {{ currency }} {{ availableBudget | number:'1.2-2' }}
+                </span>
+            </div>
+        } @else {
+            <!-- Sin presupuesto configurado -->
+            <div class="flex-1 text-center">
+                <span class="xpb-text-secondary">
+                    <span class="hidden sm:inline">Presupuesto: No configurado</span>
+                    <span class="inline sm:hidden">Sin presupuesto</span>
+                </span>
+            </div>
+        }
+    </div>
+
+    <!-- Fila 5: Botones de acción -->
+    <div class="flex gap-2">
+        <button 
+            (click)="onEditCategory()"
+            class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 xpb-bg-main hover:bg-[var(--xpb-border)] xpb-text-primary rounded-lg font-medium transition-colors text-sm"
+            type="button"
+            [attr.aria-label]="'Editar categoría ' + name">
+            <app-icon-component [icon]="'edit'" [size]="'4'"></app-icon-component>
+            <span>Editar</span>
+        </button>
+        <button 
+            (click)="onDisableCategory()"
+            class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg font-medium transition-colors text-sm"
+            [class]="state
+                ? 'bg-[var(--xpb-expense)]/10 hover:bg-[var(--xpb-expense)]/20 text-[var(--xpb-expense)]' 
+                : 'bg-[var(--xpb-income)]/10 hover:bg-[var(--xpb-income)]/20 text-[var(--xpb-income)]'"
+            type="button"
+            [attr.aria-label]="(state ? 'Desactivar' : 'Activar') + ' categoría ' + name">
+            <app-icon-component [icon]="state ? 'block' : 'check_circle'" [size]="'4'"></app-icon-component>
+            <span>
+                @if (state) {
+                    Desactivar
+                } @else {
+                    Activar
+                }
+            </span>
+        </button>
     </div>
 </div>

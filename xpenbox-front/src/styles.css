@@ -39,6 +39,10 @@
   --xpb-transfer: #4A7C95;
   --xpb-credit: #8B5CF6;
 
+  --xpb-success: #588157;
+  --xpb-warning: #e69f2c;
+  --xpb-error: #BC4749;
+
   /* Borders & Elevation */
   --xpb-border: #DEE2E6;
   --xpb-shadow: rgba(0, 0, 0, 0.05);

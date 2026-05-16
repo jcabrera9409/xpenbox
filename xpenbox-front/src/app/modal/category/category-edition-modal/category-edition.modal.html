@@ -150,6 +150,72 @@
                         }
                     </div>
 
+                    <!-- Checkbox Tiene Presupuesto -->
+                    <div class="relative mt-4 mb-3">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative">
+                                <input
+                                    type="checkbox"
+                                    [checked]="hasBudget()"
+                                    (change)="onChangeHasBudget()"
+                                    class="peer sr-only" />
+                                <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
+                                    <app-icon-component
+                                        [icon]="'check'"
+                                        [size]="'3'"
+                                        [class]="'text-white opacity-0 peer-checked:opacity-100 transition-opacity'">
+                                    </app-icon-component>
+                                </div>
+                            </div>
+                            <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
+                                Agregar presupuesto a la categoría
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Input Presupuesto -->
+                    @if (hasBudget()) {
+                        <div>
+                            <label for="budget" class="block text-sm font-medium xpb-text-primary mb-2">
+                                Presupuesto de la categoría
+                            </label>
+                            <div class="relative">
+                                <app-icon-component
+                                    [icon]="'money_bag'"
+                                    [size]="'5'"
+                                    [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                                </app-icon-component>
+                                <input 
+                                    id="budget" 
+                                    type="number" 
+                                    formControlName="budget"
+                                    class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+                                    placeholder="Ej: 1000"
+                                    autocomplete="off" 
+                                    aria-required="true" 
+                                    aria-label="Presupuesto de la categoría" 
+                                />
+                            </div>
+                            @if (formCategory.get('budget')?.touched && formCategory.get('budget')?.invalid) {
+                                <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                                    <app-icon-component
+                                        [icon]="'info'"
+                                        [size]="'5'"
+                                        [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                                    </app-icon-component>
+                                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                        @if (formCategory.get('budget')?.errors?.['required']) {
+                                            <p>El presupuesto es obligatorio.</p>
+                                        }
+                                        @if (formCategory.get('budget')?.errors?.['min']) {
+                                            <p>El presupuesto debe ser mayor o igual a 1.</p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
                     <!-- Mensaje de error al enviar -->
                     @if (this.categoryState.errorSendingCategory()) {
                         <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">

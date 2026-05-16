@@ -1,4 +1,4 @@
-<div class="h-screen xpb-bg-main p-3 sm:p-4 flex flex-col overflow-hidden">
+<div class="xpb-bg-main p-3 sm:p-4 flex flex-col">
   <!-- Header -->
   <div class="mb-4 flex-shrink-0">
     <div class="flex items-center justify-between">
@@ -33,7 +33,7 @@
 
   <!-- Categories List -->
   <div class="flex-1 overflow-hidden">
-    <div class="h-full overflow-y-auto pr-2">
+    <div class="h-full overflow-y-auto">
       @if (this.categoryState.isLoadingGetList()) {
         <app-loading-ui></app-loading-ui>
       } @else if (this.categoryState.errorGetList()) {
@@ -50,15 +50,12 @@
           (create)="openCategoryEditionModal()"
         ></app-create-first-component>
       } @else {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 pb-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 sm:gap-4 pb-4">
           @for (category of orderedCategories(); track category.resourceCode) {
             <app-category-card ngSkipHydration 
               class="block"
-              [categoryCardName]="category.name"
-              [categoryCardColor]="category.color"
-              [categoryCardState]="category.state"
-              [categoryCardResourceCode]="category.resourceCode"
-              [categoryTotalUses]="category.usageCount"
+              [category]="category"
+              [categoryBudgetUsage]="getCategoryBudgetUsage(category.resourceCode)"
               (categoryCardEdit)="openCategoryEditionModal($event)"
               (categoryCardChangeState)="openConfirmNewStateModal($event)">
             </app-category-card>

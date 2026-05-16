@@ -6,6 +6,8 @@ import { ApiResponseDTO } from '../../common/model/api.response.dto';
 import { CategoryRequestDTO } from '../model/category.request.dto';
 import { GenericService } from '../../common/service/generic.service';
 import { categoryState } from './category.state';
+import { CategoryBudgetUsageRequestDTO } from '../model/categorybudgetusage.request.dto';
+import { Observable } from 'rxjs';
 
 /**
  * Service for managing categories, including creating, updating, and fetching category data.
@@ -25,6 +27,30 @@ export class CategoryService extends GenericService<CategoryRequestDTO, Category
       http,
       `${envService.getApiUrl()}/category`
     )
+  }
+
+  /**
+   * Loads the budget usage information for categories and returns it as an observable.
+   * This method is used to fetch the usage count and budget used for each category.
+   * @returns An observable of the API response containing a list of CategoryBudgetUsageRequestDTO.
+   */
+  loadBudgetUsage(): void {
+    categoryState.isLoadingGetBudgetUsage.set(true);
+    categoryState.errorGetBudgetUsage.set(null);
+
+    this.http.get<ApiResponseDTO<CategoryBudgetUsageRequestDTO[]>>(`${this.apiUrl}/budget-usage`,
+      { withCredentials: true }
+    ).subscribe({
+      next: (response) => {
+        categoryState.categoriesBudgetUsage.set(response.data || []);
+        categoryState.isLoadingGetBudgetUsage.set(false);
+      },
+      error: (error) => {
+        console.error('Error fetching category budget usage:', error);
+        categoryState.errorGetBudgetUsage.set(error.message || 'Error fetching category budget usage');
+        categoryState.isLoadingGetBudgetUsage.set(false);
+      }
+    });
   }
 
   /**

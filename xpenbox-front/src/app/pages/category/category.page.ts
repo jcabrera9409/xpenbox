@@ -14,6 +14,7 @@ import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
 import { CategoryRequestDTO } from '../../feature/category/model/category.request.dto';
 import { NotificationService } from '../../feature/common/service/notification.service';
 import { IconComponent } from '../../shared/components/icon.component/icon.component';
+import { CategoryBudgetUsageRequestDTO } from '../../feature/category/model/categorybudgetusage.request.dto';
 
 @Component({
   selector: 'app-category-page',
@@ -60,6 +61,7 @@ export class CategoryPage {
     }
 
     this.categoryService.load();
+    this.categoryService.loadBudgetUsage();
   }
 
   openCategoryEditionModal(resourceCodeCategorySelected: string | null = null) {
@@ -80,6 +82,8 @@ export class CategoryPage {
     this.categoryState.isLoadingSendingCategory.set(true);
 
     const categoryData = new CategoryRequestDTO(
+      undefined!,
+      undefined!,
       undefined!,
       undefined!,
       this.categoryDataSelected()!.state ? false : true
@@ -114,6 +118,11 @@ export class CategoryPage {
 
   reloadCategories() {
     this.categoryService.refresh();
+  }
+
+  getCategoryBudgetUsage(resourceCode: string): CategoryBudgetUsageRequestDTO | undefined {
+    const budgetUsage = this.categoryState.categoriesBudgetUsage()?.find(usage => usage.category.resourceCode === resourceCode);
+    return budgetUsage;
   }
 
   private updateNewStateDataModal() {
