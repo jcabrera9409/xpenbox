@@ -54,6 +54,14 @@ export class CategoryService extends GenericService<CategoryRequestDTO, Category
   }
 
   /**
+   * Refreshes the budget usage information by calling the loadBudgetUsage method.
+   * This can be used to update the budget usage data after changes to categories or budgets.
+   */
+  refreshBudgetUsage(): void {
+    this.loadBudgetUsage();
+  }
+
+  /**
    * Loads categories and updates the category state with the fetched data.
    * Handles loading and error states.
    */

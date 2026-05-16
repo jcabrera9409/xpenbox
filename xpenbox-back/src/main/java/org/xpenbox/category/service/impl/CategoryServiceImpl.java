@@ -20,6 +20,7 @@ import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
 import org.xpenbox.enforcement.service.IPlanSnapshotService;
 import org.xpenbox.enforcement.service.IPlanValidatorService;
 import org.xpenbox.transaction.entity.Transaction;
+import org.xpenbox.transaction.entity.Transaction.TransactionType;
 import org.xpenbox.transaction.repository.TransactionRepository;
 import org.xpenbox.user.entity.User;
 import org.xpenbox.user.repository.UserRepository;
@@ -94,10 +95,18 @@ public class CategoryServiceImpl extends GenericServiceImpl<Category, CategoryCr
         Map<String, LocalDateTime> dateRange = PeriodFilter.getDateRange(PeriodFilter.CURRENT_MONTH);
         List<Transaction> transactions = transactionRepository.findByUserIdAndPeriodRange(user.id, dateRange.get("from"), dateRange.get("to"));
 
-        List<CategoryResponseDTO> categories = extractCategoriesFromTransactions(transactions);
+        List<Transaction> transactionFilter = transactions.stream()
+            .filter(
+                tx -> tx.getCategory() != null && (tx.getTransactionType().equals(TransactionType.EXPENSE)
+                        || tx.getTransactionType().equals(TransactionType.CREDIT_PAYMENT))
+                    && tx.getAccount() != null
+            )
+            .toList();
+
+        List<CategoryResponseDTO> categories = extractCategoriesFromTransactions(transactionFilter);
 
         return categories.stream()
-            .map(category -> mapToCategoryBudgetUsageDTO(category, transactions))
+            .map(category -> mapToCategoryBudgetUsageDTO(category, transactionFilter))
             .toList();
 
     }

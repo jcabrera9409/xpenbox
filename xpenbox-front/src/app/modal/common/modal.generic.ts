@@ -8,13 +8,13 @@ export abstract class ModalGeneric implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         if (isPlatformBrowser(this.platformId)) {
-        this.document.body.style.overflow = 'hidden';
+            this.document.body.style.overflow = 'hidden';
         }
     }
 
     ngOnDestroy(): void {
         if (isPlatformBrowser(this.platformId)) {
-        this.document.body.style.overflow = '';
+            this.document.body.style.overflow = '';
         }
     }
 }

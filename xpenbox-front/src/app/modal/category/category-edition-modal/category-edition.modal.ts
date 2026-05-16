@@ -12,6 +12,7 @@ import { RetryComponent } from '../../../shared/components/retry-component/retry
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
 
 @Component({
   selector: 'app-category-edition-modal',
@@ -19,7 +20,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   templateUrl: './category-edition.modal.html',
   styleUrl: './category-edition.modal.css',
 })
-export class CategoryEditionModal implements OnInit {
+export class CategoryEditionModal extends ModalGeneric implements OnInit {
 
   resourceCodeSelected = input<string | null>();
   close = output<void>();
@@ -35,9 +36,13 @@ export class CategoryEditionModal implements OnInit {
     private fb: FormBuilder,
     private categoryService: CategoryService,
     private notificationService: NotificationService
-  ) { }
+  ) { 
+    super();
+  }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
+    
     this.categoryState.isLoadingSendingCategory.set(false);
     this.categoryState.errorSendingCategory.set(null);
 
@@ -68,6 +73,7 @@ export class CategoryEditionModal implements OnInit {
         if (response.success && response.data) {
           this.notificationService.success(`Categoria ${this.isEditMode ? 'actualizada' : 'creada'} con éxito.`);
           this.categoryService.refresh();
+          this.categoryService.refreshBudgetUsage();
           this.close.emit();
         } else {
           this.categoryState.errorSendingCategory.set(response.message);
