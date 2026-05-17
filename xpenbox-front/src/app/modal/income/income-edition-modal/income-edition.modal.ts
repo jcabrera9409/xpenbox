@@ -1,5 +1,5 @@
 import { Component, OnInit, output, ChangeDetectionStrategy, signal, input, effect } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { incomeState } from '../../../feature/income/service/income.state';
 import { IncomeResponseDTO } from '../../../feature/income/model/income.response.dto';
@@ -21,10 +21,11 @@ import { userState } from '../../../feature/user/service/user.state';
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 import { ModalGeneric } from '../../common/modal.generic';
+import { InputComponent } from '../../../shared/components/input-component/input.component';
 
 @Component({
   selector: 'app-income-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, AccountsCarouselComponent, RetryComponent, ModalButtonsUi, IconComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, AccountsCarouselComponent, RetryComponent, ModalButtonsUi, IconComponent, InputComponent],
   templateUrl: './income-edition.modal.html',
   styleUrl: './income-edition.modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -152,15 +153,15 @@ export class IncomeEditionModal extends ModalGeneric implements OnInit {
 
   // Getters para acceso fácil a controles
   get conceptControl() {
-    return this.formIncome.get('concept');
+    return this.formIncome.get('concept') as FormControl;
   }
 
   get amountControl() {
-    return this.formIncome.get('amount');
+    return this.formIncome.get('amount') as FormControl;
   }
 
   get incomeDateControl() {
-    return this.formIncome.get('incomeDate');
+    return this.formIncome.get('incomeDate') as FormControl;
   }
 
   // Método helper para mostrar errores
@@ -219,8 +220,9 @@ export class IncomeEditionModal extends ModalGeneric implements OnInit {
   }
   
   private initForm(): void {
-    const today = this.dateService.getLocalDatetime();
-    this.maxDate.set(this.dateService.format(today.getTime(), 'ISO').split('T')[0]);
+    const today = this.dateService.toTimestamp(this.dateService.getLocalDatetime());
+    const formattedDate = this.dateService.format(today, 'ISO-LOCAL');
+    this.maxDate.set(formattedDate);
 
     this.formIncome = this.fb.group({
       concept: ['', [

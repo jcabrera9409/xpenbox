@@ -1,6 +1,6 @@
 import { Component, input, OnInit, output, signal } from '@angular/core';
 import { CategoryResponseDTO } from '../../../feature/category/model/category.response.dto';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CategoryService } from '../../../feature/category/service/category.service';
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { CategoryRequestDTO } from '../../../feature/category/model/category.request.dto';
@@ -13,10 +13,11 @@ import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-button
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 import { ModalGeneric } from '../../common/modal.generic';
+import { InputComponent } from '../../../shared/components/input-component/input.component';
 
 @Component({
   selector: 'app-category-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, IconComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, IconComponent, InputComponent],
   templateUrl: './category-edition.modal.html',
   styleUrl: './category-edition.modal.css',
 })
@@ -52,6 +53,22 @@ export class CategoryEditionModal extends ModalGeneric implements OnInit {
 
   get isEditMode(): boolean {
     return this.resourceCodeSelected() !== null;
+  }
+
+  get nameControl() {
+    return this.formCategory.get('name') as FormControl;
+  }
+
+  get budgetControl() {
+    return this.formCategory.get('budget') as FormControl;
+  }
+
+  private initForms(): void {
+    this.formCategory = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]],
+      color: [this.generateRandomHexColor(), [Validators.required, Validators.pattern(/^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$/)]],
+      budget: [0]
+    });
   }
 
   onSubmit() {
@@ -128,14 +145,6 @@ export class CategoryEditionModal extends ModalGeneric implements OnInit {
 
   retryLoadCategoryData(): void {
     this.loadCategoryData();
-  }
-
-  private initForms(): void {
-    this.formCategory = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]],
-      color: [this.generateRandomHexColor(), [Validators.required, Validators.pattern(/^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$/)]],
-      budget: [0]
-    });
   }
 
   private loadCategoryData(): void {

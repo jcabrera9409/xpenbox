@@ -47,49 +47,13 @@
             } @else if(categoryData() || !isEditMode) {
                 <form [formGroup]="formCategory" (ngSubmit)="onSubmit()" class="flex flex-col gap-5" id="categoryForm">
                     <!-- Nombre de la categoría -->
-                    <div>
-                        <label for="name" class="block text-sm font-medium xpb-text-primary mb-2">
-                            Nombre de la categoría
-                        </label>
-                        <div class="relative">
-                            <app-icon-component
-                                [icon]="'category'"
-                                [size]="'5'"
-                                [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
-                            </app-icon-component>
-                            <input 
-                                id="name" 
-                                type="text" 
-                                formControlName="name"
-                                class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
-                                placeholder="Ej: Categoría de Gastos/Ingresos"
-                                maxlength="25" 
-                                autocomplete="off" 
-                                aria-required="true" 
-                                aria-label="Nombre de la categoría" 
-                            />
-                        </div>
-                        @if (formCategory.get('name')?.touched && formCategory.get('name')?.invalid) {
-                            <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                                <app-icon-component
-                                    [icon]="'info'"
-                                    [size]="'5'"
-                                    [class]="'text-[var(--xpb-expense)] mt-0.5'">
-                                </app-icon-component>
-                                <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                    @if (formCategory.get('name')?.errors?.['required']) {
-                                        <p>El nombre es obligatorio.</p>
-                                    }
-                                    @if (formCategory.get('name')?.errors?.['minlength']) {
-                                        <p>Debe tener mínimo 3 caracteres.</p>
-                                    }
-                                    @if (formCategory.get('name')?.errors?.['maxlength']) {
-                                        <p>Máximo 25 caracteres.</p>
-                                    }
-                                </div>
-                            </div>
-                        }
-                    </div>
+                    <app-input-component
+                        [inputControl]="nameControl"
+                        [inputName]="'name'"
+                        [placeholder]="'Ej: Categoría de Gastos/Ingresos'"
+                        [labelText]="'Nombre de la categoría'"
+                        [iconName]="'category'">
+                    </app-input-component>
 
                     <!-- Color de la categoría -->
                      <div>
@@ -175,45 +139,14 @@
 
                     <!-- Input Presupuesto -->
                     @if (hasBudget()) {
-                        <div>
-                            <label for="budget" class="block text-sm font-medium xpb-text-primary mb-2">
-                                Presupuesto de la categoría
-                            </label>
-                            <div class="relative">
-                                <app-icon-component
-                                    [icon]="'chart_pie'"
-                                    [size]="'5'"
-                                    [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
-                                </app-icon-component>
-                                <input 
-                                    id="budget" 
-                                    type="number" 
-                                    formControlName="budget"
-                                    class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
-                                    placeholder="Ej: 1000"
-                                    autocomplete="off" 
-                                    aria-required="true" 
-                                    aria-label="Presupuesto de la categoría" 
-                                />
-                            </div>
-                            @if (formCategory.get('budget')?.touched && formCategory.get('budget')?.invalid) {
-                                <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                                    <app-icon-component
-                                        [icon]="'info'"
-                                        [size]="'5'"
-                                        [class]="'text-[var(--xpb-expense)] mt-0.5'">
-                                    </app-icon-component>
-                                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                        @if (formCategory.get('budget')?.errors?.['required']) {
-                                            <p>El presupuesto es obligatorio.</p>
-                                        }
-                                        @if (formCategory.get('budget')?.errors?.['min']) {
-                                            <p>El presupuesto debe ser mayor o igual a 1.</p>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        </div>
+                        <app-input-component
+                            [inputControl]="budgetControl"
+                            [inputName]="'budget'"
+                            [inputType]="'number'"
+                            [placeholder]="'Ej: 1000'"
+                            [labelText]="'Presupuesto de la categoría'"
+                            [iconName]="'chart_pie'">
+                        </app-input-component>
                     }
 
                     <!-- Mensaje de error al enviar -->

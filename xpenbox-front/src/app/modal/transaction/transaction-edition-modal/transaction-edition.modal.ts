@@ -1,7 +1,7 @@
 import { Component, input, OnInit, output, signal } from '@angular/core';
 import { TransactionResponseDTO } from '../../../feature/transaction/model/transaction.response.dto';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
@@ -17,10 +17,11 @@ import { TransactionRequestDTO } from '../../../feature/transaction/model/transa
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 import { ModalGeneric } from '../../common/modal.generic';
+import { InputComponent } from '../../../shared/components/input-component/input.component';
 
 @Component({
   selector: 'app-transaction-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, CategoriesCarouselComponent, IconComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, CategoriesCarouselComponent, IconComponent, InputComponent],
   templateUrl: './transaction-edition.modal.html',
   styleUrl: './transaction-edition.modal.css',
 })
@@ -61,11 +62,11 @@ export class TransactionEditionModal extends ModalGeneric implements OnInit {
   }
 
   get descriptionControl() {
-    return this.formTransaction.get('description');
+    return this.formTransaction.get('description') as FormControl;
   }
 
   get transactionDateControl() {
-    return this.formTransaction.get('transactionDate');
+    return this.formTransaction.get('transactionDate') as FormControl;
   }
 
   onSubmit() {

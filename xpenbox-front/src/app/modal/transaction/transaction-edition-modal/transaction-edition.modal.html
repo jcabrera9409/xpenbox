@@ -196,70 +196,22 @@
                 <form [formGroup]="formTransaction" (ngSubmit)="onSubmit()" id="transactionForm">
                     <div class="space-y-4 mb-5">
                         <!-- Descripción -->
-                        <div>
-                            <label for="description" class="block text-sm font-medium xpb-text-primary mb-2">
-                                Descripción (opcional)
-                            </label>
-                            <div class="relative">
-                                <app-icon-component
-                                    [icon]="'description'"
-                                    [size]="'5'"
-                                    [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
-                                </app-icon-component>
-                                <input
-                                    id="description"
-                                    type="text"
-                                    formControlName="description"
-                                    placeholder="Ejm: Compra en supermercado"
-                                    class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
-                                />
-                            </div>
-                            @if (descriptionControl?.invalid && descriptionControl?.touched) {
-                                <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                                    <app-icon-component
-                                        [icon]="'info'"
-                                        [size]="'5'"
-                                        [class]="'text-[var(--xpb-expense)] mt-0.5'">
-                                    </app-icon-component>
-                                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                        <p>{{ getErrorMessage('description') }}</p>
-                                    </div>
-                                </div>
-                            }
-                        </div>
+                        <app-input-component
+                            [inputControl]="descriptionControl"
+                            [inputName]="'description'"
+                            [placeholder]="'Ejm: Compra en supermercado'"
+                            [labelText]="'Descripción (opcional)'"
+                            [iconName]="'description'">
+                        </app-input-component>
 
                         <!-- Fecha de transacción -->
-                        <div>
-                            <label for="transactionDate" class="block text-sm font-medium xpb-text-primary mb-2">
-                                Fecha de la transacción
-                            </label>
-                            <div class="relative">
-                                <app-icon-component
-                                    [icon]="'event'"
-                                    [size]="'5'"
-                                    [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
-                                </app-icon-component>
-                                <input
-                                    id="transactionDate"
-                                    type="datetime-local"
-                                    formControlName="transactionDate"
-                                    [max]="maxDate()"
-                                    class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
-                                />
-                            </div>
-                            @if (transactionDateControl?.invalid && transactionDateControl?.touched) {
-                                <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                                    <app-icon-component
-                                        [icon]="'info'"
-                                        [size]="'5'"
-                                        [class]="'text-[var(--xpb-expense)] mt-0.5'">
-                                    </app-icon-component>
-                                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                        <p>{{ getErrorMessage('transactionDate') }}</p>
-                                    </div>
-                                </div>
-                            }
-                        </div>
+                        <app-input-component
+                            [inputControl]="transactionDateControl"
+                            [inputName]="'transactionDate'"
+                            [inputType]="'datetime-local'"
+                            [labelText]="'Fecha de la transacción'"
+                            [iconName]="'event'">
+                        </app-input-component>
 
                         <!-- Checkbox para asignar a categoría -->
                         <div class="relative">

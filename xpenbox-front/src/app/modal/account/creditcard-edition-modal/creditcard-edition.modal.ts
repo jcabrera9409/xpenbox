@@ -1,6 +1,6 @@
 import { Component, OnInit, output, signal, input } from '@angular/core';
 import { CreditCardResponseDTO } from '../../../feature/creditcard/model/creditcard.response.dto';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreditCardService } from '../../../feature/creditcard/service/creditcard.service';
 import { CommonModule } from '@angular/common';
 import { CreditCardRequestDTO } from '../../../feature/creditcard/model/creditcard.request.dto';
@@ -13,10 +13,11 @@ import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-button
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 import { ModalGeneric } from '../../common/modal.generic';
+import { InputComponent } from '../../../shared/components/input-component/input.component';
 
 @Component({
   selector: 'app-creditcard-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, IconComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, IconComponent, InputComponent],
   templateUrl: './creditcard-edition.modal.html',
   styleUrl: './creditcard-edition.modal.css',
 })
@@ -50,6 +51,42 @@ export class CreditcardEditionModal extends ModalGeneric implements OnInit {
 
   get isEditMode(): boolean {
     return this.resourceCodeSelected() !== null;
+  }
+
+  get nameControl(): FormControl {
+    return this.formCreditCard.get('name') as FormControl;
+  }
+
+  get creditLimitControl(): FormControl {
+    return this.formCreditCard.get('creditLimit') as FormControl;
+  }
+
+  get currentBalanceControl(): FormControl {
+    return this.formCreditCard.get('currentBalance') as FormControl;
+  }
+
+  get billingDayControl(): FormControl {
+    return this.formCreditCard.get('billingDay') as FormControl;
+  }
+
+  get paymentDayControl(): FormControl {
+    return this.formCreditCard.get('paymentDay') as FormControl;
+  }
+
+  private initForms() {
+    this.formCreditCard = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
+      creditLimit: ['', [Validators.required, Validators.min(1)]],
+      currentBalance: [0, [Validators.required, Validators.min(0)]],
+      billingDay: [1, [Validators.required, Validators.min(1), Validators.max(28)]],
+      paymentDay: [15, [Validators.required, Validators.min(1), Validators.max(28)]]
+    });
+
+    const currentBalanceControl = this.formCreditCard.get('currentBalance');
+    if (this.isEditMode) {
+      currentBalanceControl?.clearValidators();
+      currentBalanceControl?.updateValueAndValidity();
+    }
   }
 
   onSubmit() {
@@ -122,22 +159,6 @@ export class CreditcardEditionModal extends ModalGeneric implements OnInit {
       paymentDay,
       true
     );
-  }
-
-  private initForms() {
-    this.formCreditCard = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
-      creditLimit: [0, [Validators.required, Validators.min(1)]],
-      currentBalance: [0, [Validators.required, Validators.min(0)]],
-      billingDay: [1, [Validators.required, Validators.min(1), Validators.max(28)]],
-      paymentDay: [1, [Validators.required, Validators.min(1), Validators.max(28)]]
-    });
-
-    const currentBalanceControl = this.formCreditCard.get('currentBalance');
-    if (this.isEditMode) {
-      currentBalanceControl?.clearValidators();
-      currentBalanceControl?.updateValueAndValidity();
-    }
   }
 
   private loadCreditCardData() {
