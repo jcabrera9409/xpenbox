@@ -18,6 +18,7 @@ import { genericState } from '../../../feature/common/service/generic.state';
 import { AccountDeactivateRequestDTO } from '../../../feature/account/model/account.deactivate.request.dto';
 import { CreditCardDeactivateRequestDTO } from '../../../feature/creditcard/model/creditcard.deactivate.request.dto';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
 
 @Component({
   selector: 'app-disable-account-credit-modal',
@@ -25,7 +26,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   templateUrl: './disable-account-credit.modal.html',
   styleUrl: './disable-account-credit.modal.css',
 })
-export class DisableAccountCreditModal implements OnInit {
+export class DisableAccountCreditModal extends ModalGeneric implements OnInit {
   userLogged = userState.userLogged;
 
   // Inputs
@@ -55,6 +56,8 @@ export class DisableAccountCreditModal implements OnInit {
     private creditCardService: CreditCardService,
     private accountCreditService: AccountCreditService
   ) {
+    super();
+
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
     }
@@ -83,7 +86,9 @@ export class DisableAccountCreditModal implements OnInit {
 
   }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
+
     this.accountState.isLoadingGetAccount.set(false);
     this.accountState.errorGetAccount.set(null);
     this.accountState.isLoadingSendingAccount.set(false);

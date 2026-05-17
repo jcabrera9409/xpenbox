@@ -3,6 +3,7 @@ import { subscriptionState } from '../../../feature/subscription/service/subscri
 import { DateService } from '../../../shared/service/date.service';
 import { SubscriptionService } from '../../../feature/subscription/service/subscription.service';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
 
 @Component({
   selector: 'app-cancel-pro-modal',
@@ -10,7 +11,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   templateUrl: './cancel-pro.modal.html',
   styleUrl: './cancel-pro.modal.css',
 })
-export class CancelProModal {
+export class CancelProModal extends ModalGeneric {
 
   subscriptionState = subscriptionState;
   
@@ -19,7 +20,9 @@ export class CancelProModal {
   constructor(
     private subscriptionService: SubscriptionService,
     private dateService: DateService
-  ) {}
+  ) {
+    super();
+  }
 
   subscriptionEndDate = computed(() => {
     const subscription = subscriptionState.subscription();

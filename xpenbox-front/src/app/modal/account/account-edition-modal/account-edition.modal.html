@@ -1,7 +1,6 @@
 <!-- Modal Overlay -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
-    <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto my-auto max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden">
-        
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
+    <div class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-md md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">  
         <!-- Header -->
         <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
             <div class="flex items-center justify-between gap-3">
@@ -45,7 +44,7 @@
         </div>
 
         <!-- Content -->
-        <div class="p-4 overflow-y-auto flex-1">
+        <div class="p-6 overflow-y-auto flex-1">
             @if (this.accountState.isLoadingGetAccount() && isEditMode) {
                 <app-loading-ui></app-loading-ui>
             } @else if(this.accountState.errorGetAccount() && isEditMode) {
@@ -54,7 +53,7 @@
                     (retry)="retryLoadAccountData()">
                 </app-retry-component>
             } @else if(accountData() || !isEditMode) {
-                <form [formGroup]="formAccount" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+                <form [formGroup]="formAccount" (ngSubmit)="onSubmit()" class="flex flex-col gap-5" id="accountForm">
                     <!-- Nombre de la cuenta -->
                     <div>
                         <label for="name" class="block text-sm font-medium xpb-text-primary mb-2">
@@ -155,24 +154,26 @@
                             </div>
                         </div>
                     }
-                    <!-- Botones de acción -->
-                    <app-modal-buttons-ui
-                        [cancelText]="'Cancelar'"
-                        [cancelIcon]="'close'"
-                        [isEditMode]="isEditMode"
-                        [isLoading]="this.accountState.isLoadingSendingAccount()"
-                        [isValidForm]="formAccount.valid"
-                        [loadingText]="'Guardando...'"
-                        [loadingIcon]="'autorenew'"
-                        [confirmText]="'Registrar'"
-                        [confirmIcon]="'add'"
-                        [confirmEditText]="'Actualizar'"
-                        [confirmEditIcon]="'check'"
-                        (cancel)="onClose()">
-                    </app-modal-buttons-ui>
                 </form>
             }
         </div>
+
+        <!-- Botones de acción -->
+        <app-modal-buttons-ui
+            [cancelText]="'Cancelar'"
+            [cancelIcon]="'close'"
+            [isEditMode]="isEditMode"
+            [isLoading]="this.accountState.isLoadingSendingAccount()"
+            [isValidForm]="formAccount.valid"
+            [loadingText]="'Guardando...'"
+            [loadingIcon]="'autorenew'"
+            [confirmText]="'Registrar'"
+            [confirmIcon]="'add'"
+            [confirmEditText]="'Actualizar'"
+            [confirmEditIcon]="'check'"
+            [formId]="'accountForm'"
+            (cancel)="onClose()">
+        </app-modal-buttons-ui>
     </div>
 </div>
 

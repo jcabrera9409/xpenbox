@@ -12,6 +12,7 @@ import { RetryComponent } from '../../../shared/components/retry-component/retry
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
 
 @Component({
   selector: 'app-account-edition-modal',
@@ -20,7 +21,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   templateUrl: './account-edition.modal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountEditionModal implements OnInit {
+export class AccountEditionModal extends ModalGeneric implements OnInit {
 
   resourceCodeSelected = input<string | null>();
   close = output<void>();
@@ -34,9 +35,13 @@ export class AccountEditionModal implements OnInit {
     private fb: FormBuilder,
     private accountService: AccountService,
     private notificationService: NotificationService
-  ) { }
+  ) {
+    super();
+  }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
+
     this.accountState.isLoadingSendingAccount.set(false);
     this.accountState.errorSendingAccount.set(null);
 

@@ -12,6 +12,7 @@ import { RetryComponent } from '../../../shared/components/retry-component/retry
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
 
 @Component({
   selector: 'app-creditcard-edition-modal',
@@ -19,7 +20,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   templateUrl: './creditcard-edition.modal.html',
   styleUrl: './creditcard-edition.modal.css',
 })
-export class CreditcardEditionModal implements OnInit {
+export class CreditcardEditionModal extends ModalGeneric implements OnInit {
 
   resourceCodeSelected = input<string | null>();
   close = output<void>();
@@ -33,9 +34,13 @@ export class CreditcardEditionModal implements OnInit {
     private fb: FormBuilder,
     private creditCardService: CreditCardService,
     private notificationService: NotificationService
-  ) { }
+  ) {
+    super();
+  }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
+
     this.creditCardState.isLoadingSendingCreditCard.set(false);
     this.creditCardState.errorSendingCreditCard.set(null);
 
