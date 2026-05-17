@@ -1,6 +1,6 @@
 <!-- Modal Overlay -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
-    <div class="xpb-bg-card rounded-xl shadow-2xl w-full max-w-md mx-auto my-auto max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden">
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
+    <div class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-md md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">
         <!-- Header -->
         <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
             <div class="flex items-center justify-between gap-3">
@@ -31,7 +31,7 @@
         </div>
 
         <!-- Body content -->
-        <div class="p-4 overflow-y-auto flex-1">
+        <div class="p-6 overflow-y-auto flex-1">
             @if (this.transactionState.isLoadingGetTransaction()) {
                 <app-loading-ui></app-loading-ui>
             } @else if(this.transactionState.errorGetTransaction()) {
@@ -193,7 +193,7 @@
                 </div>
 
                 <!-- Formulario de edición -->
-                <form [formGroup]="formTransaction" (ngSubmit)="onSubmit()">
+                <form [formGroup]="formTransaction" (ngSubmit)="onSubmit()" id="transactionForm">
                     <div class="space-y-4 mb-5">
                         <!-- Descripción -->
                         <div>
@@ -306,22 +306,23 @@
                             </div>
                         </div>
                     }
-
-                    <!-- Action buttons -->
-                    <app-modal-buttons-ui
-                        [cancelText]="'Cancelar'"
-                        [cancelIcon]="'close'"
-                        [isEditMode]="false"
-                        [isLoading]="this.transactionState.isLoadingSendingTransaction()"
-                        [isValidForm]="formTransaction.valid"
-                        [loadingText]="'Guardando...'"
-                        [loadingIcon]="'autorenew'"
-                        [confirmText]="'Actualizar'"
-                        [confirmIcon]="'check'"
-                        (cancel)="onClose()">
-                    </app-modal-buttons-ui>
                 </form>
             }
         </div>
+
+        <!-- Action buttons -->
+        <app-modal-buttons-ui
+            [cancelText]="'Cancelar'"
+            [cancelIcon]="'close'"
+            [isEditMode]="false"
+            [isLoading]="this.transactionState.isLoadingSendingTransaction()"
+            [isValidForm]="formTransaction.valid"
+            [loadingText]="'Guardando...'"
+            [loadingIcon]="'autorenew'"
+            [confirmText]="'Actualizar'"
+            [confirmIcon]="'check'"
+            [formId]="'transactionForm'"
+            (cancel)="onClose()">
+        </app-modal-buttons-ui>
     </div>
 </div>

@@ -20,6 +20,7 @@ import { transactionState } from '../../../feature/transaction/service/transacti
 import { userState } from '../../../feature/user/service/user.state';
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
 
 @Component({
   selector: 'app-income-edition-modal',
@@ -28,7 +29,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   styleUrl: './income-edition.modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class IncomeEditionModal implements OnInit {
+export class IncomeEditionModal extends ModalGeneric implements OnInit {
 
   userLogged = userState.userLogged;
 
@@ -55,6 +56,8 @@ export class IncomeEditionModal implements OnInit {
     private notificationService: NotificationService,
     private dateService: DateService
   ) {
+    super();
+
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
     }
@@ -73,7 +76,9 @@ export class IncomeEditionModal implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
+
     this.incomeState.isLoadingSendingIncome.set(false);
     this.incomeState.errorSendingIncome.set(null);
 

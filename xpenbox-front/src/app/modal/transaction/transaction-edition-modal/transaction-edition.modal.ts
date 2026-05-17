@@ -16,6 +16,7 @@ import { CategoriesCarouselComponent } from '../../../shared/components/categori
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
 
 @Component({
   selector: 'app-transaction-edition-modal',
@@ -23,7 +24,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   templateUrl: './transaction-edition.modal.html',
   styleUrl: './transaction-edition.modal.css',
 })
-export class TransactionEditionModal implements OnInit {
+export class TransactionEditionModal extends ModalGeneric implements OnInit {
   
   userLogged = userState.userLogged;
 
@@ -45,9 +46,13 @@ export class TransactionEditionModal implements OnInit {
     private transactionService: TransactionService,
     private notificationService: NotificationService,
     private dateService: DateService
-  ) { }
+  ) { 
+    super();
+  }
   
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
+
     this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
 

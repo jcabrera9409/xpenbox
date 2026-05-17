@@ -1,6 +1,6 @@
 <!-- Modal Overlay -->
 <div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
-    <div class="xpb-bg-card md:rounded-xl shadow-2xl md:w-full md:max-w-xl md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">
+    <div class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-xl md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">
         <!-- Header -->
         <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
             <div class="flex items-center justify-between gap-3">
@@ -36,7 +36,7 @@
         </div>
 
         <!-- Content -->
-        <div class="p-4 overflow-y-auto flex-1">
+        <div class="p-6 overflow-y-auto flex-1">
             @if (this.categoryState.isLoadingGetCategory() && isEditMode) {
                 <app-loading-ui></app-loading-ui>
             } @else if(this.categoryState.errorGetCategory() && isEditMode) {
@@ -45,7 +45,7 @@
                     (retry)="retryLoadCategoryData()">
                 </app-retry-component>
             } @else if(categoryData() || !isEditMode) {
-                <form [formGroup]="formCategory" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+                <form [formGroup]="formCategory" (ngSubmit)="onSubmit()" class="flex flex-col gap-5" id="categoryForm">
                     <!-- Nombre de la categoría -->
                     <div>
                         <label for="name" class="block text-sm font-medium xpb-text-primary mb-2">
@@ -229,25 +229,28 @@
                             </div>
                         </div>
                     }
-
-                    <!-- Botones de acción -->
-                    <app-modal-buttons-ui
-                        [cancelText]="'Cancelar'"
-                        [cancelIcon]="'close'"
-                        [isEditMode]="isEditMode"
-                        [isLoading]="this.categoryState.isLoadingSendingCategory()"
-                        [isValidForm]="formCategory.valid"
-                        [loadingText]="'Guardando...'"
-                        [loadingIcon]="'autorenew'"
-                        [confirmText]="'Registrar'"
-                        [confirmIcon]="'add'"
-                        [confirmEditText]="'Actualizar'"
-                        [confirmEditIcon]="'check'"
-                        (cancel)="onClose()">
-                    </app-modal-buttons-ui>
                 </form>
             }
         </div>
+
+        <!-- Footer - Botones de acción fijos -->
+        @if (categoryData() || !isEditMode) {
+            <app-modal-buttons-ui
+                [cancelText]="'Cancelar'"
+                [cancelIcon]="'close'"
+                [isEditMode]="isEditMode"
+                [isLoading]="this.categoryState.isLoadingSendingCategory()"
+                [isValidForm]="formCategory.valid"
+                [loadingText]="'Guardando...'"
+                [loadingIcon]="'autorenew'"
+                [confirmText]="'Registrar'"
+                [confirmIcon]="'add'"
+                [confirmEditText]="'Actualizar'"
+                [confirmEditIcon]="'check'"
+                [formId]="'categoryForm'"
+                (cancel)="onClose()">
+            </app-modal-buttons-ui>
+        }
     </div>
 </div>
 

@@ -1,4 +1,4 @@
-import { Component, effect, input, output, signal } from '@angular/core';
+import { Component, effect, input, OnInit, output, signal } from '@angular/core';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
 import { AccountCreditDTO, AccountCreditType } from '../../../shared/dto/account-credit.dto';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
@@ -21,6 +21,7 @@ import { CategoriesCarouselComponent } from '../../../shared/components/categori
 import { CategoryResponseDTO } from '../../../feature/category/model/category.response.dto';
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
 
 @Component({
   selector: 'app-creditcard-payment-modal',
@@ -28,7 +29,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   templateUrl: './creditcard-payment.modal.html',
   styleUrl: './creditcard-payment.modal.css',
 })
-export class CreditcardPaymentModal {
+export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
 
   userLogged = userState.userLogged;
 
@@ -58,6 +59,8 @@ export class CreditcardPaymentModal {
     private accountCreditService: AccountCreditService,
     private dateService: DateService
   ) { 
+    super();
+
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
     }
@@ -140,7 +143,9 @@ export class CreditcardPaymentModal {
     });
   }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
+
     this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
     
