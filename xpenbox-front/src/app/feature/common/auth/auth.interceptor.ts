@@ -33,9 +33,11 @@ export function authInterceptor(
             },
             withCredentials: true
         });
+    } else {
+        req = req.clone({withCredentials: true});
     }
 
-    return next(req.clone({withCredentials: true})).pipe(
+    return next(req).pipe(
         catchError((error: HttpErrorResponse) => {
             if (req.url.endsWith('/auth/refresh')) {
                 authService.clearAuthState();
