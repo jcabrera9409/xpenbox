@@ -1,0 +1,5 @@
+<section class="flex flex-col" 
+    [class.slide-in-right]="animationDirection() === 'right'"
+    [class.slide-in-left]="animationDirection() === 'left'">
+    <ng-content></ng-content>
+</section>

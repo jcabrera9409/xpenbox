@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, signal, PLATFORM_ID, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, signal, PLATFORM_ID, inject, effect } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { DashboardState } from '../../feature/dashboard/service/dashboard.state';
@@ -18,10 +18,13 @@ import { TooltipUi } from '../../shared/ui/tooltip-ui/tooltip.ui';
 import { EntitlementService } from '../../feature/subscription/service/entitlement.service';
 import { upgradeProModalState } from '../../modal/subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../shared/components/icon.component/icon.component';
+import { TabObjectDTO } from '../../shared/dto/tab-object.dto';
+import { TabUi } from '../../shared/ui/tab-ui/tab.ui';
+import { TabContentUi } from '../../shared/ui/tab-content.ui/tab-content.ui';
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [CommonModule, RouterLink, LoadingUi, RetryComponent, TooltipUi, IconComponent],
+  imports: [CommonModule, RouterLink, LoadingUi, RetryComponent, TooltipUi, IconComponent, TabUi, TabContentUi],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.css',
 })
@@ -60,6 +63,14 @@ export class DashboardPage implements OnInit, AfterViewInit {
   creditCards = signal<CreditCardResponseDTO[]>([]);
   transactions = signal<TransactionResponseDTO[]>([]);
 
+  activeTab = signal<String>('accounts');
+  animationDirection = signal<'left' | 'right'>('right');
+
+  tabsList: TabObjectDTO[] = [
+    { id: 'accounts', label: 'Cuentas', iconName: 'account_balance' },
+    { id: 'creditCards', label: 'Tarjetas', iconName: 'credit_card' }
+  ];
+
   constructor(
     private dashboardService: DashboardService,
     private dateService: DateService,
@@ -70,6 +81,15 @@ export class DashboardPage implements OnInit, AfterViewInit {
       Chart.register(...registerables);
       this.chartRegistered = true;
     }
+
+    effect(() => {
+      const activeTab = this.activeTab();
+      if (activeTab === 'accounts') {
+        this.updateExpenseLiquidChart();
+      } else {
+        this.updateExpenseCreditChart();
+      }
+    });
   }
 
   get isCurrentMonthSelected(): boolean {

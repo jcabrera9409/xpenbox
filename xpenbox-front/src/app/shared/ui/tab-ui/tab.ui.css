@@ -1,0 +1,46 @@
+.tabs-wrapper {
+  width: 100%;
+}
+
+.tabs-container {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scroll-behavior: smooth;
+  min-width: 0; /* Permite que el contenedor se encoja correctamente */
+}
+
+.tabs-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Tabs siempre mantienen su tamaño natural */
+.tab-button {
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+/* En mobile (< 768px), si el contenido no desborda, distribuir tabs uniformemente */
+@media (max-width: 767px) {
+  .tabs-container {
+    justify-content: stretch;
+  }
+  
+  /* Solo cuando NO hay overflow, expandir los tabs */
+  .tabs-container.no-overflow .tab-button {
+    flex: 1;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+}
+
+/* Desktop: tabs mantienen su tamaño natural siempre */
+@media (min-width: 768px) {
+  .tabs-container {
+    justify-content: flex-start;
+  }
+}
+
+/* Estilos para las flechas de navegación */
+.tabs-wrapper button[aria-label] {
+  min-width: 44px;
+}

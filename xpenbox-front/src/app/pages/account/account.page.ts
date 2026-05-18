@@ -19,10 +19,13 @@ import { userState } from '../../feature/user/service/user.state';
 import { DisableAccountCreditModal } from '../../modal/account/disable-account-credit-modal/disable-account-credit.modal';
 import { AccountCreditType } from '../../shared/dto/account-credit.dto';
 import { IconComponent } from '../../shared/components/icon.component/icon.component';
+import { TabObjectDTO } from '../../shared/dto/tab-object.dto';
+import { TabUi } from '../../shared/ui/tab-ui/tab.ui';
+import { TabContentUi } from '../../shared/ui/tab-content.ui/tab-content.ui';
 
 @Component({
   selector: 'app-account-page',
-  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent, TransferModal, CreditcardPaymentModal, DisableAccountCreditModal, IconComponent],
+  imports: [AccountCard, CreditCard, CommonModule, AccountEditionModal, CreditcardEditionModal, SummaryCard, LoadingUi, RetryComponent, CreateFirstComponent, TransferModal, CreditcardPaymentModal, DisableAccountCreditModal, IconComponent, TabUi, TabContentUi],
   templateUrl: './account.page.html',
   styleUrl: './account.page.css',
 })
@@ -50,8 +53,13 @@ export class AccountPage {
   resourceCodeCreditcardPaymentSelected = signal<string | null>(null);
 
   // Active tab control
-  activeTab = signal<'accounts' | 'creditCards'>('accounts');
+  activeTab = signal<String>('accounts');
   animationDirection = signal<'left' | 'right'>('right');
+
+  tabsList: TabObjectDTO[] = [
+    { id: 'accounts', label: 'Cuentas de Débito', iconName: 'account_balance' },
+    { id: 'creditCards', label: 'Tarjetas de crédito', iconName: 'credit_card' }
+  ];
 
   // Computed signal for ordered accounts by name
   orderedAccounts = computed(() => {
@@ -136,14 +144,5 @@ export class AccountPage {
 
   closeCreditcardPaymentModal() {
     this.showCreditcardPaymentModal.set(false);
-  }
-
-  switchTab(tab: 'accounts' | 'creditCards') {
-    if (tab === 'creditCards' && this.activeTab() === 'accounts') {
-      this.animationDirection.set('left');
-    } else if (tab === 'accounts' && this.activeTab() === 'creditCards') {
-      this.animationDirection.set('right');
-    }
-    this.activeTab.set(tab);
   }
 }
