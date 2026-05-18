@@ -24,6 +24,26 @@ public class TransactionRepository extends GenericRepository<Transaction> {
     private static final Logger LOG = Logger.getLogger(TransactionRepository.class);
 
     /**
+     * Find the last transaction for each user between specified dates.
+     * @param from the start date
+     * @param to the end date
+     * @return a list of the last transactions for each user within the specified date range
+     */
+    public List<Transaction> findLastTransactionForUsersBetweenDates(LocalDateTime from, LocalDateTime to) {
+        LOG.debugf("Finding last transactions for users between %s and %s", from, to);
+        return find("""
+            FROM Transaction t
+            WHERE t.id IN (
+                SELECT MAX(t2.id) 
+                FROM Transaction t2 
+                WHERE t2.transactionDate BETWEEN :from AND :to 
+                GROUP BY t2.user.id
+            )
+            """, Parameters.with("from", from).and("to", to)
+        ).list();
+    }
+
+    /**
      * Find assigned amounts by income IDs, user ID, and transaction type.
      * @param incomeIds the list of income IDs
      * @param userId the user ID
