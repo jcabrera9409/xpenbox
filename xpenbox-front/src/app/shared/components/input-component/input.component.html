@@ -1,0 +1,38 @@
+<div>
+    @if (labelText()) {
+    <label class="block text-sm font-medium xpb-text-primary mb-2">
+        {{ labelText() }}
+    </label>
+    }
+    <div class="relative">
+        <app-icon-component [icon]="iconName() || ''" [size]="'5'"
+            [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+        </app-icon-component>
+        <input [id]="inputName()" [type]="inputType()" [formControl]="inputControl()" [placeholder]="placeholder()"
+            class="xpb-bg-main border xpb-border rounded-lg pl-11 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all"
+            autocomplete="off" aria-required="true" [attr.aria-label]="labelText()" />
+    </div>
+    @if (inputControl().touched && inputControl().invalid) {
+    <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+        <app-icon-component [icon]="'info'" [size]="'5'" [class]="'text-[var(--xpb-expense)] mt-0.5'">
+        </app-icon-component>
+        <div class="text-sm text-[var(--xpb-expense)] flex-1">
+            @if (inputControl().hasError('required')) {
+            <p>{{ requiredMessageError }}</p>
+            }
+            @if (inputControl().hasError('minlength')) {
+            <p>{{ minLengthMessageError }}</p>
+            }
+            @if (inputControl().hasError('maxlength')) {
+            <p>{{ maxLengthMessageError }}</p>
+            }
+            @if (inputControl().hasError('min')) {
+            <p>{{ minValueMessageError }}</p>
+            }
+            @if (inputControl().hasError('max')) {
+            <p>{{ maxValueMessageError }}</p>
+            }
+        </div>
+    </div>
+    }
+</div>

@@ -39,6 +39,11 @@
   --xpb-transfer: #4A7C95;
   --xpb-credit: #8B5CF6;
 
+  --xpb-success: #588157;
+  --xpb-warning: #e69f2c;
+  --xpb-error: #BC4749;
+  --xpb-info: #4361EE;
+
   /* Borders & Elevation */
   --xpb-border: #DEE2E6;
   --xpb-shadow: rgba(0, 0, 0, 0.05);
@@ -115,6 +120,22 @@ a:disabled, button:disabled {
 
 .xpb-text-transfer {
   color: var(--xpb-transfer);
+}
+
+.xpb-text-success {
+  color: var(--xpb-success);
+}
+
+.xpb-text-warning {
+  color: var(--xpb-warning);
+}
+
+.xpb-text-error {
+  color: var(--xpb-error);
+}
+
+.xpb-text-info {
+  color: var(--xpb-info);
 }
 
 .xpb-bg-income {

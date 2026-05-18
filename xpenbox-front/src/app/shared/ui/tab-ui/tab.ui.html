@@ -1,0 +1,51 @@
+<div class="tabs-wrapper flex items-stretch mb-4 gap-2">
+  <!-- Flecha izquierda -->
+  @if (showLeftArrow()) {
+    <button 
+      (click)="scrollLeft()" 
+      [disabled]="!canScrollLeft()"
+      class="flex-shrink-0 flex items-center justify-center hover:opacity-70 transition-opacity border-b border-gray-200 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:opacity-30"
+      type="button"
+      aria-label="Scroll left">
+      <div class="bg-gray-100 rounded-full transition-colors"
+           [class.hover:bg-gray-200]="canScrollLeft()">
+        <app-icon-component [icon]="'chevron_left'" [size]="'8'"></app-icon-component>
+      </div>
+    </button>
+  }
+
+  <!-- Contenedor de tabs con scroll -->
+  <div 
+    #tabsContainer
+    (scroll)="onScroll()"
+    class="tabs-container flex-1 flex gap-4 border-b border-gray-200 overflow-x-auto">
+    @for (tab of tabsList(); track tab.id) {
+      <button 
+        (click)="switchTab(tab.id)" 
+        [class.border-[var(--xpb-primary)]]="activeTabId() === tab.id"
+        [class.xpb-text-primary]="activeTabId() === tab.id" 
+        [class.xpb-text-secondary]="activeTabId() !== tab.id"
+        [class.border-transparent]="activeTabId() !== tab.id"
+        class="tab-button py-3 px-4 font-semibold transition-all flex items-center justify-center gap-2 border-b-2 text-sm whitespace-nowrap"
+        type="button">
+        <app-icon-component [icon]="tab.iconName" [size]="'4'"></app-icon-component>
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Flecha derecha -->
+  @if (showRightArrow()) {
+    <button 
+      (click)="scrollRight()" 
+      [disabled]="!canScrollRight()"
+      class="flex-shrink-0 flex items-center justify-center hover:opacity-70 transition-opacity border-b border-gray-200 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:opacity-30"
+      type="button"
+      aria-label="Scroll right">
+      <div class="bg-gray-100 rounded-full transition-colors"
+           [class.hover:bg-gray-200]="canScrollRight()">
+        <app-icon-component [icon]="'chevron_right'" [size]="'8'"></app-icon-component>
+      </div>
+    </button>
+  }
+</div>

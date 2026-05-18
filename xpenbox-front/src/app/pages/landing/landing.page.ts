@@ -49,16 +49,22 @@ export class LandingPage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     if (isPlatformBrowser(this.platformId)) {
+
       if (!this.userState.userLogged()) {
         this.userService.loadUserLoggedIn();
       }
+
       if(!this.subscriptionState.subscription()) {
         this.subscriptionService.loadUserSubscription();
       }
     }
 
     if (this.capacitorService.isNativePlatform()) {
-      await this.initializePushService();
+      const hasToken = await this.capacitorService.getRefreshToken();
+
+      if (hasToken) {
+        await this.initializePushService();
+      }
     }
   }
 

@@ -8,70 +8,38 @@
   <!-- Summary Cards -->
   <div class="grid grid-cols-2 sm:grid-cols-2 gap-3 mb-4 flex-shrink-0">
     <!-- Total Liquidity -->
-    <app-summary-card
-      [isLoading]="accountState.isLoadingGetList()"
-      [titleCard]="'Liquidez Total'"
+    <app-summary-card [isLoading]="accountState.isLoadingGetList()" [titleCard]="'Liquidez Total'"
       [contentCard]="accountState.totalLiquidBalance() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2'"
       [subtitleCard]="
         orderedAccounts().length > 1 ? orderedAccounts().length + ' cuentas activas' :
         orderedAccounts().length == 1 ? orderedAccounts().length + ' cuenta activa' :
         'Ninguna cuenta activa'
-      "
-      [iconCard]="'account_balance'"
-      [contentClassCard]="'xpb-text-income'"
-    ></app-summary-card>
+      " [iconCard]="'account_balance'" [contentClassCard]="'xpb-text-income'"></app-summary-card>
 
     <!-- Total Credit Balance -->
-    <app-summary-card
-      [isLoading]="this.creditCardState.isLoadingGetList()"
-      [titleCard]="'Balance Total Tarjetas'"
+    <app-summary-card [isLoading]="this.creditCardState.isLoadingGetList()" [titleCard]="'Balance Total Tarjetas'"
       [contentCard]="
         '- ' + (this.creditCardState.totalCreditBalance() | currency:userLogged()?.currency + ' ':'symbol':'1.2-2')
-      "
-      [subtitleCard]="
+      " [subtitleCard]="
         orderedCreditCards().length > 1 ? orderedCreditCards().length + ' tarjetas activas' :
         orderedCreditCards().length == 1 ? orderedCreditCards().length + ' tarjeta activa' :
         'Ninguna tarjeta activa'
-      "
-      [iconCard]="'credit_card'"
-      [contentClassCard]="'xpb-text-expense'"
-    ></app-summary-card>
+      " [iconCard]="'credit_card'" [contentClassCard]="'xpb-text-expense'"></app-summary-card>
   </div>
 
-  <!-- Tabs Navigation -->
-  <div class="flex gap-4 mb-4 flex-shrink-0 border-b border-gray-200">
-    <button 
-      (click)="switchTab('accounts')"
-      [class.border-[var(--xpb-primary)]]="activeTab() === 'accounts'"
-      [class.xpb-text-primary]="activeTab() === 'accounts'"
-      [class.xpb-text-secondary]="activeTab() !== 'accounts'"
-      [class.border-transparent]="activeTab() !== 'accounts'"
-      class="py-3 px-4 font-semibold transition-all flex items-center justify-center gap-2 border-b-2 text-sm"
-      type="button">
-      <app-icon-component [icon]="'account_balance'" [size]="'4'"></app-icon-component>
-      Cuentas de Débito
-    </button>
-    <button 
-      (click)="switchTab('creditCards')"
-      [class.border-[var(--xpb-primary)]]="activeTab() === 'creditCards'"
-      [class.xpb-text-primary]="activeTab() === 'creditCards'"
-      [class.xpb-text-secondary]="activeTab() !== 'creditCards'"
-      [class.border-transparent]="activeTab() !== 'creditCards'"
-      class="py-3 px-4 font-semibold transition-all flex items-center justify-center gap-2 border-b-2 text-sm"
-      type="button">
-      <app-icon-component [icon]="'credit_card'" [size]="'4'"></app-icon-component>
-      Tarjetas de Crédito
-    </button>
-  </div>
+  <app-tab-ui 
+    [tabsList]="tabsList" 
+    (animationDirection)="animationDirection.set($event)" 
+    (activeTabIdChange)="activeTab.set($event)">
+  </app-tab-ui>
 
   <!-- Tabs Content -->
   <div class="flex-1 overflow-hidden">
     <!-- Bank Accounts Section -->
     @if (activeTab() === 'accounts') {
-    <section class="flex flex-col" [class.slide-in-right]="animationDirection() === 'right'" [class.slide-in-left]="animationDirection() === 'left'">
+    <app-tab-content-ui [animationDirection]="animationDirection()">
       <div class="mb-3 flex-shrink-0">
-        <button 
-          (click)="openAccountEditionModal()"
+        <button (click)="openAccountEditionModal()"
           class="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors text-sm"
           type="button">
           <app-icon-component [icon]="'add'" [size]="'4'"></app-icon-component>
@@ -79,46 +47,35 @@
         </button>
       </div>
 
-    <!-- Bank Accounts List -->
-    <div class="space-y-3 pr-2 flex-1">
-      @if (this.accountState.isLoadingGetList()) {
+      <!-- Bank Accounts List -->
+      <div class="space-y-3 pr-2 flex-1">
+        @if (this.accountState.isLoadingGetList()) {
         <app-loading-ui></app-loading-ui>
-      } @else if (this.accountState.errorGetList()) {
-        <app-retry-component
-          [message]="'No se encontraron cuentas'"
-          (retry)="reloadAccounts()">
+        } @else if (this.accountState.errorGetList()) {
+        <app-retry-component [message]="'No se encontraron cuentas'" (retry)="reloadAccounts()">
         </app-retry-component>
-      } @else if (orderedAccounts().length === 0) {
-        <app-create-first-component
-          [icon]="'account_balance'"
-          [title]="'No hay cuentas'"
+        } @else if (orderedAccounts().length === 0) {
+        <app-create-first-component [icon]="'account_balance'" [title]="'No hay cuentas'"
           [subtitle]="'Comienza creando tu primera cuenta para organizar tus ingresos y gastos'"
-          [buttonText]="'Crear Primera Cuenta'"
-          (create)="openAccountEditionModal()"
-        ></app-create-first-component>
-      } @else {
+          [buttonText]="'Crear Primera Cuenta'" (create)="openAccountEditionModal()"></app-create-first-component>
+        } @else {
         @for (account of orderedAccounts(); track account.resourceCode) {
-          <app-account-card ngSkipHydration class="block"
-            [accountCardName]="account.name"
-            [accountCardBalance]="account.balance"
-            [accountCardState]="account.state"
-            [accountCardResourceCode]="account.resourceCode"
-            (accountCardEdit) = "openAccountEditionModal($event)"
-            (accountCardTransfer) = "openTransferModal($event)"
-            (accountCardDisable) = "openDisableAccountModal($event)"
-          ></app-account-card>
+        <app-account-card ngSkipHydration class="block" [accountCardName]="account.name"
+          [accountCardBalance]="account.balance" [accountCardState]="account.state"
+          [accountCardResourceCode]="account.resourceCode" (accountCardEdit)="openAccountEditionModal($event)"
+          (accountCardTransfer)="openTransferModal($event)"
+          (accountCardDisable)="openDisableAccountModal($event)"></app-account-card>
         }
-      }
-    </div>
-  </section>
+        }
+      </div>
+    </app-tab-content-ui>
     }
 
     <!-- Credit Cards Section -->
     @if (activeTab() === 'creditCards') {
-    <section class="flex flex-col" [class.slide-in-left]="animationDirection() === 'left'" [class.slide-in-right]="animationDirection() === 'right'">
+    <app-tab-content-ui [animationDirection]="animationDirection()">
       <div class="mb-3 flex-shrink-0">
-        <button 
-          (click)="openCreditCardEditionModal()"
+        <button (click)="openCreditCardEditionModal()"
           class="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white rounded-lg font-medium transition-colors text-sm"
           type="button">
           <app-icon-component [icon]="'add'" [size]="'4'"></app-icon-component>
@@ -129,74 +86,52 @@
       <!-- Credit Cards List -->
       <div class="space-y-3 pr-2 flex-1">
         @if (this.creditCardState.isLoadingGetList()) {
-          <app-loading-ui></app-loading-ui>
+        <app-loading-ui></app-loading-ui>
         } @else if (this.creditCardState.errorGetList()) {
-          <app-retry-component
-            [message]="'No se encontraron tarjetas'"
-            (retry)="reloadCreditCards()">
-          </app-retry-component>
+        <app-retry-component [message]="'No se encontraron tarjetas'" (retry)="reloadCreditCards()">
+        </app-retry-component>
         } @else if (orderedCreditCards().length === 0) {
-          <app-create-first-component
-            [icon]="'credit_card'"
-            [title]="'No hay tarjetas'"
-            [subtitle]="'Comienza creando tu primera tarjeta para organizar tus gastos'"
-            [buttonText]="'Crear Primera Tarjeta'"
-            (create)="openCreditCardEditionModal()"
-          ></app-create-first-component>
+        <app-create-first-component [icon]="'credit_card'" [title]="'No hay tarjetas'"
+          [subtitle]="'Comienza creando tu primera tarjeta para organizar tus gastos'"
+          [buttonText]="'Crear Primera Tarjeta'" (create)="openCreditCardEditionModal()"></app-create-first-component>
         } @else {
-          @for (creditCard of orderedCreditCards(); track creditCard.resourceCode) {
-            <app-credit-card ngSkipHydration class="block"
-              [creditCardName]="creditCard.name"
-              [creditCardLimit]="creditCard.creditLimit"
-              [creditCardBalance]="creditCard.currentBalance"
-              [creditCardState]="creditCard.state"
-              [creditCardBillingDay]="creditCard.billingDay"
-              [creditCardPaymentDay]="creditCard.paymentDay"
-              [creditCardResourceCode]="creditCard.resourceCode"
-              (creditCardEdit) = "openCreditCardEditionModal($event)"
-              (creditCardPayment) = "openCreditcardPaymentModal($event)"
-              (creditCardDisable) = "openDisableCreditCardModal($event)"
-            ></app-credit-card>
-          }
+        @for (creditCard of orderedCreditCards(); track creditCard.resourceCode) {
+        <app-credit-card ngSkipHydration class="block" [creditCardName]="creditCard.name"
+          [creditCardLimit]="creditCard.creditLimit" [creditCardBalance]="creditCard.currentBalance"
+          [creditCardState]="creditCard.state" [creditCardBillingDay]="creditCard.billingDay"
+          [creditCardPaymentDay]="creditCard.paymentDay" [creditCardResourceCode]="creditCard.resourceCode"
+          (creditCardEdit)="openCreditCardEditionModal($event)" (creditCardPayment)="openCreditcardPaymentModal($event)"
+          (creditCardDisable)="openDisableCreditCardModal($event)"></app-credit-card>
+        }
         }
       </div>
-    </section>
+    </app-tab-content-ui>
     }
   </div>
 </div>
 
 @if (showAccountEditionModal()) {
-  <app-account-edition-modal 
-    [resourceCodeSelected]="resourceCodeAccountSelected()"
-    (close)="closeAccountEditionModal()" 
-  ></app-account-edition-modal>
+<app-account-edition-modal [resourceCodeSelected]="resourceCodeAccountSelected()"
+  (close)="closeAccountEditionModal()"></app-account-edition-modal>
 }
 
 @if (showCreditCardEditionModal()) {
-  <app-creditcard-edition-modal 
-    [resourceCodeSelected]="resourceCodeCreditCardSelected()"
-    (close)="closeCreditCardEditionModal()" 
-  ></app-creditcard-edition-modal>
+<app-creditcard-edition-modal [resourceCodeSelected]="resourceCodeCreditCardSelected()"
+  (close)="closeCreditCardEditionModal()"></app-creditcard-edition-modal>
 }
 
 @if (showTransferModal()) {
-  <app-transfer-modal 
-    [accountResourceCode]="resourceCodeTransferSelected()"
-    (close)="closeTransferModal()" 
-  ></app-transfer-modal>
+<app-transfer-modal [accountResourceCode]="resourceCodeTransferSelected()"
+  (close)="closeTransferModal()"></app-transfer-modal>
 }
 
 @if (showCreditcardPaymentModal()) {
-  <app-creditcard-payment-modal 
-    [creditCardResourceCode]="resourceCodeCreditcardPaymentSelected()"
-    (close)="closeCreditcardPaymentModal()" 
-  ></app-creditcard-payment-modal>
+<app-creditcard-payment-modal [creditCardResourceCode]="resourceCodeCreditcardPaymentSelected()"
+  (close)="closeCreditcardPaymentModal()"></app-creditcard-payment-modal>
 }
 
 @if (showDisableAccountCreditModal()) {
-  <app-disable-account-credit-modal
-    [resourceCode]="this.resourceCodeAccountCreditSelected()"
-    [resourceType]="this.accountCreditTypeSelected()"
-    (close)="closeDisableAccountCreditModal()"
-  ></app-disable-account-credit-modal>
+<app-disable-account-credit-modal [resourceCode]="this.resourceCodeAccountCreditSelected()"
+  [resourceType]="this.accountCreditTypeSelected()"
+  (close)="closeDisableAccountCreditModal()"></app-disable-account-credit-modal>
 }

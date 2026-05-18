@@ -25,6 +25,8 @@ export class ModalButtonsUi {
   confirmEditText = input<string>('Actualizar');
   confirmEditIcon = input<string>('check');
 
+  formId = input<string | undefined>(undefined);
+
   cancel = output<void>();
   confirm = output<void>();
 

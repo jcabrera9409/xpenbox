@@ -19,6 +19,7 @@ import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-button
 import { DateService } from '../../../shared/service/date.service';
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
 
 @Component({
   selector: 'app-quick-expense-modal',
@@ -27,7 +28,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   templateUrl: './quick-expense.modal.html',
   styleUrl: './quick-expense.modal.css',
 })
-export class QuickExpenseModal implements OnInit {
+export class QuickExpenseModal extends ModalGeneric implements OnInit {
 
   userLogged = userState.userLogged;
 
@@ -56,6 +57,8 @@ export class QuickExpenseModal implements OnInit {
     private accountCreditService: AccountCreditService,
     private dateService: DateService
   ) {
+    super();
+
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
     }
@@ -105,7 +108,9 @@ export class QuickExpenseModal implements OnInit {
     });
   } 
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
+
     this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
   }

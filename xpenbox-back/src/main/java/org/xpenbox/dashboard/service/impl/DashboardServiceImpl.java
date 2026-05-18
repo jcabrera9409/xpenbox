@@ -52,6 +52,7 @@ public class DashboardServiceImpl implements IDashboardService {
     private final TransactionMapper transactionMapper;
     private final IPlanValidatorService planValidatorService;
     private final IPlanSnapshotService planSnapshotService;
+    private final Category uncategorizedCategory;
 
     public DashboardServiceImpl(
         UserRepository userRepository,
@@ -71,6 +72,13 @@ public class DashboardServiceImpl implements IDashboardService {
         this.transactionMapper = transactionMapper;
         this.planValidatorService = planValidatorService;
         this.planSnapshotService = planSnapshotService;
+
+        // Initialize the uncategorized category with a default name and resource code
+        this.uncategorizedCategory = new Category();
+        this.uncategorizedCategory.id = 0L; // Set a default ID for the uncategorized category
+        this.uncategorizedCategory.setName("Sin categoría");
+        this.uncategorizedCategory.setResourceCode("UNCATEGORIZED");
+        this.uncategorizedCategory.setColor("transparent"); // Set a default color for the uncategorized category (can be customized as needed)
     }
 
     @Override
@@ -86,7 +94,7 @@ public class DashboardServiceImpl implements IDashboardService {
         .orElseThrow(() -> {
             LOG.errorf("User not found with email: %s", userEmail);
             return new ResourceNotFoundException("User not found with email: " + userEmail);
-            });
+        });
 
         Map<String, LocalDateTime> dateRange = PeriodFilter.getDateRange(periodFilter);
         List<AccountResponseDTO> accounts = accountService.getAll(userEmail);
@@ -121,8 +129,9 @@ public class DashboardServiceImpl implements IDashboardService {
         BigDecimal incomeTotal = calculateIncomeTotal(transactions);
         BigDecimal expenseTotal = calculateExpenseTotal(transactions);
         BigDecimal netTotal = netCashflow(transactions);
-        List<CategoryResponseDTO> categoryBreakdown = groupTransactionsByCategory(transactions);
-        List<CategoryResponseDTO> categoryBreakdownCard = groupTransactionsCreditCardByCategory(transactions);
+        List<Transaction> transactionsNormalized = normalizeTransactions(transactions);
+        List<CategoryResponseDTO> categoryBreakdown = groupTransactionsByCategory(transactionsNormalized);
+        List<CategoryResponseDTO> categoryBreakdownCard = groupTransactionsCreditCardByCategory(transactionsNormalized);
         List<TransactionResponseDTO> lastTransactions = getLastTransactions(transactions, 10);
 
         return new DashboardPeriodFilterDTO(
@@ -329,6 +338,22 @@ public class DashboardServiceImpl implements IDashboardService {
             .sorted((t1, t2) -> t2.getTransactionDate().compareTo(t1.getTransactionDate()))
             .limit(limit)
             .map(transactionMapper::toSimpleDTO)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Normalizes the transactions by ensuring that all transactions have an associated category. If a transaction does not have a category, it assigns a default "Sin categoría" category to it. This normalization step is important to ensure that all transactions can be properly categorized and included in the category breakdowns on the dashboard, even if they were originally created without an associated category.
+     * @param transactions The list of transactions for the selected period, used to check for transactions without an associated category and assign a default category to them for proper categorization in the dashboard breakdowns.
+     * @return  A new list of transactions where any transaction that originally did not have an associated category now has a default "Sin categoría" category assigned to it, ensuring that all transactions can be categorized for the dashboard breakdowns.
+     */
+    private List<Transaction> normalizeTransactions(List<Transaction> transactions) {
+        return transactions.stream()
+            .map(t -> {
+                if (t.getCategory() == null) {
+                    t.setCategory(this.uncategorizedCategory);
+                }
+                return t;
+            })
             .collect(Collectors.toList());
     }
 }

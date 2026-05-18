@@ -6,7 +6,6 @@ import { catchError, Observable, switchMap, throwError } from "rxjs";
 import { NotificationService } from "../service/notification.service";
 import { StorageService } from "../../../shared/service/storage.service";
 import { authState } from "../../auth/service/auth.state";
-import { CapacitorService } from "../service/capacitor.service";
 
 // Singleton to track ongoing refresh token requests
 let ongoingRefresh$: Observable<void> | null = null;
@@ -85,12 +84,12 @@ export function authInterceptor(
                 switchMap(() => {
                     ongoingRefresh$ = null;
                     let newReq = req.clone({ withCredentials: true });
-                    
+
                     const newToken = authState.accessToken();
                     if (newToken) {
                         newReq = newReq.clone({
                             setHeaders: {
-                            Authorization: `Bearer ${newToken}`
+                                Authorization: `Bearer ${newToken}`
                             }
                         });
                     }

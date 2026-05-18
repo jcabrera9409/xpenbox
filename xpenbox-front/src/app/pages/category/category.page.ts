@@ -14,6 +14,8 @@ import { ApiResponseDTO } from '../../feature/common/model/api.response.dto';
 import { CategoryRequestDTO } from '../../feature/category/model/category.request.dto';
 import { NotificationService } from '../../feature/common/service/notification.service';
 import { IconComponent } from '../../shared/components/icon.component/icon.component';
+import { CategoryBudgetUsageRequestDTO } from '../../feature/category/model/categorybudgetusage.request.dto';
+import { userState } from '../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-category-page',
@@ -24,6 +26,7 @@ import { IconComponent } from '../../shared/components/icon.component/icon.compo
 export class CategoryPage {
 
   categoryState = categoryState;
+  userState = userState;
 
   showCategoryEditionModal = signal(false);
   resourceCodeCategorySelected = signal<string | null>(null);
@@ -60,6 +63,66 @@ export class CategoryPage {
     }
 
     this.categoryService.load();
+    this.categoryService.loadBudgetUsage();
+  }
+
+  get totalBudgetString(): string {
+    return `${this.currency} ${this.totalBudget.toFixed(2)}`;
+  }
+
+  get totalBudget(): number {
+    return this.categoryState.categories()
+      .filter(category => category.hasBudget && category.state)
+      .reduce((total, category) => {
+        return total + category.budget;
+    }, 0);
+  }
+
+  get totalBudgetRemainingString(): string {
+    const remaining = this.totalBudget - this.totalBudgetUsed;
+    return `${this.currency} ${remaining.toFixed(2)}`;
+  }
+
+  get totalBudgetUsed(): number {
+    return this.categoryState.categoriesBudgetUsage()
+    ?.filter(usage => usage.category.hasBudget && usage.category.state)
+    .reduce((total, usage) => {
+        return total + usage.budgetUsed;
+    }, 0) || 0;
+  }
+
+  get percentajeBudgetUsed(): number {
+    const totalBudget = this.totalBudget;
+    if (totalBudget === 0) {
+      return 0;
+    }
+    return (this.totalBudgetUsed / totalBudget) * 100;
+  }
+
+  get percentajeBudgetUsedString(): string {
+    const percentaje = this.percentajeBudgetUsed;
+    return `${percentaje.toFixed(0)}%`;
+  }
+
+  get countCategoriesWithBudget(): number {
+    return this.categoryState.categories().filter(category => category.hasBudget && category.state).length;
+  }
+
+  get currency(): string {
+    return this.userState.userLogged()?.currency || '';
+  }
+
+  get barColor(): string {
+    if (this.totalBudget === 0) {
+      return 'xpb-text-primary';
+    }
+    if (this.percentajeBudgetUsed < 50) {
+      return 'xpb-text-success';
+    } else if (this.percentajeBudgetUsed < 100) {
+      return 'xpb-text-warning';
+    } else {
+      return 'xpb-text-error';
+    }
   }
 
   openCategoryEditionModal(resourceCodeCategorySelected: string | null = null) {
@@ -80,6 +143,8 @@ export class CategoryPage {
     this.categoryState.isLoadingSendingCategory.set(true);
 
     const categoryData = new CategoryRequestDTO(
+      undefined!,
+      undefined!,
       undefined!,
       undefined!,
       this.categoryDataSelected()!.state ? false : true
@@ -114,6 +179,11 @@ export class CategoryPage {
 
   reloadCategories() {
     this.categoryService.refresh();
+  }
+
+  getCategoryBudgetUsage(resourceCode: string): CategoryBudgetUsageRequestDTO | undefined {
+    const budgetUsage = this.categoryState.categoriesBudgetUsage()?.find(usage => usage.category.resourceCode === resourceCode);
+    return budgetUsage;
   }
 
   private updateNewStateDataModal() {

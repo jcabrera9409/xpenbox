@@ -31,6 +31,7 @@
     "@angular/router": "^20.3.0",
     "@capacitor/android": "^8.3.1",
     "@capacitor/angular": "^2.0.3",
+    "@capacitor/app": "^8.1.0",
     "@capacitor/core": "latest",
     "@capacitor/preferences": "^8.0.1",
     "@capacitor/push-notifications": "^8.0.4",

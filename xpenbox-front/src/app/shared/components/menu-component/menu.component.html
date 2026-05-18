@@ -92,7 +92,7 @@
 <!-- Desktop Sidebar Menu / Mobile Drawer -->
 <aside
   [class]="isMobileMenuOpen() ? 'translate-x-0' : '-translate-x-full'"
-  class="lg:translate-x-0 flex flex-col fixed left-0 top-16 bottom-0 w-64 xpb-bg-sidebar border-r xpb-border shadow-sm z-52 transition-transform duration-300 ease-in-out lg:shadow-none"
+  class="lg:translate-x-0 flex flex-col fixed left-0 top-16 bottom-0 w-64 xpb-bg-sidebar border-r xpb-border shadow-sm z-52 lg:z-49 transition-transform duration-300 ease-in-out lg:shadow-none"
 >
   <!-- Navigation Links -->
   <nav class="flex-1 p-4 space-y-2">
@@ -115,7 +115,7 @@
   </nav>
 
   <!-- Quick Expense Button -->
-  <div class="p-4 border-t xpb-border">
+  <div style="display: none;" class="p-4 border-t xpb-border">
     <button
       (click)="onQuickExpense()"
       class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] text-white font-medium transition-colors shadow-md text-xs lg:text-base"
@@ -135,13 +135,13 @@
   <div
     (click)="closeSpeedDial()"
     [class.opacity-0]="isSpeedDialClosing()"
-    class="lg:hidden fixed inset-0 bg-black/50 z-[49] transition-opacity duration-300"
+    class="fixed inset-0 bg-black/50 z-[49] transition-opacity duration-300"
   ></div>
 }
 
 <!-- Speed Dial Actions -->
 @if (isSpeedDialOpen() || isSpeedDialClosing()) {
-  <div class="lg:hidden fixed left-1/2 -translate-x-1/2 bottom-30 z-[50] flex flex-col-reverse gap-3">
+  <div class="fixed left-4 right-4 lg:left-auto lg:right-6 lg:max-w-sm bottom-28 z-[50] flex flex-col-reverse gap-3">
     <!-- Gasto Rápido -->
     <button
       (click)="onQuickExpense()"
@@ -150,14 +150,17 @@
       [class.animate-speed-dial-out-1]="isSpeedDialClosing()"
       [style.animation-delay]="isSpeedDialClosing() ? '150ms' : '0ms'"
     >
-      <div class="w-10 h-10 rounded-full bg-[var(--xpb-expense)] flex items-center justify-center">
+      <div class="w-10 h-10 rounded-full bg-[var(--xpb-expense)] flex items-center justify-center flex-shrink-0">
         <app-icon-component
           [icon]="'receipt_long'"
           [size]="'5'"
           [class]="'text-white'">
         </app-icon-component>
       </div>
-      <span class="font-medium xpb-text-primary whitespace-nowrap">Registrar Gasto</span>
+      <div class="flex flex-col items-start flex-1">
+        <span class="text-sm lg:text-base font-medium xpb-text-primary">Gasto</span>
+        <span class="text-[10px] leading-tight lg:text-xs xpb-text-secondary text-left">Registra un gasto o pago que realizaste, como compras, servicios o suscripciones.</span>
+      </div>
     </button>
 
     <!-- Nuevo Ingreso -->
@@ -168,14 +171,17 @@
       [class.animate-speed-dial-out-2]="isSpeedDialClosing()"
       [style.animation-delay]="isSpeedDialClosing() ? '100ms' : '50ms'"
     >
-      <div class="w-10 h-10 rounded-full bg-[var(--xpb-income)] flex items-center justify-center">
+      <div class="w-10 h-10 rounded-full bg-[var(--xpb-income)] flex items-center justify-center flex-shrink-0">
         <app-icon-component
           [icon]="'trending_up'"
           [size]="'5'"
           [class]="'text-white'">
         </app-icon-component>
       </div>
-      <span class="font-medium xpb-text-primary whitespace-nowrap">Nuevo Ingreso</span>
+      <div class="flex flex-col items-start flex-1">
+        <span class="text-sm lg:text-base font-medium xpb-text-primary">Ingreso</span>
+        <span class="text-[10px] leading-tight lg:text-xs xpb-text-secondary text-left">Registra tus ingresos como sueldos, ventas o cualquier otra fuente de ingreso.</span>
+      </div>
     </button>
 
     <!-- Transferencia -->
@@ -186,14 +192,17 @@
       [class.animate-speed-dial-out-3]="isSpeedDialClosing()"
       [style.animation-delay]="isSpeedDialClosing() ? '50ms' : '100ms'"
     >
-      <div class="w-10 h-10 rounded-full bg-[var(--xpb-transfer)] flex items-center justify-center">
+      <div class="w-10 h-10 rounded-full bg-[var(--xpb-transfer)] flex items-center justify-center flex-shrink-0">
         <app-icon-component
           [icon]="'swap_horiz'"
           [size]="'5'"
           [class]="'text-white'">
         </app-icon-component>
       </div>
-      <span class="font-medium xpb-text-primary whitespace-nowrap">Transferencia</span>
+      <div class="flex flex-col items-start flex-1">
+        <span class="text-sm lg:text-base font-medium xpb-text-primary">Transferencia</span>
+        <span class="text-[10px] leading-tight lg:text-xs xpb-text-secondary text-left">Transfiere dinero entre tus cuentas.</span>
+      </div>
     </button>
 
     <!-- Pago de Tarjeta -->
@@ -204,14 +213,17 @@
       [class.animate-speed-dial-out-4]="isSpeedDialClosing()"
       [style.animation-delay]="isSpeedDialClosing() ? '0ms' : '150ms'"
     >
-      <div class="w-10 h-10 rounded-full bg-[var(--xpb-credit)] flex items-center justify-center">
+      <div class="w-10 h-10 rounded-full bg-[var(--xpb-credit)] flex items-center justify-center flex-shrink-0">
         <app-icon-component
           [icon]="'payment'"
           [size]="'5'"
           [class]="'text-white'">
         </app-icon-component>
       </div>
-      <span class="font-medium xpb-text-primary whitespace-nowrap">Pago de Crédito</span>
+      <div class="flex flex-col items-start flex-1">
+        <span class="text-sm lg:text-base font-medium xpb-text-primary">Pago de Tarjeta</span>
+        <span class="text-[10px] leading-tight lg:text-xs xpb-text-secondary text-left">Registra un pago realizado a tu tarjeta de crédito.</span>
+      </div>
     </button>
   </div>
 }
@@ -241,7 +253,7 @@
 <button
   (click)="toggleSpeedDial()"
   [class]="isSpeedDialOpen() ? 'rotate-45' : 'rotate-0'"
-  class="lg:hidden fixed left-1/2 -translate-x-1/2 bottom-10 w-14 h-14 rounded-full bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] shadow-xl flex items-center justify-center text-white transition-all duration-300 z-[51]"
+  class="fixed left-1/2 -translate-x-1/2 lg:left-auto lg:right-6 lg:translate-x-0 bottom-10 lg:bottom-6 w-14 h-14 rounded-full bg-[var(--xpb-primary)] hover:bg-[var(--xpb-primary-hover)] shadow-xl flex items-center justify-center text-white transition-all duration-300 z-[51]"
   aria-label="Acciones rápidas"
 >
   <app-icon-component

@@ -1,4 +1,4 @@
-<div class="h-screen xpb-bg-main p-3 sm:p-4 flex flex-col overflow-hidden">
+<div class="xpb-bg-main p-3 sm:p-4 flex flex-col">
   <!-- Header -->
   <div class="mb-4 flex-shrink-0">
     <div class="flex items-center justify-between">
@@ -16,24 +16,54 @@
     </div>
   </div>
 
-  <!-- Summary Card -->
-  <app-summary-card
-    class="mb-4 flex-shrink-0"
-    [isLoading]="this.categoryState.isLoadingGetList()"
-    [titleCard]="'Total de Categorías'"
-    [contentCard]="orderedCategories().length.toString()"
-    [subtitleCard]="
-      activeCategoriesCount() > 1 ? activeCategoriesCount() + ' categorías activas' :
-      activeCategoriesCount() === 1 ? activeCategoriesCount() + ' categoría activa' :
-      'Ninguna categoría activa'
-    "
-    [iconCard]="'category'"
-    [contentClassCard]="'xpb-text-primary'"
-  ></app-summary-card>
+  <div class="grid grid-cols-3 sm:grid-cols-3 gap-3 mb-2 flex-shrink-0">
+    <!-- Summary Card -->
+    <app-summary-card
+      class="mb-2 flex-shrink-0"
+      [isLoading]="this.categoryState.isLoadingGetList()"
+      [titleCard]="'Total de Categorías'"
+      [contentCard]="orderedCategories().length.toString()"
+      [subtitleCard]="
+        activeCategoriesCount() > 1 ? activeCategoriesCount() + ' categorías activas' :
+        activeCategoriesCount() === 1 ? activeCategoriesCount() + ' categoría activa' :
+        'Ninguna categoría activa'
+      "
+      [iconCard]="'category'"
+      [contentClassCard]="'xpb-text-primary'">
+    </app-summary-card>
+
+    <app-summary-card
+      class="mb-2 flex-shrink-0"
+      [isLoading]="this.categoryState.isLoadingGetBudgetUsage()"
+      [titleCard]="'Presupuesto Total'"
+      [contentCard]="totalBudgetString"
+      [subtitleCard]="
+        countCategoriesWithBudget > 1 ? countCategoriesWithBudget + ' categorías con presupuesto' :
+        countCategoriesWithBudget === 1 ? countCategoriesWithBudget + ' categoría con presupuesto' :
+        'Ninguna categoría con presupuesto'
+      "
+      [iconCard]="'chart_pie'"
+      [contentClassCard]="'xpb-text-info'">
+    </app-summary-card>
+
+    <app-summary-card
+      class="mb-2 flex-shrink-0"
+      [isLoading]="this.categoryState.isLoadingGetBudgetUsage()"
+      [titleCard]="'Presupuesto Restante'"
+      [contentCard]="totalBudgetRemainingString"
+      [subtitleCard]="
+        totalBudget > 0 ? 'Usado: ' + percentajeBudgetUsedString :
+        'Ninguna categoría con presupuesto'
+       "
+      [iconCard]="'money_bag'"
+      [contentClassCard]="barColor">
+    </app-summary-card>
+
+  </div>
 
   <!-- Categories List -->
   <div class="flex-1 overflow-hidden">
-    <div class="h-full overflow-y-auto pr-2">
+    <div class="h-full overflow-y-auto">
       @if (this.categoryState.isLoadingGetList()) {
         <app-loading-ui></app-loading-ui>
       } @else if (this.categoryState.errorGetList()) {
@@ -50,15 +80,12 @@
           (create)="openCategoryEditionModal()"
         ></app-create-first-component>
       } @else {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 pb-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 sm:gap-4 pb-4">
           @for (category of orderedCategories(); track category.resourceCode) {
             <app-category-card ngSkipHydration 
               class="block"
-              [categoryCardName]="category.name"
-              [categoryCardColor]="category.color"
-              [categoryCardState]="category.state"
-              [categoryCardResourceCode]="category.resourceCode"
-              [categoryTotalUses]="category.usageCount"
+              [category]="category"
+              [categoryBudgetUsage]="getCategoryBudgetUsage(category.resourceCode)"
               (categoryCardEdit)="openCategoryEditionModal($event)"
               (categoryCardChangeState)="openConfirmNewStateModal($event)">
             </app-category-card>
