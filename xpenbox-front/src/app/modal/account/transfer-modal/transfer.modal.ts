@@ -17,6 +17,7 @@ import { TransactionService } from '../../../feature/transaction/service/transac
 import { DateService } from '../../../shared/service/date.service';
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
 
 @Component({
   selector: 'app-transfer-modal',
@@ -24,7 +25,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   templateUrl: './transfer.modal.html',
   styleUrl: './transfer.modal.css',
 })
-export class TransferModal implements OnInit {
+export class TransferModal extends ModalGeneric implements OnInit {
 
   userLogged = userState.userLogged;
 
@@ -48,6 +49,8 @@ export class TransferModal implements OnInit {
     private accountCreditService: AccountCreditService,
     private dateService: DateService
   ) { 
+    super();
+
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
     }
@@ -91,7 +94,9 @@ export class TransferModal implements OnInit {
     return isAmountValid && isAccountValid && amountValue <= amountOriginAccount;
   }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
+
     this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
     

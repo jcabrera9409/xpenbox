@@ -100,6 +100,20 @@ public class DateFunctions {
     }
 
     /**
+     * Calculates the number of days between two LocalDateTime instances.
+     * @param start The start LocalDateTime.
+     * @param end The end LocalDateTime.
+     * @return The number of days between the two LocalDateTime instances, or null if either input is null or if there is an error during calculation.
+     */
+    public static Long daysBetween(LocalDateTime start, LocalDateTime end) {
+        LOG.debug("Calculating days between two LocalDateTime instances");
+
+        Duration duration = calculateDuration(start, end);
+
+        return duration != null ? duration.toDays() : null;
+    }
+
+    /**
      * Converts a LocalDateTime to the first day of its year.
      * @param dateTime The LocalDateTime to be converted.
      * @return The LocalDateTime representing the first day of the year of the input dateTime, or null if the input is null.

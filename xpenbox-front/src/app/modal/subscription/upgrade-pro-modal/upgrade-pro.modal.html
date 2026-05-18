@@ -1,7 +1,6 @@
 <!-- Overlay with backdrop -->
 <div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
-  <div
-    class="xpb-bg-card md:rounded-xl shadow-2xl md:w-full md:max-w-xl md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">
+  <div class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-xl md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">
     <!-- Header -->
     <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
       <div class="flex items-start justify-between">
@@ -29,7 +28,7 @@
     </div>
 
     <!-- Body content -->
-    <div class="p-6">
+    <div class="p-6 overflow-y-auto flex-1">
       <!-- Message -->
       <div class="xpb-bg-main rounded-lg p-4 border xpb-border mb-6">
         <div class="flex items-start gap-3">
@@ -88,20 +87,19 @@
       </div>
 
       <!-- Action buttons -->
-
-      <!-- Action buttons -->
-      <app-modal-buttons-ui 
-        [cancelText]="'Ahora no'" 
-        [cancelIcon]="'close'"
-        [isLoading]="subscriptionState.isLoadingSending()" 
-        [isValidForm]="true"
-        [loadingText]="''"
-        [loadingIcon]="'autorenew'"
-        [confirmText]="'Actualizar ahora'" 
-        [confirmIcon]="'workspace_premium'" 
-        (cancel)="onClose()" 
-        (confirm)="onUpgrade()">
-      </app-modal-buttons-ui>
     </div>
+    <!-- Action buttons -->
+    <app-modal-buttons-ui 
+      [cancelText]="'Ahora no'" 
+      [cancelIcon]="'close'"
+      [isLoading]="subscriptionState.isLoadingSending()" 
+      [isValidForm]="true"
+      [loadingText]="''"
+      [loadingIcon]="'autorenew'"
+      [confirmText]="'Actualizar ahora'" 
+      [confirmIcon]="'workspace_premium'" 
+      (cancel)="onClose()" 
+      (confirm)="onUpgrade()">
+    </app-modal-buttons-ui>
   </div>
 </div>

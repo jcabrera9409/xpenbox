@@ -10,6 +10,7 @@ import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { userState } from '../../../feature/user/service/user.state';
 import { Router } from '@angular/router';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
 
 @Component({
   selector: 'app-transaction-detail-modal',
@@ -17,7 +18,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   templateUrl: './transaction-detail.modal.html',
   styleUrl: './transaction-detail.modal.css',
 })
-export class TransactionDetailModal implements OnInit {
+export class TransactionDetailModal extends ModalGeneric implements OnInit {
 
   userLogged = userState.userLogged;
 
@@ -33,9 +34,13 @@ export class TransactionDetailModal implements OnInit {
     private transactionService: TransactionService,
     private dateService: DateService,
     private router: Router
-  ) { }
+  ) {
+    super();
+  }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
+
     this.transactionState.isLoadingGetTransaction.set(false);
     this.transactionState.errorGetTransaction.set(null);
     this.loadTransactionData();

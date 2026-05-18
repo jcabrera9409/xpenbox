@@ -3,6 +3,7 @@ import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-button
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../modal.generic';
 
 @Component({
   selector: 'app-confirm-modal',
@@ -10,7 +11,7 @@ import { IconComponent } from '../../../shared/components/icon.component/icon.co
   templateUrl: './confirm.modal.html',
   styleUrl: './confirm.modal.css',
 })
-export class ConfirmModal {
+export class ConfirmModal extends ModalGeneric {
   // Inputs
   iconTitle = input<string | null>(null);
   title = input<string>('Confirmar acción');

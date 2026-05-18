@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, output, input, OnInit, signal } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AccountService } from '../../../feature/account/service/account.service';
 import { AccountRequestDTO } from '../../../feature/account/model/account.request.dto';
@@ -12,15 +12,17 @@ import { RetryComponent } from '../../../shared/components/retry-component/retry
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { ModalGeneric } from '../../common/modal.generic';
+import { InputComponent } from '../../../shared/components/input-component/input.component';
 
 @Component({
   selector: 'app-account-edition-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, IconComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, IconComponent, InputComponent],
   templateUrl: './account-edition.modal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountEditionModal implements OnInit {
+export class AccountEditionModal extends ModalGeneric implements OnInit {
 
   resourceCodeSelected = input<string | null>();
   close = output<void>();
@@ -34,9 +36,13 @@ export class AccountEditionModal implements OnInit {
     private fb: FormBuilder,
     private accountService: AccountService,
     private notificationService: NotificationService
-  ) { }
+  ) {
+    super();
+  }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit();
+
     this.accountState.isLoadingSendingAccount.set(false);
     this.accountState.errorSendingAccount.set(null);
 
@@ -46,6 +52,14 @@ export class AccountEditionModal implements OnInit {
 
   get isEditMode(): boolean {
     return this.resourceCodeSelected() !== null;
+  }
+
+  get nameControl(): FormControl {
+    return this.formAccount.get('name') as FormControl;
+  }
+
+  get initialBalanceControl(): FormControl {
+    return this.formAccount.get('initialBalance') as FormControl;
   }
 
   onSubmit() {
@@ -107,7 +121,6 @@ export class AccountEditionModal implements OnInit {
     const initialBalance = this.isEditMode ? null : formValues.initialBalance;
 
     return new AccountRequestDTO(accountName, initialBalance);
-
   }
 
   private initForms(): void {
