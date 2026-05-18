@@ -92,10 +92,15 @@ export class AuthService {
       withCredentials: true 
     })
     .pipe(
-      tap(async (response: AuthenticationResponseDTO) => {
+      switchMap((response: AuthenticationResponseDTO) => {
         if (this.capacitorService.isNativePlatform()) {
-          await this.capacitorService.setRefreshToken(response.refreshToken);
+          return from(this.capacitorService.setRefreshToken(response.refreshToken)).pipe(
+            map(() => response)
+          );
         }
+        return of(response);
+      }),
+      tap((response: AuthenticationResponseDTO) => {
         authState.accessToken.set(response.accessToken);
         authState.isAuthenticated.set(true);
         authState.error.set(null);
