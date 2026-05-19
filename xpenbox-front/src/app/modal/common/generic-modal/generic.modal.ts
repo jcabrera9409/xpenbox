@@ -12,6 +12,21 @@ import { ModalGeneric } from '../modal.generic';
 })
 export class GenericModal extends ModalGeneric implements OnInit {
 
+  iconHeader = input<string>('');
+  classIconHeader = input<string>('');
+
+  title = input<string>('');
+  subtitle = input<string>('');
+
+  isLoading = input<boolean>(false);
+  isFormValid = input<boolean>(false);
+  formId = input<string>('');
+  confirmText = input<string>('Confirmar');
+  confirmIcon = input<string>('add');
+
+  confirm = output<void>();
+  close = output<void>();
+
   constructor() {
     super();
   }
@@ -19,14 +34,4 @@ export class GenericModal extends ModalGeneric implements OnInit {
   override ngOnInit(): void {
     super.ngOnInit();
   }
-
-  iconHeader = input<string>('');
-  classIconHeader = input<string>('');
-
-  title = input<string>('');
-
-  isFormValid = input<boolean>(false);
-  isLoading = input<boolean>(false);
-
-  close = output<void>();
 }

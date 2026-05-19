@@ -15,6 +15,9 @@
                 <!-- Title -->
                 <div class="flex-1">
                     <h3 class="text-xl font-semibold xpb-text-primary">{{ title() }}</h3>
+                    @if (subtitle() && subtitle() !== '') {
+                        <p class="text-sm xpb-text-secondary">{{ subtitle() }}</p>
+                    }
                 </div>
 
                 <!-- Close button -->
@@ -43,9 +46,10 @@
             [isValidForm]="isFormValid()"
             [loadingText]="'Guardando...'"
             [loadingIcon]="'autorenew'"
-            [confirmText]="'Guardar'"
-            [confirmIcon]="'save'"
-            [formId]="'expenseForm'"
+            [confirmText]="confirmText()"
+            [confirmIcon]="confirmIcon()"
+            [formId]="formId()"
+            (confirm)="confirm.emit()"
             (cancel)="close.emit()">
         </app-modal-buttons-ui>
     </div>

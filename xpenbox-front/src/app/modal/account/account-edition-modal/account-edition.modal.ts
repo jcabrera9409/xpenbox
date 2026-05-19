@@ -9,20 +9,19 @@ import { accountState } from '../../../feature/account/service/account.state';
 import { NotificationService } from '../../../feature/common/service/notification.service';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
-import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
-import { ModalGeneric } from '../../common/modal.generic';
 import { InputComponent } from '../../../shared/components/input-component/input.component';
+import { GenericModal } from '../../common/generic-modal/generic.modal';
 
 @Component({
   selector: 'app-account-edition-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, IconComponent, InputComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, IconComponent, InputComponent, GenericModal],
   templateUrl: './account-edition.modal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountEditionModal extends ModalGeneric implements OnInit {
+export class AccountEditionModal implements OnInit {
 
   resourceCodeSelected = input<string | null>();
   close = output<void>();
@@ -37,12 +36,9 @@ export class AccountEditionModal extends ModalGeneric implements OnInit {
     private accountService: AccountService,
     private notificationService: NotificationService
   ) {
-    super();
   }
 
-  override ngOnInit(): void {
-    super.ngOnInit();
-
+  ngOnInit(): void {
     this.accountState.isLoadingSendingAccount.set(false);
     this.accountState.errorSendingAccount.set(null);
 
