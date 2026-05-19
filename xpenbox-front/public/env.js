@@ -6,6 +6,6 @@
   window.__env.domains = ['localhost:8080'];
   window.__env.googleAnalyticsId = '';
 
-  window.__env.apiUrlMobile = 'https://xenomorphic-prayerfully-keegan.ngrok-free.dev/api/rest/v1';
-  window.__env.domainsMobile = ['xenomorphic-prayerfully-keegan.ngrok-free.dev'];
+  window.__env.apiUrlMobile = 'https://xpenbox.firstcode.online/api/rest/v1';
+  window.__env.domainsMobile = ['xpenbox.firstcode.online'];
 })(this);
