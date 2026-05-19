@@ -7,7 +7,6 @@ import { AccountResponseDTO } from '../../../feature/account/model/account.respo
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { AccountService } from '../../../feature/account/service/account.service';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
-import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtual-keyboard.ui';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
 import { AccountCreditDTO, AccountCreditType } from '../../../shared/dto/account-credit.dto';
@@ -18,10 +17,13 @@ import { DateService } from '../../../shared/service/date.service';
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 import { ModalGeneric } from '../../common/modal.generic';
+import { InputComponent } from '../../../shared/components/input-component/input.component';
+import { InputAmountComponent } from '../../../shared/components/input-amount-component/input-amount-component';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-transfer-modal',
-  imports: [CommonModule, LoadingUi, RetryComponent, VirtualKeyboardUi, ModalButtonsUi, AccountsCarouselComponent, IconComponent],
+  imports: [CommonModule, LoadingUi, RetryComponent, ModalButtonsUi, AccountsCarouselComponent, IconComponent, InputComponent, InputAmountComponent, ReactiveFormsModule],
   templateUrl: './transfer.modal.html',
   styleUrl: './transfer.modal.css',
 })
@@ -40,10 +42,11 @@ export class TransferModal extends ModalGeneric implements OnInit {
   selectedDestinationAccount = signal<AccountCreditDTO | null>(null);
   selectedOriginAccount = signal<AccountCreditDTO | null>(null);
 
-  amount = signal(0);
-  description = signal('');
+  formTransfer!: FormGroup;
+  maxDate = signal('');
 
   constructor(
+    private fb: FormBuilder,
     private transactionService: TransactionService,
     private accountService: AccountService,
     private accountCreditService: AccountCreditService,
@@ -84,7 +87,7 @@ export class TransferModal extends ModalGeneric implements OnInit {
   }
 
   get isFormValid(): boolean {
-    const amountValue = this.amount();
+    const amountValue = this.amountControl.value;
     const amountOriginAccount = this.selectedOriginAccount()?.balance || 0;
     const selectedAccount = this.selectedDestinationAccount();
 
@@ -92,6 +95,30 @@ export class TransferModal extends ModalGeneric implements OnInit {
     const isAccountValid = selectedAccount !== null;
 
     return isAmountValid && isAccountValid && amountValue <= amountOriginAccount;
+  }
+
+  get amountControl(): FormControl {
+    return this.formTransfer.get('amount') as FormControl;
+  }
+
+  get descriptionControl(): FormControl {
+    return this.formTransfer.get('description') as FormControl;
+  }
+
+  get transactionDateControl(): FormControl {
+    return this.formTransfer.get('transactionDate') as FormControl;
+  }
+
+  initForms(): void {
+    const today = this.dateService.toTimestamp(this.dateService.getLocalDatetime());
+    const formattedDate = this.dateService.format(today, 'ISO-LOCAL');
+    this.maxDate.set(formattedDate);
+
+    this.formTransfer = this.fb.group({
+      amount: [null, [Validators.required, Validators.min(0.01)]],
+      description: [''],
+      transactionDate: [formattedDate, [Validators.required]]
+    });
   }
 
   override ngOnInit(): void {
@@ -103,6 +130,8 @@ export class TransferModal extends ModalGeneric implements OnInit {
     if (this.accountResourceCode()) {
       this.loadAccountData();
     }
+
+    this.initForms();
   }
 
   retryLoadAccountData() {
@@ -120,18 +149,19 @@ export class TransferModal extends ModalGeneric implements OnInit {
   onSubmit() {
     if (!this.isFormValid) return;
 
-    const amountValue = this.amount();
-    const descriptionValue = this.description();
+    const amountValue = this.amountControl.value / 100;
+    const descriptionValue = this.descriptionControl.value;
     const originAccountResourceCode = this.selectedOriginAccount()?.resourceCode || '';
     const destinationAccountResourceCode = this.selectedDestinationAccount()?.resourceCode || '';
-    const dateTimestamp = this.dateService.getUtcDatetime().getTime();
+    const transactionDate = this.dateService.parseDatetimeIsoString(this.transactionDateControl.value);
+    const transactionDateTimestamp = this.dateService.toTimestamp(transactionDate);
 
     const transactionRequest = TransactionRequestDTO.generateTransferTransaction(
       amountValue,
       descriptionValue,
       originAccountResourceCode,
       destinationAccountResourceCode,
-      dateTimestamp
+      transactionDateTimestamp
     );
 
     this.transactionService.submitTransaction(transactionRequest, () => this.successTransactionCreated());

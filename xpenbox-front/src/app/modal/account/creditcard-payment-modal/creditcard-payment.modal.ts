@@ -12,7 +12,6 @@ import { TransactionRequestDTO } from '../../../feature/transaction/model/transa
 import { CommonModule } from '@angular/common';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
-import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtual-keyboard.ui';
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
 import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { creditCardState } from '../../../feature/creditcard/service/creditcard.state';
@@ -22,10 +21,13 @@ import { CategoryResponseDTO } from '../../../feature/category/model/category.re
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 import { ModalGeneric } from '../../common/modal.generic';
+import { InputComponent } from '../../../shared/components/input-component/input.component';
+import { InputAmountComponent } from '../../../shared/components/input-amount-component/input-amount-component';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-creditcard-payment-modal',
-  imports: [CommonModule, LoadingUi, RetryComponent, VirtualKeyboardUi, ModalButtonsUi, AccountsCarouselComponent, CategoriesCarouselComponent, IconComponent],
+  imports: [CommonModule, LoadingUi, RetryComponent, ModalButtonsUi, AccountsCarouselComponent, CategoriesCarouselComponent, IconComponent, InputComponent, InputAmountComponent, ReactiveFormsModule],
   templateUrl: './creditcard-payment.modal.html',
   styleUrl: './creditcard-payment.modal.css',
 })
@@ -49,10 +51,11 @@ export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
   creditCardData = signal<AccountCreditDTO | null>(null);
   onlyOneCreditCard = signal<boolean>(false);
 
-  amount = signal(0);
-  description = signal('');
+  formPayment!: FormGroup;
+  maxDate = signal('');
 
   constructor(
+    private fb: FormBuilder,
     private transactionService: TransactionService,
     private accountService: AccountService,
     private creditCardService: CreditCardService,
@@ -110,7 +113,7 @@ export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
     effect(() => {
       const accounts = this.accountCreditService.combineAccountAndCreditCardData(this.accountState.accounts(), []);
 
-      const filteredAccounts = this.accountCreditService.filterAndSortAccountCredits(accounts, this.amount());
+      const filteredAccounts = this.accountCreditService.filterAndSortAccountCredits(accounts, this.amountControl.value);
       this.accountsList.set(filteredAccounts);
 
       if (filteredAccounts.length > 0 && !this.selectedAccount()) {
@@ -120,7 +123,7 @@ export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
 
     // Update selected account when amount changes
     effect(() => {
-      const amountValue = this.amount();
+      const amountValue = this.amountControl.value;
       const accounts = this.accountsList();
       const currentSelected = this.selectedAccount();
       
@@ -152,16 +155,18 @@ export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
     if (this.creditCardResourceCode()) {
       this.loadCreditCardData();
     }
+
+    this.initForms();
   }
 
   get isFormValid(): boolean {
-    const amountValue = this.amount();
+    const amountValue = this.amountControl.value;
     const selectedAccount = this.selectedAccount();
 
     const isAmountValid = !isNaN(amountValue) && amountValue > 0;
     const isAccountValid = selectedAccount !== null;
 
-    return isAmountValid && isAccountValid;
+    return isAmountValid && isAccountValid && this.formPayment.valid;
   }
 
   get isOnlyOneCreditCard(): boolean {
@@ -170,6 +175,33 @@ export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
     } else {
       return this.onlyOneCreditCard();
     }
+  }
+
+  get amountControl(): FormControl {
+    return this.formPayment.get('amount') as FormControl;
+  }
+
+  get descriptionControl(): FormControl {
+    return this.formPayment.get('description') as FormControl;
+  }
+
+  get transactionDateControl(): FormControl {
+    return this.formPayment.get('transactionDate') as FormControl;
+  }
+
+  initForms(): void {
+    const today = this.dateService.toTimestamp(this.dateService.getLocalDatetime());
+    const formattedDate = this.dateService.format(today, 'ISO-LOCAL');
+    this.maxDate.set(formattedDate);
+
+    this.formPayment = this.fb.group({
+      amount: [null, [
+        Validators.required,
+        Validators.min(0.01)
+      ]],
+      description: [''],
+      transactionDate: [formattedDate, Validators.required]
+    });
   }
 
   retryLoadCreditCardData() {
@@ -200,12 +232,13 @@ export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
   onSubmit() {
     if (!this.isFormValid) return;
 
-    const amountValue = this.amount();
-    const descriptionValue = this.description();
+    const amountValue = this.amountControl.value;
+    const descriptionValue = this.descriptionControl.value;
     const creditCardResourceCode = this.creditCardData()?.resourceCode || '';
     const accountResourceCode = this.selectedAccount()?.resourceCode || '';
     const categoryResourceCode = this.selectedCategory()?.resourceCode || undefined;
-    const dateTimestamp = this.dateService.getUtcDatetime().getTime();
+    const transactionDate = this.dateService.parseDatetimeIsoString(this.transactionDateControl.value);
+    const transactionDateTimestamp = this.dateService.toTimestamp(transactionDate);
 
     const transactionRequest = TransactionRequestDTO.generateCreditCardPaymentTransaction(
       amountValue,
@@ -213,7 +246,7 @@ export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
       creditCardResourceCode,
       accountResourceCode,
       categoryResourceCode,
-      dateTimestamp
+      transactionDateTimestamp
     );
 
     this.transactionService.submitTransaction(transactionRequest, () => this.successTransactionCreated());
