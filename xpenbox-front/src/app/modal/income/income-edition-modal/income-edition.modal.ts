@@ -22,10 +22,11 @@ import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 import { ModalGeneric } from '../../common/modal.generic';
 import { InputComponent } from '../../../shared/components/input-component/input.component';
+import { InputAmountComponent } from '../../../shared/components/input-amount-component/input-amount-component';
 
 @Component({
   selector: 'app-income-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, AccountsCarouselComponent, RetryComponent, ModalButtonsUi, IconComponent, InputComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, AccountsCarouselComponent, RetryComponent, ModalButtonsUi, IconComponent, InputComponent, InputAmountComponent],
   templateUrl: './income-edition.modal.html',
   styleUrl: './income-edition.modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -205,13 +206,9 @@ export class IncomeEditionModal extends ModalGeneric implements OnInit {
     const formValues = this.formIncome.value;
     const concept = formValues['concept'];
 
-    const today = this.dateService.getUtcDatetime();
-    const incomeDate = this.dateService.parseDateIsoString(formValues['incomeDate']);
-    incomeDate.setHours(today.getHours(), today.getMinutes(), today.getSeconds(), today.getMilliseconds());
+    const incomeDate = this.dateService.parseDatetimeIsoString(formValues['incomeDate']);
     const incomeDateTimestamp = this.dateService.toTimestamp(incomeDate);
-    //const incomeDate = this.dateService.toUtcDate(new Date(formValues['incomeDate']));
-    //const incomeDateTimestamp = this.dateService.toTimestamp(incomeDate);
-    const totalAmount = formValues['amount'];
+    const totalAmount = formValues['amount'] / 100;
     const accountResourceCode: string | undefined = !this.isEditMode && this.selectedAccount()
       ? this.selectedAccount()!.resourceCode
       : undefined;

@@ -31,7 +31,7 @@
         </div>
 
         <!-- Body content -->
-        <div class="p-6 overflow-y-auto flex-1">
+        <div class="p-4 overflow-y-auto flex-1">
             @if (this.transactionState.isLoadingGetTransaction()) {
                 <app-loading-ui></app-loading-ui>
             } @else if(this.transactionState.errorGetTransaction()) {
@@ -41,7 +41,7 @@
                 </app-retry-component>
             } @else if(transactionData()) {
                 <!-- Detalles no editables de la transacción -->
-                <div class="mb-6 xpb-bg-main rounded-lg p-4 border xpb-border">
+                <div class="mb-4 xpb-bg-main rounded-lg p-4 border xpb-border">
                     <h3 class="text-sm font-semibold xpb-text-primary mb-3 flex items-center gap-2">
                         <app-icon-component
                             [icon]="'info'"
@@ -194,27 +194,28 @@
 
                 <!-- Formulario de edición -->
                 <form [formGroup]="formTransaction" (ngSubmit)="onSubmit()" id="transactionForm">
-                    <div class="space-y-4 mb-5">
-                        <!-- Descripción -->
-                        <app-input-component
-                            [inputControl]="descriptionControl"
-                            [inputName]="'description'"
-                            [placeholder]="'Ejm: Compra en supermercado'"
-                            [labelText]="'Descripción (opcional)'"
-                            [iconName]="'description'">
-                        </app-input-component>
-
-                        <!-- Fecha de transacción -->
-                        <app-input-component
-                            [inputControl]="transactionDateControl"
-                            [inputName]="'transactionDate'"
-                            [inputType]="'datetime-local'"
-                            [labelText]="'Fecha de la transacción'"
-                            [iconName]="'event'">
-                        </app-input-component>
-
+                    <div class="space-y-4 ">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5 mt-2">
+                            <!-- Descripción -->
+                            <app-input-component
+                                [inputControl]="descriptionControl"
+                                [inputName]="'description'"
+                                [placeholder]="'Ejm: Compra en supermercado'"
+                                [labelText]="'Descripción (opcional)'"
+                                [iconName]="'description'">
+                            </app-input-component>
+    
+                            <!-- Fecha de transacción -->
+                            <app-input-component
+                                [inputControl]="transactionDateControl"
+                                [inputName]="'transactionDate'"
+                                [inputType]="'datetime-local'"
+                                [labelText]="'Fecha de la transacción'"
+                                [iconName]="'event'">
+                            </app-input-component>
+                        </div>
                         <!-- Checkbox para asignar a categoría -->
-                        <div class="relative">
+                        <div class="relative mt-4 mb-3">
                             <label class="flex items-center gap-3 cursor-pointer group">
                                 <div class="relative">
                                     <input

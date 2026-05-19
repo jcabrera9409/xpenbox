@@ -1,0 +1,30 @@
+<div class="input-amount-container">
+    <label class="block text-sm font-medium xpb-text-primary mb-2 text-center w-full">
+        Monto
+    </label>
+    <div class="input-amount-center">
+        <input [id]="inputName()"
+               type="text"
+               [value]="currency + ' ' + formattedAmount"
+               (input)="onAmountInput($event)"
+               class="amount-input-clean"
+               autocomplete="off" aria-required="true" [attr.aria-label]="'Monto'" />
+    </div>
+    @if (inputControl().touched && inputControl().invalid) {
+    <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+        <app-icon-component [icon]="'info'" [size]="'5'" [class]="'text-[var(--xpb-expense)] mt-0.5'">
+        </app-icon-component>
+        <div class="text-sm text-[var(--xpb-expense)] flex-1">
+            @if (inputControl().hasError('required')) {
+            <p>{{ requiredMessageError }}</p>
+            }
+            @if (inputControl().hasError('min')) {
+            <p>{{ minValueMessageError }}</p>
+            }
+            @if (inputControl().hasError('max')) {
+            <p>{{ maxValueMessageError }}</p>
+            }
+        </div>
+    </div>
+    }
+</div>

@@ -57,17 +57,10 @@
         } @else if(incomeData() || !isEditMode) {
             <form [formGroup]="formIncome" (ngSubmit)="onSubmit()" id="incomeForm">
                 <!-- Monto field -->
-                
-                <div class="mb-5">
-                    <app-input-component
-                        [inputControl]="amountControl"
-                        [inputName]="'amount'"
-                        [inputType]="'number'"
-                        [placeholder]="'0.00'"
-                        [labelText]="'Monto'"
-                        [iconName]="'payment'">
-                    </app-input-component>
-                </div>
+                <app-input-amount-component
+                    [inputControl]="amountControl"
+                    [inputName]="'amount'">
+                </app-input-amount-component>
                 <!-- Monto and Fecha in grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                     <!-- Concepto field -->
