@@ -48,7 +48,7 @@
       </div>
 
       <!-- Bank Accounts List -->
-      <div class="space-y-3 pr-2 flex-1">
+      <div class="space-y-3 flex-1">
         @if (this.accountState.isLoadingGetList()) {
         <app-loading-ui></app-loading-ui>
         } @else if (this.accountState.errorGetList()) {
@@ -84,7 +84,7 @@
       </div>
 
       <!-- Credit Cards List -->
-      <div class="space-y-3 pr-2 flex-1">
+      <div class="space-y-3 flex-1">
         @if (this.creditCardState.isLoadingGetList()) {
         <app-loading-ui></app-loading-ui>
         } @else if (this.creditCardState.errorGetList()) {

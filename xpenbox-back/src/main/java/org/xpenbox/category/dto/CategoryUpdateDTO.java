@@ -25,7 +25,5 @@ public record CategoryUpdateDTO (
     @Min(value = 0, message = "Budget must be a positive value")
     BigDecimal budget,
 
-    Boolean hasBudget,
-
-    Boolean state
+    Boolean hasBudget
 ) { }

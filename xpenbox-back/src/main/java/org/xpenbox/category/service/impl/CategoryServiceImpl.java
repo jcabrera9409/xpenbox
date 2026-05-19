@@ -19,6 +19,7 @@ import org.xpenbox.dashboard.dto.PeriodFilter;
 import org.xpenbox.enforcement.dto.SnapshotPlanDTO;
 import org.xpenbox.enforcement.service.IPlanSnapshotService;
 import org.xpenbox.enforcement.service.IPlanValidatorService;
+import org.xpenbox.exception.ResourceNotFoundException;
 import org.xpenbox.transaction.entity.Transaction;
 import org.xpenbox.transaction.entity.Transaction.TransactionType;
 import org.xpenbox.transaction.repository.TransactionRepository;
@@ -97,9 +98,7 @@ public class CategoryServiceImpl extends GenericServiceImpl<Category, CategoryCr
 
         List<Transaction> transactionFilter = transactions.stream()
             .filter(
-                tx -> tx.getCategory() != null && (tx.getTransactionType().equals(TransactionType.EXPENSE)
-                        || tx.getTransactionType().equals(TransactionType.CREDIT_PAYMENT))
-                    && tx.getAccount() != null
+                tx -> tx.getCategory() != null && tx.getTransactionType().equals(TransactionType.EXPENSE)
             )
             .toList();
 
@@ -108,7 +107,32 @@ public class CategoryServiceImpl extends GenericServiceImpl<Category, CategoryCr
         return categories.stream()
             .map(category -> mapToCategoryBudgetUsageDTO(category, transactionFilter))
             .toList();
+    }
 
+    @Override
+    public void deleteByResourceCode(String resourceCode, String userEmail) {
+        LOG.infof("Deleting category with resource code: %s for user email: %s", resourceCode, userEmail);
+        User user = validateAndGetUser(userEmail);
+        Category category = categoryRepository.findByResourceCodeAndUserId(resourceCode, user.id)
+            .orElseThrow(() -> {
+                LOG.errorf("Category not found with resource code: %s for user email: %s", resourceCode, userEmail);
+                throw new ResourceNotFoundException("Category not found with resource code: " + resourceCode + " for user email: " + userEmail); 
+            });
+        
+        List<Transaction> transactionsWithCategory = transactionRepository.findAllByCategoryIdAndUserId(category.id, user.id);
+
+        if (!transactionsWithCategory.isEmpty()) {
+            List<Transaction> transactionsToUpdate = transactionsWithCategory.stream()
+                .map(tx -> {
+                    tx.setCategory(null);
+                    return tx;
+                })
+                .toList();
+            transactionRepository.persist(transactionsToUpdate);
+        }
+
+        categoryRepository.delete(category);
+        LOG.infof("Category deleted with resource code: %s for user email: %s", resourceCode, userEmail);
     }
 
     private List<CategoryResponseDTO> extractCategoriesFromTransactions(List<Transaction> transactions) {

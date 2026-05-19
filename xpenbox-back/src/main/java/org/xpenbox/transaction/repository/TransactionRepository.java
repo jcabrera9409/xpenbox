@@ -168,6 +168,18 @@ public class TransactionRepository extends GenericRepository<Transaction> {
     }
 
     /**
+     * Find transactions by category ID and user ID.
+     * @param categoryId the ID of the category
+     * @param userId the ID of the user
+     * @return a list of transactions matching the criteria
+     */
+    public List<Transaction> findAllByCategoryIdAndUserId(Long categoryId, Long userId) {
+        LOG.debugf("Finding transactions for Category ID: %d and User ID: %d", categoryId, userId);
+        return list("category.id = :categoryId and user.id = :userId", 
+                Parameters.with("categoryId", categoryId).and("userId", userId));
+    }
+
+    /**
      * Build query parameters based on filter criteria and user.
      * @param filterDTO the filter criteria
      * @param user the user

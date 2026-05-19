@@ -142,26 +142,18 @@ export class CategoryPage {
 
     this.categoryState.isLoadingSendingCategory.set(true);
 
-    const categoryData = new CategoryRequestDTO(
-      undefined!,
-      undefined!,
-      undefined!,
-      undefined!,
-      this.categoryDataSelected()!.state ? false : true
-    );
-
-    this.categoryService.update(resourceCode, categoryData).subscribe({
+    this.categoryService.delete(resourceCode).subscribe({
       next: () => {
         this.categoryState.isLoadingSendingCategory.set(false);
         this.showConfirmModal.set(false);
         this.categoryService.refresh();
-        this.notificationService.success('Categoría actualizada correctamente.');
+        this.notificationService.success('Categoría eliminada correctamente.');
       },
       error: (error) => {
         if (error.status === 500 || error.status === 0) {
-          this.categoryState.errorSendingCategory.set('Ocurrió un error al actualizar la categoría. Por favor, intenta nuevamente.');
+          this.categoryState.errorSendingCategory.set('Ocurrió un error al eliminar la categoría. Por favor, intenta nuevamente.');
         } else {
-          this.categoryState.errorSendingCategory.set(error.error.message || 'Ocurrió un error al actualizar la categoría. Por favor, intenta nuevamente.');
+          this.categoryState.errorSendingCategory.set(error.error.message || 'Ocurrió un error al eliminar la categoría. Por favor, intenta nuevamente.');
         }
         this.categoryState.isLoadingSendingCategory.set(false);
       }
@@ -193,18 +185,10 @@ export class CategoryPage {
       this.confirmTextConfirmModal.set(null);
       return;
     }
-
-    const isActive = this.categoryDataSelected()!.state;
     
-    if (isActive) {
-      this.titleConfirmModal.set('Desactivar Categoría');
-      this.messageConfirmModal.set(`¿Estás seguro de que deseas desactivar la categoría "${this.categoryDataSelected()!.name}"?`);
-      this.confirmTextConfirmModal.set('Desactivar');
-    } else {
-      this.titleConfirmModal.set('Activar Categoría');
-      this.messageConfirmModal.set(`¿Estás seguro de que deseas activar la categoría "${this.categoryDataSelected()!.name}"?`);
-      this.confirmTextConfirmModal.set('Activar');
-    }
+    this.titleConfirmModal.set('Eliminar Categoría');
+    this.messageConfirmModal.set(`<p>¿Estás seguro de que deseas eliminar la categoría "${this.categoryDataSelected()!.name}"?</p><p>Esta acción dejará a las transacciones asociadas sin categoría.</p>`);
+    this.confirmTextConfirmModal.set('Eliminar');
   }
 
   private loadCategoryData() {
