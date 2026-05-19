@@ -10,7 +10,6 @@ import { AccountCreditDTO, AccountCreditType } from '../../../shared/dto/account
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
-import { VirtualKeyboardUi } from '../../../shared/ui/virtual-keyboard-ui/virtual-keyboard.ui';
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
 import { CategoriesCarouselComponent } from '../../../shared/components/categories-carousel-component/categories-carousel.component';
@@ -20,11 +19,14 @@ import { DateService } from '../../../shared/service/date.service';
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 import { ModalGeneric } from '../../common/modal.generic';
+import { InputComponent } from '../../../shared/components/input-component/input.component';
+import { InputAmountComponent } from '../../../shared/components/input-amount-component/input-amount-component';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-quick-expense-modal',
   standalone: true,
-  imports: [CommonModule, VirtualKeyboardUi, AccountsCarouselComponent, CategoriesCarouselComponent, ModalButtonsUi, IconComponent],
+  imports: [CommonModule, ReactiveFormsModule, AccountsCarouselComponent, CategoriesCarouselComponent, ModalButtonsUi, IconComponent, InputComponent, InputAmountComponent],
   templateUrl: './quick-expense.modal.html',
   styleUrl: './quick-expense.modal.css',
 })
@@ -45,11 +47,11 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
   accountCredits = signal<AccountCreditDTO[]>([]);
   assignToCategory = signal<boolean>(false);
 
-  // Numeric input state (signals)
-  amount = signal(0);
-  description = signal('');
+  formExpense!: FormGroup;
+  maxDate = signal('');
 
   constructor(
+    private fb: FormBuilder,
     private categoryService: CategoryService,
     private accountService: AccountService,
     private creditCardService: CreditCardService,
@@ -74,7 +76,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
       if (!this.accountState.isLoadingGetList() && !this.creditCardState.isLoadingGetList()) {
         const accountCreditsList: AccountCreditDTO[] = this.accountCreditService.combineAccountAndCreditCardData(accounts, creditCards);
 
-        const availableList = this.accountCreditService.filterAndSortAccountCredits(accountCreditsList, this.amount());
+        const availableList = this.accountCreditService.filterAndSortAccountCredits(accountCreditsList, this.amountControl.value);
         this.accountCredits.set(availableList);
 
         if (availableList.length > 0 && !this.selectedAccount()) {
@@ -85,7 +87,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
 
     // Update selected account when amount changes
     effect(() => {
-      const amountValue = this.amount();
+      const amountValue = this.amountControl.value;
       const accounts = this.accountCredits();
       const currentSelected = this.selectedAccount();
       
@@ -113,6 +115,8 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
 
     this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
+
+    this.initForms();
   }
 
   // Getters for filtered and sorted lists
@@ -122,7 +126,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
 
   // Getters for form validity
   get isFormValid(): boolean {
-    const amountValue = this.amount();
+    const amountValue = this.amountControl.value;
     const selectedAccount = this.selectedAccount();
     const categorySelected = this.selectedCategory();
 
@@ -138,7 +142,34 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
       return false;
     }
 
-    return isAccountValid && (!!categorySelected || !assignToCat);
+    return isAccountValid && (!!categorySelected || !assignToCat) && this.formExpense.valid;
+  }
+
+  get amountControl(): FormControl {
+    return this.formExpense.get('amount') as FormControl;
+  }
+
+  get descriptionControl(): FormControl {
+    return this.formExpense.get('description') as FormControl;
+  }
+
+  get transactionDateControl(): FormControl {
+    return this.formExpense.get('transactionDate') as FormControl;
+  }
+
+  initForms(): void {
+    const today = this.dateService.toTimestamp(this.dateService.getLocalDatetime());
+    const formattedDate = this.dateService.format(today, 'ISO-LOCAL');
+    this.maxDate.set(formattedDate);
+
+    this.formExpense = this.fb.group({
+      amount: [null, [
+        Validators.required,
+        Validators.min(0.01)
+      ]],
+      description: [''],
+      transactionDate: [formattedDate, [Validators.required]],
+    });
   }
 
   retryAccountsAndCreditCards(): void {
@@ -169,17 +200,18 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
   onSubmit(): void {
     if (!this.isFormValid) return;
     
-    const amountValue = this.amount();
-    const descriptionValue = this.description();
+    const amountValue = this.formExpense.get('amount')?.value / 100;
+    const descriptionValue = this.formExpense.get('description')?.value;
+    const transactionDate = this.dateService.parseDatetimeIsoString(this.transactionDateControl.value);
+    const transactionDateTimestamp = this.dateService.toTimestamp(transactionDate);
     const selectedAccount = this.selectedAccount();
     const categorySelected = this.assignToCategory() ? this.selectedCategory() : null;
-    const dateTimestamp = this.dateService.getUtcDatetime().getTime();
 
     this.transactionState.isLoadingSendingTransaction.set(true);
     
     const transactionRequest = selectedAccount?.type === AccountCreditType.ACCOUNT
-      ? TransactionRequestDTO.generateExpenseAccountTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode, dateTimestamp)
-      : TransactionRequestDTO.generateExpenseCreditCardTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode, dateTimestamp);
+      ? TransactionRequestDTO.generateExpenseAccountTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode, transactionDateTimestamp)
+      : TransactionRequestDTO.generateExpenseCreditCardTransaction(amountValue, descriptionValue, selectedAccount?.resourceCode || '', categorySelected?.resourceCode, transactionDateTimestamp);
   
     this.transactionService.submitTransaction(transactionRequest, () => this.successTransactionCreated());
   }

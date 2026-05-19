@@ -30,6 +30,17 @@ export class CategoryService extends GenericService<CategoryRequestDTO, Category
   }
 
   /**
+   * Deletes a category by its resource code.
+   * @param resourceCode The unique identifier of the category to be deleted.
+   * @returns An Observable emitting an ApiResponseDTO indicating the result of the delete operation.
+   */
+  delete(resourceCode: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/${resourceCode}`, { withCredentials: true }
+    );
+  }
+
+  /**
    * Loads the budget usage information for categories and returns it as an observable.
    * This method is used to fetch the usage count and budget used for each category.
    * @returns An observable of the API response containing a list of CategoryBudgetUsageRequestDTO.

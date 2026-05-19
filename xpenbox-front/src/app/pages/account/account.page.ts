@@ -57,8 +57,8 @@ export class AccountPage {
   animationDirection = signal<'left' | 'right'>('right');
 
   tabsList: TabObjectDTO[] = [
-    { id: 'accounts', label: 'Cuentas de Débito', iconName: 'account_balance' },
-    { id: 'creditCards', label: 'Tarjetas de crédito', iconName: 'credit_card' }
+    { id: 'accounts', label: 'Cuentas', iconName: 'account_balance' },
+    { id: 'creditCards', label: 'Tarjetas', iconName: 'credit_card' }
   ];
 
   // Computed signal for ordered accounts by name

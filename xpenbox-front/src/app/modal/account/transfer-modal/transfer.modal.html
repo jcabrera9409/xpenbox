@@ -38,101 +38,101 @@
         } @else {
             <!-- Body -->
             <div class="p-6 overflow-y-auto flex-1">
-                <app-virtual-keyboard-ui 
-                    [currency]="userLogged()?.currency!"
-                    [defaultAmount]="0"
-                    (amountOutput)="amount.set($event)">
-                </app-virtual-keyboard-ui>
+                <form [formGroup]="formTransfer" (ngSubmit)="onSubmit()" id="transferForm">
+                    <!-- Monto -->
+                    <app-input-amount-component
+                        [inputControl]="amountControl"
+                        [inputName]="'amount'">
+                    </app-input-amount-component>
 
-                <!-- Description -->
-                <div class="mb-3">
-                    <label class="block text-sm font-medium xpb-text-secondary mb-2">
-                        Descripción <span class="text-xs xpb-text-secondary">(opcional)</span>
-                    </label>
-                    <div class="relative">
-                        <app-icon-component
-                            [icon]="'description'"
-                            [size]="'5'"
-                            [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
-                        </app-icon-component>
-                        <input 
-                            type="text"
-                            maxlength="250"
-                            [value]="description()"
-                            (input)="description.set($any($event.target).value)"
-                            placeholder="Ejm: Transferencia para ahorro"
-                            class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full xpb-text-primary placeholder:xpb-text-secondary focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all" />
+                    <div class="grid grid-cols-1 gap-5 mb-5 mt-5">
+                        <!-- Descripción -->
+                        <app-input-component
+                            [inputControl]="descriptionControl"
+                            [inputName]="'description'"
+                            [placeholder]="'Ejm: Transferencia para ahorro'"
+                            [labelText]="'Descripción (opcional)'"
+                            [iconName]="'description'">
+                        </app-input-component>
+
+                        <!-- Fecha de la transacción -->
+                        <app-input-component
+                            [inputControl]="transactionDateControl"
+                            [inputName]="'transactionDate'"
+                            [inputType]="'datetime-local'"
+                            [labelText]="'Fecha de la transacción'"
+                            [iconName]="'event'">
+                        </app-input-component>
                     </div>
-                </div>
 
-                @if (this.accountResourceCode()) {
-                    <!-- Origin Account (No Editable) -->
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium xpb-text-secondary mb-2">
-                            Cuenta Origen 
-                        </label>
-                        <div class="relative">
-                            <app-icon-component
-                                [icon]="'account_balance'"
-                                [size]="'5'"
-                                [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
-                            </app-icon-component>
-                            <input 
-                                type="text"
-                                [value]="selectedOriginAccount()?.name + ' - ' + userLogged()?.currency + ' ' + (selectedOriginAccount()?.balance | number:'1.2-2')"
-                                readonly
-                                class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
+                    @if (this.accountResourceCode()) {
+                        <!-- Origin Account (No Editable) -->
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium xpb-text-secondary mb-2">
+                                Cuenta Origen 
+                            </label>
+                            <div class="relative">
+                                <app-icon-component
+                                    [icon]="'account_balance'"
+                                    [size]="'5'"
+                                    [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                                </app-icon-component>
+                                <input 
+                                    type="text"
+                                    [value]="selectedOriginAccount()?.name + ' - ' + userLogged()?.currency + ' ' + (selectedOriginAccount()?.balance | number:'1.2-2')"
+                                    readonly
+                                    class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
+                            </div>
                         </div>
-                    </div>
-                } @else {
-                    <!-- Origin Account (Carousel) -->
+                    } @else {
+                        <!-- Origin Account (Carousel) -->
+                        <app-accounts-carousel-component
+                            ngSkipHydration class="block"
+                            [isLoading]="this.accountState.isLoadingGetList()"
+                            [errorLoading]="this.accountState.errorGetList()"
+                            [carouselTitle]="'Cuenta Origen'"
+                            [carouselErrorMessage]="'Error al cargar cuentas'"
+                            [currencySymbol]="userLogged()?.currency!"
+                            [accountsList]="accountsOriginList()"
+                            [currentSelectedAccount]="selectedOriginAccount()"
+                            [noAccountsMessage]="'No tienes cuentas disponibles'"
+                            (selectedAccountOutput)="this.selectedOriginAccount.set($event)"
+                            (retry)="retryLoadAccountsData()">
+                        </app-accounts-carousel-component>
+                    }
+
+
+                    <!-- Destination Account (Carousel) -->
                     <app-accounts-carousel-component
                         ngSkipHydration class="block"
                         [isLoading]="this.accountState.isLoadingGetList()"
                         [errorLoading]="this.accountState.errorGetList()"
-                        [carouselTitle]="'Cuenta Origen'"
+                        [carouselTitle]="'Cuenta Destino'"
                         [carouselErrorMessage]="'Error al cargar cuentas'"
                         [currencySymbol]="userLogged()?.currency!"
-                        [accountsList]="accountsOriginList()"
-                        [currentSelectedAccount]="selectedOriginAccount()"
+                        [accountsList]="accountsDestinationList()"
+                        [currentSelectedAccount]="selectedDestinationAccount()"
                         [noAccountsMessage]="'No tienes cuentas disponibles'"
-                        (selectedAccountOutput)="this.selectedOriginAccount.set($event)"
+                        (selectedAccountOutput)="this.selectedDestinationAccount.set($event)"
                         (retry)="retryLoadAccountsData()">
                     </app-accounts-carousel-component>
-                }
 
-
-                <!-- Destination Account (Carousel) -->
-                <app-accounts-carousel-component
-                    ngSkipHydration class="block"
-                    [isLoading]="this.accountState.isLoadingGetList()"
-                    [errorLoading]="this.accountState.errorGetList()"
-                    [carouselTitle]="'Cuenta Destino'"
-                    [carouselErrorMessage]="'Error al cargar cuentas'"
-                    [currencySymbol]="userLogged()?.currency!"
-                    [accountsList]="accountsDestinationList()"
-                    [currentSelectedAccount]="selectedDestinationAccount()"
-                    [noAccountsMessage]="'No tienes cuentas disponibles'"
-                    (selectedAccountOutput)="this.selectedDestinationAccount.set($event)"
-                    (retry)="retryLoadAccountsData()">
-                </app-accounts-carousel-component>
-
-                <!-- Error message to send transfer -->
-                @if (this.transactionState.errorSendingTransaction()) {
-                    <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                        <app-icon-component
-                            [icon]="'error_outline'"
-                            [size]="'5'"
-                            [class]="'text-[var(--xpb-expense)] mt-0.5'">
-                        </app-icon-component>
-                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                            {{ this.transactionState.errorSendingTransaction() }}
+                    <!-- Error message to send transfer -->
+                    @if (this.transactionState.errorSendingTransaction()) {
+                        <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                            <app-icon-component
+                                [icon]="'error_outline'"
+                                [size]="'5'"
+                                [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                            </app-icon-component>
+                            <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                                {{ this.transactionState.errorSendingTransaction() }}
+                            </div>
                         </div>
-                    </div>
-                }
+                    }
+                </form>
             </div>
         }
-
         <!-- Actions Buttons -->
         <app-modal-buttons-ui
             [cancelText]="'Cancelar'"
@@ -144,8 +144,8 @@
             [loadingIcon]="'autorenew'"
             [confirmText]="'Transferir'"
             [confirmIcon]="'swap_horiz'"
-            (cancel)="onClose()"
-            (confirm)="onSubmit()">
+            [formId]="'transferForm'"
+            (cancel)="onClose()">
         </app-modal-buttons-ui>
 
     </div>

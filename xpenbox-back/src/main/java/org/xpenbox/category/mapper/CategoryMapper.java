@@ -143,11 +143,6 @@ public class CategoryMapper implements GenericMapper<Category, CategoryCreateDTO
             isUpdated = true;
         }
 
-        if (dto.state() != null && !dto.state().equals(entity.getState())) {
-            entity.setState(dto.state());
-            isUpdated = true;
-        }
-
         if (dto.budget() != null && !dto.budget().equals(entity.getBudget())) {
             entity.setBudget(dto.budget());
             isUpdated = true;

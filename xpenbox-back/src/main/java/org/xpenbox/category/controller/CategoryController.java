@@ -14,6 +14,7 @@ import io.quarkus.security.Authenticated;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
@@ -85,6 +86,17 @@ public class CategoryController {
         return Response.status(Response.Status.OK).entity(
             APIResponseDTO.success("Category updated successfully", categoryResponse, Response.Status.OK.getStatusCode())
         ).build();
+    }
+
+    @DELETE
+    @Path("/{resourceCode}")
+    @Transactional
+    public Response deleteCategory(@Context SecurityContext securityContext, @PathParam("resourceCode") String resourceCode) {
+        String userEmail = securityContext.getUserPrincipal().getName();
+        LOG.infof("Delete category request received for user: %s, resourceCode: %s", userEmail, resourceCode);
+        categoryService.deleteByResourceCode(resourceCode, userEmail);
+        LOG.infof("Category deleted successfully for user: %s, resourceCode: %s", userEmail, resourceCode);
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     /**

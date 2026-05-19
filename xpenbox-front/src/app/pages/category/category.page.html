@@ -105,6 +105,8 @@
 
 @if (showConfirmModal()) {
   <app-confirm-modal
+    [iconTitle]="'delete'"
+    [typeMessage]="'warning'"
     [resourceCode]="resourceCodeCategorySelected()"
     [isLoading]="categoryState.isLoadingGetCategory()"
     [isErrorLoading]="categoryState.errorGetCategory()"
@@ -113,7 +115,7 @@
     [title]="titleConfirmModal()!"
     [message]="messageConfirmModal()!"
     [confirmText]="confirmTextConfirmModal()!"
-    [confirmIcon]="'warning'"
+    [confirmIcon]="'delete'"
     (cancelled)="closeConfirmNewStateModal()!"
     (confirmed)="confirmNewStateCategory($event)"
   ></app-confirm-modal>

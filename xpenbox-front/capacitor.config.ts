@@ -17,7 +17,7 @@ const config: CapacitorConfig = {
       launchAutoHide: false,
       backgroundColor: '#000000',
       androidScaleType: 'CENTER_INSIDE',
-      splashFullScreen: true
+      splashFullScreen: false
     },
     LocalNotifications: {
       smallIcon: 'ic_stat_notification',
