@@ -34,7 +34,8 @@
         <!-- Monto -->
         <app-input-amount-component
             [inputControl]="amountControl"
-            [inputName]="'amount'">
+            [inputName]="'amount'"
+            (amountValue)="amountOutput.set($event)">
         </app-input-amount-component>
 
         <div class="grid grid-cols-1 gap-5 mb-5 mt-5">

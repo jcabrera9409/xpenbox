@@ -1,0 +1,52 @@
+<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
+    <div class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-md md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">  
+        <!-- Header -->
+        <div class="xpb-bg-sidebar px-4 py-3 border-b xpb-border relative flex-shrink-0">
+            <div class="flex items-center gap-4">
+                <!-- Icon -->
+                <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+                    <app-icon-component
+                        [icon]="iconHeader()"
+                        [size]="'8'"
+                        [class]="classIconHeader()">
+                    </app-icon-component>
+                </div>
+
+                <!-- Title -->
+                <div class="flex-1">
+                    <h3 class="text-xl font-semibold xpb-text-primary">{{ title() }}</h3>
+                </div>
+
+                <!-- Close button -->
+                <button 
+                    (click)="close.emit()" 
+                    class="text-gray-400 hover:text-gray-600 transition-colors -mt-1">
+                    <app-icon-component
+                        [icon]="'close'"
+                        [size]="'5'">
+                    </app-icon-component>
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 overflow-y-auto flex-1">
+            <ng-content></ng-content>
+        </div>
+
+        <!-- Footer -->
+        <app-modal-buttons-ui
+            [cancelText]="'Cancelar'"
+            [cancelIcon]="'close'"
+            [isEditMode]="false"
+            [isLoading]="isLoading()"
+            [isValidForm]="isFormValid()"
+            [loadingText]="'Guardando...'"
+            [loadingIcon]="'autorenew'"
+            [confirmText]="'Guardar'"
+            [confirmIcon]="'save'"
+            [formId]="'expenseForm'"
+            (cancel)="close.emit()">
+        </app-modal-buttons-ui>
+    </div>
+</div>

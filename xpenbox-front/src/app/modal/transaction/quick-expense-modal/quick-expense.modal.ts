@@ -49,6 +49,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
 
   formExpense!: FormGroup;
   maxDate = signal('');
+  amountOutput = signal<number>(0);
 
   constructor(
     private fb: FormBuilder,
@@ -76,7 +77,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
       if (!this.accountState.isLoadingGetList() && !this.creditCardState.isLoadingGetList()) {
         const accountCreditsList: AccountCreditDTO[] = this.accountCreditService.combineAccountAndCreditCardData(accounts, creditCards);
 
-        const availableList = this.accountCreditService.filterAndSortAccountCredits(accountCreditsList, this.amountControl.value);
+        const availableList = this.accountCreditService.filterAndSortAccountCredits(accountCreditsList, this.amountOutput());
         this.accountCredits.set(availableList);
 
         if (availableList.length > 0 && !this.selectedAccount()) {
@@ -87,7 +88,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
 
     // Update selected account when amount changes
     effect(() => {
-      const amountValue = this.amountControl.value;
+      const amountValue = this.amountOutput();
       const accounts = this.accountCredits();
       const currentSelected = this.selectedAccount();
       
@@ -126,7 +127,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
 
   // Getters for form validity
   get isFormValid(): boolean {
-    const amountValue = this.amountControl.value;
+    const amountValue = this.amountOutput();
     const selectedAccount = this.selectedAccount();
     const categorySelected = this.selectedCategory();
 
@@ -142,7 +143,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
       return false;
     }
 
-    return isAccountValid && (!!categorySelected || !assignToCat) && this.formExpense.valid;
+    return isAccountValid && this.formExpense.valid;
   }
 
   get amountControl(): FormControl {

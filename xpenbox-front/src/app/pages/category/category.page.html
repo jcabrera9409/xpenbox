@@ -21,7 +21,7 @@
     <app-summary-card
       class="mb-2 flex-shrink-0"
       [isLoading]="this.categoryState.isLoadingGetList()"
-      [titleCard]="'Total de Categorías'"
+      [titleCard]="'Categorías'"
       [contentCard]="orderedCategories().length.toString()"
       [subtitleCard]="
         activeCategoriesCount() > 1 ? activeCategoriesCount() + ' categorías activas' :
@@ -35,7 +35,7 @@
     <app-summary-card
       class="mb-2 flex-shrink-0"
       [isLoading]="this.categoryState.isLoadingGetBudgetUsage()"
-      [titleCard]="'Presupuesto Total'"
+      [titleCard]="'Presupuesto'"
       [contentCard]="totalBudgetString"
       [subtitleCard]="
         countCategoriesWithBudget > 1 ? countCategoriesWithBudget + ' categorías con presupuesto' :
@@ -49,7 +49,7 @@
     <app-summary-card
       class="mb-2 flex-shrink-0"
       [isLoading]="this.categoryState.isLoadingGetBudgetUsage()"
-      [titleCard]="'Presupuesto Restante'"
+      [titleCard]="'Restante'"
       [contentCard]="totalBudgetRemainingString"
       [subtitleCard]="
         totalBudget > 0 ? 'Usado: ' + percentajeBudgetUsedString :

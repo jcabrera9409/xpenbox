@@ -28,7 +28,9 @@
         [class.border-transparent]="activeTabId() !== tab.id"
         class="tab-button py-3 px-4 font-semibold transition-all flex items-center justify-center gap-2 border-b-2 text-sm whitespace-nowrap"
         type="button">
-        <app-icon-component [icon]="tab.iconName" [size]="'4'"></app-icon-component>
+        @if (tab.iconName && tab.iconName !== '') {
+          <app-icon-component [icon]="tab.iconName" [size]="'4'"></app-icon-component>
+        }
         {{ tab.label }}
       </button>
     }

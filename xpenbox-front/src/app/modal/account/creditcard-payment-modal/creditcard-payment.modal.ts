@@ -53,6 +53,7 @@ export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
 
   formPayment!: FormGroup;
   maxDate = signal('');
+  amountOutput = signal<number>(0);
 
   constructor(
     private fb: FormBuilder,
@@ -113,7 +114,7 @@ export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
     effect(() => {
       const accounts = this.accountCreditService.combineAccountAndCreditCardData(this.accountState.accounts(), []);
 
-      const filteredAccounts = this.accountCreditService.filterAndSortAccountCredits(accounts, this.amountControl.value);
+      const filteredAccounts = this.accountCreditService.filterAndSortAccountCredits(accounts, this.amountOutput());
       this.accountsList.set(filteredAccounts);
 
       if (filteredAccounts.length > 0 && !this.selectedAccount()) {
@@ -123,7 +124,7 @@ export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
 
     // Update selected account when amount changes
     effect(() => {
-      const amountValue = this.amountControl.value;
+      const amountValue = this.amountOutput();
       const accounts = this.accountsList();
       const currentSelected = this.selectedAccount();
       
@@ -232,7 +233,7 @@ export class CreditcardPaymentModal extends ModalGeneric implements OnInit {
   onSubmit() {
     if (!this.isFormValid) return;
 
-    const amountValue = this.amountControl.value;
+    const amountValue = this.amountOutput();
     const descriptionValue = this.descriptionControl.value;
     const creditCardResourceCode = this.creditCardData()?.resourceCode || '';
     const accountResourceCode = this.selectedAccount()?.resourceCode || '';

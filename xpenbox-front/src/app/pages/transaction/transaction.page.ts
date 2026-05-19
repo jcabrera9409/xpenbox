@@ -1,4 +1,4 @@
-import { Component, signal, computed, ChangeDetectionStrategy, inject, PLATFORM_ID, effect, OnInit, untracked } from '@angular/core';
+import { Component, signal, computed, ChangeDetectionStrategy, inject, PLATFORM_ID, effect, untracked } from '@angular/core';
 import { CommonModule, isPlatformServer } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { transactionState } from '../../feature/transaction/service/transaction.state';
@@ -119,6 +119,9 @@ export class TransactionPage {
       this.source.set(params.get('source') || undefined);
       this.code.set(params.get('code') || undefined);
     });
+
+    // Limpiar el signal al inicio para evitar que el segundo effect se ejecute en la carga inicial
+    this.transactionState.transactionCreatedResourceCode.set(null);
 
     effect(() => {
       this.source();
