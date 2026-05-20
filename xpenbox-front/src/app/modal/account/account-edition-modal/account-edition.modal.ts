@@ -13,6 +13,7 @@ import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 import { InputComponent } from '../../../shared/components/input-component/input.component';
 import { GenericModal } from '../../common/generic-modal/generic.modal';
+import { userState } from '../../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-account-edition-modal',
@@ -28,8 +29,10 @@ export class AccountEditionModal implements OnInit {
 
   accountData = signal<AccountResponseDTO | null>(null);
   accountState = accountState;
+  userState = userState;
 
   formAccount!: FormGroup;
+  amountConfirm = signal<boolean>(false);
 
   constructor(
     private fb: FormBuilder,
@@ -58,13 +61,22 @@ export class AccountEditionModal implements OnInit {
     return this.formAccount.get('initialBalance') as FormControl;
   }
 
+  get currencyCode(): string {
+    return this.userState.userLogged()?.currency || 'USD';
+  }
+
   onSubmit() {
     if (this.formAccount.invalid) return;
+    
+    const accountData = this.buildAccountData();
+    
+    if ((accountData.balance || 0) > 0 && !this.amountConfirm()) {
+      this.amountConfirm.set(true);
+      return;
+    }
 
     this.accountState.isLoadingSendingAccount.set(true);
     this.accountState.errorSendingAccount.set(null);
-
-    const accountData = this.buildAccountData();
 
     const observable = this.isEditMode
       ? this.accountService.update(this.resourceCodeSelected()!, accountData)

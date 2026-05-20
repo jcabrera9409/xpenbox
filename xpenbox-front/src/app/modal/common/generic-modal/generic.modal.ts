@@ -22,6 +22,7 @@ export class GenericModal extends ModalGeneric implements OnInit {
   isFormValid = input<boolean>(false);
   formId = input<string>('');
   confirmText = input<string>('Confirmar');
+  confirmColor = input<string>('var(--xpb-primary)');
   confirmTextLoading = input<string>('Guardando...');
   confirmIcon = input<string>('add');
 

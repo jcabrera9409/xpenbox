@@ -6,7 +6,8 @@
     [isLoading]="this.creditCardState.isLoadingSendingCreditCard()"
     [isFormValid]="formCreditCard.valid"
     [formId]="'creditCardForm'"
-    [confirmText]="isEditMode ? 'Modificar' : 'Registrar'"
+    [confirmText]="isEditMode ? 'Modificar' : amountConfirm() ? 'Registrar con Línea Utilizada' : 'Registrar'"
+    [confirmColor]="amountConfirm() ? 'var(--xpb-income)' : 'var(--xpb-primary)'"
     [confirmIcon]="isEditMode ? 'check' : 'add'"
     (close)="onClose()">
     <ng-container>
@@ -85,6 +86,21 @@
                         </div>
                     </div>
                 }   
+
+                @if (amountConfirm()) {
+                    <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-warning)]">
+                        <app-icon-component 
+                            [icon]="'warning'" [size]="'5'"
+                            [class]="'text-[var(--xpb-warning)] mt-0.5'">
+                        </app-icon-component>
+                        <div class="text-sm text-[var(--xpb-warning)] flex-1 text-justify">
+                            Estás por crear una tarjeta de crédito con una línea utilizada de
+                            <strong class="text-lg">{{ currentBalanceControl.value | currency:currencyCode + ' ':'symbol':'1.2-2' }}</strong>. 
+                            Una vez creada la tarjeta no podrás modificar la línea utilizada. 
+                            Asegúrate de que el monto ingresado sea correcto antes de proceder.
+                        </div>
+                    </div>
+                }
             </form>
         }
 

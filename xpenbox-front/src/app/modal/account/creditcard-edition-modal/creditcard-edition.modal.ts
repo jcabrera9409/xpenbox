@@ -13,6 +13,7 @@ import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
 import { InputComponent } from '../../../shared/components/input-component/input.component';
 import { GenericModal } from '../../common/generic-modal/generic.modal';
+import { userState } from '../../../feature/user/service/user.state';
 
 @Component({
   selector: 'app-creditcard-edition-modal',
@@ -27,8 +28,10 @@ export class CreditcardEditionModal implements OnInit {
 
   creditCardData = signal<CreditCardResponseDTO | null>(null);
   creditCardState = creditCardState;
+  userState = userState;
 
   formCreditCard!: FormGroup;
+  amountConfirm = signal<boolean>(false);
 
   constructor(
     private fb: FormBuilder,
@@ -70,6 +73,10 @@ export class CreditcardEditionModal implements OnInit {
     return this.formCreditCard.get('paymentDay') as FormControl;
   }
 
+  get currencyCode(): string {
+    return this.userState.userLogged()?.currency || 'USD';
+  }
+
   private initForms() {
     this.formCreditCard = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
@@ -88,11 +95,16 @@ export class CreditcardEditionModal implements OnInit {
 
   onSubmit() {
     if (this.formCreditCard.invalid) return;
+ 
+    const creditCardData = this.buildCreditCardData()
+    
+    if ((creditCardData.currentBalance || 0) > 0 && !this.amountConfirm()) {
+      this.amountConfirm.set(true);
+      return;
+    }
 
     this.creditCardState.isLoadingSendingCreditCard.set(true);
     this.creditCardState.errorSendingCreditCard.set(null);
-
-    const creditCardData = this.buildCreditCardData()
 
     const observable = this.isEditMode
       ? this.creditCardService.update(this.resourceCodeSelected()!, creditCardData)
