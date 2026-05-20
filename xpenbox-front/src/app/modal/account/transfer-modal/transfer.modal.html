@@ -1,33 +1,16 @@
-<!-- Overlay con backdrop -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
-    <div class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-md md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">   
-        <!-- Header -->
-        <div class="xpb-bg-sidebar px-4 py-3 border-b xpb-border relative flex-shrink-0">
-            <div class="flex items-center gap-4">
-                <!-- Icon -->
-                <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-                    <app-icon-component
-                        [icon]="'swap_horiz'"
-                        [size]="'8'"
-                        [class]="'text-[var(--xpb-income)]'">
-                    </app-icon-component>
-                </div>
-                <!-- Title and subtitle -->
-                <div class="flex-1">
-                    <h3 class="text-xl font-semibold xpb-text-primary">Registrar Transferencia</h3>
-                    <p class="text-sm xpb-text-secondary">Transfiere fondos entre tus cuentas</p>
-                </div>
-                <!-- Close button -->
-                <button (click)="onClose()" 
-                    class="text-gray-400 hover:text-gray-600 transition-colors -mt-1">
-                    <app-icon-component
-                        [icon]="'close'"
-                        [size]="'5'">
-                    </app-icon-component>
-                </button>
-            </div>
-        </div>
-
+<app-generic-modal 
+    [iconHeader]="'swap_horiz'"
+    [classIconHeader]="'text-[var(--xpb-income)]'"
+    [title]="'Registrar Transferencia'"
+    [subtitle]="'Transfiere fondos entre tus cuentas'"
+    [isLoading]="this.transactionState.isLoadingSendingTransaction()"
+    [isFormValid]="isFormValid"
+    [formId]="'transferForm'"
+    [confirmText]="'Transferir'"
+    [confirmTextLoading]="'Transfiriendo...'"
+    [confirmIcon]="'swap_horiz'"
+    (close)="onClose()">
+    <ng-container>
         @if (this.accountState.isLoadingGetAccount() && this.accountResourceCode()) {
             <app-loading-ui></app-loading-ui>
         } @else if (this.accountState.errorGetAccount() && this.accountResourceCode()) {
@@ -37,116 +20,99 @@
             </app-retry-component>
         } @else {
             <!-- Body -->
-            <div class="p-6 overflow-y-auto flex-1">
-                <form [formGroup]="formTransfer" (ngSubmit)="onSubmit()" id="transferForm">
-                    <!-- Monto -->
-                    <app-input-amount-component
-                        [inputControl]="amountControl"
-                        [inputName]="'amount'">
-                    </app-input-amount-component>
+            <form [formGroup]="formTransfer" (ngSubmit)="onSubmit()" id="transferForm">
+                <!-- Monto -->
+                <app-input-amount-component
+                    [inputControl]="amountControl"
+                    [inputName]="'amount'">
+                </app-input-amount-component>
 
-                    <div class="grid grid-cols-1 gap-5 mb-5 mt-5">
-                        <!-- Descripción -->
-                        <app-input-component
-                            [inputControl]="descriptionControl"
-                            [inputName]="'description'"
-                            [placeholder]="'Ejm: Transferencia para ahorro'"
-                            [labelText]="'Descripción (opcional)'"
-                            [iconName]="'description'">
-                        </app-input-component>
+                <div class="grid grid-cols-1 gap-5 mb-5 mt-5">
+                    <!-- Descripción -->
+                    <app-input-component
+                        [inputControl]="descriptionControl"
+                        [inputName]="'description'"
+                        [placeholder]="'Ejm: Transferencia para ahorro'"
+                        [labelText]="'Descripción (opcional)'"
+                        [iconName]="'description'">
+                    </app-input-component>
 
-                        <!-- Fecha de la transacción -->
-                        <app-input-component
-                            [inputControl]="transactionDateControl"
-                            [inputName]="'transactionDate'"
-                            [inputType]="'datetime-local'"
-                            [labelText]="'Fecha de la transacción'"
-                            [iconName]="'event'">
-                        </app-input-component>
-                    </div>
+                    <!-- Fecha de la transacción -->
+                    <app-input-component
+                        [inputControl]="transactionDateControl"
+                        [inputName]="'transactionDate'"
+                        [inputType]="'datetime-local'"
+                        [labelText]="'Fecha de la transacción'"
+                        [iconName]="'event'">
+                    </app-input-component>
+                </div>
 
-                    @if (this.accountResourceCode()) {
-                        <!-- Origin Account (No Editable) -->
-                        <div class="mb-3">
-                            <label class="block text-sm font-medium xpb-text-secondary mb-2">
-                                Cuenta Origen 
-                            </label>
-                            <div class="relative">
-                                <app-icon-component
-                                    [icon]="'account_balance'"
-                                    [size]="'5'"
-                                    [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
-                                </app-icon-component>
-                                <input 
-                                    type="text"
-                                    [value]="selectedOriginAccount()?.name + ' - ' + userLogged()?.currency + ' ' + (selectedOriginAccount()?.balance | number:'1.2-2')"
-                                    readonly
-                                    class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
-                            </div>
+                @if (this.accountResourceCode()) {
+                    <!-- Origin Account (No Editable) -->
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium xpb-text-secondary mb-2">
+                            Cuenta Origen 
+                        </label>
+                        <div class="relative">
+                            <app-icon-component
+                                [icon]="'account_balance'"
+                                [size]="'5'"
+                                [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                            </app-icon-component>
+                            <input 
+                                type="text"
+                                [value]="selectedOriginAccount()?.name + ' - ' + userLogged()?.currency + ' ' + (selectedOriginAccount()?.balance | number:'1.2-2')"
+                                readonly
+                                class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
                         </div>
-                    } @else {
-                        <!-- Origin Account (Carousel) -->
-                        <app-accounts-carousel-component
-                            ngSkipHydration class="block"
-                            [isLoading]="this.accountState.isLoadingGetList()"
-                            [errorLoading]="this.accountState.errorGetList()"
-                            [carouselTitle]="'Cuenta Origen'"
-                            [carouselErrorMessage]="'Error al cargar cuentas'"
-                            [currencySymbol]="userLogged()?.currency!"
-                            [accountsList]="accountsOriginList()"
-                            [currentSelectedAccount]="selectedOriginAccount()"
-                            [noAccountsMessage]="'No tienes cuentas disponibles'"
-                            (selectedAccountOutput)="this.selectedOriginAccount.set($event)"
-                            (retry)="retryLoadAccountsData()">
-                        </app-accounts-carousel-component>
-                    }
-
-
-                    <!-- Destination Account (Carousel) -->
+                    </div>
+                } @else {
+                    <!-- Origin Account (Carousel) -->
                     <app-accounts-carousel-component
                         ngSkipHydration class="block"
                         [isLoading]="this.accountState.isLoadingGetList()"
                         [errorLoading]="this.accountState.errorGetList()"
-                        [carouselTitle]="'Cuenta Destino'"
+                        [carouselTitle]="'Cuenta Origen'"
                         [carouselErrorMessage]="'Error al cargar cuentas'"
                         [currencySymbol]="userLogged()?.currency!"
-                        [accountsList]="accountsDestinationList()"
-                        [currentSelectedAccount]="selectedDestinationAccount()"
+                        [accountsList]="accountsOriginList()"
+                        [currentSelectedAccount]="selectedOriginAccount()"
                         [noAccountsMessage]="'No tienes cuentas disponibles'"
-                        (selectedAccountOutput)="this.selectedDestinationAccount.set($event)"
+                        (selectedAccountOutput)="this.selectedOriginAccount.set($event)"
                         (retry)="retryLoadAccountsData()">
                     </app-accounts-carousel-component>
+                }
 
-                    <!-- Error message to send transfer -->
-                    @if (this.transactionState.errorSendingTransaction()) {
-                        <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                            <app-icon-component
-                                [icon]="'error_outline'"
-                                [size]="'5'"
-                                [class]="'text-[var(--xpb-expense)] mt-0.5'">
-                            </app-icon-component>
-                            <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                {{ this.transactionState.errorSendingTransaction() }}
-                            </div>
+
+                <!-- Destination Account (Carousel) -->
+                <app-accounts-carousel-component
+                    ngSkipHydration class="block"
+                    [isLoading]="this.accountState.isLoadingGetList()"
+                    [errorLoading]="this.accountState.errorGetList()"
+                    [carouselTitle]="'Cuenta Destino'"
+                    [carouselErrorMessage]="'Error al cargar cuentas'"
+                    [currencySymbol]="userLogged()?.currency!"
+                    [accountsList]="accountsDestinationList()"
+                    [currentSelectedAccount]="selectedDestinationAccount()"
+                    [noAccountsMessage]="'No tienes cuentas disponibles'"
+                    (selectedAccountOutput)="this.selectedDestinationAccount.set($event)"
+                    (retry)="retryLoadAccountsData()">
+                </app-accounts-carousel-component>
+
+                <!-- Error message to send transfer -->
+                @if (this.transactionState.errorSendingTransaction()) {
+                    <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                        <app-icon-component
+                            [icon]="'error_outline'"
+                            [size]="'5'"
+                            [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                        </app-icon-component>
+                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                            {{ this.transactionState.errorSendingTransaction() }}
                         </div>
-                    }
-                </form>
-            </div>
+                    </div>
+                }
+            </form>
         }
-        <!-- Actions Buttons -->
-        <app-modal-buttons-ui
-            [cancelText]="'Cancelar'"
-            [cancelIcon]="'close'"
-            [isEditMode]="false"
-            [isLoading]="this.transactionState.isLoadingSendingTransaction()"
-            [isValidForm]="isFormValid"
-            [loadingText]="'Transfiriendo...'"
-            [loadingIcon]="'autorenew'"
-            [confirmText]="'Transferir'"
-            [confirmIcon]="'swap_horiz'"
-            [formId]="'transferForm'"
-            (cancel)="onClose()">
-        </app-modal-buttons-ui>
-
-    </div>
-</div>
+    </ng-container>
+</app-generic-modal>

@@ -14,23 +14,22 @@ import { AccountsCarouselComponent } from '../../../shared/components/accounts-c
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
 import { CategoriesCarouselComponent } from '../../../shared/components/categories-carousel-component/categories-carousel.component';
 import { CategoryService } from '../../../feature/category/service/category.service';
-import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { DateService } from '../../../shared/service/date.service';
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
-import { ModalGeneric } from '../../common/modal.generic';
 import { InputComponent } from '../../../shared/components/input-component/input.component';
 import { InputAmountComponent } from '../../../shared/components/input-amount-component/input-amount-component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { GenericModal } from '../../common/generic-modal/generic.modal';
 
 @Component({
   selector: 'app-quick-expense-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AccountsCarouselComponent, CategoriesCarouselComponent, ModalButtonsUi, IconComponent, InputComponent, InputAmountComponent],
+  imports: [CommonModule, ReactiveFormsModule, AccountsCarouselComponent, CategoriesCarouselComponent, IconComponent, InputComponent, InputAmountComponent, GenericModal],
   templateUrl: './quick-expense.modal.html',
   styleUrl: './quick-expense.modal.css',
 })
-export class QuickExpenseModal extends ModalGeneric implements OnInit {
+export class QuickExpenseModal implements OnInit {
 
   userLogged = userState.userLogged;
 
@@ -60,8 +59,6 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
     private accountCreditService: AccountCreditService,
     private dateService: DateService
   ) {
-    super();
-
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
     }
@@ -111,9 +108,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
     });
   } 
 
-  override ngOnInit(): void {
-    super.ngOnInit();
-
+  ngOnInit(): void {
     this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
 

@@ -9,19 +9,18 @@ import { creditCardState } from '../../../feature/creditcard/service/creditcard.
 import { NotificationService } from '../../../feature/common/service/notification.service';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
-import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
-import { ModalGeneric } from '../../common/modal.generic';
 import { InputComponent } from '../../../shared/components/input-component/input.component';
+import { GenericModal } from '../../common/generic-modal/generic.modal';
 
 @Component({
   selector: 'app-creditcard-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, IconComponent, InputComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, IconComponent, InputComponent, GenericModal],
   templateUrl: './creditcard-edition.modal.html',
   styleUrl: './creditcard-edition.modal.css',
 })
-export class CreditcardEditionModal extends ModalGeneric implements OnInit {
+export class CreditcardEditionModal implements OnInit {
 
   resourceCodeSelected = input<string | null>();
   close = output<void>();
@@ -36,11 +35,9 @@ export class CreditcardEditionModal extends ModalGeneric implements OnInit {
     private creditCardService: CreditCardService,
     private notificationService: NotificationService
   ) {
-    super();
   }
 
-  override ngOnInit(): void {
-    super.ngOnInit();
+  ngOnInit(): void {
 
     this.creditCardState.isLoadingSendingCreditCard.set(false);
     this.creditCardState.errorSendingCreditCard.set(null);

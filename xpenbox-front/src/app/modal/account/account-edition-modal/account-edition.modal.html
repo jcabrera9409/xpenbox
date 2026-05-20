@@ -8,39 +8,46 @@
     [formId]="'accountForm'"
     [confirmText]="isEditMode ? 'Modificar' : 'Registrar'"
     [confirmIcon]="isEditMode ? 'check' : 'add'"
-    (close)="onClose()"
-    >
+    (close)="onClose()">
     <ng-container>
-        @if (this.accountState.isLoadingGetAccount() && isEditMode) {
-        <app-loading-ui></app-loading-ui>
+         @if (this.accountState.isLoadingGetAccount() && isEditMode) {
+            <app-loading-ui></app-loading-ui>
         } @else if(this.accountState.errorGetAccount() && isEditMode) {
-        <app-retry-component [message]="'Error al cargar la cuenta'" (retry)="retryLoadAccountData()">
-        </app-retry-component>
+            <app-retry-component 
+                [message]="'Error al cargar la cuenta'" 
+                (retry)="retryLoadAccountData()">
+            </app-retry-component>
         } @else if(accountData() || !isEditMode) {
-        <form [formGroup]="formAccount" (ngSubmit)="onSubmit()" class="flex flex-col gap-5" id="accountForm">
-            <!-- Nombre de la cuenta -->
-            <app-input-component [inputControl]="nameControl" [inputName]="'name'"
-                [placeholder]="'Ej: Cuenta Corriente Santander'" [labelText]="'Nombre de la cuenta'"
-                [iconName]="'account_balance'">
-            </app-input-component>
+            <form [formGroup]="formAccount" (ngSubmit)="onSubmit()" class="flex flex-col gap-5" id="accountForm">
+                <!-- Nombre de la cuenta -->
+                <app-input-component 
+                    [inputControl]="nameControl" [inputName]="'name'"
+                    [placeholder]="'Ej: Cuenta Corriente Santander'" 
+                    [labelText]="'Nombre de la cuenta'"
+                    [iconName]="'account_balance'">
+                </app-input-component>
 
-            <!-- Saldo inicial (solo en modo creación) -->
-            @if (!isEditMode) {
-            <app-input-component [inputControl]="initialBalanceControl" [inputName]="'initialBalance'"
-                [inputType]="'number'" [placeholder]="'0.00'" [labelText]="'Saldo inicial'" [iconName]="'payment'">
-            </app-input-component>
-            }
-            @if (this.accountState.errorSendingAccount()) {
-            <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                <app-icon-component [icon]="'error_outline'" [size]="'5'"
-                    [class]="'text-[var(--xpb-expense)] mt-0.5'">
-                </app-icon-component>
-                <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                    {{ this.accountState.errorSendingAccount() }}
+                <!-- Saldo inicial (solo en modo creación) -->
+                @if (!isEditMode) {
+                <app-input-component 
+                    [inputControl]="initialBalanceControl" 
+                    [inputName]="'initialBalance'"
+                    [inputType]="'number'" [placeholder]="'0.00'" 
+                    [labelText]="'Saldo inicial'" [iconName]="'payment'">
+                </app-input-component>
+                }
+                @if (this.accountState.errorSendingAccount()) {
+                <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                    <app-icon-component 
+                        [icon]="'error_outline'" [size]="'5'"
+                        [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                    </app-icon-component>
+                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                        {{ this.accountState.errorSendingAccount() }}
+                    </div>
                 </div>
-            </div>
-            }
-        </form>
+                }
+            </form>
         }
     </ng-container>
 </app-generic-modal>

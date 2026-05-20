@@ -1,35 +1,15 @@
-<!-- Overlay con backdrop -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
-  <div class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-md md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">   
-    <!-- Header -->
-    <div class="xpb-bg-sidebar px-4 py-3 border-b xpb-border relative flex-shrink-0">
-      <div class="flex items-center gap-4">
-        <!-- Icono -->
-        <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-          <app-icon-component
-              [icon]="'receipt_long'"
-              [size]="'8'"
-              [class]="'text-[var(--xpb-expense)]'">
-          </app-icon-component>
-        </div>
-        <!-- Título y subtítulo -->
-        <div class="flex-1">
-          <h3 class="text-xl font-semibold xpb-text-primary">Registrar Gasto</h3>
-        </div>
-        <!-- Botón cerrar -->
-        <button 
-          (click)="onClose()" 
-          class="text-gray-400 hover:text-gray-600 transition-colors -mt-1">
-          <app-icon-component
-              [icon]="'close'"
-              [size]="'5'">
-          </app-icon-component>
-        </button>
-      </div>
-    </div>
-
-    <!-- Body -->
-    <div class="p-6 overflow-y-auto flex-1">
+<app-generic-modal 
+    [iconHeader]="'receipt_long'"
+    [classIconHeader]="'text-[var(--xpb-expense)]'"
+    [title]="'Registrar Gasto'"
+    [subtitle]="'Registra un nuevo gasto en tu cuenta o tarjeta'"
+    [isLoading]="this.transactionState.isLoadingSendingTransaction()"
+    [isFormValid]="formExpense.valid"
+    [formId]="'expenseForm'"
+    [confirmText]="'Registrar'"
+    [confirmIcon]="'add'"
+    (close)="onClose()">
+    <ng-container>
       <form [formGroup]="formExpense" (ngSubmit)="onSubmit()" id="expenseForm">
         <!-- Monto -->
         <app-input-amount-component
@@ -117,21 +97,5 @@
           </div>
         }
       </form>
-    </div>
-
-    <!-- Botones de acción -->
-    <app-modal-buttons-ui
-        [cancelText]="'Cancelar'"
-        [cancelIcon]="'close'"
-        [isEditMode]="false"
-        [isLoading]="this.transactionState.isLoadingSendingTransaction()"
-        [isValidForm]="isFormValid"
-        [loadingText]="'Guardando...'"
-        [loadingIcon]="'autorenew'"
-        [confirmText]="'Guardar'"
-        [confirmIcon]="'save'"
-        [formId]="'expenseForm'"
-        (cancel)="onClose()">
-    </app-modal-buttons-ui>
-  </div>
-</div>
+    </ng-container>
+</app-generic-modal>

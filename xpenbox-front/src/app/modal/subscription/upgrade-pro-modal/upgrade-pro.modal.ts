@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
-import { ModalGeneric } from '../../common/modal.generic';
 import { upgradeProModalState } from '../state/upgrade-pro.modal.state';
 import { subscriptionState } from '../../../feature/subscription/service/subscription.state';
 import { SubscriptionService } from '../../../feature/subscription/service/subscription.service';
@@ -8,14 +6,15 @@ import { PreApprovalSubscriptionRequestDTO } from '../../../feature/subscription
 import { PreApprovalSubscriptionResponseDTO } from '../../../feature/subscription/model/pre-approval-subscription.response.dto';
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
+import { GenericModal } from '../../common/generic-modal/generic.modal';
 
 @Component({
   selector: 'app-upgrade-pro-modal',
-  imports: [ModalButtonsUi, IconComponent],
+  imports: [IconComponent, GenericModal],
   templateUrl: './upgrade-pro.modal.html',
   styleUrl: './upgrade-pro.modal.css',
 })
-export class UpgradeProModal extends ModalGeneric {
+export class UpgradeProModal {
 
   title = upgradeProModalState.title;
   htmlMessage = upgradeProModalState.htmlMessage;
@@ -25,7 +24,6 @@ export class UpgradeProModal extends ModalGeneric {
   constructor(
     private subscriptionService: SubscriptionService
   ) {
-    super();
   }
 
   onClose(): void {

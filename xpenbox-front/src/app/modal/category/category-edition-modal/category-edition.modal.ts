@@ -9,19 +9,18 @@ import { NotificationService } from '../../../feature/common/service/notificatio
 import { categoryState } from '../../../feature/category/service/category.state';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
-import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
-import { ModalGeneric } from '../../common/modal.generic';
 import { InputComponent } from '../../../shared/components/input-component/input.component';
+import { GenericModal } from '../../common/generic-modal/generic.modal';
 
 @Component({
   selector: 'app-category-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, IconComponent, InputComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, IconComponent, InputComponent, GenericModal],
   templateUrl: './category-edition.modal.html',
   styleUrl: './category-edition.modal.css',
 })
-export class CategoryEditionModal extends ModalGeneric implements OnInit {
+export class CategoryEditionModal implements OnInit {
 
   resourceCodeSelected = input<string | null>();
   close = output<void>();
@@ -38,12 +37,9 @@ export class CategoryEditionModal extends ModalGeneric implements OnInit {
     private categoryService: CategoryService,
     private notificationService: NotificationService
   ) { 
-    super();
   }
 
-  override ngOnInit(): void {
-    super.ngOnInit();
-    
+  ngOnInit(): void {
     this.categoryState.isLoadingSendingCategory.set(false);
     this.categoryState.errorSendingCategory.set(null);
 
