@@ -51,7 +51,8 @@ export class SettingsPage {
 
   get isPremiumUser(): boolean {
     const subscription: SubscriptionResponseDTO = subscriptionState.subscription()!; 
-    if (subscription && subscription.plan.price > 0) return true;
+    console.log('Subscription data:', subscription);
+    if (subscription && (subscription.plan.price > 0 || subscription.plan.resourceCode == 'plan_betatester')) return true;
     return false;
   }
 
