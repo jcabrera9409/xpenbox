@@ -217,7 +217,6 @@
 
 @if (showIncomeEditionModal()) {
   <app-income-edition-modal
-    [resourceCodeSelected]="null"
-    (close)="closeIncomeEditionModal()"
-  ></app-income-edition-modal>
+    (close)="closeIncomeEditionModal()">
+  </app-income-edition-modal>
 }
