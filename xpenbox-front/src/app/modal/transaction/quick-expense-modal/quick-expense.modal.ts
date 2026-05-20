@@ -14,23 +14,22 @@ import { AccountsCarouselComponent } from '../../../shared/components/accounts-c
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
 import { CategoriesCarouselComponent } from '../../../shared/components/categories-carousel-component/categories-carousel.component';
 import { CategoryService } from '../../../feature/category/service/category.service';
-import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { DateService } from '../../../shared/service/date.service';
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
-import { ModalGeneric } from '../../common/modal.generic';
 import { InputComponent } from '../../../shared/components/input-component/input.component';
 import { InputAmountComponent } from '../../../shared/components/input-amount-component/input-amount-component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { GenericModal } from '../../common/generic-modal/generic.modal';
 
 @Component({
   selector: 'app-quick-expense-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AccountsCarouselComponent, CategoriesCarouselComponent, ModalButtonsUi, IconComponent, InputComponent, InputAmountComponent],
+  imports: [CommonModule, ReactiveFormsModule, AccountsCarouselComponent, CategoriesCarouselComponent, IconComponent, InputComponent, InputAmountComponent, GenericModal],
   templateUrl: './quick-expense.modal.html',
   styleUrl: './quick-expense.modal.css',
 })
-export class QuickExpenseModal extends ModalGeneric implements OnInit {
+export class QuickExpenseModal implements OnInit {
 
   userLogged = userState.userLogged;
 
@@ -49,6 +48,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
 
   formExpense!: FormGroup;
   maxDate = signal('');
+  amountOutput = signal<number>(0);
 
   constructor(
     private fb: FormBuilder,
@@ -59,8 +59,6 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
     private accountCreditService: AccountCreditService,
     private dateService: DateService
   ) {
-    super();
-
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
     }
@@ -76,7 +74,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
       if (!this.accountState.isLoadingGetList() && !this.creditCardState.isLoadingGetList()) {
         const accountCreditsList: AccountCreditDTO[] = this.accountCreditService.combineAccountAndCreditCardData(accounts, creditCards);
 
-        const availableList = this.accountCreditService.filterAndSortAccountCredits(accountCreditsList, this.amountControl.value);
+        const availableList = this.accountCreditService.filterAndSortAccountCredits(accountCreditsList, this.amountOutput());
         this.accountCredits.set(availableList);
 
         if (availableList.length > 0 && !this.selectedAccount()) {
@@ -87,7 +85,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
 
     // Update selected account when amount changes
     effect(() => {
-      const amountValue = this.amountControl.value;
+      const amountValue = this.amountOutput();
       const accounts = this.accountCredits();
       const currentSelected = this.selectedAccount();
       
@@ -110,9 +108,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
     });
   } 
 
-  override ngOnInit(): void {
-    super.ngOnInit();
-
+  ngOnInit(): void {
     this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
 
@@ -126,7 +122,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
 
   // Getters for form validity
   get isFormValid(): boolean {
-    const amountValue = this.amountControl.value;
+    const amountValue = this.amountOutput();
     const selectedAccount = this.selectedAccount();
     const categorySelected = this.selectedCategory();
 
@@ -142,7 +138,7 @@ export class QuickExpenseModal extends ModalGeneric implements OnInit {
       return false;
     }
 
-    return isAccountValid && (!!categorySelected || !assignToCat) && this.formExpense.valid;
+    return isAccountValid && this.formExpense.valid;
   }
 
   get amountControl(): FormControl {

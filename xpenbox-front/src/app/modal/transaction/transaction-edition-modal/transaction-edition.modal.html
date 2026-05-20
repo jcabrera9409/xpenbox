@@ -1,281 +1,243 @@
-<!-- Modal Overlay -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
-    <div class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-md md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">
-        <!-- Header -->
-        <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
-            <div class="flex items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-                        <app-icon-component
-                            [icon]="'edit'"
-                            [size]="'8'"
-                            [class]="'text-[var(--xpb-primary)]'">
-                        </app-icon-component>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-semibold xpb-text-primary">Modificar Transacción</h2>
-                        <p class="text-sm xpb-text-secondary">Actualiza la información de tu transacción</p>
-                    </div>
-                </div>
-                <button
-                    type="button"
-                    (click)="onClose()"
-                    class="xpb-text-secondary hover:xpb-text-primary hover:bg-[var(--xpb-main)] rounded-lg p-2 transition-colors"
-                    aria-label="Cerrar modal">
+<app-generic-modal 
+    [iconHeader]="'edit'"
+    [classIconHeader]="'text-[var(--xpb-primary)]'"
+    [title]="'Modificar Transacción'"
+    [subtitle]="'Actualiza la información de tu transacción'"
+    [isLoading]="this.transactionState.isLoadingSendingTransaction()"
+    [isFormValid]="formTransaction.valid"
+    [formId]="'transactionForm'"
+    [confirmText]="'Modificar'"
+    [confirmIcon]="'check'"
+    (close)="onClose()">
+    <ng-container>
+        @if (this.transactionState.isLoadingGetTransaction()) {
+            <app-loading-ui></app-loading-ui>
+        } @else if(this.transactionState.errorGetTransaction()) {
+            <app-retry-component
+                [message]="'Error al cargar la información de la transacción'"
+                (retry)="retryLoadTransactionData()">
+            </app-retry-component>
+        } @else if(transactionData()) {
+            <!-- Detalles no editables de la transacción -->
+            <div class="mb-4 xpb-bg-main rounded-lg p-4 border xpb-border">
+                <h3 class="text-sm font-semibold xpb-text-primary mb-3 flex items-center gap-2">
                     <app-icon-component
-                        [icon]="'close'"
+                        [icon]="'info'"
                         [size]="'5'">
                     </app-icon-component>
-                </button>
-            </div>
-        </div>
-
-        <!-- Body content -->
-        <div class="p-4 overflow-y-auto flex-1">
-            @if (this.transactionState.isLoadingGetTransaction()) {
-                <app-loading-ui></app-loading-ui>
-            } @else if(this.transactionState.errorGetTransaction()) {
-                <app-retry-component
-                    [message]="'Error al cargar la información de la transacción'"
-                    (retry)="retryLoadTransactionData()">
-                </app-retry-component>
-            } @else if(transactionData()) {
-                <!-- Detalles no editables de la transacción -->
-                <div class="mb-4 xpb-bg-main rounded-lg p-4 border xpb-border">
-                    <h3 class="text-sm font-semibold xpb-text-primary mb-3 flex items-center gap-2">
-                        <app-icon-component
-                            [icon]="'info'"
-                            [size]="'5'">
-                        </app-icon-component>
-                        Información de la transacción
-                    </h3>
-                    
-                    <div class="space-y-3">
-                        <!-- Tipo de transacción -->
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                <app-icon-component
-                                    [icon]="'view_object_track'"
-                                    [size]="'5'">
-                                </app-icon-component>
-                                Tipo
-                            </span>
-                            <span class="text-sm font-medium xpb-text-primary">
-                                @switch (transactionData()!.transactionType) {
-                                    @case ('INCOME') {
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-income)]/10 text-[var(--xpb-income)] dark:text-[var(--xpb-income)] rounded-lg">
+                    Información de la transacción
+                </h3>
+                
+                <div class="space-y-3">
+                    <!-- Tipo de transacción -->
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                            <app-icon-component
+                                [icon]="'view_object_track'"
+                                [size]="'5'">
+                            </app-icon-component>
+                            Tipo
+                        </span>
+                        <span class="text-sm font-medium xpb-text-primary">
+                            @switch (transactionData()!.transactionType) {
+                                @case ('INCOME') {
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-income)]/10 text-[var(--xpb-income)] dark:text-[var(--xpb-income)] rounded-lg">
+                                        <app-icon-component
+                                            [icon]="'trending_up'"
+                                            [size]="'5'">
+                                        </app-icon-component>
+                                        Ingreso
+                                    </span>
+                                }
+                                @case ('EXPENSE') {
+                                    @if (transactionData()!.creditCard) {
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-expense)]/10 text-[var(--xpb-expense)] dark:text-[var(--xpb-expense)] rounded-lg">
                                             <app-icon-component
-                                                [icon]="'trending_up'"
+                                                [icon]="'credit_card'"
                                                 [size]="'5'">
                                             </app-icon-component>
-                                            Ingreso
+                                            Gasto (Tarjeta)
                                         </span>
-                                    }
-                                    @case ('EXPENSE') {
-                                        @if (transactionData()!.creditCard) {
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-expense)]/10 text-[var(--xpb-expense)] dark:text-[var(--xpb-expense)] rounded-lg">
-                                                <app-icon-component
-                                                    [icon]="'credit_card'"
-                                                    [size]="'5'">
-                                                </app-icon-component>
-                                                Gasto (Tarjeta)
-                                            </span>
-                                        } @else {
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-expense)]/10 text-[var(--xpb-expense)] dark:text-[var(--xpb-expense)] rounded-lg">
-                                                <app-icon-component
-                                                    [icon]="'trending_down'"
-                                                    [size]="'5'">
-                                                </app-icon-component>
-                                                Gasto (Cuenta)
-                                            </span>
-                                        }
-                                    }
-                                    @case ('TRANSFER') {
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-transfer)]/10 text-[var(--xpb-transfer)] dark:text-[var(--xpb-transfer)] rounded-lg">
+                                    } @else {
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-expense)]/10 text-[var(--xpb-expense)] dark:text-[var(--xpb-expense)] rounded-lg">
                                             <app-icon-component
-                                                [icon]="'swap_horiz'"
+                                                [icon]="'trending_down'"
                                                 [size]="'5'">
                                             </app-icon-component>
-                                            Transferencia
-                                        </span>
-                                    }
-                                    @case ('CREDIT_PAYMENT') {
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-credit)]/10 text-[var(--xpb-credit)] dark:text-[var(--xpb-credit)] rounded-lg">
-                                            <app-icon-component
-                                                [icon]="'payment'"
-                                                [size]="'5'">
-                                            </app-icon-component>
-                                            Pago de Crédito
+                                            Gasto (Cuenta)
                                         </span>
                                     }
                                 }
-                            </span>
-                        </div>
+                                @case ('TRANSFER') {
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-transfer)]/10 text-[var(--xpb-transfer)] dark:text-[var(--xpb-transfer)] rounded-lg">
+                                        <app-icon-component
+                                            [icon]="'swap_horiz'"
+                                            [size]="'5'">
+                                        </app-icon-component>
+                                        Transferencia
+                                    </span>
+                                }
+                                @case ('CREDIT_PAYMENT') {
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--xpb-credit)]/10 text-[var(--xpb-credit)] dark:text-[var(--xpb-credit)] rounded-lg">
+                                        <app-icon-component
+                                            [icon]="'payment'"
+                                            [size]="'5'">
+                                        </app-icon-component>
+                                        Pago de Crédito
+                                    </span>
+                                }
+                            }
+                        </span>
+                    </div>
 
-                        <!-- Monto -->
-                        <div class="flex items-center justify-between">
+                    <!-- Monto -->
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                            <app-icon-component
+                                [icon]="'attach_money'"
+                                [size]="'5'">
+                            </app-icon-component>
+                            Monto
+                        </span>
+                        <span class="text-lg font-bold xpb-text-primary">
+                            {{userLogged()?.currency}} {{ transactionData()!.amount | number:'1.2-2' }}
+                        </span>
+                    </div>
+
+                    <!-- Ingreso origen (si existe) -->
+                    @if (transactionData()!.income) {
+                        <div class="flex items-center justify-between gap-5">
                             <span class="text-sm xpb-text-secondary flex items-center gap-2">
                                 <app-icon-component
-                                    [icon]="'attach_money'"
+                                    [icon]="'savings'"
                                     [size]="'5'">
                                 </app-icon-component>
-                                Monto
+                                Fuente de ingreso
                             </span>
-                            <span class="text-lg font-bold xpb-text-primary">
-                                {{userLogged()?.currency}} {{ transactionData()!.amount | number:'1.2-2' }}
+                            <span class="text-sm font-medium xpb-text-primary truncate">
+                                {{ transactionData()!.income!.concept }}
                             </span>
-                        </div>
-
-                        <!-- Ingreso origen (si existe) -->
-                        @if (transactionData()!.income) {
-                            <div class="flex items-center justify-between gap-5">
-                                <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <app-icon-component
-                                        [icon]="'savings'"
-                                        [size]="'5'">
-                                    </app-icon-component>
-                                    Fuente de ingreso
-                                </span>
-                                <span class="text-sm font-medium xpb-text-primary truncate">
-                                    {{ transactionData()!.income!.concept }}
-                                </span>
-                            </div>
-                        }
-
-                        <!-- Cuenta origen (si existe) -->
-                        @if (transactionData()!.account) {
-                            <div class="flex items-center justify-between gap-5">
-                                <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <app-icon-component
-                                        [icon]="'account_balance_wallet'"
-                                        [size]="'5'">
-                                    </app-icon-component>
-                                    Cuenta
-                                </span>
-                                <span class="text-sm font-medium xpb-text-primary truncate">
-                                    {{ transactionData()!.account!.name }}
-                                </span>
-                            </div>
-                        }
-
-                        <!-- Tarjeta de crédito (si existe) -->
-                        @if (transactionData()!.creditCard) {
-                            <div class="flex items-center justify-between gap-5">
-                                <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <app-icon-component
-                                        [icon]="'credit_card'"
-                                        [size]="'5'">
-                                    </app-icon-component>
-                                    Tarjeta
-                                </span>
-                                <span class="text-sm font-medium xpb-text-primary truncate">
-                                    {{ transactionData()!.creditCard!.name }}
-                                </span>
-                            </div>
-                        }
-
-                        <!-- Cuenta destino (para transferencias) -->
-                        @if (transactionData()!.destinationAccount) {
-                            <div class="flex items-center justify-between gap-5">
-                                <span class="text-sm xpb-text-secondary flex items-center gap-2">
-                                    <app-icon-component
-                                        [icon]="'account_balance'"
-                                        [size]="'5'">
-                                    </app-icon-component>
-                                    Cuenta destino
-                                </span>
-                                <span class="text-sm font-medium xpb-text-primary truncate">
-                                    {{ transactionData()!.destinationAccount!.name }}
-                                </span>
-                            </div>
-                        }
-                    </div>
-                </div>
-
-                <!-- Formulario de edición -->
-                <form [formGroup]="formTransaction" (ngSubmit)="onSubmit()" id="transactionForm">
-                    <div class="space-y-4 ">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5 mt-2">
-                            <!-- Descripción -->
-                            <app-input-component
-                                [inputControl]="descriptionControl"
-                                [inputName]="'description'"
-                                [placeholder]="'Ejm: Compra en supermercado'"
-                                [labelText]="'Descripción (opcional)'"
-                                [iconName]="'description'">
-                            </app-input-component>
-    
-                            <!-- Fecha de transacción -->
-                            <app-input-component
-                                [inputControl]="transactionDateControl"
-                                [inputName]="'transactionDate'"
-                                [inputType]="'datetime-local'"
-                                [labelText]="'Fecha de la transacción'"
-                                [iconName]="'event'">
-                            </app-input-component>
-                        </div>
-                        <!-- Checkbox para asignar a categoría -->
-                        <div class="relative mt-4 mb-3">
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <div class="relative">
-                                    <input
-                                        type="checkbox"
-                                        [checked]="assignToCategory()"
-                                        (change)="assignToCategory.set(!assignToCategory())"
-                                        class="peer sr-only" />
-                                    <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
-                                        <app-icon-component
-                                            [icon]="'check'"
-                                            [size]="'5'"
-                                            [class]="'text-white opacity-0 peer-checked:opacity-100 transition-opacity'">
-                                        </app-icon-component>
-                                    </div>
-                                </div>
-                                <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
-                                    Agregar a una categoría
-                                </span>
-                            </label>
-                        </div>
-
-                        <!-- Carrusel de categorías -->
-                        @if (assignToCategory()) {
-                            <app-categories-carousel-component
-                                [categoryResourceCodeSelected]="selectedCategory() ? selectedCategory()!.resourceCode : null"
-                                (outputCategory)="selectCategory($event)">
-                            </app-categories-carousel-component>
-                        }
-                    </div>
-
-                    <!-- Mensaje de error al enviar -->
-                    @if (this.transactionState.errorSendingTransaction()) {
-                        <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                            <app-icon-component
-                                [icon]="'error_outline'"
-                                [size]="'5'"
-                                [class]="'text-[var(--xpb-expense)] mt-0.5'">
-                            </app-icon-component>
-                            <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                {{ this.transactionState.errorSendingTransaction() }}
-                            </div>
                         </div>
                     }
-                </form>
-            }
-        </div>
 
-        <!-- Action buttons -->
-        <app-modal-buttons-ui
-            [cancelText]="'Cancelar'"
-            [cancelIcon]="'close'"
-            [isEditMode]="false"
-            [isLoading]="this.transactionState.isLoadingSendingTransaction()"
-            [isValidForm]="formTransaction.valid"
-            [loadingText]="'Guardando...'"
-            [loadingIcon]="'autorenew'"
-            [confirmText]="'Actualizar'"
-            [confirmIcon]="'check'"
-            [formId]="'transactionForm'"
-            (cancel)="onClose()">
-        </app-modal-buttons-ui>
-    </div>
-</div>
+                    <!-- Cuenta origen (si existe) -->
+                    @if (transactionData()!.account) {
+                        <div class="flex items-center justify-between gap-5">
+                            <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                                <app-icon-component
+                                    [icon]="'account_balance_wallet'"
+                                    [size]="'5'">
+                                </app-icon-component>
+                                Cuenta
+                            </span>
+                            <span class="text-sm font-medium xpb-text-primary truncate">
+                                {{ transactionData()!.account!.name }}
+                            </span>
+                        </div>
+                    }
+
+                    <!-- Tarjeta de crédito (si existe) -->
+                    @if (transactionData()!.creditCard) {
+                        <div class="flex items-center justify-between gap-5">
+                            <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                                <app-icon-component
+                                    [icon]="'credit_card'"
+                                    [size]="'5'">
+                                </app-icon-component>
+                                Tarjeta
+                            </span>
+                            <span class="text-sm font-medium xpb-text-primary truncate">
+                                {{ transactionData()!.creditCard!.name }}
+                            </span>
+                        </div>
+                    }
+
+                    <!-- Cuenta destino (para transferencias) -->
+                    @if (transactionData()!.destinationAccount) {
+                        <div class="flex items-center justify-between gap-5">
+                            <span class="text-sm xpb-text-secondary flex items-center gap-2">
+                                <app-icon-component
+                                    [icon]="'account_balance'"
+                                    [size]="'5'">
+                                </app-icon-component>
+                                Cuenta destino
+                            </span>
+                            <span class="text-sm font-medium xpb-text-primary truncate">
+                                {{ transactionData()!.destinationAccount!.name }}
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Formulario de edición -->
+            <form [formGroup]="formTransaction" (ngSubmit)="onSubmit()" id="transactionForm">
+                <div class="space-y-4 ">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5 mt-2">
+                        <!-- Descripción -->
+                        <app-input-component
+                            [inputControl]="descriptionControl"
+                            [inputName]="'description'"
+                            [placeholder]="'Ejm: Compra en supermercado'"
+                            [labelText]="'Descripción (opcional)'"
+                            [iconName]="'description'">
+                        </app-input-component>
+
+                        <!-- Fecha de transacción -->
+                        <app-input-component
+                            [inputControl]="transactionDateControl"
+                            [inputName]="'transactionDate'"
+                            [inputType]="'datetime-local'"
+                            [labelText]="'Fecha de la transacción'"
+                            [iconName]="'event'">
+                        </app-input-component>
+                    </div>
+                    <!-- Checkbox para asignar a categoría -->
+                    <div class="relative mt-4 mb-3">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative">
+                                <input
+                                    type="checkbox"
+                                    [checked]="assignToCategory()"
+                                    (change)="assignToCategory.set(!assignToCategory())"
+                                    class="peer sr-only" />
+                                <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
+                                    <app-icon-component
+                                        [icon]="'check'"
+                                        [size]="'5'"
+                                        [class]="'text-white opacity-0 peer-checked:opacity-100 transition-opacity'">
+                                    </app-icon-component>
+                                </div>
+                            </div>
+                            <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
+                                Agregar a una categoría
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Carrusel de categorías -->
+                    @if (assignToCategory()) {
+                        <app-categories-carousel-component
+                            [categoryResourceCodeSelected]="selectedCategory() ? selectedCategory()!.resourceCode : null"
+                            (outputCategory)="selectCategory($event)">
+                        </app-categories-carousel-component>
+                    }
+                </div>
+
+                <!-- Mensaje de error al enviar -->
+                @if (this.transactionState.errorSendingTransaction()) {
+                    <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                        <app-icon-component
+                            [icon]="'error_outline'"
+                            [size]="'5'"
+                            [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                        </app-icon-component>
+                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                            {{ this.transactionState.errorSendingTransaction() }}
+                        </div>
+                    </div>
+                }
+            </form>
+        }
+    </ng-container>
+</app-generic-modal>

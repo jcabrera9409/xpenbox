@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { defaultInputErrorDTO, InputErrorDTO } from '../../dto/input-error.dto';
 import { userState } from '../../../feature/user/service/user.state';
@@ -17,6 +17,8 @@ export class InputAmountComponent {
   inputName = input<string>();
   
   userState = userState;
+
+  amountValue = output<number>();
 
   get currency(): string {
     return this.userState.userLogged()?.currency ?? '';
@@ -75,6 +77,10 @@ export class InputAmountComponent {
     // Actualiza el valor mostrado en el input
     input.value = this.currency + ' ' + this.formattedAmount;
     // Mueve el cursor al final
+
+    const amountValue = parseInt(raw, 10) / 100;
+    this.amountValue.emit(amountValue);
+
     setTimeout(() => {
       input.setSelectionRange(input.value.length, input.value.length);
     });

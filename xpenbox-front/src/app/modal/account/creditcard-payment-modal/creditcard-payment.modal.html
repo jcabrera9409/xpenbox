@@ -1,32 +1,16 @@
-<!-- Overlay con backdrop -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
-    <div class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-md md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">
-        <!-- Header -->
-        <div class="xpb-bg-sidebar px-4 py-3 border-b xpb-border relative flex-shrink-0">
-            <div class="flex items-center gap-4">
-                <!-- Icon -->
-                <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-                    <app-icon-component
-                        [icon]="'payment'"
-                        [size]="'8'"
-                        [class]="'text-[var(--xpb-income)]'">
-                    </app-icon-component>
-                </div>
-                <!-- Title and subtitle -->
-                <div class="flex-1">
-                    <h3 class="text-xl font-semibold xpb-text-primary">Pagar Tarjeta de Crédito</h3>
-                    <p class="text-sm xpb-text-secondary">Realiza el pago de tu tarjeta de crédito</p>
-                </div>
-                <!-- Close button -->
-                <button (click)="onClose()" 
-                    class="text-gray-400 hover:text-gray-600 transition-colors -mt-1">
-                    <app-icon-component
-                        [icon]="'close'"
-                        [size]="'5'">
-                    </app-icon-component>
-                </button>
-            </div>
-        </div>
+<app-generic-modal 
+    [iconHeader]="'payment'"
+    [classIconHeader]="'text-[var(--xpb-income)]'"
+    [title]="'Pagar Tarjeta de Crédito'"
+    [subtitle]="'Realiza el pago de tu tarjeta de crédito'"
+    [isLoading]="this.transactionState.isLoadingSendingTransaction()"
+    [isFormValid]="isFormValid"
+    [formId]="'paymentForm'"
+    [confirmText]="'Pagar'"
+    [confirmIcon]="'payment'"
+    [confirmTextLoading]="'Pagando...'"
+    (close)="onClose()">
+    <ng-container>
 
         @if (this.creditCardState.isLoadingGetCreditCard() && this.creditCardResourceCode()) {
             <app-loading-ui></app-loading-ui>
@@ -36,145 +20,128 @@
                 (retry)="retryLoadCreditCardData()">
             </app-retry-component>
         } @else {
-            <!-- Body -->
-            <div class="p-6 overflow-y-auto flex-1">
-                <form [formGroup]="formPayment" (ngSubmit)="onSubmit()" id="paymentForm">
-                    <!-- Monto -->
-                    <app-input-amount-component
-                        [inputControl]="amountControl"
-                        [inputName]="'amount'">
-                    </app-input-amount-component>
+            <form [formGroup]="formPayment" (ngSubmit)="onSubmit()" id="paymentForm">
+                <!-- Monto -->
+                <app-input-amount-component
+                    [inputControl]="amountControl"
+                    [inputName]="'amount'"
+                    (amountValue)="amountOutput.set($event)">
+                </app-input-amount-component>
 
-                    <div class="grid grid-cols-1 gap-5 mb-5 mt-5">
-                        <!-- Descripción -->
-                        <app-input-component
-                            [inputControl]="descriptionControl"
-                            [inputName]="'description'"
-                            [placeholder]="'Ejm: Pago de tarjeta de crédito'"
-                            [labelText]="'Descripción (opcional)'"
-                            [iconName]="'description'">
-                        </app-input-component>
+                <div class="grid grid-cols-1 gap-5 mb-5 mt-5">
+                    <!-- Descripción -->
+                    <app-input-component
+                        [inputControl]="descriptionControl"
+                        [inputName]="'description'"
+                        [placeholder]="'Ejm: Pago de tarjeta de crédito'"
+                        [labelText]="'Descripción (opcional)'"
+                        [iconName]="'description'">
+                    </app-input-component>
 
-                        <!-- Fecha de la transacción -->
-                        <app-input-component
-                            [inputControl]="transactionDateControl"
-                            [inputName]="'transactionDate'"
-                            [inputType]="'datetime-local'"
-                            [labelText]="'Fecha de la transacción'"
-                            [iconName]="'event'">
-                        </app-input-component>
-                    </div>
+                    <!-- Fecha de la transacción -->
+                    <app-input-component
+                        [inputControl]="transactionDateControl"
+                        [inputName]="'transactionDate'"
+                        [inputType]="'datetime-local'"
+                        [labelText]="'Fecha de la transacción'"
+                        [iconName]="'event'">
+                    </app-input-component>
+                </div>
 
-                    @if (isOnlyOneCreditCard) {
-                        <!-- Credit Card (No Editable) -->
-                        <div class="mb-3">
-                            <label class="block text-sm font-medium xpb-text-secondary mb-2">
-                                Tarjeta de Crédito
-                            </label>
-                            <div class="relative">
-                                <app-icon-component
-                                    [icon]="'payment'"
-                                    [size]="'5'"
-                                    [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
-                                </app-icon-component>
-                                <input 
-                                    type="text"
-                                    [value]="creditCardData()?.name + ' - ' + userLogged()?.currency + ' ' + (creditCardData()?.balance | number:'1.2-2')"
-                                    readonly
-                                    class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
-                            </div>
+                @if (isOnlyOneCreditCard) {
+                    <!-- Credit Card (No Editable) -->
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium xpb-text-secondary mb-2">
+                            Tarjeta de Crédito
+                        </label>
+                        <div class="relative">
+                            <app-icon-component
+                                [icon]="'payment'"
+                                [size]="'5'"
+                                [class]="'absolute left-3 top-1/2 -translate-y-1/2 xpb-text-secondary'">
+                            </app-icon-component>
+                            <input 
+                                type="text"
+                                [value]="creditCardData()?.name + ' - ' + userLogged()?.currency + ' ' + (creditCardData()?.balance | number:'1.2-2')"
+                                readonly
+                                class="xpb-bg-main border xpb-border rounded-lg pl-10 pr-4 py-2 w-full opacity-50" />
                         </div>
-                    } @else {
-                        <!-- Credit Card (Carousel) -->
-                        <app-accounts-carousel-component
-                            ngSkipHydration class="block"
-                            [isLoading]="this.creditCardState.isLoadingGetList()"
-                            [errorLoading]="this.creditCardState.errorGetList()"
-                            [carouselTitle]="'Tarjeta de Crédito a Pagar'"
-                            [carouselErrorMessage]="'Error al cargar tarjetas de crédito'"
-                            [currencySymbol]="userLogged()?.currency!"
-                            [accountsList]="creditCardList()"
-                            [currentSelectedAccount]="creditCardData()"
-                            [noAccountsMessage]="'No tienes tarjetas de crédito disponibles'"
-                            (selectedAccountOutput)="this.creditCardData.set($event)"
-                            (retry)="retryLoadCreditCardsData()">
-                        </app-accounts-carousel-component>
-                    }
-
-                    <!-- Destination Account (Carousel) -->
+                    </div>
+                } @else {
+                    <!-- Credit Card (Carousel) -->
                     <app-accounts-carousel-component
                         ngSkipHydration class="block"
-                        [isLoading]="this.accountState.isLoadingGetList()"
-                        [errorLoading]="this.accountState.errorGetList()"
-                        [carouselTitle]="'Cargar a Cuenta'"
-                        [carouselErrorMessage]="'Error al cargar cuentas'"
+                        [isLoading]="this.creditCardState.isLoadingGetList()"
+                        [errorLoading]="this.creditCardState.errorGetList()"
+                        [carouselTitle]="'Tarjeta de Crédito a Pagar'"
+                        [carouselErrorMessage]="'Error al cargar tarjetas de crédito'"
                         [currencySymbol]="userLogged()?.currency!"
-                        [accountsList]="accountsList()"
-                        [currentSelectedAccount]="selectedAccount()"
-                        [noAccountsMessage]="'No tienes cuentas disponibles'"
-                        (selectedAccountOutput)="this.selectedAccount.set($event)"
-                        (retry)="retryLoadAccountsData()">
+                        [accountsList]="creditCardList()"
+                        [currentSelectedAccount]="creditCardData()"
+                        [noAccountsMessage]="'No tienes tarjetas de crédito disponibles'"
+                        (selectedAccountOutput)="this.creditCardData.set($event)"
+                        (retry)="retryLoadCreditCardsData()">
                     </app-accounts-carousel-component>
+                }
 
-                    <!-- Checkbox para asignar a categoría -->
-                    <div class="mb-4">
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <div class="relative">
-                                <input
-                                    type="checkbox"
-                                    [checked]="assignToCategory()"
-                                    (change)="assignToCategory.set(!assignToCategory())"
-                                    class="peer sr-only" />
-                                <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
-                                    <app-icon-component
-                                        [icon]="'check'"
-                                        [size]="'5'"
-                                        [class]="'text-white opacity-0 peer-checked:opacity-100 transition-opacity'">
-                                    </app-icon-component>
-                                </div>
-                            </div>
-                            <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
-                                Agregar a una categoría
-                            </span>
-                        </label>
-                    </div>
+                <!-- Destination Account (Carousel) -->
+                <app-accounts-carousel-component
+                    ngSkipHydration class="block"
+                    [isLoading]="this.accountState.isLoadingGetList()"
+                    [errorLoading]="this.accountState.errorGetList()"
+                    [carouselTitle]="'Cargar a Cuenta'"
+                    [carouselErrorMessage]="'Error al cargar cuentas'"
+                    [currencySymbol]="userLogged()?.currency!"
+                    [accountsList]="accountsList()"
+                    [currentSelectedAccount]="selectedAccount()"
+                    [noAccountsMessage]="'No tienes cuentas disponibles'"
+                    (selectedAccountOutput)="this.selectedAccount.set($event)"
+                    (retry)="retryLoadAccountsData()">
+                </app-accounts-carousel-component>
 
-                    @if (assignToCategory()) {
-                        <app-categories-carousel-component
-                            (outputCategory)="selectCategory($event)">
-                        </app-categories-carousel-component>
-                    }
-
-                    @if (this.transactionState.errorSendingTransaction()) {
-                        <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                            <app-icon-component
-                                [icon]="'error_outline'"
-                                [size]="'5'"
-                                [class]="'text-[var(--xpb-expense)] mt-0.5'">
-                            </app-icon-component>
-                            <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                {{ this.transactionState.errorSendingTransaction() }}
+                <!-- Checkbox para asignar a categoría -->
+                <div class="mb-4">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative">
+                            <input
+                                type="checkbox"
+                                [checked]="assignToCategory()"
+                                (change)="assignToCategory.set(!assignToCategory())"
+                                class="peer sr-only" />
+                            <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
+                                <app-icon-component
+                                    [icon]="'check'"
+                                    [size]="'5'"
+                                    [class]="'text-white opacity-0 peer-checked:opacity-100 transition-opacity'">
+                                </app-icon-component>
                             </div>
                         </div>
-                    }
-                </form>
-            </div>
+                        <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
+                            Agregar a una categoría
+                        </span>
+                    </label>
+                </div>
+
+                @if (assignToCategory()) {
+                    <app-categories-carousel-component
+                        (outputCategory)="selectCategory($event)">
+                    </app-categories-carousel-component>
+                }
+
+                @if (this.transactionState.errorSendingTransaction()) {
+                    <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                        <app-icon-component
+                            [icon]="'error_outline'"
+                            [size]="'5'"
+                            [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                        </app-icon-component>
+                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                            {{ this.transactionState.errorSendingTransaction() }}
+                        </div>
+                    </div>
+                }
+            </form>
         }
 
-        <!-- Actions Buttons -->
-        <app-modal-buttons-ui
-            [cancelText]="'Cancelar'"
-            [cancelIcon]="'close'"
-            [isEditMode]="false"
-            [isLoading]="this.transactionState.isLoadingSendingTransaction()"
-            [isValidForm]="isFormValid"
-            [loadingText]="'Pagando...'"
-            [loadingIcon]="'autorenew'"
-            [confirmText]="'Pagar'"
-            [confirmIcon]="'payment'"
-            [formId]="'paymentForm'"
-            (cancel)="onClose()">
-        </app-modal-buttons-ui>
-
-    </div>
-</div>
+    </ng-container>
+</app-generic-modal>

@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
-import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { NotificationService } from '../../../feature/common/service/notification.service';
 import { TransactionService } from '../../../feature/transaction/service/transaction.service';
 import { DateService } from '../../../shared/service/date.service';
@@ -16,16 +15,16 @@ import { CategoriesCarouselComponent } from '../../../shared/components/categori
 import { TransactionRequestDTO } from '../../../feature/transaction/model/transaction.request.dto';
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
-import { ModalGeneric } from '../../common/modal.generic';
 import { InputComponent } from '../../../shared/components/input-component/input.component';
+import { GenericModal } from '../../common/generic-modal/generic.modal';
 
 @Component({
   selector: 'app-transaction-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, ModalButtonsUi, CategoriesCarouselComponent, IconComponent, InputComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingUi, RetryComponent, CategoriesCarouselComponent, IconComponent, InputComponent, GenericModal],
   templateUrl: './transaction-edition.modal.html',
   styleUrl: './transaction-edition.modal.css',
 })
-export class TransactionEditionModal extends ModalGeneric implements OnInit {
+export class TransactionEditionModal implements OnInit {
   
   userLogged = userState.userLogged;
 
@@ -48,12 +47,9 @@ export class TransactionEditionModal extends ModalGeneric implements OnInit {
     private notificationService: NotificationService,
     private dateService: DateService
   ) { 
-    super();
   }
   
-  override ngOnInit(): void {
-    super.ngOnInit();
-
+  ngOnInit(): void {
     this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
 

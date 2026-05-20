@@ -1,135 +1,70 @@
-<!-- Overlay with backdrop -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
-    <div class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-md md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">   
-    <!-- Header with icon, title, subtitle, and close button -->
-    <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
-      <div class="flex items-start justify-between">
-        <div class="flex items-center gap-4">
-          <!-- Icon container -->
-          <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-            <app-icon-component
-                [icon]="isEditMode ? 'edit' : 'trending_up'"
-                [size]="'8'"
-                [class]="'text-[var(--xpb-income)]'">
-            </app-icon-component>
-          </div>
-          <div>
-            <h2 class="text-xl font-semibold xpb-text-primary">
-                @if (isEditMode) {
-                    Modificar Ingreso
-                } @else {
-                    Registrar Ingreso
-                }
-            </h2>
-            <p class="text-sm xpb-text-secondary mt-0.5">
-                @if (isEditMode) {
-                    Modifica los detalles de tu ingreso.
-                } @else {
-                    Registra un nuevo ingreso a tu presupuesto.
-                }    
-            </p>
-          </div>
-        </div>
-        <!-- Close button -->
-        <button
-          type="button"
-          (click)="onClose()"
-          class="xpb-text-secondary hover:xpb-text-primary transition-colors p-1"
-          aria-label="Cerrar modal"
-        >
-          <app-icon-component
-            [icon]="'close'"
-            [size]="'5'">
-          </app-icon-component>
-        </button>
-      </div>
-    </div>
+<app-generic-modal 
+    [iconHeader]="'trending_up'"
+    [classIconHeader]="'text-[var(--xpb-primary)]'"
+    [title]="'Nuevo Ingreso'"
+    [subtitle]="'Registra un nuevo ingreso'"
+    [isLoading]="this.incomeState.isLoadingSendingIncome()"
+    [isFormValid]="formIncome.valid"
+    [formId]="'incomeForm'"
+    [confirmText]="'Registrar'"
+    [confirmIcon]="'add'"
+    (close)="onClose()">
+    <ng-container>
+        <form [formGroup]="formIncome" (ngSubmit)="onSubmit()" id="incomeForm">
+            <!-- Monto field -->
+            <app-input-amount-component
+                [inputControl]="amountControl"
+                [inputName]="'amount'">
+            </app-input-amount-component>
+            <!-- Monto and Fecha in grid -->
+            <div class="grid grid-cols-1 gap-5 mb-5">
+                <!-- Concepto field -->
+                <app-input-component
+                    [inputControl]="conceptControl"
+                    [inputName]="'concept'"
+                    [placeholder]="'Ej: Salario mensual, Freelance, etc.'"
+                    [labelText]="'Concepto'"
+                    [iconName]="'description'">
+                </app-input-component>
 
-    <!-- Body content -->
-    <div class="p-6 overflow-y-auto flex-1">
-        @if (this.incomeState.isLoadingGetIncome() && isEditMode) {
-            <app-loading-ui></app-loading-ui>
-        } @else if(this.incomeState.errorGetIncome() && isEditMode) {
-            <app-retry-component
-                [message]="'Error al cargar la información del ingreso'"
-                (retry)="retryLoadIncomeData()">
-            </app-retry-component>
-        } @else if(incomeData() || !isEditMode) {
-            <form [formGroup]="formIncome" (ngSubmit)="onSubmit()" id="incomeForm">
-                <!-- Monto field -->
-                <app-input-amount-component
-                    [inputControl]="amountControl"
-                    [inputName]="'amount'">
-                </app-input-amount-component>
-                <!-- Monto and Fecha in grid -->
-                <div class="grid grid-cols-1 gap-5 mb-5">
-                    <!-- Concepto field -->
-                    <app-input-component
-                        [inputControl]="conceptControl"
-                        [inputName]="'concept'"
-                        [placeholder]="'Ej: Salario mensual, Freelance, etc.'"
-                        [labelText]="'Concepto'"
-                        [iconName]="'description'">
-                    </app-input-component>
+                <!-- Fecha de ingreso field -->
+                <app-input-component
+                    [inputControl]="incomeDateControl"
+                    [inputName]="'incomeDate'"
+                    [inputType]="'datetime-local'"
+                    [labelText]="'Fecha de ingreso'"
+                    [iconName]="'event'">
+                </app-input-component>
+            </div>
 
-                    <!-- Fecha de ingreso field -->
-                    <app-input-component
-                        [inputControl]="incomeDateControl"
-                        [inputName]="'incomeDate'"
-                        [inputType]="'datetime-local'"
-                        [labelText]="'Fecha de ingreso'"
-                        [iconName]="'event'">
-                    </app-input-component>
-                </div>
+            <!-- Selección de cuenta destino (Carrusel) -->
+            <app-accounts-carousel-component
+                ngSkipHydration class="block"
+                [isLoading]="this.accountState.isLoadingGetList()"
+                [errorLoading]="this.accountState.errorGetList()"
+                [carouselTitle]="'Cuenta Destino'"
+                [carouselErrorMessage]="'Error al cargar cuentas'"
+                [currencySymbol]="userLogged()?.currency!"
+                [accountsList]="accountsList()"
+                [currentSelectedAccount]="selectedAccount()"
+                [noAccountsMessage]="'No tienes cuentas disponibles'"
+                (selectedAccountOutput)="this.selectedAccount.set($event)"
+                (retry)="retryLoadAccountsData()">
+            </app-accounts-carousel-component>
 
-                @if (!isEditMode) {
-                    <!-- Selección de cuenta destino (Carrusel) -->
-                    <app-accounts-carousel-component
-                        ngSkipHydration class="block"
-                        [isLoading]="this.accountState.isLoadingGetList()"
-                        [errorLoading]="this.accountState.errorGetList()"
-                        [carouselTitle]="'Cuenta Destino'"
-                        [carouselErrorMessage]="'Error al cargar cuentas'"
-                        [currencySymbol]="userLogged()?.currency!"
-                        [accountsList]="accountsList()"
-                        [currentSelectedAccount]="selectedAccount()"
-                        [noAccountsMessage]="'No tienes cuentas disponibles'"
-                        (selectedAccountOutput)="this.selectedAccount.set($event)"
-                        (retry)="retryLoadAccountsData()">
-                    </app-accounts-carousel-component>
-                }
-
-                <!-- Mensaje de error al enviar -->
-                @if (this.incomeState.errorSendingIncome()) {
-                    <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                        <app-icon-component
-                            [icon]="'error_outline'"
-                            [size]="'5'"
-                            [class]="'text-[var(--xpb-expense)] mt-0.5'">
-                        </app-icon-component>
-                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                            {{ this.incomeState.errorSendingIncome() }}
-                        </div>
+            <!-- Mensaje de error al enviar -->
+            @if (this.incomeState.errorSendingIncome()) {
+                <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                    <app-icon-component
+                        [icon]="'error_outline'"
+                        [size]="'5'"
+                        [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                    </app-icon-component>
+                    <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                        {{ this.incomeState.errorSendingIncome() }}
                     </div>
-                }
-            </form>   
-        }
-    </div>
-    <!-- Action buttons -->
-    <app-modal-buttons-ui
-        [cancelText]="'Cancelar'"
-        [cancelIcon]="'close'"
-        [isEditMode]="isEditMode"
-        [isLoading]="this.incomeState.isLoadingSendingIncome()"
-        [isValidForm]="formIncome.valid"
-        [loadingText]="'Guardando...'"
-        [loadingIcon]="'autorenew'"
-        [confirmText]="'Registrar'"
-        [confirmIcon]="'add'"
-        [confirmEditText]="'Actualizar'"
-        [confirmEditIcon]="'check'"
-        [formId]="'incomeForm'"
-        (cancel)="onClose()">
-    </app-modal-buttons-ui>
-  </div>
-</div>
+                </div>
+            }
+        </form>   
+    </ng-container>
+</app-generic-modal>

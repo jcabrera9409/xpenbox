@@ -1,66 +1,45 @@
-<!-- Modal Overlay -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
-    <div
-        class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-md md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">
-        <!-- Header -->
-        <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
-            <div class="flex items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-                        <app-icon-component [icon]="isEditMode ? 'edit' : 'account_balance_wallet'" [size]="'8'"
-                            [class]="'text-[var(--xpb-primary)]'">
-                        </app-icon-component>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-semibold xpb-text-primary">
-                            @if (isEditMode) {
-                            Modificar Cuenta
-                            } @else {
-                            Nueva Cuenta
-                            }
-                        </h2>
-                        <p class="text-sm xpb-text-secondary">
-                            @if (isEditMode) {
-                            Actualiza la información de tu cuenta
-                            } @else {
-                            Registra una nueva cuenta bancaria
-                            }
-                        </p>
-                    </div>
-                </div>
-                <button type="button" (click)="onClose()"
-                    class="xpb-text-secondary hover:xpb-text-primary hover:bg-[var(--xpb-main)] rounded-lg p-2 transition-colors"
-                    aria-label="Cerrar modal">
-                    <app-icon-component [icon]="'close'" [size]="'5'">
-                    </app-icon-component>
-                </button>
-            </div>
-        </div>
-
-        <!-- Content -->
-        <div class="p-6 overflow-y-auto flex-1">
-            @if (this.accountState.isLoadingGetAccount() && isEditMode) {
+<app-generic-modal 
+    [iconHeader]="isEditMode ? 'edit' : 'account_balance_wallet'"
+    [classIconHeader]="'text-[var(--xpb-primary)]'"
+    [title]="isEditMode ? 'Modificar Cuenta' : 'Nueva Cuenta'"
+    [subtitle]="isEditMode ? 'Actualiza la información de tu cuenta' : 'Registra una nueva cuenta bancaria'"
+    [isLoading]="this.accountState.isLoadingSendingAccount()"
+    [isFormValid]="formAccount.valid"
+    [formId]="'accountForm'"
+    [confirmText]="isEditMode ? 'Modificar' : 'Registrar'"
+    [confirmIcon]="isEditMode ? 'check' : 'add'"
+    (close)="onClose()">
+    <ng-container>
+         @if (this.accountState.isLoadingGetAccount() && isEditMode) {
             <app-loading-ui></app-loading-ui>
-            } @else if(this.accountState.errorGetAccount() && isEditMode) {
-            <app-retry-component [message]="'Error al cargar la cuenta'" (retry)="retryLoadAccountData()">
+        } @else if(this.accountState.errorGetAccount() && isEditMode) {
+            <app-retry-component 
+                [message]="'Error al cargar la cuenta'" 
+                (retry)="retryLoadAccountData()">
             </app-retry-component>
-            } @else if(accountData() || !isEditMode) {
+        } @else if(accountData() || !isEditMode) {
             <form [formGroup]="formAccount" (ngSubmit)="onSubmit()" class="flex flex-col gap-5" id="accountForm">
                 <!-- Nombre de la cuenta -->
-                <app-input-component [inputControl]="nameControl" [inputName]="'name'"
-                    [placeholder]="'Ej: Cuenta Corriente Santander'" [labelText]="'Nombre de la cuenta'"
+                <app-input-component 
+                    [inputControl]="nameControl" [inputName]="'name'"
+                    [placeholder]="'Ej: Cuenta Corriente Santander'" 
+                    [labelText]="'Nombre de la cuenta'"
                     [iconName]="'account_balance'">
                 </app-input-component>
 
                 <!-- Saldo inicial (solo en modo creación) -->
                 @if (!isEditMode) {
-                <app-input-component [inputControl]="initialBalanceControl" [inputName]="'initialBalance'"
-                    [inputType]="'number'" [placeholder]="'0.00'" [labelText]="'Saldo inicial'" [iconName]="'payment'">
+                <app-input-component 
+                    [inputControl]="initialBalanceControl" 
+                    [inputName]="'initialBalance'"
+                    [inputType]="'number'" [placeholder]="'0.00'" 
+                    [labelText]="'Saldo inicial'" [iconName]="'payment'">
                 </app-input-component>
                 }
                 @if (this.accountState.errorSendingAccount()) {
                 <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                    <app-icon-component [icon]="'error_outline'" [size]="'5'"
+                    <app-icon-component 
+                        [icon]="'error_outline'" [size]="'5'"
                         [class]="'text-[var(--xpb-expense)] mt-0.5'">
                     </app-icon-component>
                     <div class="text-sm text-[var(--xpb-expense)] flex-1">
@@ -69,14 +48,6 @@
                 </div>
                 }
             </form>
-            }
-        </div>
-
-        <!-- Botones de acción -->
-        <app-modal-buttons-ui [cancelText]="'Cancelar'" [cancelIcon]="'close'" [isEditMode]="isEditMode"
-            [isLoading]="this.accountState.isLoadingSendingAccount()" [isValidForm]="formAccount.valid"
-            [loadingText]="'Guardando...'" [loadingIcon]="'autorenew'" [confirmText]="'Registrar'" [confirmIcon]="'add'"
-            [confirmEditText]="'Actualizar'" [confirmEditIcon]="'check'" [formId]="'accountForm'" (cancel)="onClose()">
-        </app-modal-buttons-ui>
-    </div>
-</div>
+        }
+    </ng-container>
+</app-generic-modal>

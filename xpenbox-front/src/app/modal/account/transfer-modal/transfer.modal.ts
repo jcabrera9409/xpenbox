@@ -7,7 +7,6 @@ import { AccountResponseDTO } from '../../../feature/account/model/account.respo
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
 import { AccountService } from '../../../feature/account/service/account.service';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
-import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
 import { AccountCreditDTO, AccountCreditType } from '../../../shared/dto/account-credit.dto';
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
@@ -16,18 +15,18 @@ import { TransactionService } from '../../../feature/transaction/service/transac
 import { DateService } from '../../../shared/service/date.service';
 import { userState } from '../../../feature/user/service/user.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
-import { ModalGeneric } from '../../common/modal.generic';
 import { InputComponent } from '../../../shared/components/input-component/input.component';
 import { InputAmountComponent } from '../../../shared/components/input-amount-component/input-amount-component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { GenericModal } from '../../common/generic-modal/generic.modal';
 
 @Component({
   selector: 'app-transfer-modal',
-  imports: [CommonModule, LoadingUi, RetryComponent, ModalButtonsUi, AccountsCarouselComponent, IconComponent, InputComponent, InputAmountComponent, ReactiveFormsModule],
+  imports: [CommonModule, LoadingUi, RetryComponent, AccountsCarouselComponent, IconComponent, InputComponent, InputAmountComponent, ReactiveFormsModule, GenericModal],
   templateUrl: './transfer.modal.html',
   styleUrl: './transfer.modal.css',
 })
-export class TransferModal extends ModalGeneric implements OnInit {
+export class TransferModal implements OnInit {
 
   userLogged = userState.userLogged;
 
@@ -52,8 +51,6 @@ export class TransferModal extends ModalGeneric implements OnInit {
     private accountCreditService: AccountCreditService,
     private dateService: DateService
   ) { 
-    super();
-
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
     }
@@ -121,9 +118,7 @@ export class TransferModal extends ModalGeneric implements OnInit {
     });
   }
 
-  override ngOnInit(): void {
-    super.ngOnInit();
-
+  ngOnInit(): void {
     this.transactionState.isLoadingSendingTransaction.set(false);
     this.transactionState.errorSendingTransaction.set(null);
     

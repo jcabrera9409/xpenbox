@@ -6,48 +6,42 @@ import { IncomeResponseDTO } from '../../../feature/income/model/income.response
 import { IncomeService } from '../../../feature/income/service/income.service';
 import { NotificationService } from '../../../feature/common/service/notification.service';
 import { ApiResponseDTO } from '../../../feature/common/model/api.response.dto';
-import { LoadingUi } from '../../../shared/ui/loading-ui/loading.ui';
 import { IncomeRequestDTO } from '../../../feature/income/model/income.request.dto';
 import { accountState } from '../../../feature/account/service/account.state';
 import { AccountCreditDTO } from '../../../shared/dto/account-credit.dto';
 import { AccountService } from '../../../feature/account/service/account.service';
 import { AccountCreditService } from '../../../shared/service/account-credit.service';
 import { AccountsCarouselComponent } from '../../../shared/components/accounts-carousel-component/accounts-carousel.component';
-import { RetryComponent } from '../../../shared/components/retry-component/retry.component';
-import { ModalButtonsUi } from '../../../shared/ui/modal-buttons-ui/modal-buttons.ui';
 import { DateService } from '../../../shared/service/date.service';
 import { transactionState } from '../../../feature/transaction/service/transaction.state';
 import { userState } from '../../../feature/user/service/user.state';
 import { upgradeProModalState } from '../../subscription/state/upgrade-pro.modal.state';
 import { IconComponent } from '../../../shared/components/icon.component/icon.component';
-import { ModalGeneric } from '../../common/modal.generic';
 import { InputComponent } from '../../../shared/components/input-component/input.component';
 import { InputAmountComponent } from '../../../shared/components/input-amount-component/input-amount-component';
+import { GenericModal } from '../../common/generic-modal/generic.modal';
 
 @Component({
   selector: 'app-income-edition-modal',
-  imports: [CommonModule, ReactiveFormsModule, LoadingUi, AccountsCarouselComponent, RetryComponent, ModalButtonsUi, IconComponent, InputComponent, InputAmountComponent],
+  imports: [CommonModule, ReactiveFormsModule, AccountsCarouselComponent, IconComponent, InputComponent, InputAmountComponent, GenericModal],
   templateUrl: './income-edition.modal.html',
   styleUrl: './income-edition.modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class IncomeEditionModal extends ModalGeneric implements OnInit {
+export class IncomeEditionModal implements OnInit {
 
   userLogged = userState.userLogged;
 
-  resourceCodeSelected = input<string | null>();
   close = output<void>();
 
   accountState = accountState;
   incomeState = incomeState;
   transactionState = transactionState;
-  incomeData = signal<IncomeResponseDTO | null>(null);
 
   selectedAccount = signal<AccountCreditDTO | null>(null);
   accountsList = signal<AccountCreditDTO[]>([]);
   
   formIncome!: FormGroup;
-
   maxDate = signal('');
 
   constructor(
@@ -58,8 +52,6 @@ export class IncomeEditionModal extends ModalGeneric implements OnInit {
     private notificationService: NotificationService,
     private dateService: DateService
   ) {
-    super();
-
     if (this.accountState.accounts().length === 0) {
       this.accountService.load();
     }
@@ -78,18 +70,11 @@ export class IncomeEditionModal extends ModalGeneric implements OnInit {
     });
   }
 
-  override ngOnInit(): void {
-    super.ngOnInit();
-
+  ngOnInit(): void {
     this.incomeState.isLoadingSendingIncome.set(false);
     this.incomeState.errorSendingIncome.set(null);
 
-    this.loadIncomeData();
     this.initForm();
-  }
-
-  get isEditMode(): boolean {
-    return this.resourceCodeSelected() !== null;
   }
 
   get isValidForm(): boolean {
@@ -108,9 +93,7 @@ export class IncomeEditionModal extends ModalGeneric implements OnInit {
     
     const incomeRequest = this.buildIncomeData();
 
-    const observable = this.isEditMode
-      ? this.incomeService.update(this.resourceCodeSelected()!, incomeRequest)
-      : this.incomeService.create(incomeRequest);
+    const observable = this.incomeService.create(incomeRequest);
 
     observable.subscribe({
       next: (response: ApiResponseDTO<IncomeResponseDTO>) => {
@@ -123,7 +106,7 @@ export class IncomeEditionModal extends ModalGeneric implements OnInit {
             this.transactionState.successSendingTransaction.set(true);
             this.accountService.refresh();
           } else {
-            this.notificationService.success(this.isEditMode ? 'Ingreso actualizado correctamente' : 'Ingreso creado correctamente');
+            this.notificationService.success('Ingreso creado correctamente');
           }
           
           this.close.emit();
@@ -194,10 +177,6 @@ export class IncomeEditionModal extends ModalGeneric implements OnInit {
     return '';
   }
 
-  retryLoadIncomeData(): void {
-    this.loadIncomeData();
-  }
-
   retryLoadAccountsData(): void {
     this.accountService.refresh();
   }
@@ -209,7 +188,7 @@ export class IncomeEditionModal extends ModalGeneric implements OnInit {
     const incomeDate = this.dateService.parseDatetimeIsoString(formValues['incomeDate']);
     const incomeDateTimestamp = this.dateService.toTimestamp(incomeDate);
     const totalAmount = formValues['amount'] / 100;
-    const accountResourceCode: string | undefined = !this.isEditMode && this.selectedAccount()
+    const accountResourceCode: string | undefined = this.selectedAccount()
       ? this.selectedAccount()!.resourceCode
       : undefined;
 
@@ -232,37 +211,6 @@ export class IncomeEditionModal extends ModalGeneric implements OnInit {
         Validators.min(0.01)
       ]],
       incomeDate: [this.maxDate(), [Validators.required]]
-    });
-  }
-
-  private loadIncomeData(): void {
-    if (!this.isEditMode) return;
-
-    this.incomeState.isLoadingGetIncome.set(true);
-
-    this.incomeService.getByResourceCode(this.resourceCodeSelected()!).subscribe({
-      next: (response: ApiResponseDTO<IncomeResponseDTO>) => {
-        this.incomeState.isLoadingGetIncome.set(false);
-        if (response.success && response.data) {
-          this.incomeData.set(response.data);
-          const incomeDate = this.dateService.toDate(response.data.incomeDateTimestamp);
-          const formattedDate = this.dateService.format(incomeDate.getTime(), 'ISO').split('T')[0];
-          this.formIncome.patchValue({
-            concept: response.data.concept,
-            amount: response.data.totalAmount,
-            incomeDate: formattedDate
-          });
-        } else {
-          this.incomeState.errorGetIncome.set(response.message);
-        }
-      }, error: (error) => {
-        if (error.status === 500 || error.status === 0) {
-          this.incomeState.errorGetIncome.set('Error cargando los datos del ingreso. Por favor, inténtalo de nuevo.');
-        } else {
-          this.incomeState.errorGetIncome.set(error.error.message || 'Error cargando los datos del ingreso');
-        }
-        this.incomeState.isLoadingGetIncome.set(false);
-      }
     });
   }
 }

@@ -1,189 +1,141 @@
-<!-- Modal Overlay -->
-<div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center md:p-4 overflow-y-auto">
-    <div class="xpb-bg-card md:rounded-xl shadow-2xl w-full md:max-w-xl md:mx-auto md:my-auto md:max-h-[calc(100vh-2rem)] md:h-auto h-full flex flex-col overflow-hidden">
-        <!-- Header -->
-        <div class="xpb-bg-sidebar px-6 py-5 border-b xpb-border">
-            <div class="flex items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
-                        <app-icon-component
-                            [icon]="isEditMode ? 'edit' : 'category'"
-                            [size]="'8'"
-                            [class]="'text-[var(--xpb-primary)]'">
-                        </app-icon-component>
-                    </div>
+<app-generic-modal 
+    [iconHeader]="isEditMode ? 'edit' : 'category'"
+    [classIconHeader]="'text-[var(--xpb-primary)]'"
+    [title]="isEditMode ? 'Modificar Categoría' : 'Nueva Categoría'"
+    [subtitle]="isEditMode ? 'Actualiza la información de tu categoría' : 'Registra una nueva categoría para tus transacciones'"
+    [isLoading]="this.categoryState.isLoadingSendingCategory()"
+    [isFormValid]="formCategory.valid"
+    [formId]="'categoryForm'"
+    [confirmText]="isEditMode ? 'Modificar' : 'Registrar'"
+    [confirmIcon]="isEditMode ? 'check' : 'add'"
+    (close)="onClose()">
+    <ng-container>
+        @if (this.categoryState.isLoadingGetCategory() && isEditMode) {
+            <app-loading-ui></app-loading-ui>
+        } @else if(this.categoryState.errorGetCategory() && isEditMode) {
+            <app-retry-component
+                [message]="'Error al cargar la categoría'"
+                (retry)="retryLoadCategoryData()">
+            </app-retry-component>
+        } @else if(categoryData() || !isEditMode) {
+            <form [formGroup]="formCategory" (ngSubmit)="onSubmit()" class="flex flex-col gap-5" id="categoryForm">
+                <!-- Nombre de la categoría -->
+                <app-input-component
+                    [inputControl]="nameControl"
+                    [inputName]="'name'"
+                    [placeholder]="'Ej: Categoría de Gastos/Ingresos'"
+                    [labelText]="'Nombre de la categoría'"
+                    [iconName]="'category'">
+                </app-input-component>
+
+                <!-- Color de la categoría -->
                     <div>
-                        <h2 class="text-xl font-semibold xpb-text-primary">
-                            {{ isEditMode ? 'Modificar Categoría' : 'Nueva Categoría' }}
-                        </h2>
-                        <p class="text-sm xpb-text-secondary">
-                            {{ isEditMode ? 'Actualiza la información de tu categoría' : 'Registra una nueva categoría para tus transacciones' }}
-                        </p>
-                    </div>
-                </div>
-                <button
-                    type="button"
-                    (click)="onClose()"
-                    class="xpb-text-secondary hover:xpb-text-primary hover:bg-[var(--xpb-main)] rounded-lg p-2 transition-colors"
-                    aria-label="Cerrar modal"
-                >
-                    <app-icon-component
-                        [icon]="'close'"
-                        [size]="'5'">
-                    </app-icon-component>
-                </button>
-            </div>
-        </div>
-
-        <!-- Content -->
-        <div class="p-6 overflow-y-auto flex-1">
-            @if (this.categoryState.isLoadingGetCategory() && isEditMode) {
-                <app-loading-ui></app-loading-ui>
-            } @else if(this.categoryState.errorGetCategory() && isEditMode) {
-                <app-retry-component
-                    [message]="'Error al cargar la categoría'"
-                    (retry)="retryLoadCategoryData()">
-                </app-retry-component>
-            } @else if(categoryData() || !isEditMode) {
-                <form [formGroup]="formCategory" (ngSubmit)="onSubmit()" class="flex flex-col gap-5" id="categoryForm">
-                    <!-- Nombre de la categoría -->
-                    <app-input-component
-                        [inputControl]="nameControl"
-                        [inputName]="'name'"
-                        [placeholder]="'Ej: Categoría de Gastos/Ingresos'"
-                        [labelText]="'Nombre de la categoría'"
-                        [iconName]="'category'">
-                    </app-input-component>
-
-                    <!-- Color de la categoría -->
-                     <div>
-                        <label for="color" class="block text-sm font-medium xpb-text-primary mb-2">
-                            Color de la categoría
-                        </label>
-                        <div class="flex items-center gap-3">
-                            <!-- Preview del color seleccionado -->
-                            <div 
-                                class="w-16 h-16 rounded-xl border-2 xpb-border shadow-sm transition-all hover:scale-105 hover:shadow-md hover:border-[var(--xpb-primary)] cursor-pointer"
-                                [style.background-color]="formCategory.get('color')?.value"
-                                (click)="colorInput.click()"
-                                title="Haz clic para cambiar el color"
-                            ></div>
-                            
-                            <!-- Input y valor hex -->
-                            <div class="flex-1">
-                                <div class="relative">
-                                    <input 
-                                        #colorInput
-                                        id="color" 
-                                        type="color" 
-                                        formControlName="color"
-                                        class="absolute left-0 top-0 w-full h-full opacity-0 cursor-pointer"
-                                        aria-required="true" 
-                                        aria-label="Color de la categoría" 
-                                    />
-                                    <input 
-                                        type="text"
-                                        [value]="formCategory.get('color')?.value"
-                                        readonly
-                                        (click)="colorInput.click()"
-                                        class="xpb-bg-main border xpb-border rounded-lg pl-4 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all cursor-pointer uppercase font-mono text-sm relative"
-                                        placeholder="#000000"
-                                    />
-                                </div>
-                                <p class="text-xs xpb-text-secondary mt-1.5 ml-1">
-                                    Haz clic en el cuadro o el código para cambiar
-                                </p>
-                            </div>
-                        </div>
-                        @if (formCategory.get('color')?.touched && formCategory.get('color')?.invalid) {
-                            <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
-                                <app-icon-component
-                                    [icon]="'info'"
-                                    [size]="'5'"
-                                    [class]="'text-[var(--xpb-expense)] mt-0.5'">
-                                </app-icon-component>
-                                <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                    @if (formCategory.get('color')?.errors?.['required']) {
-                                        <p>El color es obligatorio.</p>
-                                    }
-                                    @if (formCategory.get('color')?.errors?.['pattern']) {
-                                        <p>El color debe ser un valor hexadecimal válido.</p>
-                                    }
-                                </div>
-                            </div>
-                        }
-                    </div>
-
-                    <!-- Checkbox Tiene Presupuesto -->
-                    <div class="relative mt-4 mb-3">
-                        <label class="flex items-center gap-3 cursor-pointer group">
+                    <label for="color" class="block text-sm font-medium xpb-text-primary mb-2">
+                        Color de la categoría
+                    </label>
+                    <div class="flex items-center gap-3">
+                        <!-- Preview del color seleccionado -->
+                        <div 
+                            class="w-16 h-16 rounded-xl border-2 xpb-border shadow-sm transition-all hover:scale-105 hover:shadow-md hover:border-[var(--xpb-primary)] cursor-pointer"
+                            [style.background-color]="formCategory.get('color')?.value"
+                            (click)="colorInput.click()"
+                            title="Haz clic para cambiar el color"
+                        ></div>
+                        
+                        <!-- Input y valor hex -->
+                        <div class="flex-1">
                             <div class="relative">
-                                <input
-                                    type="checkbox"
-                                    [checked]="hasBudget()"
-                                    (change)="onChangeHasBudget()"
-                                    class="peer sr-only" />
-                                <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
-                                    <app-icon-component
-                                        [icon]="'check'"
-                                        [size]="'3'"
-                                        [class]="'text-white opacity-0 peer-checked:opacity-100 transition-opacity'">
-                                    </app-icon-component>
-                                </div>
+                                <input 
+                                    #colorInput
+                                    id="color" 
+                                    type="color" 
+                                    formControlName="color"
+                                    class="absolute left-0 top-0 w-full h-full opacity-0 cursor-pointer"
+                                    aria-required="true" 
+                                    aria-label="Color de la categoría" 
+                                />
+                                <input 
+                                    type="text"
+                                    [value]="formCategory.get('color')?.value"
+                                    readonly
+                                    (click)="colorInput.click()"
+                                    class="xpb-bg-main border xpb-border rounded-lg pl-4 pr-4 py-2.5 w-full focus:outline-none focus:ring-2 focus:ring-[var(--xpb-primary)] focus:border-transparent transition-all cursor-pointer uppercase font-mono text-sm relative"
+                                    placeholder="#000000"
+                                />
                             </div>
-                            <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
-                                Agregar presupuesto a la categoría
-                            </span>
-                        </label>
+                            <p class="text-xs xpb-text-secondary mt-1.5 ml-1">
+                                Haz clic en el cuadro o el código para cambiar
+                            </p>
+                        </div>
                     </div>
-
-                    <!-- Input Presupuesto -->
-                    @if (hasBudget()) {
-                        <app-input-component
-                            [inputControl]="budgetControl"
-                            [inputName]="'budget'"
-                            [inputType]="'number'"
-                            [placeholder]="'Ej: 1000'"
-                            [labelText]="'Presupuesto de la categoría'"
-                            [iconName]="'chart_pie'">
-                        </app-input-component>
-                    }
-
-                    <!-- Mensaje de error al enviar -->
-                    @if (this.categoryState.errorSendingCategory()) {
-                        <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                    @if (formCategory.get('color')?.touched && formCategory.get('color')?.invalid) {
+                        <div class="mt-2 flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
                             <app-icon-component
-                                [icon]="'error_outline'"
+                                [icon]="'info'"
                                 [size]="'5'"
                                 [class]="'text-[var(--xpb-expense)] mt-0.5'">
                             </app-icon-component>
                             <div class="text-sm text-[var(--xpb-expense)] flex-1">
-                                {{ this.categoryState.errorSendingCategory() }}
+                                @if (formCategory.get('color')?.errors?.['required']) {
+                                    <p>El color es obligatorio.</p>
+                                }
+                                @if (formCategory.get('color')?.errors?.['pattern']) {
+                                    <p>El color debe ser un valor hexadecimal válido.</p>
+                                }
                             </div>
                         </div>
                     }
-                </form>
-            }
-        </div>
+                </div>
 
-        <!-- Footer - Botones de acción fijos -->
-        @if (categoryData() || !isEditMode) {
-            <app-modal-buttons-ui
-                [cancelText]="'Cancelar'"
-                [cancelIcon]="'close'"
-                [isEditMode]="isEditMode"
-                [isLoading]="this.categoryState.isLoadingSendingCategory()"
-                [isValidForm]="formCategory.valid"
-                [loadingText]="'Guardando...'"
-                [loadingIcon]="'autorenew'"
-                [confirmText]="'Registrar'"
-                [confirmIcon]="'add'"
-                [confirmEditText]="'Actualizar'"
-                [confirmEditIcon]="'check'"
-                [formId]="'categoryForm'"
-                (cancel)="onClose()">
-            </app-modal-buttons-ui>
+                <!-- Checkbox Tiene Presupuesto -->
+                <div class="relative mt-4 mb-3">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative">
+                            <input
+                                type="checkbox"
+                                [checked]="hasBudget()"
+                                (change)="onChangeHasBudget()"
+                                class="peer sr-only" />
+                            <div class="w-5 h-5 border-2 xpb-border rounded transition-all peer-checked:bg-[var(--xpb-primary)] peer-checked:border-[var(--xpb-primary)] flex items-center justify-center">
+                                <app-icon-component
+                                    [icon]="'check'"
+                                    [size]="'3'"
+                                    [class]="'text-white opacity-0 peer-checked:opacity-100 transition-opacity'">
+                                </app-icon-component>
+                            </div>
+                        </div>
+                        <span class="text-sm font-medium xpb-text-primary group-hover:xpb-text-secondary transition-colors">
+                            Agregar presupuesto a la categoría
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Input Presupuesto -->
+                @if (hasBudget()) {
+                    <app-input-component
+                        [inputControl]="budgetControl"
+                        [inputName]="'budget'"
+                        [inputType]="'number'"
+                        [placeholder]="'Ej: 1000'"
+                        [labelText]="'Presupuesto de la categoría'"
+                        [iconName]="'chart_pie'">
+                    </app-input-component>
+                }
+
+                <!-- Mensaje de error al enviar -->
+                @if (this.categoryState.errorSendingCategory()) {
+                    <div class="flex items-start gap-2 xpb-bg-main rounded-lg p-3 border-l-4 border-[var(--xpb-expense)]">
+                        <app-icon-component
+                            [icon]="'error_outline'"
+                            [size]="'5'"
+                            [class]="'text-[var(--xpb-expense)] mt-0.5'">
+                        </app-icon-component>
+                        <div class="text-sm text-[var(--xpb-expense)] flex-1">
+                            {{ this.categoryState.errorSendingCategory() }}
+                        </div>
+                    </div>
+                }
+            </form>
         }
-    </div>
-</div>
-
+    </ng-container>
+</app-generic-modal>
