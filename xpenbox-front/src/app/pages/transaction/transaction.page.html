@@ -162,7 +162,7 @@
         } @else {
             <!-- Tarjetas de transacciones agrupadas por fecha -->
             @for (group of groupedTransactions(); track group.label) {
-              <div class="mb-6">
+              <div class="mb-3">
                 <h3 class="text-sm font-semibold xpb-text-secondary mb-3 px-1">{{ group.label }}</h3>
                 <div class="space-y-4">
                   @for (transaction of group.transactions; track transaction.resourceCode) {
@@ -181,7 +181,7 @@
 
             <!-- Botón Cargar más -->
             @if (hasMoreTransactions()) {
-              <div class="flex justify-center pt-6">
+              <div class="flex justify-center pt-2 mb-2">
                 <button
                   (click)="loadMore()"
                   [disabled]="transactionState.isLoadingFilteredList()"
