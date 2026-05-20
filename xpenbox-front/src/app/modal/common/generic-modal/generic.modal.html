@@ -4,7 +4,7 @@
         <div class="xpb-bg-sidebar px-4 py-2 border-b xpb-border relative flex-shrink-0">
             <div class="flex items-center gap-4">
                 <!-- Icon -->
-                <div class="xpb-bg-card rounded-lg p-2 shadow-sm">
+                <div class="xpb-bg-card rounded-lg p-2 shadow-sm hidden md:block">
                     <app-icon-component
                         [icon]="iconHeader()"
                         [size]="'8'"
@@ -12,8 +12,17 @@
                     </app-icon-component>
                 </div>
 
+                <!-- Button Back -->
+                <button (click)="close.emit()"
+                    class="xpb-text-primary transition-colors block md:hidden absolute left-3 top-1/2 -translate-y-1/2">
+                    <app-icon-component
+                        [icon]="'keyboard_backspace'"
+                        [size]="'8'">
+                    </app-icon-component>
+                </button>
+
                 <!-- Title -->
-                <div class="flex-1">
+                <div class="flex-1 text-center md:text-left">
                     <h3 class="text-xl font-semibold xpb-text-primary">{{ title() }}</h3>
                     @if (subtitle() && subtitle() !== '') {
                         <p class="text-sm xpb-text-secondary">{{ subtitle() }}</p>
@@ -21,9 +30,8 @@
                 </div>
 
                 <!-- Close button -->
-                <button 
-                    (click)="close.emit()" 
-                    class="text-gray-400 hover:text-gray-600 transition-colors -mt-1">
+                <button (click)="close.emit()" 
+                    class="text-gray-400 hover:text-gray-600 transition-colors -mt-1 hidden md:block">
                     <app-icon-component
                         [icon]="'close'"
                         [size]="'5'">
@@ -48,6 +56,7 @@
             [loadingIcon]="'autorenew'"
             [confirmText]="confirmText()"
             [confirmIcon]="confirmIcon()"
+            [responsiveCancelButtonHidden]="true"
             [formId]="formId()"
             (confirm)="confirm.emit()"
             (cancel)="close.emit()">
